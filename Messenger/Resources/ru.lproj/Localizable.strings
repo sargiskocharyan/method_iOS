@@ -1,0 +1,27 @@
+/* 
+  Localizable.strings
+  Messenger
+
+  Created by Employee1 on 6/6/20.
+  Copyright © 2020 Employee1. All rights reserved.
+*/
+"Enter your email" = "Введите адрес электронной почты";
+"Error message" = "Сообщение об ошибке";
+"OK" = "Хорошо";
+"Incorrect code" = "Неверный код";
+"Login" = "Логин";
+"Register" = "Регистрация";
+"Resend code" = "Отправить код еще раз";
+"Name" = "Имя";
+"Lastname" = "Фамилия";
+"Username" = "Имя пользователя";
+"Email" = "Адрес электронной почты";
+"University" = "Университет";
+"Contacts" = "Контакты";
+"Reset" = "Сброс";
+"Found users" = "Найденные пользователи";
+"No Contacts" = "Нет контактов";
+"Search user" = "Поиск пользователя";
+"Enter name, lastname or username" = "Введите имя, фамилию или имя пользователя";
+"Find" = "Найти";
+"There is no result" = "Нет результата";
