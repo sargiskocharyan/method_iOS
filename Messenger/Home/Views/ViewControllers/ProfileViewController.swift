@@ -11,7 +11,7 @@ import DropDown
 
 class ProfileViewController: UIViewController {
     
-     //MARK: IBOutlets
+    //MARK: IBOutlets
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var switchMode: UISwitch!
     @IBOutlet weak var universityLabel: UILabel!
@@ -42,6 +42,7 @@ class ProfileViewController: UIViewController {
     let viewModel = ProfileViewModel()
     
     //MARK: Lifecycles
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setFlagImage()
@@ -54,16 +55,8 @@ class ProfileViewController: UIViewController {
         addGestures()
         checkVersion()
         defineSwithState()
-        headerEmailLabel.text = "email".localized()
-        headerUsernameLabel.text = "username".localized()
-        phoneTextLabel.text = "phone:".localized()
-        nameTextLabel.text = "name:".localized()
-        lastnameTextLabel.text = "lastname:".localized()
-        contactsLabel.text = "contacts".localized()
-        languageLabel.text = "language".localized()
-        darkModeLabel.text = "dark_mode".localized()
-        logoutLabel.text = "log_out".localized()
-        self.navigationController?.navigationBar.topItem?.title = "profile".localized()
+        localizeStrings()
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,6 +69,19 @@ class ProfileViewController: UIViewController {
           let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
           self.navigationController?.pushViewController(vc, animated: true)
       }
+    
+    func localizeStrings() {
+           headerEmailLabel.text = "email".localized()
+           headerUsernameLabel.text = "username".localized()
+           phoneTextLabel.text = "phone:".localized()
+           nameTextLabel.text = "name:".localized()
+           lastnameTextLabel.text = "lastname:".localized()
+           contactsLabel.text = "contacts".localized()
+           languageLabel.text = "language".localized()
+           darkModeLabel.text = "dark_mode".localized()
+           logoutLabel.text = "log_out".localized()
+           self.navigationController?.navigationBar.topItem?.title = "profile".localized()
+       }
     
     func defineSwithState() {
         if SharedConfigs.shared.mode == "dark" {
@@ -193,7 +199,6 @@ class ProfileViewController: UIViewController {
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Arm)
             }
             self.viewDidLoad()
-            print(SharedConfigs.shared.appLang)
         }
         dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
@@ -237,7 +242,7 @@ class ProfileViewController: UIViewController {
         } else {
             universityLabel.text = user?.university?.name
             switch SharedConfigs.shared.appLang {
-            case "am":
+            case "hy":
                 universityLabel.text = user?.university?.name
             case "ru":
                 universityLabel.text = user?.university?.nameRU

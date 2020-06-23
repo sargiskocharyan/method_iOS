@@ -43,7 +43,7 @@ struct Sender: Codable{
 struct Message: Codable {
     let _id: String
     let reciever: String
-    let text: String
+    var text: String
     let createdAt: String
     let updatedAt: String
     let owner: String
@@ -55,5 +55,12 @@ struct Chat: Codable {
     let name: String?
     let lastname: String?
     let username: String
-    let message: Message?
+    var message: Message?
+}
+
+struct UserById: Codable {
+    let name: String?
+    let username: String
+    let lastname: String?
+    let id: String
 }

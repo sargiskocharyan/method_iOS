@@ -9,8 +9,6 @@
 import UIKit
 
 extension UITextField {
-    
-    
     func underlined() {
         viewWithTag(1)?.removeFromSuperview()
         let border = UIView()
@@ -19,9 +17,7 @@ extension UITextField {
         border.backgroundColor = .lightGray
         border.frame = CGRect(x: 0, y: self.frame.size.height - height, width:  self.frame.size.width, height: height)
         self.addSubview(border)
-        
     }
-    
 }
 
 

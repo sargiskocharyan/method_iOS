@@ -221,5 +221,41 @@ class HomeNetworkManager: NetworkManager {
               }
           }
        }
-    
+    func getuserById(id: String,  completion: @escaping (UserById?, String?, Int?)->()) {
+     router.request(.getUserById(id: id)) { data, response, error in
+           if error != nil {
+               print(error!.localizedDescription)
+               completion(nil, error?.localizedDescription, nil)
+           }
+           if let response = response as? HTTPURLResponse {
+               let result = self.handleNetworkResponse(response)
+               switch result {
+               case .success:
+                   guard let responseData = data else {
+                       completion(nil, nil, response.statusCode)
+                       return
+                   }
+                   do {
+                        let responseObject = try JSONDecoder().decode(UserById.self, from: responseData)
+                        completion(responseObject, nil, response.statusCode)
+                   } catch {
+                       print(error)
+                    completion(nil, error.localizedDescription, response.statusCode)
+                   }
+               case .failure( _):
+                    guard let responseData = data else {
+                        completion(nil, nil, response.statusCode)
+                        return
+                    }
+                   do {
+                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
+                    completion(nil, errorObject.Error, response.statusCode)
+                   } catch {
+                       print(error)
+                    completion(nil, error.localizedDescription, response.statusCode)
+                   }
+               }
+           }
+       }
+    }
 }

@@ -13,7 +13,6 @@ struct Environment {
 }
 
 struct AUTHUrls {
-    static var id: String?
     static let MailisExist      = "/mailExists"
     static let Login            = "/login"
     static let Register         = "/register"
@@ -26,6 +25,7 @@ struct AUTHUrls {
     static let Logout           = "/user/logout"
     static let GetChats         = "/chats"
     static let GetChatMessages  = "/chats/"
+    static let GetUserById      = "/user/"
 }
 
 struct AppLangKeys {

@@ -8,26 +8,66 @@
 
 import UIKit
 
-class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UNUserNotificationCenterDelegate {
+    
+    
+    
+    //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    let socketTaskManager = SocketTaskManager.shared
+    
+    //MARK: Properties
     static let cellID = "messageCell"
     var chats: [Chat] = []
     let viewModel = RecentMessagesViewModel()
+    let socketTaskManager = SocketTaskManager.shared
+    let center = UNUserNotificationCenter.current()
     
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         getChats()
-        self.socketTaskManager.connect()
+        getnewMessage()
+        self.center.delegate = self
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           tabBarController?.tabBar.isHidden = false
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    //MARK: Helper methods
+    func scheduleNotification() {
+           let content = UNMutableNotificationContent()
+           content.title = "Late wake up call"
+           content.body = "The early bird catches the worm, but the second mouse gets the cheese."
+           content.categoryIdentifier = "alarm"
+           content.userInfo = ["customData": "fizzbuzz"]
+           content.sound = UNNotificationSound.default
+        let currentDateTime = Date()
+        let userCalendar = Calendar.current
+        let requestedComponents: Set<Calendar.Component> = [
+            .year,
+            .month,
+            .day,
+            .hour,
+            .minute,
+            .second
+        ]
+        let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
+        print(dateTimeComponents)
+           let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
+           let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+           center.add(request) { (error) in
+               if let error = error {
+                   print("Notification Error: ", error)
+               }
+           }
        }
+    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -89,16 +129,70 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
             }
             else {
-               if (messages != nil) {
-                self.chats = messages!
-                self.sort()
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.tableView.reloadData()
+                if (messages != nil) {
+                    self.chats = messages!.filter({ (chat) -> Bool in
+                        return chat.message != nil
+                    })
+                    self.sort()
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                        self.tableView.reloadData()
+                    }
                 }
             }
-          }
         }
+    }
+    
+    func getnewMessage() {
+        socketTaskManager.getChatMessage(completionHandler: { (message) in
+            var id = ""
+            if message.sender.id == SharedConfigs.shared.signedUser?.id {
+                id = message.reciever
+            } else {
+                id = message.sender.id
+            }
+            self.viewModel.getuserById(id: id) { (user, error, code) in
+                if (error != nil) {
+                    if code == 401 {
+                        UserDataController().logOutUser()
+                        DispatchQueue.main.async {
+                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                            let nav = UINavigationController(rootViewController: vc)
+                            let window: UIWindow? = UIApplication.shared.windows[0]
+                            window?.rootViewController = nav
+                            window?.makeKeyAndVisible()
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                        self.present(alert, animated: true)
+                        self.activityIndicator.stopAnimating()
+                    }
+                } else if user != nil {
+                    for i in 0..<self.chats.count {
+                        if self.chats[i].id == id {
+                            print(self.chats[i])
+                            self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
+                            self.sort()
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                            self.scheduleNotification()
+                            return
+                        }
+                    }
+                    self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
+                    self.sort()
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                    self.scheduleNotification()
+                }
+            }
+            
+            
+        })
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -130,5 +224,4 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
-    
 }

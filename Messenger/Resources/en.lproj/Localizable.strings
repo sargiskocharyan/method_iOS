@@ -45,9 +45,9 @@
 "incorrect_username" = "Incorrect username";
 "correct_username" = "Correct username";
 "correct_name" = "Correct name";
-"name_must_contain_at_least_3_letters" = "Name must contain at least 3 letters";
+"name_must_contain_at_least_2_letters" = "Name must contain at least 2 letters";
 "correct_lastname" = "Correct lastname";
-"lastname_must_contain_at_least_3_letters" = "lastname must contain at least 3 letters";
+"lastname_must_contain_at_least_2_letters" = "lastname must contain at least 2 letters";
 "code" = "Code";
 "update_information" = "Update information";
 "enter_message" = "Enter message...";

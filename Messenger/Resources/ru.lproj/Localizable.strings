@@ -45,9 +45,9 @@
 "incorrect_username" = "Неверное имя пользователя";
 "correct_username" = "Правильное имя пользователя";
 "correct_name" = "Правильное имя";
-"name_must_contain_at_least_3_letters" = "Имя должно содержать не менее 3 букв";
+"name_must_contain_at_least_2_letters" = "Имя должно содержать не менее 2 букв";
 "correct_lastname" = "Правильная фамилия";
-"lastname_must_contain_at_least_3_letters" = "Фамилия должна содержать не менее 3 букв";
+"lastname_must_contain_at_least_2_letters" = "Фамилия должна содержать не менее 2 букв";
 "code" = "Код";
 "update_information" = "Обновить информацию";
 "enter_message" = "Введите сообщение...";

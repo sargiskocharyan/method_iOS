@@ -62,13 +62,9 @@ class SharedConfigs {
     
     func setAppLang(lang: String? ) {
         if lang != nil {
-            print(lang)
-            
             appLang = lang
             UserDefaults.standard.set(appLang, forKey: Keys.APP_Language)
             UserDefaults.standard.synchronize()
-            
-            print(UserDefaults.standard.object(forKey: Keys.APP_Language) as! String)
         }
     }
 }

@@ -122,7 +122,7 @@ class RegisterViewController: UIViewController {
             } else if responseObject != nil {
                 self.universities = responseObject!
                 switch SharedConfigs.shared.appLang {
-                case "am":
+                case "hy":
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.name
                     })
@@ -142,6 +142,7 @@ class RegisterViewController: UIViewController {
             }
         }
     }
+    
     func configureView() {
         bottomWidth = view.frame.width * 0.6
         bottomHeight = view.frame.height * 0.08
@@ -190,7 +191,6 @@ class RegisterViewController: UIViewController {
     }
     
 }
-
 
 //MARK: Extension
 extension RegisterViewController: CustomTextFieldDelegate {

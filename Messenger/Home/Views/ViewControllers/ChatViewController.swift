@@ -11,16 +11,43 @@ import SocketIO
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    
+    //MARK: Properties
     var viewModel = ChatMessagesViewModel()
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
     var bottomConstraintOnTableView: NSLayoutConstraint?
     var socketTaskManager: SocketTaskManager!
+    let messageInputContainerView: UIView = {
+         let view = UIView()
+         if SharedConfigs.shared.mode == "light" {
+             view.backgroundColor = .white
+         } else {
+             view.backgroundColor = .black
+         }
+         return view
+     }()
+     
+     let inputTextField: UITextField = {
+         let textField = UITextField()
+         textField.placeholder = ""
+         return textField
+     }()
+     
+     let sendButton: UIButton = {
+         let button = UIButton(type: .system)
+         
+         button.setImage(UIImage(named: "send"), for: .normal)
+         return button
+     }()
+     
+     
     
-    
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -33,12 +60,18 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         getnewMessage()
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
-        sendButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+          super.viewWillAppear(animated)
+          tabBarController?.tabBar.isHidden = true
+      }
+    
+    //MARK: Helper methods
     @objc func sendMessage() {
         socketTaskManager.send(message: inputTextField.text!, id: id!)
     }
+    
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
@@ -58,6 +91,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             })
         }
     }
+    
     func getnewMessage() {
         socketTaskManager.getChatMessage(completionHandler: { (message) in
             if message.reciever == self.id || message.sender.id == self.id {
@@ -78,7 +112,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
@@ -87,11 +120,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -20)// es takern en
-        bottomConstraintOnTableView = NSLayoutConstraint(item: tableView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -68)// es tablei takn u view-i verevy
+        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -20)
+        bottomConstraintOnTableView = NSLayoutConstraint(item: tableView!, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -68)
         view.addConstraint(bottomConstraint!)
         view.addConstraint(bottomConstraintOnTableView!)
     }
+    
     private func setupInputComponents() {
         let topBorderView = UIView()
         topBorderView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
@@ -107,35 +141,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: messageInputContainerView, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
-    let messageInputContainerView: UIView = {
-        let view = UIView()
-        if SharedConfigs.shared.mode == "light" {
-            view.backgroundColor = .white
-        } else {
-            view.backgroundColor = .black
-        }
-        return view
-    }()
-    
-    let inputTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = ""
-        return textField
-    }()
-    
-    let sendButton: UIButton = {
-        let button = UIButton(type: .system)
-        
-        button.setImage(UIImage(named: "send"), for: .normal)
-        return button
-    }()
-    
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
     func getChatMessages() {
         self.activity.startAnimating()
         viewModel.getChatMessages(id: id!) { (messages, error, code) in
@@ -208,24 +213,4 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 }
 
-extension UIView {
-    func addConstraintsWithFormat(_ format: String, views: UIView...) {
-        var viewsDictionary = [String: UIView]()
-        for (index, view) in views.enumerated() {
-            let key = "v\(index)"
-            view.translatesAutoresizingMaskIntoConstraints = false
-            viewsDictionary[key] = view
-        }
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: format, options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: viewsDictionary))
-    }
-}
-func heightForView(text:String, font:UIFont, width:CGFloat) -> CGFloat{
-    let label:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: CGFloat.greatestFiniteMagnitude))
-    label.numberOfLines = 0
-    label.lineBreakMode = NSLineBreakMode.byWordWrapping
-    label.font = font
-    label.text = text
-    
-    label.sizeToFit()
-    return label.frame.height
-}
+

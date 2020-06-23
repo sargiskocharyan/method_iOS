@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class ContactsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //MARK: IBOutlets
@@ -29,7 +28,11 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.dataSource = self
         setNavigationItems()
         getContacts()
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
     }
     
     //MARK: Helper methods
@@ -63,8 +66,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         onContactPage = false
         let alert = UIAlertController(title: "search_user".localized()
             , message: "enter_name_or_lastname_or_username".localized(), preferredStyle: .alert)
-        alert.addTextField { (textField) in
-        }
+        alert.addTextField { (textField) in }
         alert.addAction(UIAlertAction(title: "find".localized(), style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0]
             if textField?.text != "" {
@@ -142,6 +144,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    
     func getContacts() {
         activityIndicator.startAnimating()
         viewModel.getContacts { (userContacts, error, code) in
@@ -175,7 +178,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     self.activityIndicator.stopAnimating()
                 }
             }
-            
         }
     }
     
@@ -221,7 +223,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                 }
             }
         } else {
-            
+            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+            vc.id = self.contactsMiniInformation[indexPath.row]._id
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

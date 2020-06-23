@@ -8,22 +8,25 @@
 
 import UIKit
 import DropDown
+
 class EditInformationViewController: UIViewController {
-    
-    let viewModel = RegisterViewModel()
-    var isMore = false
-    let dropDown = DropDown()
-    let moreOrLessImageView = UIImageView()
-    var universities: [University] = []
-    let gradientColor = CAGradientLayer()
-    
-    
+
+    //MARK: IBOutlets
     @IBOutlet weak var updateInformationButton: UIButton!
     @IBOutlet weak var usernameView: CustomTextField!
     @IBOutlet weak var nameView: CustomTextField!
     @IBOutlet weak var lastnameView: CustomTextField!
     @IBOutlet weak var universityTextField: UITextField!
     
+    //MARK: Properties
+    let viewModel = RegisterViewModel()
+    var isMore = false
+    let dropDown = DropDown()
+    let moreOrLessImageView = UIImageView()
+    var universities: [University] = []
+    let gradientColor = CAGradientLayer()
+       
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         nameView.delagate = self
@@ -50,6 +53,7 @@ class EditInformationViewController: UIViewController {
         
     }
     
+    //MARK: Helper methods
     @IBAction func continueButtonAction(_ sender: UIButton) {
         let id = self.universities.first { (university) -> Bool in
             university.name == self.universityTextField.text!
@@ -84,7 +88,7 @@ class EditInformationViewController: UIViewController {
     
     func setUniversityName() {
         switch SharedConfigs.shared.appLang {
-        case "am":
+        case "hy":
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.name
         case "ru":
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameRU
@@ -113,7 +117,7 @@ class EditInformationViewController: UIViewController {
             } else if responseObject != nil {
                 self.universities = responseObject!
                 switch SharedConfigs.shared.appLang {
-                case "am":
+                case "hy":
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.name
                     })
@@ -173,6 +177,7 @@ class EditInformationViewController: UIViewController {
     
 }
 
+//MARK: Extension
 extension EditInformationViewController: CustomTextFieldDelegate {
     func texfFieldDidChange(placeholder: String) {
         if placeholder == "name".localized() {

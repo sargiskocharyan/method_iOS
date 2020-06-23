@@ -27,6 +27,10 @@ class ContactsViewModel {
 
     }
   }
-    func getMessages()
+    func getMessages(id: String, completion: @escaping ([Message]?, String?, Int?)->()) {
+        HomeNetworkManager().getChatMessages(id: id) { (messages, error, code) in
+            completion(messages, error, code)
+        }
+    }
     
 }

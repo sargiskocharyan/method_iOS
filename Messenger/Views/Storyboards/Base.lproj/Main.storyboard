@@ -56,9 +56,9 @@
                                     <constraint firstAttribute="height" constant="66.333333333333314" id="l9z-c4-j3a"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Email"/>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Incorrect email"/>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct email"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="email"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="incorrect_email"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_email"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                         <real key="value" value="0.0"/>
                                     </userDefinedRuntimeAttribute>
@@ -327,9 +327,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="LfH-1F-oem"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Name"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Name must contain at least 3 letters"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct name"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="name"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="name_must_contain_at_least_2_letters"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_name"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
@@ -345,9 +345,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="jv7-0g-OwN"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Lastname"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Lastname must contain at least 3 letters"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct lastname"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="lastname"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="lastname_must_contain_at_least_2_letters"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_lastname"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
@@ -360,9 +360,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="9n8-aP-Cmi"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Username"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Incorrect username"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="incorrect_username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_username"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
@@ -577,11 +577,11 @@
             </objects>
             <point key="canvasLocation" x="-1539" y="-10"/>
         </scene>
-        <!--Item-->
+        <!--Navigation Controller-->
         <scene sceneID="kLX-xg-Y7m">
             <objects>
                 <navigationController id="6nT-M4-yeU" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="HKz-gh-90P"/>
+                    <tabBarItem key="tabBarItem" title="" image="user" id="HKz-gh-90P"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="cCh-ar-OXu">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -741,10 +741,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="buy-6C-dht">
-                                                <rect key="frame" x="0.0" y="517.33333333333337" width="414" height="57"/>
+                                                <rect key="frame" x="-1" y="517.33333333333337" width="416" height="57"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8qB-vw-PYS">
-                                                        <rect key="frame" x="20" y="10" width="374" height="37"/>
+                                                        <rect key="frame" x="20" y="10" width="376" height="37"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                         <color key="textColor" red="0.27450980392156865" green="0.29411764705882354" blue="0.30196078431372547" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -768,7 +768,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KVZ-Oj-Bf6">
-                                                <rect key="frame" x="0.0" y="405.66666666666669" width="414" height="56.666666666666686"/>
+                                                <rect key="frame" x="-1" y="405.66666666666669" width="416" height="56.666666666666686"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Language" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yQO-5J-yKI">
                                                         <rect key="frame" x="20" y="10" width="84.333333333333329" height="36.666666666666664"/>
@@ -777,7 +777,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Armenian" translatesAutoresizingMaskIntoConstraints="NO" id="U5g-ju-ODe">
-                                                        <rect key="frame" x="359" y="10" width="35" height="36.666666666666664"/>
+                                                        <rect key="frame" x="361" y="10" width="35" height="36.666666666666664"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="35" id="eFq-CW-WYA"/>
                                                         </constraints>
@@ -803,7 +803,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GGb-mj-bYD">
-                                                <rect key="frame" x="0.0" y="461.33333333333331" width="414" height="56.999999999999943"/>
+                                                <rect key="frame" x="-1" y="461.33333333333331" width="416" height="56.999999999999943"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dark mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yqX-xW-WLK">
                                                         <rect key="frame" x="20" y="10" width="95" height="37"/>
@@ -812,7 +812,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HmC-ch-7MM">
-                                                        <rect key="frame" x="345" y="10" width="51" height="37"/>
+                                                        <rect key="frame" x="347" y="10" width="51" height="37"/>
                                                         <color key="onTintColor" systemColor="systemIndigoColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <connections>
                                                             <action selector="selectMode:" destination="TuZ-W6-Udy" eventType="valueChanged" id="mWC-RU-HCj"/>
@@ -839,7 +839,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hRh-Bm-Mhx">
-                                                <rect key="frame" x="0.0" y="349.66666666666669" width="414" height="57"/>
+                                                <rect key="frame" x="-1" y="349.66666666666669" width="416" height="57"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contacts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0KE-c9-tyY">
                                                         <rect key="frame" x="20" y="10" width="77" height="37"/>
@@ -848,7 +848,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="detail2x" translatesAutoresizingMaskIntoConstraints="NO" id="2Rv-hi-WCs">
-                                                        <rect key="frame" x="357" y="10" width="40" height="37"/>
+                                                        <rect key="frame" x="359" y="10" width="40" height="37"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="40" id="R9j-Gd-B9s"/>
                                                         </constraints>
@@ -877,20 +877,20 @@
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="ABt-Yi-ygM" secondAttribute="trailing" id="0DX-vw-IgL"/>
-                                            <constraint firstItem="hRh-Bm-Mhx" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" id="1QW-3d-F51"/>
+                                            <constraint firstItem="hRh-Bm-Mhx" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" constant="-1" id="1QW-3d-F51"/>
                                             <constraint firstItem="ABt-Yi-ygM" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" id="5ze-4S-N1R"/>
                                             <constraint firstItem="ABt-Yi-ygM" firstAttribute="top" secondItem="9Rk-vN-Vcq" secondAttribute="top" id="8RV-Uf-ONK"/>
-                                            <constraint firstAttribute="trailing" secondItem="KVZ-Oj-Bf6" secondAttribute="trailing" id="PGE-N3-lZd"/>
-                                            <constraint firstItem="buy-6C-dht" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" id="SeB-PP-SUw"/>
+                                            <constraint firstAttribute="trailing" secondItem="KVZ-Oj-Bf6" secondAttribute="trailing" constant="-1" id="PGE-N3-lZd"/>
+                                            <constraint firstItem="buy-6C-dht" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" constant="-1" id="SeB-PP-SUw"/>
                                             <constraint firstItem="KVZ-Oj-Bf6" firstAttribute="top" secondItem="hRh-Bm-Mhx" secondAttribute="bottom" constant="-1" id="TZA-ZU-hyD"/>
-                                            <constraint firstItem="KVZ-Oj-Bf6" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" id="aAg-oF-Mev"/>
+                                            <constraint firstItem="KVZ-Oj-Bf6" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" constant="-1" id="aAg-oF-Mev"/>
                                             <constraint firstItem="buy-6C-dht" firstAttribute="top" secondItem="KVZ-Oj-Bf6" secondAttribute="bottom" priority="998" id="cer-MD-Q0C"/>
                                             <constraint firstItem="GGb-mj-bYD" firstAttribute="top" secondItem="KVZ-Oj-Bf6" secondAttribute="bottom" constant="-1" id="dKY-aD-exj"/>
-                                            <constraint firstAttribute="trailing" secondItem="buy-6C-dht" secondAttribute="trailing" id="lUq-gs-irh"/>
-                                            <constraint firstAttribute="trailing" secondItem="GGb-mj-bYD" secondAttribute="trailing" id="mLd-2r-b8l"/>
-                                            <constraint firstItem="GGb-mj-bYD" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" id="pyk-PK-jAl"/>
+                                            <constraint firstAttribute="trailing" secondItem="buy-6C-dht" secondAttribute="trailing" constant="-1" id="lUq-gs-irh"/>
+                                            <constraint firstAttribute="trailing" secondItem="GGb-mj-bYD" secondAttribute="trailing" constant="-1" id="mLd-2r-b8l"/>
+                                            <constraint firstItem="GGb-mj-bYD" firstAttribute="leading" secondItem="9Rk-vN-Vcq" secondAttribute="leading" constant="-1" id="pyk-PK-jAl"/>
                                             <constraint firstItem="hRh-Bm-Mhx" firstAttribute="top" secondItem="ABt-Yi-ygM" secondAttribute="bottom" id="taH-JY-Daz"/>
-                                            <constraint firstAttribute="trailing" secondItem="hRh-Bm-Mhx" secondAttribute="trailing" id="uNA-lu-1KD"/>
+                                            <constraint firstAttribute="trailing" secondItem="hRh-Bm-Mhx" secondAttribute="trailing" constant="-1" id="uNA-lu-1KD"/>
                                             <constraint firstItem="buy-6C-dht" firstAttribute="top" secondItem="GGb-mj-bYD" secondAttribute="bottom" priority="999" constant="-1" id="x8w-X6-FdJ"/>
                                         </constraints>
                                     </view>
@@ -952,11 +952,11 @@
             </objects>
             <point key="canvasLocation" x="-4341" y="-731"/>
         </scene>
-        <!--Item-->
+        <!--Navigation Controller-->
         <scene sceneID="RVV-Ug-zgm">
             <objects>
                 <navigationController id="kYK-ZC-6gw" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="U29-Re-VLe"/>
+                    <tabBarItem key="tabBarItem" title="" image="chatIcon" id="U29-Re-VLe"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ok9-5F-JKX">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1167,6 +1167,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="selectedImageTintColor" red="0.49803921569999998" green="0.37254901959999998" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="Ji6-tZ-NkX" kind="relationship" relationship="viewControllers" id="gwQ-Qa-TYF"/>
@@ -1178,7 +1179,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1A2-YJ-RuA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5706" y="398"/>
+            <point key="canvasLocation" x="-6080" y="110"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="DIm-em-dcq">
@@ -1221,9 +1222,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="9ZI-KW-Yof"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Name"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Name must contain at least 3 letters"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct name"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="name"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="name_must_contain_at_least_2_letters"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_name"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
@@ -1239,9 +1240,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="Dej-XH-qw1"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Lastname"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Lastname must contain at least 3 letters"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct lastname"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="lastname"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="lastname_must_contain_at_least_2_letters"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_lastname"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
@@ -1254,9 +1255,9 @@
                                             <constraint firstAttribute="height" constant="66.333333333333314" id="Cm9-2r-v8M"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Username"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Incorrect username"/>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Correct username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="incorrect_username"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_username"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                                 <real key="value" value="0.0"/>
                                             </userDefinedRuntimeAttribute>
