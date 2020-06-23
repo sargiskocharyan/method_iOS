@@ -9,9 +9,9 @@
 import Foundation
 
 class HomePageViewModel {
-    func verifyToken(token: String, completion: @escaping (VerifyTokenResponse?, String?)->()) {
-        AuthorizationNetworkManager().verifyToken(token: token) { (responseObject, error) in
-            completion(responseObject, error)
+    func verifyToken(token: String, completion: @escaping (VerifyTokenResponse?, String?, Int?)->()) {
+        AuthorizationNetworkManager().verifyToken(token: token) { (responseObject, error, code) in
+            completion(responseObject, error, code)
         }
     }
 }

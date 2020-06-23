@@ -25,7 +25,6 @@ struct User: Codable {
     let lastname: String?
     let university: String?
     let _id: String
-//    let email: String
     let username: String
 }
 

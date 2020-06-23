@@ -54,7 +54,7 @@ class CustomTextField: UIView {
     @objc func textFieldDidChange(textField: UITextField){
         self.delagate?.texfFieldDidChange(placeholder: placeholder)
         if textField.text != "" {
-            self.topLabel.text = textField.placeholder
+            self.topLabel.text = textField.placeholder?.localized()
         } else {
             self.topLabel.text = ""
         }
@@ -75,24 +75,24 @@ class CustomTextField: UIView {
     @IBInspectable var placeholder: String {
         get {
             return self.textField.placeholder!
-        }set {
-            self.textField.placeholder = newValue
+        } set {
+            self.textField.placeholder = newValue.localized()
         }
     }
     
     @IBInspectable var errorMessage: String {
         get {
-            return self.errorText
-        }set {
-            self.errorText = newValue
+            return self.errorText.localized()
+        } set {
+            self.errorText = newValue.localized()
         }
     }
     
     @IBInspectable var successMessage: String {
         get {
             return self.successText
-        }set {
-            self.successText = newValue
+        } set {
+            self.successText = newValue.localized()
         }
     }
     

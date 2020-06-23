@@ -22,7 +22,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         tableView.dataSource = self
         getChats()
         self.socketTaskManager.connect()
-//        self.socketTaskManager.connected()
+        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     override func viewWillAppear(_ animated: Bool) {
            super.viewWillAppear(animated)
@@ -82,8 +82,8 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                     }
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                     self.activityIndicator.stopAnimating()
                 }

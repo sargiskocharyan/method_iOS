@@ -11,33 +11,21 @@ import Foundation
 class ConfirmCodeViewModel {
     let networkManager = AuthorizationNetworkManager()
     
-    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?)->()) {
-        networkManager.login(email: email, code: code) { (token, loginResponse, error) in
-            if error != nil {
-                completion(nil, nil, error)
-            } else if token != nil && loginResponse != nil {
-                completion(token, loginResponse, nil)
-            } else if error == nil && token == nil {
-                completion(nil, nil, nil)
-            }
+    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?, Int?)->()) {
+        networkManager.login(email: email, code: code) { (token, loginResponse, error, code) in
+            completion(token, loginResponse, error, code)
         }
     }
 
     func resendCode(email: String, completion: @escaping (String?, String?)->()) {
-        networkManager.beforeLogin(email: email) { (responseObject, error) in
+        networkManager.beforeLogin(email: email) { (responseObject, error, code) in
             completion(responseObject?.code, error)
         }
     }
     
-    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?)->()) {
-        networkManager.register(email: email, code: code) { (token, loginResponse, error) in
-            if error != nil {
-                completion(nil, nil, error)
-            } else if token != nil {
-                completion(token, loginResponse, nil)
-            } else if error == nil && token == nil {
-                completion(nil, nil, nil)
-            }
+    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?, Int?)->()) {
+        networkManager.register(email: email, code: code) { (token, loginResponse, error, code) in
+            completion(token, loginResponse, error, code)
         }
     }
 }

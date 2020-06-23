@@ -37,9 +37,9 @@ class RegisterViewController: UIViewController {
         let id = self.universities.first { (university) -> Bool in
             university.name == self.universityTextField.text!
         }?._id
-        viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
+        viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error, code) in
             if error != nil {
-                if error == "unauthorized" {
+                if code == 401 {
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                         vc.modalPresentationStyle = .fullScreen
@@ -97,14 +97,17 @@ class RegisterViewController: UIViewController {
         usernameCustomView.delagate = self
         addDropDown()
         getUniversities()
+        skipButton.setTitle("skip".localized(), for: .normal)
+        createAccountButton.setTitle("create_account".localized(), for: .normal)
+        universityTextField.placeholder = "select_university".localized()
     }
     
     
     //MARK: Helper methodes
     func getUniversities() {
-        viewModel.getUniversities { (responseObject, error) in
+        viewModel.getUniversities { (responseObject, error, code) in
             if(error != nil) {
-                if (error == "Please authenticate!") {
+                if code == 401 {
                      let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                            let nav = UINavigationController(rootViewController: vc)
                            let window: UIWindow? = UIApplication.shared.windows[0]
@@ -112,15 +115,30 @@ class RegisterViewController: UIViewController {
                            window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
             } else if responseObject != nil {
                 self.universities = responseObject!
-                self.dropDown.dataSource = self.universities.map({ (university) -> String in
-                    university.name
-                })
+                switch SharedConfigs.shared.appLang {
+                case "am":
+                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
+                        university.name
+                    })
+                case "ru":
+                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
+                        university.nameRU
+                    })
+                case "en":
+                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
+                        university.nameEN
+                    })
+                default:
+                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
+                        university.nameEN
+                    })
+                }
             }
         }
     }
@@ -177,7 +195,7 @@ class RegisterViewController: UIViewController {
 //MARK: Extension
 extension RegisterViewController: CustomTextFieldDelegate {
     func texfFieldDidChange(placeholder: String) {
-        if placeholder == "Name".localized() {
+        if placeholder == "name".localized() {
             if !nameCustomView.textField.text!.isValidNameOrLastname() {
                 nameCustomView.errorLabel.text = nameCustomView.errorMessage
                 nameCustomView.errorLabel.textColor = .red
@@ -188,7 +206,7 @@ extension RegisterViewController: CustomTextFieldDelegate {
                 nameCustomView.errorLabel.text = nameCustomView.successMessage
             }
         }
-        if placeholder == "Lastname".localized() {
+        if placeholder == "lastname".localized() {
             if !lastnameCustomView.textField.text!.isValidNameOrLastname() {
                 lastnameCustomView.errorLabel.text = lastnameCustomView.errorMessage
                 lastnameCustomView.errorLabel.textColor = .red
@@ -199,7 +217,7 @@ extension RegisterViewController: CustomTextFieldDelegate {
                 lastnameCustomView.errorLabel.text = lastnameCustomView.successMessage
             }
         }
-        if placeholder == "Username".localized() {
+        if placeholder == "username".localized() {
             if !usernameCustomView.textField.text!.isValidUsername() {
                 usernameCustomView.errorLabel.text = usernameCustomView.errorMessage
                 usernameCustomView.errorLabel.textColor = .red

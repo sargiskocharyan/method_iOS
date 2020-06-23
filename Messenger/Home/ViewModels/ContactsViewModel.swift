@@ -27,4 +27,6 @@ class ContactsViewModel {
 
     }
   }
+    func getMessages()
+    
 }

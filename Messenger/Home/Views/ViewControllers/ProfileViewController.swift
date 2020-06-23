@@ -20,13 +20,22 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var contactView: UIView!
+    @IBOutlet weak var contactsLabel: UILabel!
+    @IBOutlet weak var phoneTextLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var nameTextLabel: UILabel!
+    @IBOutlet weak var darkModeLabel: UILabel!
+    @IBOutlet weak var lastnameTextLabel: UILabel!
+    @IBOutlet weak var languageLabel: UILabel!
+    @IBOutlet weak var logoutLabel: UILabel!
     @IBOutlet weak var languageView: UIView!
     @IBOutlet weak var darkModeView: UIView!
     @IBOutlet weak var logoutView: UIView!
+    @IBOutlet weak var headerUsernameLabel: UILabel!
     @IBOutlet weak var flagImageView: UIImageView!
     @IBOutlet weak var logOutLanguageVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var logOutDarkModeVerticalConstraint: NSLayoutConstraint!
+    @IBOutlet weak var headerEmailLabel: UILabel!
     
     //MARK: Properties
     var dropDown = DropDown()
@@ -45,10 +54,28 @@ class ProfileViewController: UIViewController {
         addGestures()
         checkVersion()
         defineSwithState()
+        headerEmailLabel.text = "email".localized()
+        headerUsernameLabel.text = "username".localized()
+        phoneTextLabel.text = "phone:".localized()
+        nameTextLabel.text = "name:".localized()
+        lastnameTextLabel.text = "lastname:".localized()
+        contactsLabel.text = "contacts".localized()
+        languageLabel.text = "language".localized()
+        darkModeLabel.text = "dark_mode".localized()
+        logoutLabel.text = "log_out".localized()
+        self.navigationController?.navigationBar.topItem?.title = "profile".localized()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+             super.viewWillAppear(animated)
+             checkInformation()
+         }
+    
     //MARK: Helper methods
-    //TODO make enum with keys, and user that enum cases
+    @IBAction func editButton(_ sender: Any) {
+          let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
+          self.navigationController?.pushViewController(vc, animated: true)
+      }
     
     func defineSwithState() {
         if SharedConfigs.shared.mode == "dark" {
@@ -122,8 +149,8 @@ class ProfileViewController: UIViewController {
                     }
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
                 return
@@ -165,6 +192,8 @@ class ProfileViewController: UIViewController {
                 self.flagImageView.image = UIImage(named: "Armenian")
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Arm)
             }
+            self.viewDidLoad()
+            print(SharedConfigs.shared.appLang)
         }
         dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
@@ -178,35 +207,45 @@ class ProfileViewController: UIViewController {
     func checkInformation() {
         let user = SharedConfigs.shared.signedUser
         if user?.name == nil {
-            nameLabel.text = "Name".localized()
+            nameLabel.text = "name".localized()
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
         }
         if user?.lastname == nil {
-            lastnameLabel.text = "Lastname".localized()
+            lastnameLabel.text = "lastname".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
         }
         if user?.email == nil {
-            emailLabel.text = "Email".localized()
+            emailLabel.text = "email".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
         }
         if user?.username == nil {
-            usernameLabel.text = "Username".localized()
+            usernameLabel.text = "username".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
         }
         
         if user?.university == nil {
-            universityLabel.text = "University".localized()
+            universityLabel.text = "university".localized()
             universityLabel.textColor = .lightGray
         } else {
             universityLabel.text = user?.university?.name
+            switch SharedConfigs.shared.appLang {
+            case "am":
+                universityLabel.text = user?.university?.name
+            case "ru":
+                universityLabel.text = user?.university?.nameRU
+            case "en":
+                universityLabel.text = user?.university?.nameEN
+            default:
+                universityLabel.text = user?.university?.nameEN
+            }
         }
         
     }

@@ -23,10 +23,9 @@ class HomePageViewController: UITabBarController {
     
     //MARK: Helper methods
     func verifyToken() {
-        //TODO
-        viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
+        viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error, code) in
             if (error != nil){
-                if (error == "Please authenticate!") {
+                if code == 401 {
                      let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                            let nav = UINavigationController(rootViewController: vc)
                            let window: UIWindow? = UIApplication.shared.windows[0]
@@ -34,8 +33,8 @@ class HomePageViewController: UITabBarController {
                            window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
             } else if responseObject != nil && responseObject!.tokenExists == false {

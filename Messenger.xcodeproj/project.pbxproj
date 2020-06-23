@@ -28,13 +28,13 @@
 		CD3713C2248682710088A0CC /* DarkModeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3713C1248682710088A0CC /* DarkModeTableViewCell.swift */; };
 		CD382F28247D116700AD437D /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F29247D1B0800AD437D /* ViewController-Extension.swift */; };
-		CD387837249CAB0600F0D999 /* EditInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD387836249CAB0600F0D999 /* EditInformationViewController.swift */; };
 		CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD39FD04248A7A0B004C083A /* CustomCell.swift */; };
 		CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
 		CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C323E24989A7000E975DF /* ChatViewController.swift */; };
 		CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */; };
 		CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
 		CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */; };
+		CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */; };
 		CD424917248A315E00A38987 /* message.json in Resources */ = {isa = PBXBuildFile; fileRef = CD424916248A315D00A38987 /* message.json */; };
 		CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
 		CD5E713F24865935008D876E /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E713E24865935008D876E /* HomePageViewController.swift */; };
@@ -109,15 +109,16 @@
 		CD3713BA248674BA0088A0CC /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CD3713BF248680150088A0CC /* LanguagelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagelTableViewCell.swift; sourceTree = "<group>"; };
 		CD3713C1248682710088A0CC /* DarkModeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeTableViewCell.swift; sourceTree = "<group>"; };
+		CD372DE524A0967D00043431 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		CD382F27247D116700AD437D /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		CD382F29247D1B0800AD437D /* ViewController-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController-Extension.swift"; sourceTree = "<group>"; };
-		CD387836249CAB0600F0D999 /* EditInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInformationViewController.swift; sourceTree = "<group>"; };
 		CD39FD04248A7A0B004C083A /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		CD39FD05248A7A0B004C083A /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
 		CD3C323E24989A7000E975DF /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesViewModel.swift; sourceTree = "<group>"; };
+		CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditInformationViewController.swift; sourceTree = "<group>"; };
 		CD424916248A315D00A38987 /* message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = message.json; sourceTree = "<group>"; };
 		CD424918248A335100A38987 /* BeforeLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewController.swift; sourceTree = "<group>"; };
 		CD5E713E24865935008D876E /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
@@ -232,6 +233,7 @@
 				CD5E713E24865935008D876E /* HomePageViewController.swift */,
 				CD3713BA248674BA0088A0CC /* ProfileViewController.swift */,
 				CD352E352488F71900747E32 /* ContactsViewController.swift */,
+				CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */,
 				CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */,
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 			);
@@ -435,7 +437,6 @@
 				CD3673352479495F0002E606 /* CongratulationsViewController.swift */,
 				CD424918248A335100A38987 /* BeforeLoginViewController.swift */,
 				CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */,
-				CD387836249CAB0600F0D999 /* EditInformationViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -682,7 +683,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD382F28247D116700AD437D /* CustomTextField.swift in Sources */,
-				CD387837249CAB0600F0D999 /* EditInformationViewController.swift in Sources */,
 				CD352E362488F71900747E32 /* ContactsViewController.swift in Sources */,
 				CD35E26A2497989A003C53AB /* RecentMessageTableViewCell.swift in Sources */,
 				CDD9C683247BC94F0048A9A1 /* Constants.swift in Sources */,
@@ -697,6 +697,7 @@
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
+				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
 				CDD9C673247BC4AE0048A9A1 /* HTTPTask.swift in Sources */,
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
 				CD355E46247FAEF90049517F /* Data-Extension.swift in Sources */,
@@ -773,6 +774,7 @@
 				CDBCCA67247BF29900115C99 /* Base */,
 				CD361E18248B8B8900BCF154 /* ru */,
 				CD361E1A248B8B9D00BCF154 /* hy */,
+				CD372DE524A0967D00043431 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
