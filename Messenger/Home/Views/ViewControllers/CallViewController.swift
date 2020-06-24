@@ -17,10 +17,6 @@ class CallViewController: UIViewController, UNUserNotificationCenterDelegate {
         self.view.backgroundColor = .yellow
         center.delegate = self
     }
-    
-    func getnewMessage() {
-              self.scheduleNotification(center: self.center)
-      }
       
       func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
           completionHandler()

@@ -31,10 +31,10 @@ class HomeNetworkManager: NetworkManager {
                     let responseObject = try JSONDecoder().decode([ContactResponseWithId].self, from: responseData)
                     completion(responseObject, nil, response.statusCode)
                } catch {
-                   print(error)
+                print(error)
                 completion(nil, error.localizedDescription, response.statusCode)
                }
-           case .failure( _):
+           case .failure(_):
                 guard let responseData = data else {
                     completion(nil, nil, response.statusCode)
                     return

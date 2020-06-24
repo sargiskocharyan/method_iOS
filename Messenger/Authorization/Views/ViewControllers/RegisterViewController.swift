@@ -122,15 +122,15 @@ class RegisterViewController: UIViewController {
             } else if responseObject != nil {
                 self.universities = responseObject!
                 switch SharedConfigs.shared.appLang {
-                case "hy":
+                case AppLangKeys.Arm:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.name
                     })
-                case "ru":
+                case AppLangKeys.Rus:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.nameRU
                     })
-                case "en":
+                case AppLangKeys.Eng:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.nameEN
                     })

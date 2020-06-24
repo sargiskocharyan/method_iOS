@@ -16,7 +16,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
     //MARK: Properties
     let viewModel = HomePageViewModel()
     let socketTaskManager = SocketTaskManager.shared
-    let center = UNUserNotificationCenter.current()
+    static let center = UNUserNotificationCenter.current()
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -25,7 +25,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         verifyToken()
    
         self.socketTaskManager.connect()
-        center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+        Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
             } else {
@@ -34,21 +34,37 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         }
     }
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+           completionHandler()
+       }
+
+       func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+           completionHandler([.alert, .badge, .sound])
+       }
+    
     func getNewMessage() {
         socketTaskManager.getChatMessage { (message) in
             let chatsNC = self.viewControllers![3] as! UINavigationController
-            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
+            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
+            if chatsVC.isLoaded {
+                chatsVC.getnewMessage(message: message)
+            } 
             switch self.selectedIndex {
-                
-            case 0, 1, 2, 4:
-                self.selectedViewController?.scheduleNotification(center: self.center)
-                
-                chatsVC.getnewMessage(message: message)
+            case 0, 1, 2:
+                self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
                 break
-            case 3:
-                let chatsVC = (self.selectedViewController?.children[0])! as! RecentMessagesViewController
-                chatsVC.getnewMessage(message: message)
-                break
+            case 4:
+                let profileNC = self.viewControllers![4] as! UINavigationController
+                print(profileNC.viewControllers.count)
+                if profileNC.viewControllers.count < 3 {
+                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
+                } else if profileNC.viewControllers.count == 3 {
+                    let chatVC = profileNC.viewControllers[2] as! ChatViewController
+                    chatVC.getnewMessage(message: message)
+//                    if message.sender.id != chatVC.id {
+//                        chatVC.scheduleNotification(center: Self.center, message: message)
+//                    }
+                }
             default:
                 break
             }
@@ -113,13 +129,4 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
             }
         }
     }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
-    }
-   
 }

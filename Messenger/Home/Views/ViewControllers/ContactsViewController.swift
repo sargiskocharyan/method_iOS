@@ -137,6 +137,17 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    func getNewMessage(message: Message) {
+        print("dfjg")
+//        DispatchQueue.main.async {
+//                            let visibleViewController = self.navigationController?.visibleViewController
+//                            if visibleViewController is ChatViewController {
+//                                let chatViewController = visibleViewController as! ChatViewController
+//                                    chatViewController.getnewMessage( message: message)
+//                            }
+//                        }
+    }
+    
     func removeView() {
         DispatchQueue.main.async {
             let resultView = self.view.viewWithTag(1)

@@ -9,7 +9,7 @@
 import UIKit
 import SocketIO
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UNUserNotificationCenterDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -22,6 +22,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     var bottomConstraint: NSLayoutConstraint?
     var bottomConstraintOnTableView: NSLayoutConstraint?
     var socketTaskManager: SocketTaskManager!
+    let center = UNUserNotificationCenter.current()
     let messageInputContainerView: UIView = {
          let view = UIView()
          if SharedConfigs.shared.mode == "light" {
@@ -52,11 +53,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        //center.delegate = self
         getChatMessages()
         addConstraints()
         setupInputComponents()
         setObservers()
         socketTaskManager = SocketTaskManager.shared
+        //getnewMessage()
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
     }
@@ -92,9 +95,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getnewMessage(message: Message) {
-            if message.reciever == self.id || message.sender.id == self.id {
+        if (message.reciever == self.id || message.sender.id == self.id) &&  message.sender.id != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
                 print(message)
-                print(self.id)
                 if message.reciever == self.id {
                     DispatchQueue.main.async {
                         self.inputTextField.text = ""
@@ -106,13 +108,25 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                     let indexPath = NSIndexPath(item: self.allMessages.count - 1, section: 0)
                     self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
                 }
+        } else if self.id == SharedConfigs.shared.signedUser?.id && message.sender.id == message.reciever  {
+            DispatchQueue.main.async {
+                self.inputTextField.text = ""
             }
+            self.allMessages.append(message)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                let indexPath = NSIndexPath(item: self.allMessages.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+            }
+        } else {
+            self.scheduleNotification(center: MainTabBarController.center, message: message)
+        }
     }
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
+    }//++
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
@@ -138,6 +152,14 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: messageInputContainerView, attribute: .centerY, multiplier: 1, constant: 0))
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
     
     func getChatMessages() {

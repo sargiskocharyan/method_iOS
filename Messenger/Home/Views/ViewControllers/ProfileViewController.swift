@@ -93,10 +93,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         }
     }
     
-    func getnewMessage(message: Message) {
-            self.scheduleNotification(center: self.center)
-    }
-    
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
@@ -256,11 +252,11 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         } else {
             universityLabel.text = user?.university?.name
             switch SharedConfigs.shared.appLang {
-            case "hy":
+            case AppLangKeys.Arm:
                 universityLabel.text = user?.university?.name
-            case "ru":
+            case AppLangKeys.Rus:
                 universityLabel.text = user?.university?.nameRU
-            case "en":
+            case AppLangKeys.Eng:
                 universityLabel.text = user?.university?.nameEN
             default:
                 universityLabel.text = user?.university?.nameEN

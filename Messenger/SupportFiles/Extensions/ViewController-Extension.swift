@@ -24,10 +24,11 @@ extension UIViewController {
         return appStoryboard.viewController(viewControllerClass: self)
     }
     
-    func scheduleNotification(center: UNUserNotificationCenter) {
+    func scheduleNotification(center: UNUserNotificationCenter, message: Message) {
+        print("scheduleNotification")
         let content = UNMutableNotificationContent()
-        content.title = "Late wake up call"
-        content.body = "The early bird catches the worm, but the second mouse gets the cheese."
+        content.title = "You have a new message"
+        content.body = message.text
         content.categoryIdentifier = "alarm"
         content.userInfo = ["customData": "fizzbuzz"]
         content.sound = UNNotificationSound.default

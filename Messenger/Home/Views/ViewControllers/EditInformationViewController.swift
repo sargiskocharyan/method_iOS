@@ -88,11 +88,11 @@ class EditInformationViewController: UIViewController {
     
     func setUniversityName() {
         switch SharedConfigs.shared.appLang {
-        case "hy":
+        case AppLangKeys.Arm:
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.name
-        case "ru":
+        case AppLangKeys.Rus:
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameRU
-        case "en":
+        case AppLangKeys.Eng:
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameEN
         default:
             universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameEN
@@ -117,15 +117,15 @@ class EditInformationViewController: UIViewController {
             } else if responseObject != nil {
                 self.universities = responseObject!
                 switch SharedConfigs.shared.appLang {
-                case "hy":
+                case AppLangKeys.Arm:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.name
                     })
-                case "ru":
+                case AppLangKeys.Rus:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.nameRU
                     })
-                case "en":
+                case AppLangKeys.Eng:
                     self.dropDown.dataSource = self.universities.map({ (university) -> String in
                         university.nameEN
                     })

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UNUserNotificationCenterDelegate {
+class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     
@@ -19,8 +19,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     //MARK: Properties
     static let cellID = "messageCell"
     var chats: [Chat] = []
+    var isLoaded: Bool = false
     let viewModel = RecentMessagesViewModel()
     let socketTaskManager = SocketTaskManager.shared
+    
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -75,6 +77,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func getChats() {
+        isLoaded = true
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
@@ -138,6 +141,16 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                     self.activityIndicator.stopAnimating()
                 }
             } else if user != nil {
+                //Ero trial
+                DispatchQueue.main.async {
+                    let visibleViewController = self.navigationController?.visibleViewController
+                    if visibleViewController is ChatViewController {
+                        let chatViewController = visibleViewController as! ChatViewController
+//                        if chatViewController.id == message.sender.id || chatViewController.id == message.reciever {
+                            chatViewController.getnewMessage( message: message)
+//                        }
+                    }
+                }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
                         print(self.chats[i])
@@ -154,8 +167,9 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
                     }
-                }
+                
             }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
