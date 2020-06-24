@@ -30,7 +30,7 @@ class CongratulationsViewController: UIViewController {
     
     @IBAction func doneButtonAction(_ sender: UIButton) {
         DispatchQueue.main.async {
-            let vc = HomePageViewController.instantiate(fromAppStoryboard: .main) 
+            let vc = MainTabBarController.instantiate(fromAppStoryboard: .main) 
             vc.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(vc, animated: true)
            

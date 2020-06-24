@@ -69,8 +69,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         } else {
             DispatchQueue.main.async {
-                guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageViewController") as? HomePageViewController else {
-                    print("HomePageViewController not found")
+                guard let rootVC = storyboard.instantiateViewController(identifier: "MainTabBarController") as? MainTabBarController else {
+                    print("MainTabBarController not found")
                     return
                 }
                 let rootNC = UINavigationController(rootViewController: rootVC)

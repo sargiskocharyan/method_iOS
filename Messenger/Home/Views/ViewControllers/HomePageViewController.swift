@@ -10,30 +10,21 @@
 import UIKit
 import UserNotifications
 
-class HomePageViewController: UITabBarController, UNUserNotificationCenterDelegate {
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
-    }
+class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate {
+    
+    
     //MARK: Properties
     let viewModel = HomePageViewModel()
     let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
-    private weak var tabVc:UITabBarController?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         verifyToken()
+   
         self.socketTaskManager.connect()
-        getnewMessage()
-        
-        print(self.selectedViewController)
-        center.delegate = self
         center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -42,49 +33,68 @@ class HomePageViewController: UITabBarController, UNUserNotificationCenterDelega
             }
         }
     }
+    
+    func getNewMessage() {
+        
+        print(viewControllers?.count)
+        //let topMostViewController = UIApplication.shared.topMostViewController()
+        let index = selectedIndex
+        if index != 3 {
+            
+        }
+        let vc = viewControllers![index]
+        
+        switch index {
+        case 0:
+            let callVC = viewControllers![index] as? CallViewController
+            break
+        case 1:
+            let groupsVC = viewControllers![index]
+            break
+        case 2:
+            let channelsVC = viewControllers![index]
+            break
+        case 3:
+            let chatsVC = viewControllers![index] as? RecentMessagesViewController
+            break
+        case 4:
+            let profileVC = viewControllers![index] as? ProfileViewController
+            break
+        default:
+            break
+        }
+        //self.selectedIndex = 8
+        print(selectedIndex)
+        socketTaskManager.getChatMessage { (message) in
+            print(self.tabBarItem.selectedImage?.cgImage == UIImage(named: "call")?.cgImage)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getNewMessage()
+    }
+    
+//    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+//        print(item.selectedImage?.cgImage)
+//        if item.selectedImage?.cgImage == UIImage(named: "call")?.cgImage {
+//            let callVC = CallViewController.instantiate(fromAppStoryboard: .main)
+//            callVC.getnewMessage()
+//        }
+//    }
+    
 //    override public func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 ////        self.tabBarController = segue.destination as? UITabBarController
 //
 //        if let vc = self.tabBarController?.viewControllers?[0] as? RequestTabBarController {
 //            vc.doWhatEver(niceObject)
 //        }
-//    }
+//    }(<UIImage:0x6000022fc7e0 named(main: call) {30, 30}>)
     //MARK: Helper methods
-    func scheduleNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Late wake up call"
-        content.body = "The early bird catches the worm, but the second mouse gets the cheese."
-        content.categoryIdentifier = "alarm"
-        content.userInfo = ["customData": "fizzbuzz"]
-        content.sound = UNNotificationSound.default
-     let currentDateTime = Date()
-     let userCalendar = Calendar.current
-     let requestedComponents: Set<Calendar.Component> = [
-         .year,
-         .month,
-         .day,
-         .hour,
-         .minute,
-         .second
-     ]
-     let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
-     print(dateTimeComponents)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        center.add(request) { (error) in
-            if let error = error {
-                print("Notification Error: ", error)
-            }
-        }
-    }
-    func getnewMessage() {
-    socketTaskManager.getChatMessage(completionHandler: { (message) in
-        
-            self.scheduleNotification()
-        })
-    }
-
     
+    
+    
+
     func verifyToken() {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error, code) in
             if (error != nil) {
@@ -117,6 +127,14 @@ class HomePageViewController: UITabBarController, UNUserNotificationCenterDelega
               
             }
         }
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
    
 }

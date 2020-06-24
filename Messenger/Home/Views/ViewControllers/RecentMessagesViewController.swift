@@ -21,7 +21,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     var chats: [Chat] = []
     let viewModel = RecentMessagesViewModel()
     let socketTaskManager = SocketTaskManager.shared
-    let center = UNUserNotificationCenter.current()
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -30,7 +29,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         tableView.dataSource = self
         getChats()
         getnewMessage()
-        self.center.delegate = self
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
@@ -40,34 +38,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     //MARK: Helper methods
-    func scheduleNotification() {
-           let content = UNMutableNotificationContent()
-           content.title = "Late wake up call"
-           content.body = "The early bird catches the worm, but the second mouse gets the cheese."
-           content.categoryIdentifier = "alarm"
-           content.userInfo = ["customData": "fizzbuzz"]
-           content.sound = UNNotificationSound.default
-        let currentDateTime = Date()
-        let userCalendar = Calendar.current
-        let requestedComponents: Set<Calendar.Component> = [
-            .year,
-            .month,
-            .day,
-            .hour,
-            .minute,
-            .second
-        ]
-        let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
-        print(dateTimeComponents)
-           let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
-           let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-           center.add(request) { (error) in
-               if let error = error {
-                   print("Notification Error: ", error)
-               }
-           }
-       }
-    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -178,7 +148,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                             DispatchQueue.main.async {
                                 self.tableView.reloadData()
                             }
-                            self.scheduleNotification()
                             return
                         }
                     }
@@ -187,7 +156,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
-                    self.scheduleNotification()
                 }
             }
             

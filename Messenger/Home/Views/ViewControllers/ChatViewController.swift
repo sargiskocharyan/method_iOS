@@ -95,6 +95,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     func getnewMessage() {
         socketTaskManager.getChatMessage(completionHandler: { (message) in
             if message.reciever == self.id || message.sender.id == self.id {
+                print(message)
+                print(self.id)
                 if message.reciever == self.id {
                     DispatchQueue.main.async {
                         self.inputTextField.text = ""

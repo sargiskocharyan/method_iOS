@@ -9,7 +9,7 @@
 import UIKit
 import DropDown
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var phoneLabel: UILabel!
@@ -40,11 +40,13 @@ class ProfileViewController: UIViewController {
     //MARK: Properties
     var dropDown = DropDown()
     let viewModel = ProfileViewModel()
-    
+    let socketTaskManager = SocketTaskManager.shared
+    let center = UNUserNotificationCenter.current()
+
     //MARK: Lifecycles
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.center.delegate = self
         setFlagImage()
         setBorder(view: contactView)
         setBorder(view: languageView)
@@ -56,7 +58,7 @@ class ProfileViewController: UIViewController {
         checkVersion()
         defineSwithState()
         localizeStrings()
-       
+        getnewMessage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,6 +71,7 @@ class ProfileViewController: UIViewController {
           let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
           self.navigationController?.pushViewController(vc, animated: true)
       }
+    
     
     func localizeStrings() {
            headerEmailLabel.text = "email".localized()
@@ -89,6 +92,20 @@ class ProfileViewController: UIViewController {
         } else {
             switchMode.isOn = false
         }
+    }
+    
+    func getnewMessage() {
+        socketTaskManager.getChatMessage(completionHandler: { (message) in
+            self.scheduleNotification(center: self.center)
+        })
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
     
     func setFlagImage() {

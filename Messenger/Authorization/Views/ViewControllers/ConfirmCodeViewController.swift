@@ -84,7 +84,7 @@ class ConfirmCodeViewController: UIViewController {
                     UserDataController().saveUserInfo()
                     
                     DispatchQueue.main.async {
-                        let vc = HomePageViewController.instantiate(fromAppStoryboard: .main)
+                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
                         self.view.window?.rootViewController = vc
                         self.activityIndicator.stopAnimating()
                     }

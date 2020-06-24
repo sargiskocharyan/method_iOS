@@ -564,7 +564,7 @@
         <!--Call View Controller-->
         <scene sceneID="Lja-Vl-KhK">
             <objects>
-                <viewController id="Ji6-tZ-NkX" customClass="CallViewController" customModule="Messenger" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CallViewController" id="Ji6-tZ-NkX" customClass="CallViewController" customModule="Messenger" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Hvr-tR-3p8">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1159,10 +1159,10 @@
             </objects>
             <point key="canvasLocation" x="-2904.347826086957" y="667.63392857142856"/>
         </scene>
-        <!--Home Page View Controller-->
+        <!--Main Tab Bar Controller-->
         <scene sceneID="N1N-xw-iO5">
             <objects>
-                <tabBarController storyboardIdentifier="HomePageViewController" id="7ih-Il-Sgm" customClass="HomePageViewController" customModule="Messenger" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MainTabBarController" id="7ih-Il-Sgm" customClass="MainTabBarController" customModule="Messenger" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="t3n-FB-42z">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
