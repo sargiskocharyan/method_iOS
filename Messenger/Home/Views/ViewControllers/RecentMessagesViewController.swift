@@ -28,7 +28,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         tableView.delegate = self
         tableView.dataSource = self
         getChats()
-        getnewMessage()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
@@ -113,54 +112,50 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         }
     }
     
-    func getnewMessage() {
-        socketTaskManager.getChatMessage(completionHandler: { (message) in
-            var id = ""
-            if message.sender.id == SharedConfigs.shared.signedUser?.id {
-                id = message.reciever
-            } else {
-                id = message.sender.id
-            }
-            self.viewModel.getuserById(id: id) { (user, error, code) in
-                if (error != nil) {
-                    if code == 401 {
-                        UserDataController().logOutUser()
+    func getnewMessage(message: Message) {
+        var id = ""
+        if message.sender.id == SharedConfigs.shared.signedUser?.id {
+            id = message.reciever
+        } else {
+            id = message.sender.id
+        }
+        self.viewModel.getuserById(id: id) { (user, error, code) in
+            if (error != nil) {
+                if code == 401 {
+                    UserDataController().logOutUser()
+                    DispatchQueue.main.async {
+                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                        let nav = UINavigationController(rootViewController: vc)
+                        let window: UIWindow? = UIApplication.shared.windows[0]
+                        window?.rootViewController = nav
+                        window?.makeKeyAndVisible()
+                    }
+                }
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else if user != nil {
+                for i in 0..<self.chats.count {
+                    if self.chats[i].id == id {
+                        print(self.chats[i])
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
+                        self.sort()
                         DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
+                            self.tableView?.reloadData()
                         }
+                        return
                     }
-                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                        self.activityIndicator.stopAnimating()
-                    }
-                } else if user != nil {
-                    for i in 0..<self.chats.count {
-                        if self.chats[i].id == id {
-                            print(self.chats[i])
-                            self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
-                            self.sort()
-                            DispatchQueue.main.async {
-                                self.tableView.reloadData()
-                            }
-                            return
-                        }
-                    }
-                    self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
-                    self.sort()
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                }
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
+                self.sort()
+                DispatchQueue.main.async {
+                    self.tableView?.reloadData()
                     }
                 }
             }
-            
-            
-        })
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

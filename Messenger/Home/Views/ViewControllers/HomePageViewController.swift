@@ -35,38 +35,23 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
     }
     
     func getNewMessage() {
-        
-        print(viewControllers?.count)
-        //let topMostViewController = UIApplication.shared.topMostViewController()
-        let index = selectedIndex
-        if index != 3 {
-            
-        }
-        let vc = viewControllers![index]
-        
-        switch index {
-        case 0:
-            let callVC = viewControllers![index] as? CallViewController
-            break
-        case 1:
-            let groupsVC = viewControllers![index]
-            break
-        case 2:
-            let channelsVC = viewControllers![index]
-            break
-        case 3:
-            let chatsVC = viewControllers![index] as? RecentMessagesViewController
-            break
-        case 4:
-            let profileVC = viewControllers![index] as? ProfileViewController
-            break
-        default:
-            break
-        }
-        //self.selectedIndex = 8
-        print(selectedIndex)
         socketTaskManager.getChatMessage { (message) in
-            print(self.tabBarItem.selectedImage?.cgImage == UIImage(named: "call")?.cgImage)
+            let chatsNC = self.viewControllers![3] as! UINavigationController
+            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
+            switch self.selectedIndex {
+                
+            case 0, 1, 2, 4:
+                self.selectedViewController?.scheduleNotification(center: self.center)
+                
+                chatsVC.getnewMessage(message: message)
+                break
+            case 3:
+                let chatsVC = (self.selectedViewController?.children[0])! as! RecentMessagesViewController
+                chatsVC.getnewMessage(message: message)
+                break
+            default:
+                break
+            }
         }
     }
     

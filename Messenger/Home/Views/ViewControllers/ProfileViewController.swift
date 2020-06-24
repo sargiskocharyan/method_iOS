@@ -58,7 +58,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         checkVersion()
         defineSwithState()
         localizeStrings()
-        getnewMessage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -94,10 +93,8 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         }
     }
     
-    func getnewMessage() {
-        socketTaskManager.getChatMessage(completionHandler: { (message) in
+    func getnewMessage(message: Message) {
             self.scheduleNotification(center: self.center)
-        })
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {

@@ -57,7 +57,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         setupInputComponents()
         setObservers()
         socketTaskManager = SocketTaskManager.shared
-        getnewMessage()
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
     }
@@ -92,8 +91,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func getnewMessage() {
-        socketTaskManager.getChatMessage(completionHandler: { (message) in
+    func getnewMessage(message: Message) {
             if message.reciever == self.id || message.sender.id == self.id {
                 print(message)
                 print(self.id)
@@ -109,7 +107,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                     self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
                 }
             }
-        })
     }
     
     func setObservers() {
