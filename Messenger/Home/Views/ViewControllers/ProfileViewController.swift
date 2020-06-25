@@ -152,9 +152,9 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
-        viewModel.logout { (error, code) in
+        viewModel.logout { (error) in
             if (error != nil) {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -165,7 +165,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
                     }
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
@@ -181,6 +181,8 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
                     window?.makeKeyAndVisible()
                 }
             }
+            self.socketTaskManager.disconnect()
+            print(self.socketTaskManager.socket.status)
         }
     }
     
@@ -226,30 +228,35 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
+            nameLabel.textColor = .black
         }
         if user?.lastname == nil {
             lastnameLabel.text = "lastname".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
+            lastnameLabel.textColor = .black
         }
         if user?.email == nil {
             emailLabel.text = "email".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
+            emailLabel.textColor = .black
         }
         if user?.username == nil {
             usernameLabel.text = "username".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
+            usernameLabel.textColor = .black
         }
         
         if user?.university == nil {
             universityLabel.text = "university".localized()
             universityLabel.textColor = .lightGray
         } else {
+            universityLabel.textColor = .black
             universityLabel.text = user?.university?.name
             switch SharedConfigs.shared.appLang {
             case AppLangKeys.Arm:

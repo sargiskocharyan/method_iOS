@@ -23,8 +23,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         verifyToken()
-   
-        self.socketTaskManager.connect()
+        socketTaskManager.connect()
         Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -91,15 +90,12 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
 //            vc.doWhatEver(niceObject)
 //        }
 //    }(<UIImage:0x6000022fc7e0 named(main: call) {30, 30}>)
+    
     //MARK: Helper methods
-    
-    
-    
-
     func verifyToken() {
-        viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error, code) in
+        viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                      let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                            let nav = UINavigationController(rootViewController: vc)
                            let window: UIWindow? = UIApplication.shared.windows[0]
@@ -107,7 +103,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                            window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
@@ -124,9 +120,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                     sceneDelegate.window?.rootViewController = nav
                 }
             }
-            else if responseObject != nil && ((responseObject?.tokenExists) == true) {
-              
-            }
+           // self.socketTaskManager.connect()
         }
     }
 }

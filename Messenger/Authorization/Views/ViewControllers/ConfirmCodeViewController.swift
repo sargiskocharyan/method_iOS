@@ -43,7 +43,7 @@ class ConfirmCodeViewController: UIViewController {
         viewModel.resendCode(email: email!) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                     self.activityIndicator.stopAnimating()
@@ -70,10 +70,10 @@ class ConfirmCodeViewController: UIViewController {
             self.activityIndicator.startAnimating()
         }
         if isExists! {
-            viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error, code) in
+            viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()
@@ -82,7 +82,6 @@ class ConfirmCodeViewController: UIViewController {
                     SharedConfigs.shared.signedUser = loginResponse?.user
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
-                    
                     DispatchQueue.main.async {
                         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
                         self.view.window?.rootViewController = vc
@@ -98,10 +97,10 @@ class ConfirmCodeViewController: UIViewController {
                 }
             }
         } else {
-            viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error, code)  in
+            viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()

@@ -34,12 +34,24 @@ class RegisterViewController: UIViewController {
     
     //MARK: @IBActions
     @IBAction func createAccountAction(_ sender: UIButton) {
-        let id = self.universities.first { (university) -> Bool in
-            university.name == self.universityTextField.text!
-        }?._id
-        viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error, code) in
+        var id: String?
+        switch SharedConfigs.shared.appLang {
+        case AppLangKeys.Arm:
+            id = self.universities.first { (university) -> Bool in
+                university.name == self.universityTextField.text!
+                }?._id
+        case AppLangKeys.Rus:
+            id = self.universities.first { (university) -> Bool in
+                university.nameRU == self.universityTextField.text!
+                }?._id
+        default:
+            id = self.universities.first { (university) -> Bool in
+                university.nameEN == self.universityTextField.text!
+                }?._id
+        }
+        viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
             if error != nil {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                         vc.modalPresentationStyle = .fullScreen
@@ -105,9 +117,9 @@ class RegisterViewController: UIViewController {
     
     //MARK: Helper methodes
     func getUniversities() {
-        viewModel.getUniversities { (responseObject, error, code) in
+        viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                      let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                            let nav = UINavigationController(rootViewController: vc)
                            let window: UIWindow? = UIApplication.shared.windows[0]
@@ -115,7 +127,7 @@ class RegisterViewController: UIViewController {
                            window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }

@@ -53,13 +53,11 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        //center.delegate = self
         getChatMessages()
         addConstraints()
         setupInputComponents()
         setObservers()
         socketTaskManager = SocketTaskManager.shared
-        //getnewMessage()
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
     }
@@ -164,9 +162,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getChatMessages() {
         self.activity.startAnimating()
-        viewModel.getChatMessages(id: id!) { (messages, error, code) in
+        viewModel.getChatMessages(id: id!) { (messages, error) in
             if error != nil {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -178,7 +176,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
@@ -215,6 +213,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
         if allMessages[indexPath.row].sender.id == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text

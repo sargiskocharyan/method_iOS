@@ -8,9 +8,9 @@
 
 import Foundation
 class ProfileViewModel {
-    func logout(completion: @escaping (String?, Int?)->()) {
-        HomeNetworkManager().logout() { (error, code) in
-            completion(error, code)
+    func logout(completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().logout() { (error) in
+            completion(error)
         }
     }
 }

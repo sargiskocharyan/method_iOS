@@ -32,11 +32,11 @@ class BeforeLoginViewController: UIViewController {
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
         activityIndicator.startAnimating()
-        viewModel.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error, code) in
+        viewModel.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }

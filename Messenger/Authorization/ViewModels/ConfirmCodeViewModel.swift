@@ -11,21 +11,21 @@ import Foundation
 class ConfirmCodeViewModel {
     let networkManager = AuthorizationNetworkManager()
     
-    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?, Int?)->()) {
-        networkManager.login(email: email, code: code) { (token, loginResponse, error, code) in
-            completion(token, loginResponse, error, code)
+    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, NetworkResponse?)->()) {
+        networkManager.login(email: email, code: code) { (token, loginResponse, error) in
+            completion(token, loginResponse, error)
         }
     }
 
-    func resendCode(email: String, completion: @escaping (String?, String?)->()) {
-        networkManager.beforeLogin(email: email) { (responseObject, error, code) in
+    func resendCode(email: String, completion: @escaping (String?, NetworkResponse?)->()) {
+        networkManager.beforeLogin(email: email) { (responseObject, error) in
             completion(responseObject?.code, error)
         }
     }
     
-    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?, Int?)->()) {
-        networkManager.register(email: email, code: code) { (token, loginResponse, error, code) in
-            completion(token, loginResponse, error, code)
+    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, NetworkResponse?)->()) {
+        networkManager.register(email: email, code: code) { (token, loginResponse, error) in
+            completion(token, loginResponse, error)
         }
     }
 }

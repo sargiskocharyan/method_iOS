@@ -9,14 +9,14 @@
 import Foundation
 
 class RecentMessagesViewModel {
-    func getChats(completion: @escaping ([Chat]?, String?, Int?)->()) {
-        HomeNetworkManager().getChats() { (chats, error, code) in
-            completion(chats, error, code)
+    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
+        HomeNetworkManager().getChats() { (chats, error) in
+            completion(chats, error)
         }
     }
-    func getuserById(id: String, completion: @escaping (UserById?, String?, Int?)->()) {
-        HomeNetworkManager().getuserById(id: id) { (user, error, code) in
-            completion(user, error, code)
+    func getuserById(id: String, completion: @escaping (UserById?, NetworkResponse?)->()) {
+        HomeNetworkManager().getuserById(id: id) { (user, error) in
+            completion(user, error)
         }
     }
 }

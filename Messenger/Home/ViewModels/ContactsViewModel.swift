@@ -9,27 +9,27 @@
 import Foundation
 
 class ContactsViewModel {
-    func getContacts(completion: @escaping ([ContactResponseWithId]?, String?, Int?)->()) {
-        HomeNetworkManager().getUserContacts() { (contacts, error, code) in
-            completion(contacts, error, code)
+    func getContacts(completion: @escaping ([ContactResponseWithId]?, NetworkResponse?)->()) {
+        HomeNetworkManager().getUserContacts() { (contacts, error) in
+            completion(contacts, error)
         }
     }
     
-    func findUsers(term: String, completion: @escaping (FindUserResponse?, String?, Int?)->()) {
-        HomeNetworkManager().findUsers(term: term) { (responseObject, error, code) in
-            completion(responseObject, error, code)
+    func findUsers(term: String, completion: @escaping (FindUserResponse?, NetworkResponse?)->()) {
+        HomeNetworkManager().findUsers(term: term) { (responseObject, error) in
+            completion(responseObject, error)
         }
     }
     
-    func addContact(id: String, completion: @escaping (String?, Int?)->()) {
-        HomeNetworkManager().addContact(id: id) { (error, code) in
-            completion(error, code)
+    func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().addContact(id: id) { (error) in
+            completion(error)
 
     }
   }
-    func getMessages(id: String, completion: @escaping ([Message]?, String?, Int?)->()) {
-        HomeNetworkManager().getChatMessages(id: id) { (messages, error, code) in
-            completion(messages, error, code)
+    func getMessages(id: String, completion: @escaping ([Message]?, NetworkResponse?)->()) {
+        HomeNetworkManager().getChatMessages(id: id) { (messages, error) in
+            completion(messages, error)
         }
     }
     

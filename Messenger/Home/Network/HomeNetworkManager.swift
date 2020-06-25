@@ -13,131 +13,131 @@ class HomeNetworkManager: NetworkManager {
     
     let router = Router<HomeApi>()
     
-    func getUserContacts(completion: @escaping ([ContactResponseWithId]?, String?, Int?)->()) {
+    func getUserContacts(completion: @escaping ([ContactResponseWithId]?, NetworkResponse?)->()) {
    router.request(.getUserContacts) { data, response, error in
        if error != nil {
-           print(error!.localizedDescription)
-           completion(nil, error?.localizedDescription, nil)
+        print(error?.rawValue)
+        completion(nil, error)
        }
        if let response = response as? HTTPURLResponse {
            let result = self.handleNetworkResponse(response)
            switch result {
            case .success:
                guard let responseData = data else {
-                completion(nil, nil, response.statusCode)
+                completion(nil, error)
                    return
                }
                do {
                     let responseObject = try JSONDecoder().decode([ContactResponseWithId].self, from: responseData)
-                    completion(responseObject, nil, response.statusCode)
+                completion(responseObject, nil)
                } catch {
                 print(error)
-                completion(nil, error.localizedDescription, response.statusCode)
+                completion(nil, NetworkResponse.unableToDecode)
                }
            case .failure(_):
                 guard let responseData = data else {
-                    completion(nil, nil, response.statusCode)
+                    completion(nil, error)
                     return
                 }
                do {
                     let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                completion(nil, errorObject.Error, response.statusCode)
+                completion(nil, error)
                } catch {
                    print(error)
-                completion(nil, error.localizedDescription, response.statusCode)
+                completion(nil, NetworkResponse.unableToDecode)
                }
            }
        }
    }
 }
     
-    func findUsers(term: String, completion: @escaping (FindUserResponse?, String?, Int?)->()) {
+    func findUsers(term: String, completion: @escaping (FindUserResponse?, NetworkResponse?)->()) {
         router.request(.findUsers(term: term)) { data, response, error in
             if error != nil {
-                print(error!.localizedDescription)
-                completion(nil, error?.localizedDescription, nil)
+                print(error!.rawValue)
+                completion(nil, error)
             }
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
                     guard let responseData = data else {
-                        completion(nil, nil, response.statusCode)
+                        completion(nil, error)
                         return
                     }
                     do {
                          let responseObject = try JSONDecoder().decode(FindUserResponse.self, from: responseData)
-                         completion(responseObject, nil, response.statusCode)
+                         completion(responseObject, nil)
                     } catch {
                         print(error)
-                        completion(nil, nil, response.statusCode)
+                        completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
                    guard let responseData = data else {
-                         completion(nil, nil, response.statusCode)
+                         completion(nil, error)
                          return
                      }
                     do {
                          let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                     completion(nil, errorObject.Error, response.statusCode)
+                     completion(nil, error)
                     } catch {
                         print(error)
-                     completion(nil, error.localizedDescription, response.statusCode)
+                        completion(nil, NetworkResponse.unableToDecode)
                     }
                 }
             }
         }
     }
     
-    func addContact(id: String, completion: @escaping (String?, Int?)->()) {
+    func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.addContact(id: id)) { data, response, error in
             if error != nil {
-                print(error!.localizedDescription)
-                completion(error?.localizedDescription, nil)
+                print(error!.rawValue)
+                completion(error)
             }
           
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                        completion(nil, response.statusCode)
+                        completion(error)
                 case .failure( _):
                    guard let responseData = data else {
-                         completion("Something went wrong", response.statusCode)
+                         completion(error)
                          return
                      }
                     do {
                          let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                     completion(errorObject.Error, response.statusCode)
+                     completion(nil)
                     } catch {
-                     completion(error.localizedDescription, response.statusCode)
+                        completion(NetworkResponse.unableToDecode)
                     }
                 }
             }
         }
     }
-        func logout(completion: @escaping (String?, Int?)->()) {
+        func logout(completion: @escaping (NetworkResponse?)->()) {
         router.request(.logout) { data, response, error in
             if error != nil {
-                print(error!.localizedDescription)
-                completion(error?.localizedDescription, nil)
+                print(error!.rawValue)
+                completion(error)
             }
           
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                        completion(nil, response.statusCode)
+                        completion(error)
                 case .failure( _):
                    guard let responseData = data else {
-                         completion("Something went wrong", response.statusCode)
+                         completion(error)
                          return
                      }
                     do {
                          let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                     completion(errorObject.Error, response.statusCode)
+                     completion(nil)
                     } catch {
-                     completion(error.localizedDescription, response.statusCode)
+                        completion(NetworkResponse.unableToDecode)
                     }
                 }
             }
@@ -145,11 +145,11 @@ class HomeNetworkManager: NetworkManager {
     
 }
     
-    func getChats(completion: @escaping ([Chat]?, String?, Int?)->()) {
+    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
        router.request(.getChats) { data, response, error in
            if error != nil {
-               print(error!.localizedDescription)
-               completion(nil, error?.localizedDescription, nil)
+               print(error!.rawValue)
+               completion(nil, error)
            }
          
            if let response = response as? HTTPURLResponse {
@@ -157,102 +157,102 @@ class HomeNetworkManager: NetworkManager {
                switch result {
                case .success:
                    guard let responseData = data else {
-                       completion(nil, nil, response.statusCode)
+                       completion(nil, error)
                        return
                    }
                    do {
                         let responseObject = try JSONDecoder().decode([Chat].self, from: responseData)
-                        completion(responseObject, nil, response.statusCode)
+                        completion(responseObject, nil)
                    } catch {
                        print(error)
-                    completion(nil, error.localizedDescription, response.statusCode)
+                    completion(nil, NetworkResponse.unableToDecode)
                    }
                case .failure( _):
                     guard let responseData = data else {
-                        completion(nil, nil, response.statusCode)
+                        completion(nil, error)
                         return
                     }
                    do {
                         let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                    completion(nil, errorObject.Error, response.statusCode)
+                    completion(nil, error)
                    } catch {
                        print(error)
-                    completion(nil, error.localizedDescription, response.statusCode)
+                    completion(nil, NetworkResponse.unableToDecode)
                    }
                }
            }
        }
     }
     
-    func getChatMessages(id: String,  completion: @escaping ([Message]?, String?, Int?)->()) {
+    func getChatMessages(id: String,  completion: @escaping ([Message]?, NetworkResponse?)->()) {
         router.request(.getChatMessages(id: id)) { data, response, error in
               if error != nil {
-                  print(error!.localizedDescription)
-                  completion(nil, error?.localizedDescription, nil)
+                  print(error!.rawValue)
+                  completion(nil, error)
               }
               if let response = response as? HTTPURLResponse {
                   let result = self.handleNetworkResponse(response)
                   switch result {
                   case .success:
                       guard let responseData = data else {
-                          completion(nil, nil, response.statusCode)
+                          completion(nil, error)
                           return
                       }
                       do {
                            let responseObject = try JSONDecoder().decode([Message].self, from: responseData)
-                           completion(responseObject, nil, response.statusCode)
+                           completion(responseObject, nil)
                       } catch {
                           print(error)
-                       completion(nil, error.localizedDescription, response.statusCode)
+                        completion(nil, NetworkResponse.unableToDecode)
                       }
                   case .failure( _):
                        guard let responseData = data else {
-                           completion(nil, nil, response.statusCode)
+                           completion(nil, error)
                            return
                        }
                       do {
                            let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                       completion(nil, errorObject.Error, response.statusCode)
+                       completion(nil, error)
                       } catch {
                           print(error)
-                       completion(nil, error.localizedDescription, response.statusCode)
+                        completion(nil, NetworkResponse.unableToDecode)
                       }
                   }
               }
           }
        }
-    func getuserById(id: String,  completion: @escaping (UserById?, String?, Int?)->()) {
+    func getuserById(id: String,  completion: @escaping (UserById?, NetworkResponse?)->()) {
      router.request(.getUserById(id: id)) { data, response, error in
            if error != nil {
-               print(error!.localizedDescription)
-               completion(nil, error?.localizedDescription, nil)
+               print(error!.rawValue)
+               completion(nil, error)
            }
            if let response = response as? HTTPURLResponse {
                let result = self.handleNetworkResponse(response)
                switch result {
                case .success:
                    guard let responseData = data else {
-                       completion(nil, nil, response.statusCode)
+                       completion(nil, error)
                        return
                    }
                    do {
                         let responseObject = try JSONDecoder().decode(UserById.self, from: responseData)
-                        completion(responseObject, nil, response.statusCode)
+                        completion(responseObject, nil)
                    } catch {
                        print(error)
-                    completion(nil, error.localizedDescription, response.statusCode)
+                    completion(nil, NetworkResponse.unableToDecode)
                    }
                case .failure( _):
                     guard let responseData = data else {
-                        completion(nil, nil, response.statusCode)
+                        completion(nil, error)
                         return
                     }
                    do {
                         let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                    completion(nil, errorObject.Error, response.statusCode)
+                    completion(nil, error)
                    } catch {
                        print(error)
-                    completion(nil, error.localizedDescription, response.statusCode)
+                    completion(nil, NetworkResponse.unableToDecode)
                    }
                }
            }

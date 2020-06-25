@@ -10,19 +10,30 @@ import Foundation
 import SocketIO
 
 class SocketTaskManager {
+    
     static let shared = SocketTaskManager()
-    let manager = SocketManager(socketURL: URL(string: "https://messenger-dynamic.herokuapp.com")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .compress])
     
     var socket: SocketIOClient {
-        let socket = manager.defaultSocket
-        return socket
+        print(KeyChain.load(key: "token")?.toString())
+        return manager.defaultSocket
     }
+    
+    var manager: SocketManager = SocketManager(socketURL: URL(string: "http://192.168.0.106:3000")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
     
     private init () { }
     
     
     func connect() {
+        manager = SocketManager(socketURL: URL(string: "http://192.168.0.106:3000")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
+        print(KeyChain.load(key: "token")?.toString())
         socket.connect()
+        print(socket.status)
+        socket.on(clientEvent: .connect) {data, ack in
+            print("socket connected")
+        }
+        socket.on(clientEvent: .error) {data, ack in
+            print("error")
+        }
     }
     
     func emit() {
@@ -32,7 +43,13 @@ class SocketTaskManager {
     }
     
     func send(message: String, id: String) {
+        print(socket.status)
         socket.emit("sendMessage", message, id) 
+    }
+    
+    func disconnect() {
+        socket.disconnect()
+        
     }
     
     func getChatMessage(completionHandler: @escaping (_ message: Message) -> Void) {

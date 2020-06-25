@@ -20,6 +20,8 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     var contactsMiniInformation: [ContactInformation] = []
     let viewModel = ContactsViewModel()
     var onContactPage = true
+    var isLoaded = false
+    var isLoadedFoundUsers = false
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -33,6 +35,18 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if isLoaded && contacts.count == 0 && onContactPage {
+            removeView()
+            setView("no_contacts".localized())
+        }
+        if findedUsers.count == 0 && isLoadedFoundUsers && !onContactPage {
+            removeView()
+            setView("there_is_no_result".localized())
+        }
     }
     
     //MARK: Helper methods
@@ -75,10 +89,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                     self.navigationItem.title = "found_users".localized()
                 }
-                self.viewModel.findUsers(term: (textField?.text)!) { (responseObject, error, code) in
-                    self.removeView()
+                self.viewModel.findUsers(term: (textField?.text)!) { (responseObject, error) in
                     if error != nil {
-                        if code == 401 {
+                        if error == NetworkResponse.authenticationError {
                             UserDataController().logOutUser()
                             DispatchQueue.main.async {
                                 let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -89,13 +102,15 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                             }
                         }
                         DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized() , message: error, preferredStyle: .alert)
+                            let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                             self.present(alert, animated: true)
                         }
                     } else if responseObject != nil {
+                        self.isLoadedFoundUsers = true
                         if responseObject?.users.count == 0 {
                             DispatchQueue.main.async {
+                                self.contactsMiniInformation = []
                                 self.tableView.reloadData()
                                 self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                                 self.navigationItem.title = "found_users".localized()
@@ -139,13 +154,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getNewMessage(message: Message) {
         print("dfjg")
-//        DispatchQueue.main.async {
-//                            let visibleViewController = self.navigationController?.visibleViewController
-//                            if visibleViewController is ChatViewController {
-//                                let chatViewController = visibleViewController as! ChatViewController
-//                                    chatViewController.getnewMessage( message: message)
-//                            }
-//                        }
     }
     
     func removeView() {
@@ -158,9 +166,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getContacts() {
         activityIndicator.startAnimating()
-        viewModel.getContacts { (userContacts, error, code) in
+        viewModel.getContacts { (userContacts, error) in
             if error != nil {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -170,14 +178,18 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         window?.makeKeyAndVisible()
                     }
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                     }
                 }
             } else if userContacts != nil {
+                self.isLoaded = true
                 if userContacts?.count == 0 {
                     self.setView("no_contacts".localized())
+                    DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    }
                     return
                 }
                 self.contacts = userContacts!
@@ -193,15 +205,14 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.removeView()
         if onContactPage == false {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
             DispatchQueue.main.async {
                 self.activityIndicator.startAnimating()
             }
-            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error, code) in
+            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
                 if error != nil {
-                    if code == 401 {
+                    if error == NetworkResponse.authenticationError {
                         UserDataController().logOutUser()
                         DispatchQueue.main.async {
                             let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -213,7 +224,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     }
                     DispatchQueue.main.async {
                         self.activityIndicator.stopAnimating()
-                        let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                     }
@@ -245,6 +256,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
         cell.contactImageView.image = UIImage(named: "noPhoto")
         if contactsMiniInformation[indexPath.row].name == nil {

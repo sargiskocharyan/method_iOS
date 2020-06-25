@@ -10,7 +10,7 @@ import UIKit
 import DropDown
 
 class EditInformationViewController: UIViewController {
-
+    
     //MARK: IBOutlets
     @IBOutlet weak var updateInformationButton: UIButton!
     @IBOutlet weak var usernameView: CustomTextField!
@@ -25,7 +25,7 @@ class EditInformationViewController: UIViewController {
     let moreOrLessImageView = UIImageView()
     var universities: [University] = []
     let gradientColor = CAGradientLayer()
-       
+    
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,18 +50,29 @@ class EditInformationViewController: UIViewController {
         lastnameView.handleRotate()
         usernameView.handleRotate()
         updateInformationButton.setGradientBackground(view: self.view, gradientColor)
-        
     }
     
     //MARK: Helper methods
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        let id = self.universities.first { (university) -> Bool in
-            university.name == self.universityTextField.text!
-            }?._id
+        var id: String?
+        switch SharedConfigs.shared.appLang {
+        case AppLangKeys.Arm:
+            id = self.universities.first { (university) -> Bool in
+                university.name == self.universityTextField.text!
+                }?._id
+        case AppLangKeys.Rus:
+            id = self.universities.first { (university) -> Bool in
+                university.nameRU == self.universityTextField.text!
+                }?._id
+        default:
+            id = self.universities.first { (university) -> Bool in
+                university.nameEN == self.universityTextField.text!
+                }?._id
+        }
         if nameView.textField.text != " " && lastnameView.textField.text != "" && usernameView.textField.text != "" && id != nil {
-            viewModel.updateUser(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, university: (id)!) { (user, error, code) in
+            viewModel.updateUser(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, university: (id)!) { (user, error) in
                 if error != nil {
-                    if code == 401 {
+                    if error == NetworkResponse.authenticationError {
                         DispatchQueue.main.async {
                             let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                             vc.modalPresentationStyle = .fullScreen
@@ -76,8 +87,7 @@ class EditInformationViewController: UIViewController {
                     }
                 }
             }
-        }
-        else {
+        } else {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -100,9 +110,9 @@ class EditInformationViewController: UIViewController {
     }
     
     func getUniversities() {
-        viewModel.getUniversities { (responseObject, error, code) in
+        viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                     let nav = UINavigationController(rootViewController: vc)
                     let window: UIWindow? = UIApplication.shared.windows[0]
@@ -110,7 +120,7 @@ class EditInformationViewController: UIViewController {
                     window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
