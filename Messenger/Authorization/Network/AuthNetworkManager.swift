@@ -16,7 +16,7 @@ class AuthorizationNetworkManager: NetworkManager {
     func beforeLogin(email: String, completion: @escaping (MailExistsResponse?, NetworkResponse?)->()) {
         router.request(.beforeLogin(email: email)) { data, response, error in
             if error != nil {
-                print(error?.rawValue)
+                print(error!.rawValue)
                 completion(nil, error)
             }
             
@@ -37,17 +37,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    guard let responseData = data else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                        completion(nil, error)
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil, error)
                 }
             }
         }
@@ -76,17 +66,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    guard let responseData = data else {
-                        completion(nil, nil, error)
-                        return
-                    }
-                    do {
-                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                        completion(nil, nil, error)
-                    } catch {
-                        print(error)
-                        completion(nil, nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil, nil, error)
                 }
             }
         }
@@ -115,17 +95,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    guard data != nil else {
-                        completion(nil, nil, error)
-                        return
-                    }
-                    do {
-                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: data!)
-                        completion(nil, nil, error)
-                    } catch {
-                        print(error)
-                        completion(nil, nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil, nil, error)
                 }
             }
         }
@@ -153,19 +123,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    guard data != nil else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        _ = String(bytes: data!, encoding: .utf8)
-                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: data!)
-                        completion(nil, error)
-                        
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil, error)
                 }
             }
         }
@@ -225,17 +183,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    guard let responseData = data else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        let errorObject = try JSONDecoder().decode(ErrorResponse.self, from: responseData)
-                        completion(nil, error)
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil, error)
                 }
             }
         }

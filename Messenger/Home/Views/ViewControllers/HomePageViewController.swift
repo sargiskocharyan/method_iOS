@@ -24,6 +24,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         self.navigationController?.isNavigationBarHidden = true
         verifyToken()
         socketTaskManager.connect()
+//        HomeNetworkManager().uploadImage(tmpImage: UIImage(named: "Armenian"))
         Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -34,12 +35,12 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-           completionHandler()
-       }
-
-       func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-           completionHandler([.alert, .badge, .sound])
-       }
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
     
     func getNewMessage() {
         socketTaskManager.getChatMessage { (message) in
@@ -60,9 +61,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                 } else if profileNC.viewControllers.count == 3 {
                     let chatVC = profileNC.viewControllers[2] as! ChatViewController
                     chatVC.getnewMessage(message: message)
-//                    if message.sender.id != chatVC.id {
-//                        chatVC.scheduleNotification(center: Self.center, message: message)
-//                    }
                 }
             default:
                 break
@@ -75,32 +73,16 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         getNewMessage()
     }
     
-//    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-//        print(item.selectedImage?.cgImage)
-//        if item.selectedImage?.cgImage == UIImage(named: "call")?.cgImage {
-//            let callVC = CallViewController.instantiate(fromAppStoryboard: .main)
-//            callVC.getnewMessage()
-//        }
-//    }
-    
-//    override public func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-////        self.tabBarController = segue.destination as? UITabBarController
-//
-//        if let vc = self.tabBarController?.viewControllers?[0] as? RequestTabBarController {
-//            vc.doWhatEver(niceObject)
-//        }
-//    }(<UIImage:0x6000022fc7e0 named(main: call) {30, 30}>)
-    
     //MARK: Helper methods
     func verifyToken() {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
                 if error == NetworkResponse.authenticationError {
-                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                           let nav = UINavigationController(rootViewController: vc)
-                           let window: UIWindow? = UIApplication.shared.windows[0]
-                           window?.rootViewController = nav
-                           window?.makeKeyAndVisible()
+                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                    let nav = UINavigationController(rootViewController: vc)
+                    let window: UIWindow? = UIApplication.shared.windows[0]
+                    window?.rootViewController = nav
+                    window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
@@ -120,7 +102,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                     sceneDelegate.window?.rootViewController = nav
                 }
             }
-           // self.socketTaskManager.connect()
         }
     }
 }

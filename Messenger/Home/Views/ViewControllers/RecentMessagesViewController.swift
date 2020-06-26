@@ -55,8 +55,8 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 guard chats[i].message != nil, chats[j].message != nil else {
                     break
                 }
-                let firstDate = formatter.date(from: chats[i].message!.createdAt)
-                let secondDate = formatter.date(from: chats[j].message!.createdAt)
+                let firstDate = formatter.date(from: chats[i].message!.createdAt ?? "")
+                let secondDate = formatter.date(from: chats[j].message!.createdAt ?? "")
                 if firstDate?.compare(secondDate!).rawValue == -1 {
                     let temp = chats[i]
                     chats[i] = chats[j]
@@ -113,7 +113,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
             self.activityIndicator.startAnimating()
         }
         viewModel.getChats { (messages, error) in
-            
             if (error != nil) {
                 if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
@@ -159,10 +158,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     
     func getnewMessage(message: Message) {
         var id = ""
-        if message.sender.id == SharedConfigs.shared.signedUser?.id {
-            id = message.reciever
+        if message.sender?.id == SharedConfigs.shared.signedUser?.id {
+            id = message.reciever ?? ""
         } else {
-            id = message.sender.id
+            id = (message.sender?.id! ?? "") as String
         }
         self.viewModel.getuserById(id: id) { (user, error) in
             if (error != nil) {
@@ -224,13 +223,18 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
+//        let url = URL(string: "https://messenger-dynamic.herokuapp.com/users/\(chats[indexPath.row].id)/avatar")!
+//        if let data = try? Data(contentsOf: url) {
+//            cell.userImageView.image = UIImage(data: data)
+//        }
+        cell.userImageView.downloaded(from: "https://messenger-dynamic.herokuapp.com/users/\(chats[indexPath.row].id)/avatar")
         if chats[indexPath.row].name != nil && chats[indexPath.row].lastname != nil {
             cell.nameLabel.text = "\(chats[indexPath.row].name!) \(chats[indexPath.row].lastname!)"
         } else {
             cell.nameLabel.text = chats[indexPath.row].username
         }
         if chats[indexPath.row].message != nil {
-            cell.timeLabel.text = stringToDate(date: chats[indexPath.row].message!.createdAt )
+            cell.timeLabel.text = stringToDate(date: chats[indexPath.row].message!.createdAt ?? "" )
         }
         
         cell.lastMessageLabel.text = chats[indexPath.row].message?.text
@@ -240,5 +244,30 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
+    }
+}
+
+extension UIImageView {
+    func downloaded(from url: URL, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        contentMode = mode
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard
+                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                let data = data, error == nil,
+                let image = UIImage(data: data)
+                else {
+                    DispatchQueue.main.async() { [weak self] in
+                        self?.image = UIImage(named: "noPhoto")
+                    }
+                    return }
+            DispatchQueue.main.async() { [weak self] in
+                self?.image = image
+            }
+        }.resume()
+    }
+    func downloaded(from link: String, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        guard let url = URL(string: link) else { return }
+        downloaded(from: url, contentMode: mode)
     }
 }

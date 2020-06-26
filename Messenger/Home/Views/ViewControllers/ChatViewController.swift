@@ -60,6 +60,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
+//        tableView.contentInset.bottom =  -20
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,15 +78,15 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height : 0
+            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
             bottomConstraintOnTableView?.constant = isKeyboardShowing ? -keyboardFrame!.height - 48 : 20
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
                 if isKeyboardShowing {
                     if self.allMessages.count > 0 {
-                        let indexPath = NSIndexPath(item: self.allMessages.count - 1, section: 0)
-                        self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
                 }
             })
@@ -93,7 +94,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getnewMessage(message: Message) {
-        if (message.reciever == self.id || message.sender.id == self.id) &&  message.sender.id != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
+        if (message.reciever == self.id || message.sender?.id == self.id) &&  message.sender?.id != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
                 print(message)
                 if message.reciever == self.id {
                     DispatchQueue.main.async {
@@ -103,18 +104,18 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.allMessages.append(message)
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    let indexPath = NSIndexPath(item: self.allMessages.count - 1, section: 0)
-                    self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+                    let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                    self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                 }
-        } else if self.id == SharedConfigs.shared.signedUser?.id && message.sender.id == message.reciever  {
+        } else if self.id == SharedConfigs.shared.signedUser?.id && message.sender?.id == message.reciever  {
             DispatchQueue.main.async {
                 self.inputTextField.text = ""
             }
             self.allMessages.append(message)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                let indexPath = NSIndexPath(item: self.allMessages.count - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+                let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
             self.scheduleNotification(center: MainTabBarController.center, message: message)
@@ -124,7 +125,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }//++
+    }
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
@@ -201,20 +202,20 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         var size: CGSize?
         
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        if (allMessages[indexPath.row].sender.id == SharedConfigs.shared.signedUser?.id) {
+        if (allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id) {
             size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-            let frame = NSString(string: allMessages[indexPath.row].text).boundingRect(with: size!, options: options, attributes: nil, context: nil)
+            let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             return frame.height + 30
         } else {
             size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-            let frame = NSString(string: allMessages[indexPath.row].text).boundingRect(with: size!, options: options, attributes: nil, context: nil)
+            let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             return frame.height + 30
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        if allMessages[indexPath.row].sender.id == SharedConfigs.shared.signedUser?.id {
+        if allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text
             cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)

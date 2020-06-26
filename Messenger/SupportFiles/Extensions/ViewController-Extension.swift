@@ -28,7 +28,7 @@ extension UIViewController {
         print("scheduleNotification")
         let content = UNMutableNotificationContent()
         content.title = "You have a new message"
-        content.body = message.text
+        content.body = message.text ?? ""
         content.categoryIdentifier = "alarm"
         content.userInfo = ["customData": "fizzbuzz"]
         content.sound = UNNotificationSound.default
@@ -52,22 +52,6 @@ extension UIViewController {
             }
         }
     }
-    
-    func topMostViewController() -> UIViewController {
-         if self.presentedViewController == nil {
-             return self
-         }
-         if let navigation = self.presentedViewController as? UINavigationController {
-            return (navigation.visibleViewController?.topMostViewController())!
-         }
-         if let tab = self.presentedViewController as? UITabBarController {
-             if let selectedTab = tab.selectedViewController {
-                 return selectedTab.topMostViewController()
-             }
-             return tab.topMostViewController()
-         }
-         return self.presentedViewController!.topMostViewController()
-     }
     
 }
 
@@ -95,8 +79,3 @@ extension AppStoryboard {
     }
 }
 
-extension UIApplication {
-    func topMostViewController() -> UIViewController? {
-        return self.keyWindow?.rootViewController?.topMostViewController()
-    }
-}

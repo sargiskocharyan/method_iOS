@@ -9,7 +9,7 @@
 import UIKit
 import DropDown
 
-class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate {
+class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var phoneLabel: UILabel!
@@ -42,48 +42,67 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
     let viewModel = ProfileViewModel()
     let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
-
+    var imagePicker = UIImagePickerController()
+    
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.center.delegate = self
+        imagePicker.delegate = self
         setFlagImage()
         setBorder(view: contactView)
         setBorder(view: languageView)
         setBorder(view: darkModeView)
         setBorder(view: logoutView)
         checkInformation()
+        setImage()
         configureImageView()
         addGestures()
         checkVersion()
         defineSwithState()
         localizeStrings()
+        let url = URL(string: "https://messenger-dynamic.herokuapp.com/users/5ee76d13bfa0980017a39018/avatar")!
+
+           // Fetch Image Data
+           if let data = try? Data(contentsOf: url) {
+               // Create Image and Update Image View
+               userImageView.image = UIImage(data: data)
+           }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-             super.viewWillAppear(animated)
-             checkInformation()
-         }
+        super.viewWillAppear(animated)
+        checkInformation()
+    }
     
     //MARK: Helper methods
     @IBAction func editButton(_ sender: Any) {
-          let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
-          self.navigationController?.pushViewController(vc, animated: true)
-      }
+        let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
+    func setImage() {
+        viewModel.getImage(id: SharedConfigs.shared.signedUser?.id ?? "") { (image, error) in
+            if image != nil {
+                DispatchQueue.main.async {
+                    self.userImageView.image = image
+                }
+            }
+        }
+    }
     
     func localizeStrings() {
-           headerEmailLabel.text = "email".localized()
-           headerUsernameLabel.text = "username".localized()
-           phoneTextLabel.text = "phone:".localized()
-           nameTextLabel.text = "name:".localized()
-           lastnameTextLabel.text = "lastname:".localized()
-           contactsLabel.text = "contacts".localized()
-           languageLabel.text = "language".localized()
-           darkModeLabel.text = "dark_mode".localized()
-           logoutLabel.text = "log_out".localized()
-           self.navigationController?.navigationBar.topItem?.title = "profile".localized()
-       }
+        headerEmailLabel.text = "email".localized()
+        headerUsernameLabel.text = "username".localized()
+        phoneTextLabel.text = "phone:".localized()
+        nameTextLabel.text = "name:".localized()
+        lastnameTextLabel.text = "lastname:".localized()
+        contactsLabel.text = "contacts".localized()
+        languageLabel.text = "language".localized()
+        darkModeLabel.text = "dark_mode".localized()
+        logoutLabel.text = "log_out".localized()
+        self.navigationController?.navigationBar.topItem?.title = "profile".localized()
+    }
     
     func defineSwithState() {
         if SharedConfigs.shared.mode == "dark" {
@@ -96,7 +115,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
-
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
     }
@@ -119,8 +138,8 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
             SharedConfigs.shared.setMode(selectedMode: "dark")
         } else {
             UIApplication.shared.windows.forEach { window in
-                           window.overrideUserInterfaceStyle = .light
-                       }
+                window.overrideUserInterfaceStyle = .light
+            }
             SharedConfigs.shared.setMode(selectedMode: "light")
         }
     }
@@ -129,8 +148,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         userImageView.contentMode = . scaleAspectFill
         userImageView.layer.cornerRadius = 50
         userImageView.clipsToBounds = true
-        userImageView.backgroundColor = .darkGray
-        userImageView.image = UIImage(named: "noPhoto")
     }
     
     func addGestures() {
@@ -140,6 +157,39 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         contactView.addGestureRecognizer(tapContacts)
         let tapLanguage = UITapGestureRecognizer(target: self, action: #selector(self.handleLanguageTab(_:)))
         languageView.addGestureRecognizer(tapLanguage)
+        let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.handleImageTap(_:)))
+        userImageView.isUserInteractionEnabled = true
+        userImageView.addGestureRecognizer(tapImage)
+    }
+    
+    @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
+        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+            print("Button capture")
+            
+            imagePicker.sourceType = .savedPhotosAlbum
+            imagePicker.allowsEditing = false
+            present(imagePicker, animated: true, completion: nil)
+        }
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        guard let image = info[.originalImage] as? UIImage else {
+            fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
+        }
+        viewModel.uploadImage(image: image) { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            } else {
+                 DispatchQueue.main.async {
+                   self.userImageView.image = image
+                }
+            }
+        }
     }
     
     @objc func handleContactsTap(_ sender: UITapGestureRecognizer? = nil) {
@@ -214,7 +264,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate 
         }
         dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
-           guard let cell = cell as? CustomCell else { return }
+            guard let cell = cell as? CustomCell else { return }
             
             cell.countryImageView.image = UIImage(named: "\(item)")
         }

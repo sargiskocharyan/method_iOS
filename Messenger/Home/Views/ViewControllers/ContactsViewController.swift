@@ -17,7 +17,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: Properties
     var contacts: [ContactResponseWithId] = []
     var findedUsers: [User] = []
-    var contactsMiniInformation: [ContactInformation] = []
+    var contactsMiniInformation: [ContactResponseWithId] = []
     let viewModel = ContactsViewModel()
     var onContactPage = true
     var isLoaded = false
@@ -61,9 +61,10 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     @objc func backToContacts() {
-        contactsMiniInformation = contacts.map({ (contact) -> ContactInformation in
-            ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-        })
+        contactsMiniInformation = contacts
+//            .map({ (contact) -> ContactResponseWithId in
+//            ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//        })
         DispatchQueue.main.async {
             self.removeView()
             if self.contacts.count == 0 {
@@ -108,7 +109,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         }
                     } else if responseObject != nil {
                         self.isLoadedFoundUsers = true
-                        if responseObject?.users.count == 0 {
+                        if responseObject?.count == 0 {
                             DispatchQueue.main.async {
                                 self.contactsMiniInformation = []
                                 self.tableView.reloadData()
@@ -119,9 +120,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                             }
                             return
                         }
-                        self.findedUsers = responseObject!.users
-                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactInformation in
-                            ContactInformation(username: user.username, name: user.name, lastname: user.lastname, _id: user._id)
+                        self.findedUsers = responseObject!
+                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactResponseWithId in
+                            ContactResponseWithId(_id: user.username, name: user.name, lastname: user.lastname, email: nil, username: user._id)
                         })
                         DispatchQueue.main.async {
                             self.removeView()
@@ -152,17 +153,12 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    func getNewMessage(message: Message) {
-        print("dfjg")
-    }
-    
     func removeView() {
         DispatchQueue.main.async {
             let resultView = self.view.viewWithTag(1)
             resultView?.removeFromSuperview()
         }
     }
-    
     
     func getContacts() {
         activityIndicator.startAnimating()
@@ -193,9 +189,10 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     return
                 }
                 self.contacts = userContacts!
-                self.contactsMiniInformation = userContacts!.map({ (contact) -> ContactInformation in
-                    ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-                })
+                self.contactsMiniInformation = userContacts!
+//                    .map({ (contact) -> ContactResponseWithId in
+//                    ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
@@ -233,9 +230,10 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     self.contacts.append(ContactResponseWithId(_id: self.findedUsers[indexPath.row]._id, name:
                         self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username))
                     self.onContactPage = true
-                    self.contactsMiniInformation = self.contacts.map({ (contact) -> ContactInformation in
-                        ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-                    })
+                    self.contactsMiniInformation = self.contacts
+//                        .map({ (contact) -> ContactInformation in
+//                        ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//                    })
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
@@ -265,12 +263,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         } else {
             cell.nameLabel.text = self.contactsMiniInformation[indexPath.row].name
         }
-        if contactsMiniInformation[indexPath.row].username == nil {
-            cell.usernameLabel.textColor = .darkGray
-            cell.usernameLabel.text = "username".localized()
-        } else {
-            cell.usernameLabel.text = self.contactsMiniInformation[indexPath.row].username
-        }
+        cell.usernameLabel.text = self.contactsMiniInformation[indexPath.row].username
         if contactsMiniInformation[indexPath.row].lastname == nil {
             cell.lastnameLabel.textColor = .darkGray
             cell.lastnameLabel.text = "lastname".localized()

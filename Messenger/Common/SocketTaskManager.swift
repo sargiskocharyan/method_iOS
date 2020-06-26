@@ -14,18 +14,16 @@ class SocketTaskManager {
     static let shared = SocketTaskManager()
     
     var socket: SocketIOClient {
-        print(KeyChain.load(key: "token")?.toString())
         return manager.defaultSocket
     }
     
-    var manager: SocketManager = SocketManager(socketURL: URL(string: "http://192.168.0.106:3000")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
+    var manager: SocketManager = SocketManager(socketURL: URL(string: "https://messenger-dynamic.herokuapp.com")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
     
     private init () { }
     
     
     func connect() {
-        manager = SocketManager(socketURL: URL(string: "http://192.168.0.106:3000")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
-        print(KeyChain.load(key: "token")?.toString())
+        manager = SocketManager(socketURL: URL(string: "https://messenger-dynamic.herokuapp.com")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
         socket.connect()
         print(socket.status)
         socket.on(clientEvent: .connect) {data, ack in
@@ -56,7 +54,7 @@ class SocketTaskManager {
         socket.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
             let sender = data["sender"] as! NSDictionary
-            let message = Message(_id: data["_id"] as! String, reciever: data["reciever"] as! String, text: data["text"] as! String, createdAt: data["createdAt"] as! String, updatedAt: data["updatedAt"] as! String, owner: data["owner"] as! String, sender: Sender(id: sender["id"] as! String, name: sender["name"] as? String ?? ""))
+            let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
             completionHandler(message)
         }
     }
