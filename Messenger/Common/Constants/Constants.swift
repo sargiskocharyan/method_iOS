@@ -26,7 +26,7 @@ struct AUTHUrls {
     static let GetChats         = "/chats"
     static let GetChatMessages  = "/chats/"
     static let GetUserById      = "/user/"
-    static let GetImage         = "/users"
+    static let GetImage         = "/avatars"
 }
 
 struct AppLangKeys {

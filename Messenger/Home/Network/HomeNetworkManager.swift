@@ -41,7 +41,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func findUsers(term: String, completion: @escaping ([User]?, NetworkResponse?)->()) {
+    func findUsers(term: String, completion: @escaping (FoundUsers?, NetworkResponse?)->()) {
         router.request(.findUsers(term: term)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -56,7 +56,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([User].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(FoundUsers.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -80,9 +80,9 @@ class HomeNetworkManager: NetworkManager {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                    completion(error)
+                    completion(nil)
                 case .failure( _):
-                    completion(error)
+                    completion(NetworkResponse.failed)
                 }
             }
         }
@@ -190,8 +190,9 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getImage(id: String, completion: @escaping (UIImage?, NetworkResponse?)->()) {
-        router.request(.getImage(id: id)) { data, response, error in
+    func getImage(avatar: String, completion: @escaping (UIImage?, NetworkResponse?)->()) {
+        router.request(.getImage(avatar: avatar)) { data, response, error in
+            print(avatar)
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -216,7 +217,7 @@ class HomeNetworkManager: NetworkManager {
     func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "http://192.168.0.103:3000/users/me/avatar")!)
+        var request = URLRequest(url: URL(string: "http://192.168.0.106:3000/users/me/avatar")!)
         request.httpMethod = "POST"
         request.timeoutInterval = 10
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

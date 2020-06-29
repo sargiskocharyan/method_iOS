@@ -61,13 +61,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         checkVersion()
         defineSwithState()
         localizeStrings()
-        let url = URL(string: "https://messenger-dynamic.herokuapp.com/users/5ee76d13bfa0980017a39018/avatar")!
-
-           // Fetch Image Data
-           if let data = try? Data(contentsOf: url) {
-               // Create Image and Update Image View
-               userImageView.image = UIImage(data: data)
-           }
+        print(SharedConfigs.shared.signedUser)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,11 +76,17 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     func setImage() {
-        viewModel.getImage(id: SharedConfigs.shared.signedUser?.id ?? "") { (image, error) in
-            if image != nil {
-                DispatchQueue.main.async {
-                    self.userImageView.image = image
-                }
+//        viewModel.getImage(avatar: SharedConfigs.shared.signedUser?.avatar ?? "") { (image, error) in
+//            if image != nil {
+//                DispatchQueue.main.async {
+//                    self.userImageView.image = image
+//                }
+//            }
+//        }
+        print(SharedConfigs.shared.signedUser?.avatar)
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatar ?? "") { (image) in
+            DispatchQueue.main.async {
+                self.userImageView.image = image
             }
         }
     }

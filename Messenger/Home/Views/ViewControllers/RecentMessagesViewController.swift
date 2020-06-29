@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -149,7 +150,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                             self.activityIndicator.stopAnimating()
                             self.tableView.reloadData()
                         }
-                        
                     }
                 }
             }
@@ -220,54 +220,18 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func cacheData() {
+        
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
-//        let url = URL(string: "https://messenger-dynamic.herokuapp.com/users/\(chats[indexPath.row].id)/avatar")!
-//        if let data = try? Data(contentsOf: url) {
-//            cell.userImageView.image = UIImage(data: data)
-//        }
-        cell.userImageView.downloaded(from: "https://messenger-dynamic.herokuapp.com/users/\(chats[indexPath.row].id)/avatar")
-        if chats[indexPath.row].name != nil && chats[indexPath.row].lastname != nil {
-            cell.nameLabel.text = "\(chats[indexPath.row].name!) \(chats[indexPath.row].lastname!)"
-        } else {
-            cell.nameLabel.text = chats[indexPath.row].username
-        }
-        if chats[indexPath.row].message != nil {
-            cell.timeLabel.text = stringToDate(date: chats[indexPath.row].message!.createdAt ?? "" )
-        }
-        
-        cell.lastMessageLabel.text = chats[indexPath.row].message?.text
-        
+        cell.configure(chat: chats[indexPath.row])
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
-    }
-}
-
-extension UIImageView {
-    func downloaded(from url: URL, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
-        contentMode = mode
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard
-                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
-                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
-                let data = data, error == nil,
-                let image = UIImage(data: data)
-                else {
-                    DispatchQueue.main.async() { [weak self] in
-                        self?.image = UIImage(named: "noPhoto")
-                    }
-                    return }
-            DispatchQueue.main.async() { [weak self] in
-                self?.image = image
-            }
-        }.resume()
-    }
-    func downloaded(from link: String, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
-        guard let url = URL(string: link) else { return }
-        downloaded(from: url, contentMode: mode)
     }
 }

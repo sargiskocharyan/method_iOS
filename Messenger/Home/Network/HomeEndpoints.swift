@@ -17,7 +17,7 @@ public enum HomeApi {
     case getChats
     case getChatMessages(id: String)
     case getUserById(id: String)
-    case getImage(id: String)
+    case getImage(avatar: String)
     
 }
 
@@ -44,8 +44,8 @@ extension HomeApi: EndPointType {
             return  "\(AUTHUrls.GetChatMessages)\(id)"
         case .getUserById(let id):
             return  "\(AUTHUrls.GetUserById)\(id)"
-        case .getImage(let id):
-            return "\(AUTHUrls.GetImage)/\(id)/avatar"
+        case .getImage(let avatar):
+            return "\(AUTHUrls.GetImage)/\(avatar)"
         }
     }
     

@@ -32,6 +32,7 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                 print("D'oh")
             }
         }
+        print(SharedConfigs.shared.signedUser)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {

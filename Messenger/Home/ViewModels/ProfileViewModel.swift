@@ -21,8 +21,8 @@ class ProfileViewModel {
         }
     }
     
-    func getImage(id: String, completion: @escaping (UIImage?, NetworkResponse?)->()) {
-        HomeNetworkManager().getImage(id: id) { (image, error) in
+    func getImage(avatar: String, completion: @escaping (UIImage?, NetworkResponse?)->()) {
+        HomeNetworkManager().getImage(avatar: avatar) { (image, error) in
             completion(image, error)
         }
     }

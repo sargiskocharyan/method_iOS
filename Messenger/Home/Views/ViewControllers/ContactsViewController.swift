@@ -109,7 +109,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         }
                     } else if responseObject != nil {
                         self.isLoadedFoundUsers = true
-                        if responseObject?.count == 0 {
+                        if responseObject?.users.count == 0 {
                             DispatchQueue.main.async {
                                 self.contactsMiniInformation = []
                                 self.tableView.reloadData()
@@ -120,9 +120,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                             }
                             return
                         }
-                        self.findedUsers = responseObject!
+                        self.findedUsers = responseObject!.users
                         self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactResponseWithId in
-                            ContactResponseWithId(_id: user.username, name: user.name, lastname: user.lastname, email: nil, username: user._id)
+                            ContactResponseWithId(_id: user.username, name: user.name, lastname: user.lastname, email: nil, username: user._id, avatar: user.avatar)
                         })
                         DispatchQueue.main.async {
                             self.removeView()
@@ -207,7 +207,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
             DispatchQueue.main.async {
                 self.activityIndicator.startAnimating()
             }
-            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
+            viewModel.addContact(id: contactsMiniInformation[indexPath.row].username) { (error) in
                 if error != nil {
                     if error == NetworkResponse.authenticationError {
                         UserDataController().logOutUser()
@@ -228,7 +228,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     
                 } else {
                     self.contacts.append(ContactResponseWithId(_id: self.findedUsers[indexPath.row]._id, name:
-                        self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username))
+                        self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username, avatar: self.findedUsers[indexPath.row].avatar))
                     self.onContactPage = true
                     self.contactsMiniInformation = self.contacts
 //                        .map({ (contact) -> ContactInformation in
@@ -256,20 +256,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
-        cell.contactImageView.image = UIImage(named: "noPhoto")
-        if contactsMiniInformation[indexPath.row].name == nil {
-            cell.nameLabel.textColor = .darkGray
-            cell.nameLabel.text = "name".localized()
-        } else {
-            cell.nameLabel.text = self.contactsMiniInformation[indexPath.row].name
-        }
-        cell.usernameLabel.text = self.contactsMiniInformation[indexPath.row].username
-        if contactsMiniInformation[indexPath.row].lastname == nil {
-            cell.lastnameLabel.textColor = .darkGray
-            cell.lastnameLabel.text = "lastname".localized()
-        } else {
-            cell.lastnameLabel.text = self.contactsMiniInformation[indexPath.row].lastname
-        }
+        cell.configure(contact: contactsMiniInformation[indexPath.row])
         return cell
     }
     

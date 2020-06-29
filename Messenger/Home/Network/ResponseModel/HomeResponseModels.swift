@@ -14,6 +14,7 @@ struct ContactResponseWithId: Codable {
     let lastname: String?
     let email: String?
     let username: String
+    let avatar: String?
 }
 
 struct User: Codable {
@@ -22,6 +23,11 @@ struct User: Codable {
     let university: String?
     let _id: String
     let username: String
+    let avatar: String?
+}
+
+struct FoundUsers: Codable {
+    let users: [User]
 }
 
 //struct ContactInformation {
@@ -52,6 +58,7 @@ struct Chat: Codable {
     let lastname: String?
     let username: String
     var message: Message?
+    var recipientAvatarURL: String?
 }
 
 struct UserById: Codable {

@@ -73,6 +73,7 @@
 		CDD9C683247BC94F0048A9A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C682247BC94F0048A9A1 /* Constants.swift */; };
 		CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */; };
 		CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
+		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
@@ -160,6 +161,7 @@
 		CDD9C682247BC94F0048A9A1 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewModel.swift; sourceTree = "<group>"; };
 		CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTaskManager.swift; sourceTree = "<group>"; };
+		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -525,6 +527,7 @@
 				CDD9C684247BC9880048A9A1 /* SharedConfigs */,
 				CDD9C681247BC93B0048A9A1 /* Constants */,
 				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
+				CDF0776724A9F49800B1DAD7 /* ImageCache.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -709,6 +712,7 @@
 				CDD9C674247BC4AE0048A9A1 /* HTTPMethod.swift in Sources */,
 				CD36733224790D430002E606 /* BottomShapeView.swift in Sources */,
 				CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */,
+				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
 				CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */,

@@ -15,7 +15,7 @@ class ContactsViewModel {
         }
     }
     
-    func findUsers(term: String, completion: @escaping ([User]?, NetworkResponse?)->()) {
+    func findUsers(term: String, completion: @escaping (FoundUsers?, NetworkResponse?)->()) {
         HomeNetworkManager().findUsers(term: term) { (responseObject, error) in
             completion(responseObject, error)
         }
