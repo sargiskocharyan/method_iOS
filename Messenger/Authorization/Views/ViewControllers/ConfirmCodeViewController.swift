@@ -79,12 +79,9 @@ class ConfirmCodeViewController: UIViewController {
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
-                    print(loginResponse)
-                    SharedConfigs.shared.signedUser = loginResponse?.user
-                    print(loginResponse?.user)
+                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatar: loginResponse!.user.avatar)
                     UserDataController().saveUserSensitiveData(token: token!)
-                    UserDataController().populateUserProfile(model: loginResponse!.user)
-                    print(SharedConfigs.shared.signedUser?.avatar)
+                    UserDataController().populateUserProfile(model: model)
                     DispatchQueue.main.async {
                         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
                         self.view.window?.rootViewController = vc

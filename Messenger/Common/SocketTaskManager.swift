@@ -25,7 +25,6 @@ class SocketTaskManager {
     func connect() {
         manager = SocketManager(socketURL: URL(string: "https://messenger-dynamic.herokuapp.com")!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
         socket.connect()
-        print(socket.status)
         socket.on(clientEvent: .connect) {data, ack in
             print("socket connected")
         }
@@ -41,7 +40,6 @@ class SocketTaskManager {
     }
     
     func send(message: String, id: String) {
-        print(socket.status)
         socket.emit("sendMessage", message, id) 
     }
     
@@ -58,6 +56,5 @@ class SocketTaskManager {
             completionHandler(message)
         }
     }
-    //https://messenger-dynamic.herokuapp.com/socket.io/?EIO=3&transport=websocket
 }
 

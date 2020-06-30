@@ -14,7 +14,6 @@ class CallViewController: UIViewController, UNUserNotificationCenterDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .yellow
         center.delegate = self
     }
       

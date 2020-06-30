@@ -9,13 +9,13 @@
 import Foundation
 
 class ContactsViewModel {
-    func getContacts(completion: @escaping ([ContactResponseWithId]?, NetworkResponse?)->()) {
+    func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         HomeNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
         }
     }
     
-    func findUsers(term: String, completion: @escaping (FoundUsers?, NetworkResponse?)->()) {
+    func findUsers(term: String, completion: @escaping (Users?, NetworkResponse?)->()) {
         HomeNetworkManager().findUsers(term: term) { (responseObject, error) in
             completion(responseObject, error)
         }
@@ -27,6 +27,7 @@ class ContactsViewModel {
 
     }
   }
+    
     func getMessages(id: String, completion: @escaping ([Message]?, NetworkResponse?)->()) {
         HomeNetworkManager().getChatMessages(id: id) { (messages, error) in
             completion(messages, error)

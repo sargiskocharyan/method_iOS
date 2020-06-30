@@ -7,11 +7,8 @@
 //
 
 import UIKit
-import Combine
 
-class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
-    
+class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -30,6 +27,9 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        let nc = (self.tabBarController?.viewControllers?[4]) as? UINavigationController
+        let vc = nc?.viewControllers[0] as! ProfileViewController
+        vc.delegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
@@ -65,6 +65,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
             }
         }
+    }
+    
+    func changeLanguage(key: String) {
+        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
     func setView(_ str: String) {
@@ -105,7 +109,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         let hour = calendar.component(.hour, from: parsedDate!)
         let minutes = calendar.component(.minute, from: parsedDate!)
         return ("\(hour):\(minutes)")
-        
     }
     
     func getChats() {
@@ -192,8 +195,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        print(self.chats[i])
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatar)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -201,7 +203,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatar))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
@@ -216,12 +218,11 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+        vc.name = chats[indexPath.row].name
+        vc.username = chats[indexPath.row].username
+        vc.avatar = chats[indexPath.row].recipientAvatarURL
         vc.id = chats[indexPath.row].id
         self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func cacheData() {
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -15,9 +15,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
-    var contacts: [ContactResponseWithId] = []
+    var contacts: [User] = []
     var findedUsers: [User] = []
-    var contactsMiniInformation: [ContactResponseWithId] = []
+    var contactsMiniInformation: [User] = []
     let viewModel = ContactsViewModel()
     var onContactPage = true
     var isLoaded = false
@@ -62,9 +62,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     
     @objc func backToContacts() {
         contactsMiniInformation = contacts
-//            .map({ (contact) -> ContactResponseWithId in
-//            ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-//        })
         DispatchQueue.main.async {
             self.removeView()
             if self.contacts.count == 0 {
@@ -121,8 +118,8 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                             return
                         }
                         self.findedUsers = responseObject!.users
-                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactResponseWithId in
-                            ContactResponseWithId(_id: user.username, name: user.name, lastname: user.lastname, email: nil, username: user._id, avatar: user.avatar)
+                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
+                            User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatar: user.avatar, email: nil)
                         })
                         DispatchQueue.main.async {
                             self.removeView()
@@ -190,9 +187,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                 }
                 self.contacts = userContacts!
                 self.contactsMiniInformation = userContacts!
-//                    .map({ (contact) -> ContactResponseWithId in
-//                    ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-//                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
@@ -227,13 +221,10 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     }
                     
                 } else {
-                    self.contacts.append(ContactResponseWithId(_id: self.findedUsers[indexPath.row]._id, name:
-                        self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username, avatar: self.findedUsers[indexPath.row].avatar))
+                    self.contacts.append(User(name: self.findedUsers[indexPath.row].name, lastname:
+                        self.findedUsers[indexPath.row].lastname, university: nil, _id: self.findedUsers[indexPath.row]._id, username: self.findedUsers[indexPath.row].username, avatar: self.findedUsers[indexPath.row].avatar, email: nil))
                     self.onContactPage = true
                     self.contactsMiniInformation = self.contacts
-//                        .map({ (contact) -> ContactInformation in
-//                        ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-//                    })
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
@@ -245,6 +236,8 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         } else {
             let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
             vc.id = self.contactsMiniInformation[indexPath.row]._id
+            vc.name = self.contactsMiniInformation[indexPath.row].name
+            vc.username = self.contactsMiniInformation[indexPath.row].username
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

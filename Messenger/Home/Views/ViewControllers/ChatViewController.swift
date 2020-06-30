@@ -23,30 +23,34 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     var bottomConstraintOnTableView: NSLayoutConstraint?
     var socketTaskManager: SocketTaskManager!
     let center = UNUserNotificationCenter.current()
+    var name: String?
+    var username: String?
+    var avatar: String?
+    var image = UIImage(named: "noPhoto")
     let messageInputContainerView: UIView = {
-         let view = UIView()
-         if SharedConfigs.shared.mode == "light" {
-             view.backgroundColor = .white
-         } else {
-             view.backgroundColor = .black
-         }
-         return view
-     }()
-     
-     let inputTextField: UITextField = {
-         let textField = UITextField()
-         textField.placeholder = ""
-         return textField
-     }()
-     
-     let sendButton: UIButton = {
-         let button = UIButton(type: .system)
-         
-         button.setImage(UIImage(named: "send"), for: .normal)
-         return button
-     }()
-     
-     
+        let view = UIView()
+        if SharedConfigs.shared.mode == "light" {
+            view.backgroundColor = .white
+        } else {
+            view.backgroundColor = .black
+        }
+        return view
+    }()
+    
+    let inputTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = ""
+        return textField
+    }()
+    
+    let sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        button.setImage(UIImage(named: "send"), for: .normal)
+        return button
+    }()
+    
+    
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -60,19 +64,28 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
-//        tableView.contentInset.bottom =  -20
+        setTitle()
+        getImage()
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
-          super.viewWillAppear(animated)
-          tabBarController?.tabBar.isHidden = true
-      }
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
     
     //MARK: Helper methods
     @objc func sendMessage() {
         socketTaskManager.send(message: inputTextField.text!, id: id!)
     }
     
+    func setTitle() {
+           if name == nil {
+               self.title = username
+           } else {
+               self.title = name
+           }
+       }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
@@ -95,18 +108,17 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getnewMessage(message: Message) {
         if (message.reciever == self.id || message.sender?.id == self.id) &&  message.sender?.id != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
-                print(message)
-                if message.reciever == self.id {
-                    DispatchQueue.main.async {
-                        self.inputTextField.text = ""
-                    }
-                }
-                self.allMessages.append(message)
+            if message.reciever == self.id {
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
-                    self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    self.inputTextField.text = ""
                 }
+            }
+            self.allMessages.append(message)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
         } else if self.id == SharedConfigs.shared.signedUser?.id && message.sender?.id == message.reciever  {
             DispatchQueue.main.async {
                 self.inputTextField.text = ""
@@ -153,10 +165,16 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: messageInputContainerView, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
+    func getImage() {
+        ImageCache.shared.getImage(url: avatar ?? "") { (userImage) in
+            self.image = userImage
+        }
+    }
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
-
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
     }
@@ -214,7 +232,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         if allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text
@@ -226,7 +243,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-            cell.userImageView.image = UIImage(named: "noPhoto")
+            cell.userImageView.image = image
             cell.messageLabel.text = allMessages[indexPath.row].text
             cell.messageLabel.sizeToFit()
             return cell
