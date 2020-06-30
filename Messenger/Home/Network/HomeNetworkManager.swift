@@ -75,7 +75,6 @@ class HomeNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
@@ -214,10 +213,10 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, AvatarModel?)->()) {
+    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, String?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "http://192.168.0.105:3000/users/me/avatar")!)
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/users/me/avatar")!)
         request.httpMethod = "POST"
         request.timeoutInterval = 10
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -242,17 +241,10 @@ class HomeNetworkManager: NetworkManager {
                     completion(NetworkResponse.noData, nil)
                     return
                 }
-                do {
-                    let responseObject = try JSONDecoder().decode(AvatarModel.self, from: responseData)
-                    SharedConfigs.shared.signedUser?.avatar = responseObject.avatar
-                    UserDataController().saveUserInfo()
-                    completion(nil, responseObject)
-                } catch {
-                    print(error)
-                    completion(NetworkResponse.unableToDecode, nil)
-                }
+                SharedConfigs.shared.signedUser?.avatarURL = String(data: responseData, encoding: .utf8)
+                UserDataController().saveUserInfo()
+                completion(nil, String(data: responseData, encoding: .utf8))
             }
-            
         }.resume()
     }
 }

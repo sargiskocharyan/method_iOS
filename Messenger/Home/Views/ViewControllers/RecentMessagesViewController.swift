@@ -195,7 +195,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatar)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -203,7 +203,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatar))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()

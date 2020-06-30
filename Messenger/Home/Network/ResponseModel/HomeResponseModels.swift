@@ -14,7 +14,7 @@ struct User: Codable {
     let university: String?
     let _id: String
     let username: String
-    let avatar: String?
+    let avatarURL: String?
     let email: String?
 }
 
@@ -51,9 +51,6 @@ struct UserById: Codable {
     let username: String
     let lastname: String?
     let id: String
-    let avatar: String?
+    let avatarURL: String?
 }
 
-struct AvatarModel: Codable {
-    var avatar: String?
-}

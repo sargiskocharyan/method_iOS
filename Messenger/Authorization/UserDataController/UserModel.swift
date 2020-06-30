@@ -15,7 +15,7 @@ struct UserModel: Codable {
     var university: University?
     var token: String?
     var id: String
-    var avatar: String?
+    var avatarURL: String?
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -25,6 +25,6 @@ struct UserModel: Codable {
         case university
         case token
         case id = "_id"
-        case avatar
+        case avatarURL
     }
 }

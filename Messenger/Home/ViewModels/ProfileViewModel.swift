@@ -15,9 +15,9 @@ class ProfileViewModel {
         }
     }
     
-    func uploadImage(image: UIImage, completion: @escaping (NetworkResponse?, AvatarModel?)->()) {
-        HomeNetworkManager().uploadImage(tmpImage: image) { (error, responseObject) in
-            completion(error, responseObject)
+    func uploadImage(image: UIImage, completion: @escaping (NetworkResponse?, String?)->()) {
+        HomeNetworkManager().uploadImage(tmpImage: image) { (error, avatarURL) in
+            completion(error, avatarURL)
         }
     }
     

@@ -79,7 +79,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     func setImage() {
-        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatar ?? "") { (image) in
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "") { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -178,7 +178,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         guard let image = info[.originalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
-        viewModel.uploadImage(image: image) { (error, responseObject) in
+        viewModel.uploadImage(image: image) { (error, avatarURL) in
             if error != nil {
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
@@ -186,7 +186,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                     self.present(alert, animated: true)
                 }
             } else {
-                ImageCache.shared.getImage(url: responseObject?.avatar ?? "") { (image) in
+                ImageCache.shared.getImage(url: avatarURL ?? "") { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
                     }

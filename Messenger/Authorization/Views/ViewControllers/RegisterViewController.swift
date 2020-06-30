@@ -60,7 +60,7 @@ class RegisterViewController: UIViewController {
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
-                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatar: user?.avatar)
+                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL)
                     UserDataController().populateUserProfile(model: userModel)
                     let vc = CongratulationsViewController.instantiate(fromAppStoryboard: .main)
                     self.navigationController?.pushViewController(vc, animated: true)
