@@ -16,6 +16,9 @@ public enum HomeApi {
     case logout
     case getChats
     case getChatMessages(id: String)
+    case getUserById(id: String)
+    case getImage(avatar: String)
+    
 }
 
 extension HomeApi: EndPointType {
@@ -39,6 +42,10 @@ extension HomeApi: EndPointType {
             return AUTHUrls.GetChats
         case .getChatMessages(let id):
             return  "\(AUTHUrls.GetChatMessages)\(id)"
+        case .getUserById(let id):
+            return  "\(AUTHUrls.GetUserById)\(id)"
+        case .getImage(let avatar):
+            return "\(AUTHUrls.GetImage)/\(avatar)"
         }
     }
     
@@ -56,6 +63,10 @@ extension HomeApi: EndPointType {
         case .getChats:
             return .get
         case .getChatMessages(_):
+            return .get
+        case .getUserById(_):
+            return .get
+        case .getImage(_):
             return .get
         }
         
@@ -87,8 +98,13 @@ extension HomeApi: EndPointType {
         case .getChatMessages(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getUserById(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getImage(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
-        
     }
     
     var headers: HTTPHeaders? {

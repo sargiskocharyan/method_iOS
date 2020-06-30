@@ -7,27 +7,47 @@
 //
 
 import UIKit
+import Combine
 
 class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    
+    
+    //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    let socketTaskManager = SocketTaskManager.shared
+    
+    //MARK: Properties
     static let cellID = "messageCell"
     var chats: [Chat] = []
+    var isLoaded: Bool = false
     let viewModel = RecentMessagesViewModel()
+    let socketTaskManager = SocketTaskManager.shared
+    var isLoadedMessages = false
     
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         getChats()
-        self.socketTaskManager.connect()
-//        self.socketTaskManager.connected()
+        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           tabBarController?.tabBar.isHidden = false
-       }
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+        
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if isLoadedMessages && chats.count == 0 {
+            setView("You have no message")
+        }
+    }
+    
+    //MARK: Helper methods
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -36,14 +56,37 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 guard chats[i].message != nil, chats[j].message != nil else {
                     break
                 }
-                let firstDate = formatter.date(from: chats[i].message!.createdAt)
-                let secondDate = formatter.date(from: chats[j].message!.createdAt)
+                let firstDate = formatter.date(from: chats[i].message!.createdAt ?? "")
+                let secondDate = formatter.date(from: chats[j].message!.createdAt ?? "")
                 if firstDate?.compare(secondDate!).rawValue == -1 {
                     let temp = chats[i]
                     chats[i] = chats[j]
                     chats[j] = temp
                 }
             }
+        }
+    }
+    
+    func setView(_ str: String) {
+        DispatchQueue.main.async {
+            self.removeView()
+            let noResultView = UIView(frame: self.view.frame)
+            noResultView.tag = 1
+            noResultView.backgroundColor = .white
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
+            label.center = noResultView.center
+            label.text = str
+            label.textColor = .lightGray
+            label.textAlignment = .center
+            noResultView.addSubview(label)
+            self.view.addSubview(noResultView)
+        }
+    }
+    
+    func removeView() {
+        DispatchQueue.main.async {
+            let resultView = self.view.viewWithTag(1)
+            resultView?.removeFromSuperview()
         }
     }
     
@@ -66,12 +109,13 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func getChats() {
+        self.isLoaded = true
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        viewModel.getChats { (messages, error, code) in
+        viewModel.getChats { (messages, error) in
             if (error != nil) {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -82,22 +126,87 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                     }
                 }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                     self.activityIndicator.stopAnimating()
                 }
             }
             else {
-               if (messages != nil) {
-                self.chats = messages!
-                self.sort()
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.tableView.reloadData()
+                if (messages != nil) {
+                    self.isLoadedMessages = true
+                    if messages?.count == 0 {
+                        self.setView("You have no messages")
+                        DispatchQueue.main.async {
+                            self.activityIndicator.stopAnimating()
+                        }
+                    } else {
+                        self.chats = messages!.filter({ (chat) -> Bool in
+                            return chat.message != nil
+                        })
+                        self.sort()
+                        DispatchQueue.main.async {
+                            self.removeView()
+                            self.activityIndicator.stopAnimating()
+                            self.tableView.reloadData()
+                        }
+                    }
                 }
             }
-          }
+        }
+    }
+    
+    func getnewMessage(message: Message) {
+        var id = ""
+        if message.sender?.id == SharedConfigs.shared.signedUser?.id {
+            id = message.reciever ?? ""
+        } else {
+            id = (message.sender?.id! ?? "") as String
+        }
+        self.viewModel.getuserById(id: id) { (user, error) in
+            if (error != nil) {
+                if error == NetworkResponse.authenticationError {
+                    UserDataController().logOutUser()
+                    DispatchQueue.main.async {
+                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                        let nav = UINavigationController(rootViewController: vc)
+                        let window: UIWindow? = UIApplication.shared.windows[0]
+                        window?.rootViewController = nav
+                        window?.makeKeyAndVisible()
+                    }
+                }
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else if user != nil {
+                DispatchQueue.main.async {
+                    self.removeView()
+                    let visibleViewController = self.navigationController?.visibleViewController
+                    if visibleViewController is ChatViewController {
+                        let chatViewController = visibleViewController as! ChatViewController
+                        chatViewController.getnewMessage( message: message)
+                    }
+                }
+                for i in 0..<self.chats.count {
+                    if self.chats[i].id == id {
+                        print(self.chats[i])
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
+                        self.sort()
+                        DispatchQueue.main.async {
+                            self.tableView?.reloadData()
+                        }
+                        return
+                    }
+                }
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
+                self.sort()
+                DispatchQueue.main.async {
+                    self.tableView?.reloadData()
+                }
+            }
         }
     }
     
@@ -111,24 +220,18 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func cacheData() {
+        
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
-        if chats[indexPath.row].name != nil && chats[indexPath.row].lastname != nil {
-            cell.nameLabel.text = "\(chats[indexPath.row].name!) \(chats[indexPath.row].lastname!)"
-        } else {
-            cell.nameLabel.text = chats[indexPath.row].username
-        }
-        if chats[indexPath.row].message != nil {
-            cell.timeLabel.text = stringToDate(date: chats[indexPath.row].message!.createdAt )
-        }
-        
-        cell.lastMessageLabel.text = chats[indexPath.row].message?.text
-        
+        cell.configure(chat: chats[indexPath.row])
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
-    
 }

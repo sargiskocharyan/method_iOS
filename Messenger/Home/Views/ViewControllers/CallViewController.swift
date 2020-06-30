@@ -8,12 +8,21 @@
 
 import UIKit
 
-class CallViewController: UIViewController {
-
+class CallViewController: UIViewController, UNUserNotificationCenterDelegate {
+    
+    let center = UNUserNotificationCenter.current()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .yellow
+        center.delegate = self
     }
-    
+      
+      func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+          completionHandler()
+      }
 
+      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+          completionHandler([.alert, .badge, .sound])
+      }
 }

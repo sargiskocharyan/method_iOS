@@ -14,6 +14,7 @@ class CongratulationsViewController: UIViewController {
     //MARK: @IBOutlet
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var animationView: UIView!
+    @IBOutlet weak var congratulationsLabel: UILabel!
     
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
@@ -29,7 +30,7 @@ class CongratulationsViewController: UIViewController {
     
     @IBAction func doneButtonAction(_ sender: UIButton) {
         DispatchQueue.main.async {
-            let vc = HomePageViewController.instantiate(fromAppStoryboard: .main) 
+            let vc = MainTabBarController.instantiate(fromAppStoryboard: .main) 
             vc.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(vc, animated: true)
            
@@ -60,6 +61,8 @@ class CongratulationsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         showAnimation()
+        congratulationsLabel.text = "congratulations".localized()
+        doneButton.setTitle("done".localized(), for: .normal)
     }
     
     //MARK: Helper methods

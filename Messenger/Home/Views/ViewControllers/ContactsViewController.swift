@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class ContactsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //MARK: IBOutlets
@@ -18,9 +17,11 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: Properties
     var contacts: [ContactResponseWithId] = []
     var findedUsers: [User] = []
-    var contactsMiniInformation: [ContactInformation] = []
+    var contactsMiniInformation: [ContactResponseWithId] = []
     let viewModel = ContactsViewModel()
     var onContactPage = true
+    var isLoaded = false
+    var isLoadedFoundUsers = false
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -31,51 +32,67 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         getContacts()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if isLoaded && contacts.count == 0 && onContactPage {
+            removeView()
+            setView("no_contacts".localized())
+        }
+        if findedUsers.count == 0 && isLoadedFoundUsers && !onContactPage {
+            removeView()
+            setView("there_is_no_result".localized())
+        }
+    }
+    
     //MARK: Helper methods
     func setNavigationItems() {
         if onContactPage {
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-            self.navigationItem.title = "Contacts".localized()
+            self.navigationItem.title = "contacts".localized()
         } else {
-            self.navigationItem.rightBarButtonItem = .init(title: "Reset", style: .plain, target: self, action: #selector(backToContacts))
-            self.navigationItem.title = "Found users"
+            self.navigationItem.rightBarButtonItem = .init(title: "reset", style: .plain, target: self, action: #selector(backToContacts))
+            self.navigationItem.title = "found_users"
         }
     }
     
     @objc func backToContacts() {
-        contactsMiniInformation = contacts.map({ (contact) -> ContactInformation in
-            ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-        })
+        contactsMiniInformation = contacts
+//            .map({ (contact) -> ContactResponseWithId in
+//            ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//        })
         DispatchQueue.main.async {
             self.removeView()
             if self.contacts.count == 0 {
-                self.setView("No Contacts".localized())
+                self.setView("no_contacts".localized())
             }
             self.onContactPage = true
             self.tableView.reloadData()
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
-            self.navigationItem.title = "Contacts".localized()
+            self.navigationItem.title = "contacts".localized()
         }
     }
     
     @objc func addButtonTapped() {
         onContactPage = false
-        let alert = UIAlertController(title: "Search user".localized()
-            , message: "Enter name, lastname or username".localized(), preferredStyle: .alert)
-        alert.addTextField { (textField) in
-        }
-        alert.addAction(UIAlertAction(title: "Find".localized(), style: .default, handler: { [weak alert] (_) in
+        let alert = UIAlertController(title: "search_user".localized()
+            , message: "enter_name_or_lastname_or_username".localized(), preferredStyle: .alert)
+        alert.addTextField { (textField) in }
+        alert.addAction(UIAlertAction(title: "find".localized(), style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0]
             if textField?.text != "" {
                 DispatchQueue.main.async {
                     self.activityIndicator.startAnimating()
-                    self.navigationItem.rightBarButtonItem = .init(title: "Reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
-                    self.navigationItem.title = "Found users".localized()
+                    self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
+                    self.navigationItem.title = "found_users".localized()
                 }
-                self.viewModel.findUsers(term: (textField?.text)!) { (responseObject, error, code) in
-                    self.removeView()
+                self.viewModel.findUsers(term: (textField?.text)!) { (responseObject, error) in
                     if error != nil {
-                        if code == 401 {
+                        if error == NetworkResponse.authenticationError {
                             UserDataController().logOutUser()
                             DispatchQueue.main.async {
                                 let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -86,30 +103,32 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                             }
                         }
                         DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "Error message".localized() , message: error, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                            let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                             self.present(alert, animated: true)
                         }
                     } else if responseObject != nil {
+                        self.isLoadedFoundUsers = true
                         if responseObject?.users.count == 0 {
                             DispatchQueue.main.async {
+                                self.contactsMiniInformation = []
                                 self.tableView.reloadData()
-                                self.navigationItem.rightBarButtonItem = .init(title: "Reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
-                                self.navigationItem.title = "Found users".localized()
+                                self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
+                                self.navigationItem.title = "found_users".localized()
                                 self.activityIndicator.stopAnimating()
-                                self.setView("There is no result".localized())
+                                self.setView("there_is_no_result".localized())
                             }
                             return
                         }
                         self.findedUsers = responseObject!.users
-                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactInformation in
-                            ContactInformation(username: user.username, name: user.name, lastname: user.lastname, _id: user._id)
+                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> ContactResponseWithId in
+                            ContactResponseWithId(_id: user.username, name: user.name, lastname: user.lastname, email: nil, username: user._id, avatar: user.avatar)
                         })
                         DispatchQueue.main.async {
                             self.removeView()
                             self.tableView.reloadData()
-                            self.navigationItem.rightBarButtonItem = .init(title: "Reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
-                            self.navigationItem.title = "Found users".localized()
+                            self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
+                            self.navigationItem.title = "found_users".localized()
                             self.activityIndicator.stopAnimating()
                         }
                     }
@@ -143,9 +162,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     
     func getContacts() {
         activityIndicator.startAnimating()
-        viewModel.getContacts { (userContacts, error, code) in
+        viewModel.getContacts { (userContacts, error) in
             if error != nil {
-                if code == 401 {
+                if error == NetworkResponse.authenticationError {
                     UserDataController().logOutUser()
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -155,39 +174,42 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         window?.makeKeyAndVisible()
                     }
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                     }
                 }
             } else if userContacts != nil {
+                self.isLoaded = true
                 if userContacts?.count == 0 {
-                    self.setView("No Contacts".localized())
+                    self.setView("no_contacts".localized())
+                    DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    }
                     return
                 }
                 self.contacts = userContacts!
-                self.contactsMiniInformation = userContacts!.map({ (contact) -> ContactInformation in
-                    ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-                })
+                self.contactsMiniInformation = userContacts!
+//                    .map({ (contact) -> ContactResponseWithId in
+//                    ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
                 }
             }
-            
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.removeView()
         if onContactPage == false {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
             DispatchQueue.main.async {
                 self.activityIndicator.startAnimating()
             }
-            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error, code) in
+            viewModel.addContact(id: contactsMiniInformation[indexPath.row].username) { (error) in
                 if error != nil {
-                    if code == 401 {
+                    if error == NetworkResponse.authenticationError {
                         UserDataController().logOutUser()
                         DispatchQueue.main.async {
                             let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
@@ -199,25 +221,31 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                     }
                     DispatchQueue.main.async {
                         self.activityIndicator.stopAnimating()
-                        let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                     }
                     
                 } else {
                     self.contacts.append(ContactResponseWithId(_id: self.findedUsers[indexPath.row]._id, name:
-                        self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username))
-                    self.contactsMiniInformation = self.contacts.map({ (contact) -> ContactInformation in
-                        ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
-                    })
+                        self.findedUsers[indexPath.row].name, lastname: self.findedUsers[indexPath.row].lastname, email: nil, username: self.findedUsers[indexPath.row].username, avatar: self.findedUsers[indexPath.row].avatar))
+                    self.onContactPage = true
+                    self.contactsMiniInformation = self.contacts
+//                        .map({ (contact) -> ContactInformation in
+//                        ContactInformation(username: contact.username, name: contact.name, lastname: contact.lastname, _id: contact._id)
+//                    })
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
-                        self.navigationItem.title = "Contacts".localized()
+                        self.navigationItem.title = "contacts".localized()
                         self.activityIndicator.stopAnimating()
                     }
                 }
             }
+        } else {
+            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+            vc.id = self.contactsMiniInformation[indexPath.row]._id
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -226,26 +254,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
-        cell.contactImageView.image = UIImage(named: "noPhoto")
-        if contactsMiniInformation[indexPath.row].name == nil {
-            cell.nameLabel.textColor = .darkGray
-            cell.nameLabel.text = "Name".localized()
-        } else {
-            cell.nameLabel.text = self.contactsMiniInformation[indexPath.row].name
-        }
-        if contactsMiniInformation[indexPath.row].username == nil {
-            cell.usernameLabel.textColor = .darkGray
-            cell.usernameLabel.text = "Username".localized()
-        } else {
-            cell.usernameLabel.text = self.contactsMiniInformation[indexPath.row].username
-        }
-        if contactsMiniInformation[indexPath.row].lastname == nil {
-            cell.lastnameLabel.textColor = .darkGray
-            cell.lastnameLabel.text = "Lastname".localized()
-        } else {
-            cell.lastnameLabel.text = self.contactsMiniInformation[indexPath.row].lastname
-        }
+        cell.configure(contact: contactsMiniInformation[indexPath.row])
         return cell
     }
     

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 struct UserModel: Codable {
     var name: String?
     var lastname: String?
@@ -16,6 +15,7 @@ struct UserModel: Codable {
     var university: University?
     var token: String?
     var id: String
+    var avatar: String?
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -25,5 +25,6 @@ struct UserModel: Codable {
         case university
         case token
         case id = "_id"
+        case avatar
     }
 }

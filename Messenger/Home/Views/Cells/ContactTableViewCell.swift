@@ -21,11 +21,33 @@ class ContactTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
+    
     func changeShapeOfImageView() {
         contactImageView.clipsToBounds = true
         contactImageView.layer.cornerRadius = 25
+    }
+    
+    func configure(contact: ContactResponseWithId) {
+        print(contact)
+        contactImageView.image = UIImage(named: "noPhoto")
+        ImageCache.shared.getImage(url: contact.avatar ?? "") { (image) in
+            DispatchQueue.main.async {
+                self.contactImageView.image = image
+            }
+        }
+        if contact.name == nil {
+            nameLabel.textColor = .darkGray
+            nameLabel.text = "name".localized()
+        } else {
+            nameLabel.text = contact.name
+        }
+        usernameLabel.text = contact.username
+        if contact.lastname == nil {
+            lastnameLabel.textColor = .darkGray
+            lastnameLabel.text = "lastname".localized()
+        } else {
+            lastnameLabel.text = contact.lastname
+        }
     }
 }

@@ -10,9 +10,9 @@ import Foundation
 
 class ChatMessagesViewModel {
     
-    func getChatMessages(id: String, completion: @escaping ([Message]?, String?, Int?)->()) {
-        HomeNetworkManager().getChatMessages(id: id) { (messages, error, code) in
-            completion(messages, error, code)
+    func getChatMessages(id: String, completion: @escaping ([Message]?, NetworkResponse?)->()) {
+        HomeNetworkManager().getChatMessages(id: id) { (messages, error) in
+            completion(messages, error)
         }
     }
 }

@@ -13,26 +13,11 @@ class BeforeLoginViewController: UIViewController {
     
     //MARK: @IBOutlets
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var emailDescriptionLabel: UILabel!
     @IBOutlet weak var aboutPgLabel: UILabel!
     @IBOutlet weak var continueButton: UIButton!
     @IBOutlet weak var emaiCustomView: CustomTextField!
     @IBOutlet weak var AVView: UIView!
-    
-//    init() {
-//        super.init()
-//        DispatchQueue.main.async {
-//            self.headerShapeView = HeaderShapeView()
-//            self.bottomView = BottomShapeView()
-//        }
-//    }
-    
-//    required init?(coder: NSCoder) {
-//        super.init()
-//       DispatchQueue.main.async {
-//            self.headerShapeView = HeaderShapeView()
-//            self.bottomView = BottomShapeView()
-//        }
-//    }
     
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
@@ -51,8 +36,8 @@ class BeforeLoginViewController: UIViewController {
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
             } else {
@@ -82,6 +67,7 @@ class BeforeLoginViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureViews()
+        continueButton.setTitle("continue".localized(), for: .normal)
     }
     
     override func viewDidLoad() {
@@ -91,6 +77,7 @@ class BeforeLoginViewController: UIViewController {
         continueButton.isEnabled = false
         self.emaiCustomView.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
         showAnimation()
+        emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         
     }
     
@@ -114,7 +101,7 @@ class BeforeLoginViewController: UIViewController {
         self.gradientColor.removeFromSuperlayer()
         continueButton.setGradientBackground(view: self.view, gradientColor)
         continueButton.layer.cornerRadius = 8
-        aboutPgLabel.text = "Enter your email".localized()
+        aboutPgLabel.text = "enter_your_email".localized()
     }
     
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias NetworkRouterCompletion = (_ data: Data?,_ response: URLResponse?,_ error: Error?)->()
+typealias NetworkRouterCompletion = (_ data: Data?,_ response: URLResponse?,_ error: NetworkResponse?)->()
 
 protocol NetworkRouter: class {
     associatedtype EndPoint: EndPointType
@@ -26,10 +26,15 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
             NetworkLogger.log(request: request)
             
             task = session.dataTask(with: request, completionHandler: { data, response, error in
-                completion(data, response, error)
+                if error != nil {
+                    completion(data, response, NetworkResponse.failed)
+                } else {
+                    completion(data, response, nil)
+                }
+                
             })
         } catch {
-            completion(nil, nil, error)
+            completion(nil, nil, NetworkResponse.badRequest)
         }
         self.task?.resume()
     }

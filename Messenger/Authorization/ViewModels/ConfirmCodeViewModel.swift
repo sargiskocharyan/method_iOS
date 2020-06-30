@@ -11,33 +11,21 @@ import Foundation
 class ConfirmCodeViewModel {
     let networkManager = AuthorizationNetworkManager()
     
-    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?)->()) {
+    func login(email: String, code: String, completion: @escaping (String?, LoginResponse?, NetworkResponse?)->()) {
         networkManager.login(email: email, code: code) { (token, loginResponse, error) in
-            if error != nil {
-                completion(nil, nil, error)
-            } else if token != nil && loginResponse != nil {
-                completion(token, loginResponse, nil)
-            } else if error == nil && token == nil {
-                completion(nil, nil, nil)
-            }
+            completion(token, loginResponse, error)
         }
     }
 
-    func resendCode(email: String, completion: @escaping (String?, String?)->()) {
+    func resendCode(email: String, completion: @escaping (String?, NetworkResponse?)->()) {
         networkManager.beforeLogin(email: email) { (responseObject, error) in
             completion(responseObject?.code, error)
         }
     }
     
-    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, String?)->()) {
+    func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, NetworkResponse?)->()) {
         networkManager.register(email: email, code: code) { (token, loginResponse, error) in
-            if error != nil {
-                completion(nil, nil, error)
-            } else if token != nil {
-                completion(token, loginResponse, nil)
-            } else if error == nil && token == nil {
-                completion(nil, nil, nil)
-            }
+            completion(token, loginResponse, error)
         }
     }
 }

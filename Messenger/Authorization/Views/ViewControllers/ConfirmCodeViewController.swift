@@ -43,8 +43,8 @@ class ConfirmCodeViewController: UIViewController {
         viewModel.resendCode(email: email!) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                     self.activityIndicator.stopAnimating()
                 }
@@ -73,25 +73,27 @@ class ConfirmCodeViewController: UIViewController {
             viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
+                    print(loginResponse)
                     SharedConfigs.shared.signedUser = loginResponse?.user
+                    print(loginResponse?.user)
                     UserDataController().saveUserSensitiveData(token: token!)
-                    UserDataController().saveUserInfo()
-                    
+                    UserDataController().populateUserProfile(model: loginResponse!.user)
+                    print(SharedConfigs.shared.signedUser?.avatar)
                     DispatchQueue.main.async {
-                        let vc = HomePageViewController.instantiate(fromAppStoryboard: .main)
+                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
                         self.view.window?.rootViewController = vc
                         self.activityIndicator.stopAnimating()
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Error message".localized(), message: "Incorrect code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()
                     }
@@ -101,8 +103,8 @@ class ConfirmCodeViewController: UIViewController {
             viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Error message".localized(), message: error, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()
                     }
@@ -117,8 +119,8 @@ class ConfirmCodeViewController: UIViewController {
                     }
                 } else {
                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Error message".localized(), message: "Incorrect code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK".localized(), style: .default, handler: nil))
+                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
                         self.activityIndicator.stopAnimating()
                     }
@@ -136,12 +138,15 @@ class ConfirmCodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         CodeField.text = code
+        CodeField.placeholder = "enter_code".localized()
+        continueButton.setTitle("continue".localized(), for: .normal)
+        enterCodeLabel.text = "code".localized()
         if isExists! {
-            registerOrLoginLabel.text = "Login".localized()
+            registerOrLoginLabel.text = "login".localized()
         } else {
-            registerOrLoginLabel.text = "Register".localized()
+            registerOrLoginLabel.text = "register".localized()
         }
-        let attributeString = NSMutableAttributedString(string: "Resend code".localized(),
+        let attributeString = NSMutableAttributedString(string: "resend_code".localized(),
                                                         attributes: buttonAttributes)
         resendCodeButton.setAttributedTitle(attributeString, for: .normal)
         continueButton.isEnabled = true

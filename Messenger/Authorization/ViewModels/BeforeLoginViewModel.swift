@@ -12,13 +12,9 @@ class BeforeLoginViewModel {
     
     let networkManager = AuthorizationNetworkManager()
     
-    func emailChecking(email: String, completion: @escaping (MailExistsResponse?, String?)->()) {
+    func emailChecking(email: String, completion: @escaping (MailExistsResponse?, NetworkResponse?)->()) {
         networkManager.beforeLogin(email: email) { (responseObject, error) in
-            if (error != nil) {
-                completion(nil, error)
-            } else if responseObject != nil {
-                completion(responseObject, nil)
-            }
+            completion(responseObject, error)
         }
     }
 }

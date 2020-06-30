@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 enum AppStoryboard: String {
     case main = "Main"
@@ -22,6 +23,36 @@ extension UIViewController {
         
         return appStoryboard.viewController(viewControllerClass: self)
     }
+    
+    func scheduleNotification(center: UNUserNotificationCenter, message: Message) {
+        print("scheduleNotification")
+        let content = UNMutableNotificationContent()
+        content.title = "You have a new message"
+        content.body = message.text ?? ""
+        content.categoryIdentifier = "alarm"
+        content.userInfo = ["customData": "fizzbuzz"]
+        content.sound = UNNotificationSound.default
+     let currentDateTime = Date()
+     let userCalendar = Calendar.current
+     let requestedComponents: Set<Calendar.Component> = [
+         .year,
+         .month,
+         .day,
+         .hour,
+         .minute,
+         .second
+        ]
+     let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
+     print(dateTimeComponents)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        center.add(request) { (error) in
+            if let error = error {
+                print("Notification Error: ", error)
+            }
+        }
+    }
+    
 }
 
 extension AppStoryboard {
@@ -47,3 +78,4 @@ extension AppStoryboard {
         return instance.instantiateInitialViewController()
     }
 }
+
