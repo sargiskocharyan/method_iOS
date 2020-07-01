@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfirmCodeViewController: UIViewController {
+class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: @IBOutlets
     @IBOutlet weak var registerOrLoginLabel: UILabel!
@@ -17,8 +17,10 @@ class ConfirmCodeViewController: UIViewController {
     @IBOutlet weak var resendCodeButton: UIButton!
     @IBOutlet weak var continueButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var registerOrLogintTopConstraint: NSLayoutConstraint!
     
     //MARK: properties
+    var constant = 0
     var email: String?
     var code: String?
     var viewModel = ConfirmCodeViewModel()
@@ -65,7 +67,70 @@ class ConfirmCodeViewController: UIViewController {
         }
     }
     
+     
+    
     @IBAction func continueAction(_ sender: UIButton) {
+        confirmCode()
+    }
+    
+    //MARK: Lifecycle methodes
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureView()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        print(size)
+        if size.width > size.height {
+            constant = 30
+        } else {
+            constant = 150
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        CodeField.text = code
+        CodeField.placeholder = "enter_code".localized()
+        continueButton.setTitle("continue".localized(), for: .normal)
+        enterCodeLabel.text = "code".localized()
+        CodeField.delegate = self
+        if isExists! {
+            registerOrLoginLabel.text = "login".localized()
+        } else {
+            registerOrLoginLabel.text = "register".localized()
+        }
+        let attributeString = NSMutableAttributedString(string: "resend_code".localized(),
+                                                        attributes: buttonAttributes)
+        resendCodeButton.setAttributedTitle(attributeString, for: .normal)
+        continueButton.isEnabled = true
+        self.CodeField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
+        self.hideKeyboardWhenTappedAround()
+        constant = Int(registerOrLogintTopConstraint.constant)
+        setObservers()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        CodeField.underlined()
+        let minRect = CGRect(x: 0, y: 0, width: 0, height: 0)
+        let maxRectBottom = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
+        let maxRect = CGRect(x: self.view.frame.size.width - topWidth, y: 0, width: topWidth, height: topHeight)
+        if (self.view.frame.height < self.view.frame.width) {
+            headerShapeView.frame = minRect
+            bottomView.frame = minRect
+        } else {
+            headerShapeView.frame = maxRect
+            bottomView.frame = maxRectBottom
+        }
+        self.gradientColor.removeFromSuperlayer()
+        continueButton.setGradientBackground(view: self.view, gradientColor)
+        continueButton.layer.cornerRadius = 8
+        setImage()
+    }
+    
+    
+    //MARK: Helper methods
+    func confirmCode() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
@@ -115,7 +180,7 @@ class ConfirmCodeViewController: UIViewController {
                         self.activityIndicator.stopAnimating()
                     }
                 } else {
-                   DispatchQueue.main.async {
+                    DispatchQueue.main.async {
                         let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                         self.present(alert, animated: true)
@@ -126,51 +191,6 @@ class ConfirmCodeViewController: UIViewController {
         }
     }
     
-    //MARK: Lifecycle methodes
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        configureView()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        CodeField.text = code
-        CodeField.placeholder = "enter_code".localized()
-        continueButton.setTitle("continue".localized(), for: .normal)
-        enterCodeLabel.text = "code".localized()
-        if isExists! {
-            registerOrLoginLabel.text = "login".localized()
-        } else {
-            registerOrLoginLabel.text = "register".localized()
-        }
-        let attributeString = NSMutableAttributedString(string: "resend_code".localized(),
-                                                        attributes: buttonAttributes)
-        resendCodeButton.setAttributedTitle(attributeString, for: .normal)
-        continueButton.isEnabled = true
-        self.CodeField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
-        self.hideKeyboardWhenTappedAround()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        CodeField.underlined()
-        let minRect = CGRect(x: 0, y: 0, width: 0, height: 0)
-        let maxRectBottom = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
-        let maxRect = CGRect(x: self.view.frame.size.width - topWidth, y: 0, width: topWidth, height: topHeight)
-        if (self.view.frame.height < self.view.frame.width) {
-            headerShapeView.frame = minRect
-            bottomView.frame = minRect
-        } else {
-            headerShapeView.frame = maxRect
-            bottomView.frame = maxRectBottom
-        }
-        self.gradientColor.removeFromSuperlayer()
-        continueButton.setGradientBackground(view: self.view, gradientColor)
-        continueButton.layer.cornerRadius = 8
-        setImage()
-    }
-    
-    
-    //MARK: Helper methods
     func configureView() {
         bottomWidth = view.frame.width * 0.6
         bottomHeight = view.frame.height * 0.08
@@ -189,8 +209,36 @@ class ConfirmCodeViewController: UIViewController {
         }
     }
     
+    @objc func handleKeyboardNotification(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
+            if self.view.frame.height - resendCodeButton.frame.maxY < keyboardFrame!.height {
+                registerOrLogintTopConstraint.constant = CGFloat(isKeyboardShowing ? constant - (Int(keyboardFrame!.height) - Int((self.view.frame.height - resendCodeButton.frame.maxY))) : constant)
+            } else {
+                registerOrLogintTopConstraint.constant = CGFloat(constant)
+            }
+            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func setObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     @objc func tapDetected() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        if textField.text?.count == 4 {
+           confirmCode()
+        }
+        return true
     }
     
     func setImage() {
