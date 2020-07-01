@@ -80,6 +80,7 @@
 		F1764361249CD60800492327 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SocketIO */; };
 		F1764364249CD61F00492327 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* Lottie */; };
 		F1764367249CD68B00492327 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* CryptoSwift */; };
+		F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -164,6 +165,7 @@
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -340,6 +342,7 @@
 		CDBE8E042476746B0049F971 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */,
 				CDBE8DFE2476744D0049F971 /* Info.plist */,
 				CDBE8DF02476744C0049F971 /* AppDelegate.swift */,
 				CDBE8DF22476744C0049F971 /* SceneDelegate.swift */,
@@ -630,6 +633,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
+				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
 				CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */,
