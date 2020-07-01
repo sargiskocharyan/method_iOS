@@ -40,6 +40,7 @@ class EditInformationViewController: UIViewController {
         setUniversityName()
         universityTextField.placeholder = "select_university".localized()
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
+        self.hideKeyboardWhenTappedAround()
     }
     
     

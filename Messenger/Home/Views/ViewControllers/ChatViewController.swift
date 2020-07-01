@@ -66,6 +66,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         sendButton.setTitle("send".localized(), for: .normal)
         setTitle()
         getImage()
+        self.hideKeyboardWhenTappedAround()
     }
     
     

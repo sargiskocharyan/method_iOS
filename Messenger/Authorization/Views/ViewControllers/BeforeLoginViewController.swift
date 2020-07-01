@@ -78,7 +78,7 @@ class BeforeLoginViewController: UIViewController {
         self.emaiCustomView.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
         showAnimation()
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
-        
+        self.hideKeyboardWhenTappedAround()
     }
     
     override func viewWillLayoutSubviews() {

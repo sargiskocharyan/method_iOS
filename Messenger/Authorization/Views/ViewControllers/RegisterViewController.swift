@@ -112,6 +112,7 @@ class RegisterViewController: UIViewController {
         skipButton.setTitle("skip".localized(), for: .normal)
         createAccountButton.setTitle("create_account".localized(), for: .normal)
         universityTextField.placeholder = "select_university".localized()
+        self.hideKeyboardWhenTappedAround()
     }
     
     
