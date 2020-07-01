@@ -86,6 +86,7 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
     func logout(completion: @escaping (NetworkResponse?)->()) {
         router.request(.logout) { data, response, error in
             if error != nil {
