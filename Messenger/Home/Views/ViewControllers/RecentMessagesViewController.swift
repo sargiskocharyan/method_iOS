@@ -32,6 +32,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         vc.delegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
+      
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,6 +49,9 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     //MARK: Helper methods
+    
+   
+    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -229,6 +233,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
         cell.configure(chat: chats[indexPath.row])
+//        let showTap = UITapGestureRecognizer(target: self, action: #selector(cell.addImageViewWithImage(image:)))
+//        showTap.numberOfTapsRequired = 1
+//        cell.userImageView.addGestureRecognizer(showTap)
+        
         return cell
     }
     

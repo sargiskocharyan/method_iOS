@@ -66,7 +66,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         sendButton.setTitle("send".localized(), for: .normal)
         setTitle()
         getImage()
-        self.hideKeyboardWhenTappedAround()
+        setObservers()
     }
     
     
@@ -87,6 +87,11 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                self.title = name
            }
        }
+    
+    func setObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
@@ -133,11 +138,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             self.scheduleNotification(center: MainTabBarController.center, message: message)
         }
-    }
-    
-    func setObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func addConstraints() {

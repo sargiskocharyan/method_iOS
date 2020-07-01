@@ -19,10 +19,14 @@ class RecentMessageTableViewCell: UITableViewCell {
         changeShapeOfImageView()
     }
     
+    
+    
     func changeShapeOfImageView() {
         userImageView.clipsToBounds = true
         userImageView.layer.cornerRadius = 30
     }
+    
+    
 
     func configure(chat: Chat) {
         userImageView.image = UIImage(named: "noPhoto")

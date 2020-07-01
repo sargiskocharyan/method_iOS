@@ -19,6 +19,7 @@ class BeforeLoginViewController: UIViewController {
     @IBOutlet weak var emaiCustomView: CustomTextField!
     @IBOutlet weak var AVView: UIView!
     
+    @IBOutlet weak var taboutLabelTopConstraint: NSLayoutConstraint!
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
     var bottomView = BottomShapeView()
@@ -53,6 +54,22 @@ class BeforeLoginViewController: UIViewController {
         }
     }
     
+    @objc func handleKeyboardNotification(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
+            taboutLabelTopConstraint.constant = isKeyboardShowing ? 312 - keyboardFrame!.height  : 312
+            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func setObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     func showAnimation() {
         let checkMarkAnimation =  AnimationView(name:  "message")
         AVView.contentMode = .scaleAspectFit
@@ -79,6 +96,7 @@ class BeforeLoginViewController: UIViewController {
         showAnimation()
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         self.hideKeyboardWhenTappedAround()
+        setObservers()
     }
     
     override func viewWillLayoutSubviews() {
