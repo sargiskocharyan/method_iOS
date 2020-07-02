@@ -62,7 +62,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         setImage()
         configureImageView()
         addGestures()
-        checkVersion()
+//        checkVersion()
         defineSwithState()
         localizeStrings()
     }
