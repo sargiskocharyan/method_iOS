@@ -92,6 +92,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         CodeField.text = code
         CodeField.placeholder = "enter_code".localized()
+        CodeField.underlined()
         continueButton.setTitle("continue".localized(), for: .normal)
         enterCodeLabel.text = "code".localized()
         CodeField.delegate = self
@@ -111,7 +112,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidLayoutSubviews() {
-        CodeField.underlined()
         let minRect = CGRect(x: 0, y: 0, width: 0, height: 0)
         let maxRectBottom = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
         let maxRect = CGRect(x: self.view.frame.size.width - topWidth, y: 0, width: topWidth, height: topHeight)

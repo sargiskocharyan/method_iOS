@@ -8,7 +8,7 @@
 
 import UIKit
 import DropDown
-
+import AVFoundation
 protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
 }
@@ -39,6 +39,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     @IBOutlet weak var logOutLanguageVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var logOutDarkModeVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var headerEmailLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
     var dropDown = DropDown()
@@ -62,7 +63,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         setImage()
         configureImageView()
         addGestures()
-//        checkVersion()
         defineSwithState()
         localizeStrings()
     }
@@ -165,7 +165,14 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
 //            imagePicker.sourceType = .camera;
 //            imagePicker.allowsEditing = false
 //            self.present(imagePicker, animated: true, completion: nil)
-//        }
+        //        }
+        AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
+            if response {
+                print("Permission allowed")
+            } else {
+                print("Permission don't allowed")
+            }
+        }
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
             imagePicker.sourceType = .savedPhotosAlbum
             imagePicker.allowsEditing = false
@@ -174,6 +181,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        activityIndicator.startAnimating()
         picker.dismiss(animated: true, completion: nil)
         guard let image = info[.originalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
@@ -191,6 +199,9 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                         self.userImageView.image = image
                     }
                 }
+            }
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
             }
         }
     }

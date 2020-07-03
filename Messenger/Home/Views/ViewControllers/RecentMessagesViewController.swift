@@ -32,7 +32,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         vc.delegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
-      
+         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,8 +49,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     //MARK: Helper methods
-    
-   
+    @objc func addButtonTapped() {
+        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
     func sort() {
         let formatter = DateFormatter()

@@ -31,14 +31,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                 print("D'oh")
             }
         }
-        
-        AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
-            if response {
-                //access granted
-            } else {
-
-            }
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

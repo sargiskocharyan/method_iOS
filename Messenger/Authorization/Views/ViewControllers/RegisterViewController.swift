@@ -23,7 +23,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
     let viewModel = RegisterViewModel()
-    let gradientColor = CAGradientLayer()
     var topWidth = CGFloat()
     var topHeight = CGFloat()
     let bottomView = BottomShapeView()
@@ -34,6 +33,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     let moreOrLessImageView = UIImageView()
     var universities: [University] = []
     var constant = 0
+    let button = UIButton()
     
     //MARK: @IBActions
     @IBAction func createAccountAction(_ sender: UIButton) {
@@ -78,11 +78,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
-    
+        
     //MARK: Lifecycles
     override func viewDidLayoutSubviews() {
         print("viewDidLayoutSubviews")
-        universityTextField.underlined()
+        dropDown.width = button.frame.width
         nameCustomView.handleRotate()
         lastnameCustomView.handleRotate()
         usernameCustomView.handleRotate()
@@ -96,9 +96,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             headerShapeView.frame = maxRect
             bottomView.frame = maxRectBottom
         }
-         self.gradientColor.removeFromSuperlayer()
-//        view.bringSubviewToFront(viewOnScroll)
-       createAccountButton.setGradientBackground(view: viewOnScroll, gradientColor)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -106,17 +103,13 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         configureView()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-//        self.gradientColor.removeFromSuperlayer()
-//        createAccountButton.setGradientBackground(view: view, gradientColor)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        stackViewTopConstraint.constant = self.view.frame.height * 0.3
+        universityTextField.underlined()
         self.navigationController?.isNavigationBarHidden = true
         createAccountButton.isEnabled = false
-        skipButton.isEnabled = false
+//        createAccountButton.backgroundColor?.withAlphaComponent(0.3)
         constant = Int(stackViewTopConstraint.constant)
         nameCustomView.delagate = self
         lastnameCustomView.delagate = self
@@ -131,18 +124,65 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         universityTextField.placeholder = "select_university".localized()
         self.hideKeyboardWhenTappedAround()
         setObservers()
-        universityTextField.isEnabled = false
+        createAccountButton.isEnabled = false
+        createAccountButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+        createAccountButton.titleLabel?.textColor = UIColor.lightGray
+        nameCustomView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
+        usernameCustomView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
+        lastnameCustomView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        dropDown.hide()
+        moreOrLessImageView.image = UIImage(named: "more")
         if size.width > size.height {
-            constant = 100
+            constant = 50
         } else {
-            constant = 180
+            constant = Int(size.height * 0.3)
+            stackViewTopConstraint.constant = CGFloat(constant)
         }
     }
     
     //MARK: Helper methodes
+    func checkFields() {
+        var id: String?
+        switch SharedConfigs.shared.appLang {
+        case AppLangKeys.Arm:
+            id = self.universities.first { (university) -> Bool in
+                university.name == self.universityTextField.text!
+                }?._id
+        case AppLangKeys.Rus:
+            id = self.universities.first { (university) -> Bool in
+                university.nameRU == self.universityTextField.text!
+                }?._id
+        default:
+            id = self.universities.first { (university) -> Bool in
+                university.nameEN == self.universityTextField.text!
+                }?._id
+        }
+        if (nameCustomView.textField.text?.isValidNameOrLastname())! && (lastnameCustomView.textField.text?.isValidNameOrLastname())! && (usernameCustomView.textField.text?.isValidUsername())! && id != nil {
+            createAccountButton.backgroundColor = .clear
+            createAccountButton.titleLabel?.textColor = .white
+            createAccountButton.isEnabled = true
+        } else {
+            createAccountButton.isEnabled = false
+            createAccountButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+            createAccountButton.titleLabel?.textColor = UIColor.lightGray
+        }
+    }
+    
+    @objc func nameTextFieldAction() {
+        checkFields()
+    }
+    
+    @objc func usernameTextFieldAction() {
+        checkFields()
+    }
+    
+    @objc func lastnameTextFieldAction() {
+       checkFields()
+    }
+    
     func getUniversities() {
         viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
@@ -224,31 +264,47 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         self.view.addSubview(headerShapeView)
     }
     
-    func addDropDown() {
-        let button = UIButton(frame: universityTextField.frame)
-        button.addTarget(self, action: #selector(imageTapped), for: .touchUpInside)
+    func addImage() {
         universityTextField.addSubview(moreOrLessImageView)
-        self.universityTextField.addSubview(button)
-        moreOrLessImageView.frame = CGRect(x: universityTextField.frame.maxX - 35, y: universityTextField.frame.maxY - 30, width: 30, height: 30)
         moreOrLessImageView.image = UIImage(named: "more")
+        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 0).isActive = true
+        moreOrLessImageView.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
+        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         moreOrLessImageView.isUserInteractionEnabled = true
+        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 0, bottom: universityTextField.bottomAnchor, paddingBottom: 5, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 30, height: 30)
+    }
+    
+    func addButton() {
+        button.addTarget(self, action: #selector(imageTapped), for: .touchUpInside)
+        self.universityTextField.addSubview(button)
+        button.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 0).isActive = true
+        button.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
+        button.leftAnchor.constraint(equalTo: universityTextField.leftAnchor, constant: 0).isActive = true
+        button.heightAnchor.constraint(equalToConstant: universityTextField.frame.height).isActive = true
+        button.widthAnchor.constraint(equalToConstant: universityTextField.frame.width).isActive = true
+        button.anchor(top: universityTextField.topAnchor, paddingTop: 0, bottom: universityTextField.bottomAnchor, paddingBottom: 0, left: universityTextField.leftAnchor, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: universityTextField.frame.width, height: universityTextField.frame.height)
+    }
+    
+    func addDropDown() {
+        addButton()
+        addImage()
         dropDown.anchorView = button
         dropDown.direction = .any
-        
-        dropDown.bottomOffset = CGPoint(x: 0, y:(dropDown.anchorView?.plainView.bounds.height)!)
+        dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5))
         dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
             self.universityTextField.text = item
             self.moreOrLessImageView.image = UIImage(named: "more")
             self.isMore = false
         }
-        dropDown.width = button.frame.width
+        dropDown.width = universityTextField.frame.width
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityTextField.frame.height))
         universityTextField.rightView = paddingView
         universityTextField.rightViewMode = UITextField.ViewMode.always
-
     }
     
     @objc func imageTapped() {
+        checkFields()
         if isMore {
             isMore = false
             dropDown.hide()
@@ -262,6 +318,45 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
 }
+
+@IBDesignable
+class GradientView: UIView {
+    @IBInspectable var firstColor: UIColor = UIColor.clear {
+        didSet {
+            updateView()
+        }
+    }
+    @IBInspectable var secondColor: UIColor = UIColor.clear {
+        didSet {
+            updateView()
+        }
+    }
+    
+    override class var layerClass: AnyClass {
+       get {
+          return CAGradientLayer.self
+       }
+    }
+    
+    @IBInspectable var isHorizontal: Bool = true {
+       didSet {
+        updateView()
+        }
+    }
+    func updateView() {
+        let layer = self.layer as! CAGradientLayer
+        layer.colors = [firstColor, secondColor].map{$0.cgColor}
+        if (self.isHorizontal) {
+            layer.startPoint = CGPoint(x: 0, y: 0.5)
+            layer.endPoint = CGPoint (x: 1, y: 0.5)
+        } else {
+            layer.startPoint = CGPoint(x: 0.5, y: 0)
+            layer.endPoint = CGPoint (x: 0.5, y: 1)
+        }
+    }
+    
+}
+
 
 //MARK: Extension
 extension RegisterViewController: CustomTextFieldDelegate {

@@ -74,64 +74,72 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    @objc func addButtonTapped() {
-        onContactPage = false
-        let alert = UIAlertController(title: "search_user".localized()
-            , message: "enter_name_or_lastname_or_username".localized(), preferredStyle: .alert)
-        alert.addTextField { (textField) in }
-        alert.addAction(UIAlertAction(title: "find".localized(), style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0]
-            if textField?.text != "" {
-                DispatchQueue.main.async {
-                    self.activityIndicator.startAnimating()
-                    self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
-                    self.navigationItem.title = "found_users".localized()
-                }
-                self.viewModel.findUsers(term: (textField?.text)!) { (responseObject, error) in
-                    if error != nil {
-                        if error == NetworkResponse.authenticationError {
-                            UserDataController().logOutUser()
-                            DispatchQueue.main.async {
-                                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                                let nav = UINavigationController(rootViewController: vc)
-                                let window: UIWindow? = UIApplication.shared.windows[0]
-                                window?.rootViewController = nav
-                                window?.makeKeyAndVisible()
-                            }
-                        }
+    @objc func handleAlertChange(sender: Any?) {
+        let textField = sender as! UITextField
+        if textField.text != "" {
+            self.viewModel.findUsers(term: (textField.text)!) { (responseObject, error) in
+                if error != nil {
+                    if error == NetworkResponse.authenticationError {
+                        UserDataController().logOutUser()
                         DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                            self.present(alert, animated: true)
+                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                            let nav = UINavigationController(rootViewController: vc)
+                            let window: UIWindow? = UIApplication.shared.windows[0]
+                            window?.rootViewController = nav
+                            window?.makeKeyAndVisible()
                         }
-                    } else if responseObject != nil {
-                        self.isLoadedFoundUsers = true
-                        if responseObject?.users.count == 0 {
-                            DispatchQueue.main.async {
-                                self.contactsMiniInformation = []
-                                self.tableView.reloadData()
-                                self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
-                                self.navigationItem.title = "found_users".localized()
-                                self.activityIndicator.stopAnimating()
-                                self.setView("there_is_no_result".localized())
-                            }
-                            return
-                        }
-                        self.findedUsers = responseObject!.users
-                        self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                            User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil)
-                        })
+                    }
+                    DispatchQueue.main.async {
+                        let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                        self.present(alert, animated: true)
+                    }
+                } else if responseObject != nil {
+                    self.isLoadedFoundUsers = true
+                    if responseObject?.users.count == 0 {
                         DispatchQueue.main.async {
-                            self.removeView()
+                            self.contactsMiniInformation = []
                             self.tableView.reloadData()
                             self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                             self.navigationItem.title = "found_users".localized()
                             self.activityIndicator.stopAnimating()
+                            self.setView("there_is_no_result".localized())
                         }
+                        return
+                    }
+                    self.findedUsers = responseObject!.users
+                    self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
+                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil)
+                    })
+                    DispatchQueue.main.async {
+                        self.removeView()
+                        self.tableView.reloadData()
+                        self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
+                        self.navigationItem.title = "found_users".localized()
+                        self.activityIndicator.stopAnimating()
                     }
                 }
             }
-        }))
+        } else {
+            DispatchQueue.main.async {
+                self.contactsMiniInformation = []
+                self.tableView.reloadData()
+                self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
+                self.navigationItem.title = "found_users".localized()
+                self.activityIndicator.stopAnimating()
+                self.setView("there_is_no_result".localized())
+            }
+        }
+    }
+    
+    @objc func addButtonTapped() {
+        onContactPage = false
+        let alert = UIAlertController(title: "search_user".localized()
+            , message: "enter_name_or_lastname_or_username".localized(), preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
+        }
+        alert.addAction(UIAlertAction(title: "close".localized(), style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     

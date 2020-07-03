@@ -27,7 +27,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     var headerShapeView = HeaderShapeView()
     var bottomView = BottomShapeView()
     var viewModel = BeforeLoginViewModel()
-    let gradientColor = CAGradientLayer()
     var topWidth = CGFloat()
     var topHeight = CGFloat()
     var bottomWidth = CGFloat()
@@ -55,18 +54,15 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         emaiCustomView.textField.delegate = self
         navigationController?.isNavigationBarHidden = true
         continueButton.isEnabled = false
-        self.emaiCustomView.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
+        continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+        continueButton.titleLabel?.textColor = UIColor.lightGray
+        self.emaiCustomView.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .allEvents)
         showAnimation()
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         self.hideKeyboardWhenTappedAround()
         setObservers()
         emaiCustomView.textField.returnKeyType = .done
         constant = Int(animationTopConstraint.constant)
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        continueButton.setGradientBackground(view: self.view, gradientColor)
     }
     
     override func viewDidLayoutSubviews() {
@@ -81,8 +77,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
             headerShapeView.frame = maxRect
             bottomView.frame = maxRectBottom
         }
-        self.gradientColor.removeFromSuperlayer()
-        continueButton.setGradientBackground(view: self.view, gradientColor)
         continueButton.layer.cornerRadius = 8
         aboutPgLabel.text = "enter_your_email".localized()
     }
@@ -92,11 +86,9 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         if size.width > size.height {
             constant = -50
         } else {
-            constant = 148
+            constant = 90
         }
     }
-    
-
     
     //MARK: Helper methods
     func configureViews() {
@@ -120,8 +112,12 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     @objc func textFieldDidChange(textField: UITextField){
         if !textField.text!.isValidEmail() {
             continueButton.isEnabled = false
+            continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+            continueButton.titleLabel?.textColor = UIColor.lightGray
         } else {
             continueButton.isEnabled = true
+            continueButton.backgroundColor = UIColor.clear
+            continueButton.titleLabel?.textColor = UIColor.white
         }
     }
     
