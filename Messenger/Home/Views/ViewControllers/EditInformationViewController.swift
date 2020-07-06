@@ -19,6 +19,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var universityTextField: UITextField!
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
+    @IBOutlet weak var phoneCustomView: CustomTextField!
     
     //MARK: Properties
     let viewModel = RegisterViewModel()
@@ -39,13 +40,14 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         usernameView.textField.delegate = self
         lastnameView.delagate = self
         usernameView.delagate = self
+        phoneCustomView.delagate = self
         addDropDown()
         getUniversities()
         nameView.textField.text = SharedConfigs.shared.signedUser?.name
         lastnameView.textField.text = SharedConfigs.shared.signedUser?.lastname
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
         setUniversityName()
-        universityTextField.underlined()
+        universityTextField.underlinedUniversityTextField()
         universityTextField.placeholder = "select_university".localized()
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
         self.hideKeyboardWhenTappedAround()
@@ -56,6 +58,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         nameView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
+        phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -76,7 +79,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     }
     
     //MARK: Helper methods
-    
+    @objc func phoneTextFieldAction() {
+        checkFields()
+        
+    }
     func checkFields() {
         var id: String?
         switch SharedConfigs.shared.appLang {
@@ -151,12 +157,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     func addImage() {
         universityTextField.addSubview(moreOrLessImageView)
         moreOrLessImageView.image = UIImage(named: "more")
-        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 0).isActive = true
+        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 20).isActive = true
         moreOrLessImageView.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
-        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
         moreOrLessImageView.isUserInteractionEnabled = true
-        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 0, bottom: universityTextField.bottomAnchor, paddingBottom: 5, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 30, height: 30)
+        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 20, bottom: universityTextField.bottomAnchor, paddingBottom: 15, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 25, height: 10)
     }
     
     func addButton() {
@@ -291,7 +297,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
            addImage()
            dropDown.anchorView = button
            dropDown.direction = .any
-           dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5))
+           dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5 - 25))
            dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
                self.universityTextField.text = item
                self.moreOrLessImageView.image = UIImage(named: "more")
@@ -341,6 +347,17 @@ extension EditInformationViewController: CustomTextFieldDelegate {
                 usernameView.errorLabel.text = usernameView.successMessage
             }
         }
+        if placeholder == "number".localized() {
+                  if !phoneCustomView.textField.text!.isValidNumber() {
+                      phoneCustomView.errorLabel.text = phoneCustomView.errorMessage
+                      phoneCustomView.errorLabel.textColor = .red
+                      phoneCustomView.border.backgroundColor = .red
+                  } else {
+                      phoneCustomView.border.backgroundColor = .blue
+                      phoneCustomView.errorLabel.textColor = .blue
+                      phoneCustomView.errorLabel.text = phoneCustomView.successMessage
+                  }
+              }
         
     }
 }

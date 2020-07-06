@@ -21,6 +21,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     let viewModel = RecentMessagesViewModel()
     let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
+    let refreshControl = UIRefreshControl()
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -33,6 +34,12 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
          self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,6 +56,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     //MARK: Helper methods
+    @objc func refreshData() {
+        getChats()
+    }
+    
     @objc func addButtonTapped() {
         let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
         self.navigationController?.pushViewController(vc, animated: true)
@@ -119,9 +130,12 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     
     func getChats() {
         self.isLoaded = true
-        DispatchQueue.main.async {
-            self.activityIndicator.startAnimating()
+        if isLoadedMessages == false {
+            DispatchQueue.main.async {
+                self.activityIndicator.startAnimating()
+            }
         }
+        
         viewModel.getChats { (messages, error) in
             if (error != nil) {
                 if error == NetworkResponse.authenticationError {
@@ -161,6 +175,9 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                         }
                     }
                 }
+            }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
             }
         }
     }

@@ -48,8 +48,8 @@ class CustomTextField: UIView {
     }
     
     func configureViews() {
-        self.topLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 10)
-        self.errorLabel.frame = CGRect(x: 0, y: 48, width: self.frame.width, height: 10)
+        self.topLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 15)
+        self.errorLabel.frame = CGRect(x: 0, y: 48, width: self.frame.width, height: 15)
         self.topLabel.textColor = .darkGray
         self.border.backgroundColor = .lightGray
         self.topLabel.font = self.topLabel.font.withSize(13.0)

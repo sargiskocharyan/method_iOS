@@ -20,6 +20,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var AVView: UIView!
     @IBOutlet weak var animationTopConstraint: NSLayoutConstraint!
     
+    @IBOutlet var storyboardView: UIView!
     
     
     // @IBOutlet weak var taboutLabelTopConstraint: NSLayoutConstraint!
@@ -50,6 +51,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        storyboardView.bringSubviewToFront(view)
         emaiCustomView.delagate = self
         emaiCustomView.textField.delegate = self
         navigationController?.isNavigationBarHidden = true
@@ -64,6 +66,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         emaiCustomView.textField.returnKeyType = .done
         constant = Int(animationTopConstraint.constant)
     }
+   
     
     override func viewDidLayoutSubviews() {
         self.emaiCustomView.handleRotate()

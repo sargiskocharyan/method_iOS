@@ -18,7 +18,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var lastnameCustomView: CustomTextField!
     @IBOutlet weak var nameCustomView: CustomTextField!
     @IBOutlet weak var createAccountButton: UIButton!
+    @IBOutlet weak var header: HeaderShapeView!
     @IBOutlet weak var universityTextField: UITextField!
+    @IBOutlet var storyboardView: UIView!
+    @IBOutlet weak var headerTopConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
@@ -101,12 +104,32 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureView()
+        setNeedsStatusBarAppearanceUpdate()
+        self.navigationController?.navigationBar.isTranslucent = true
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        let navigationBar = self.navigationController?.navigationBar
+
+        navigationBar?.shadowImage = nil
+        navigationBar?.setBackgroundImage(nil, for: .default)
+        navigationBar?.isTranslucent = false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .default
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        header.backgroundColor = .clear
+        view.bringSubviewToFront(viewOnScroll)
+        view.bringSubviewToFront(universityTextField)
         stackViewTopConstraint.constant = self.view.frame.height * 0.3
-        universityTextField.underlined()
+        universityTextField.underlinedUniversityTextField()
         self.navigationController?.isNavigationBarHidden = true
         createAccountButton.isEnabled = false
 //        createAccountButton.backgroundColor?.withAlphaComponent(0.3)
@@ -130,6 +153,27 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         nameCustomView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameCustomView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameCustomView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
+        if #available(iOS 13.0, *) {
+
+                      let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+                      var statusBarFrame = window?.windowScene?.statusBarManager?.statusBarFrame
+
+                      let statusBarView = UIView(frame: statusBarFrame!)
+                      self.view.addSubview(statusBarView)
+                      statusBarView.backgroundColor = .clear
+            headerTopConstraint.constant = -statusBarFrame!.height
+            statusBarFrame = CGRect.zero
+                  } else {
+                      //Below iOS13
+                      var statusBarFrame = UIApplication.shared.statusBarFrame
+                      let statusBarView = UIView(frame: statusBarFrame)
+                      self.view.addSubview(statusBarView)
+                      statusBarView.backgroundColor = .clear
+            headerTopConstraint.constant = -statusBarFrame.height
+            
+            statusBarFrame = CGRect.zero
+        }
+        
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -258,21 +302,21 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         bottomWidth = view.frame.width * 0.6
         bottomHeight = view.frame.height * 0.08
         bottomView.frame = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
-        self.view.addSubview(bottomView)
+      //  self.view.addSubview(bottomView)
         topWidth = view.frame.width * 0.83
         topHeight =  view.frame.height * 0.3
-        self.view.addSubview(headerShapeView)
+//        self.view.addSubview(headerShapeView)
     }
     
     func addImage() {
         universityTextField.addSubview(moreOrLessImageView)
         moreOrLessImageView.image = UIImage(named: "more")
-        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 0).isActive = true
+        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 20).isActive = true
         moreOrLessImageView.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
-        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
         moreOrLessImageView.isUserInteractionEnabled = true
-        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 0, bottom: universityTextField.bottomAnchor, paddingBottom: 5, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 30, height: 30)
+        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 20, bottom: universityTextField.bottomAnchor, paddingBottom: 15, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 25, height: 10)
     }
     
     func addButton() {
@@ -291,7 +335,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         addImage()
         dropDown.anchorView = button
         dropDown.direction = .any
-        dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5))
+        dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5 - 25))
         dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
             self.universityTextField.text = item
             self.moreOrLessImageView.image = UIImage(named: "more")

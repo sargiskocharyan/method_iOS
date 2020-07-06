@@ -22,6 +22,8 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     var onContactPage = true
     var isLoaded = false
     var isLoadedFoundUsers = false
+    let refreshControl = UIRefreshControl()
+    
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -30,7 +32,19 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.dataSource = self
         setNavigationItems()
         getContacts()
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        refreshControl.addTarget(self, action: #selector(refreshWeatherData(_:)), for: .valueChanged)
+        
     }
+    
+    @objc private func refreshWeatherData(_ sender: Any) {
+        getContacts()
+    }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -107,7 +121,19 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         }
                         return
                     }
-                    self.findedUsers = responseObject!.users
+                    self.findedUsers = []
+                    for i in 0..<responseObject!.users.count {
+                        var a = false
+                        for j in 0..<self.contacts.count {
+                            if responseObject!.users[i]._id == self.contacts[j]._id {
+                                a = true
+                                break
+                            }
+                        }
+                        if a == false {
+                            self.findedUsers.append(responseObject!.users[i])
+                        }
+                    }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
                         User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil)
                     })
@@ -166,7 +192,9 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func getContacts() {
-        activityIndicator.startAnimating()
+        if !isLoaded {
+            activityIndicator.startAnimating()
+        }
         viewModel.getContacts { (userContacts, error) in
             if error != nil {
                 if error == NetworkResponse.authenticationError {
@@ -188,17 +216,17 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                 self.isLoaded = true
                 if userContacts?.count == 0 {
                     self.setView("no_contacts".localized())
-                    DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    }
                     return
                 }
                 self.contacts = userContacts!
                 self.contactsMiniInformation = userContacts!
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    self.activityIndicator.stopAnimating()
                 }
+            }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+                self.activityIndicator.stopAnimating()
             }
         }
     }

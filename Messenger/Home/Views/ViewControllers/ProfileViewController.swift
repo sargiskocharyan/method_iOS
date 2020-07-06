@@ -173,13 +173,33 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                 print("Permission don't allowed")
             }
         }
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
-            imagePicker.sourceType = .savedPhotosAlbum
-            imagePicker.allowsEditing = false
-            present(imagePicker, animated: true, completion: nil)
+//        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+//            imagePicker.sourceType = .savedPhotosAlbum
+//            imagePicker.allowsEditing = false
+//            present(imagePicker, animated: true, completion: nil)
+//        }
+        let newImageView = UIImageView(image: userImageView.image)
+        newImageView.frame = UIScreen.main.bounds
+        if SharedConfigs.shared.mode == "dark" {
+            newImageView.backgroundColor = .black
+        } else {
+            newImageView.backgroundColor = .white
         }
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.view.addSubview(newImageView)
+        self.navigationController?.isNavigationBarHidden = true
+        self.tabBarController?.tabBar.isHidden = true
     }
 
+    @objc func dismissFullscreenImage(sender: UITapGestureRecognizer) {
+        self.navigationController?.isNavigationBarHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         activityIndicator.startAnimating()
         picker.dismiss(animated: true, completion: nil)
