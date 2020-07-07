@@ -17,9 +17,8 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var aboutPgLabel: UILabel!
     @IBOutlet weak var continueButton: UIButton!
     @IBOutlet weak var emaiCustomView: CustomTextField!
-    @IBOutlet weak var AVView: UIView!
+    @IBOutlet weak var animationView: UIView!
     @IBOutlet weak var animationTopConstraint: NSLayoutConstraint!
-    
     @IBOutlet var storyboardView: UIView!
     
     
@@ -32,7 +31,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     var topHeight = CGFloat()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
-    var constant = 0
+    var constant: CGFloat = 0
     
     //MARK: @IBAction
     
@@ -64,7 +63,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         self.hideKeyboardWhenTappedAround()
         setObservers()
         emaiCustomView.textField.returnKeyType = .done
-        constant = Int(animationTopConstraint.constant)
+        constant = animationTopConstraint.constant
     }
    
     
@@ -129,9 +128,9 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
                let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
                let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
                if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
-                   animationTopConstraint.constant = CGFloat(isKeyboardShowing ? constant - (Int(keyboardFrame!.height) - Int((self.view.frame.height - emailDescriptionLabel.frame.maxY))) : constant)
+                   animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
                } else {
-                   animationTopConstraint.constant = CGFloat(constant)
+                   animationTopConstraint.constant = constant
                }
                UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                    self.view.layoutIfNeeded()
@@ -169,12 +168,12 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
        
        func showAnimation() {
            let checkMarkAnimation =  AnimationView(name:  "message")
-           AVView.contentMode = .scaleAspectFit
+           animationView.contentMode = .scaleAspectFit
            checkMarkAnimation.animationSpeed = 1
-           checkMarkAnimation.frame = self.AVView.bounds
+           checkMarkAnimation.frame = self.animationView.bounds
            checkMarkAnimation.loopMode = .loop
            checkMarkAnimation.play()
-           self.AVView.addSubview(checkMarkAnimation)
+           self.animationView.addSubview(checkMarkAnimation)
        }
 }
 

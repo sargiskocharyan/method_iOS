@@ -11,7 +11,9 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
-    
+    static let beforeLoginViewControllerIdentifier = "BeforeLoginViewController"
+    static let mainTabBarControllerIdentifier = "MainTabBarController"
+
     
  
     
@@ -55,24 +57,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func defineStartController() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         UserDataController().loadUserInfo()
-        
         if SharedConfigs.shared.signedUser == nil {
             DispatchQueue.main.async {
-                guard let rootVC = storyboard.instantiateViewController(identifier: "BeforeLoginViewController") as? BeforeLoginViewController else {
-                    print("BeforeLoginViewController not found")
-                    return
-                }
+                let rootVC = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
             }
         } else {
             DispatchQueue.main.async {
-                guard let rootVC = storyboard.instantiateViewController(identifier: "MainTabBarController") as? MainTabBarController else {
-                    print("MainTabBarController not found")
-                    return
-                }
+                let rootVC = MainTabBarController.instantiate(fromAppStoryboard: .main)
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
             }

@@ -12,5 +12,14 @@ import DropDown
 class CustomCell: DropDownCell {
 
     @IBOutlet weak var countryImageView: UIImageView!
-   
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        if SharedConfigs.shared.mode == "dark" {
+            optionLabel.textColor = UIColor.white
+        } else {
+            optionLabel.textColor = UIColor.black
+        }
+    }
+    
 }

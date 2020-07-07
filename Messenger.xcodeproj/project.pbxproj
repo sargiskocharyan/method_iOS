@@ -40,6 +40,7 @@
 		CD5E713F24865935008D876E /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E713E24865935008D876E /* HomePageViewController.swift */; };
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
 		CD5E7145248661B2008D876E /* CallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallViewController.swift */; };
+		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
@@ -128,6 +129,7 @@
 		CD5E713E24865935008D876E /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
+		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */,
 				CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */,
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
+				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -756,6 +759,7 @@
 				CDD9C677247BC4AE0048A9A1 /* EndPointType.swift in Sources */,
 				CDBE8DF32476744C0049F971 /* SceneDelegate.swift in Sources */,
 				CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */,
+				CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */,
 				CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */,
 				CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */,
 			);

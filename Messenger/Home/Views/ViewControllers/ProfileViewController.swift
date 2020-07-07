@@ -60,6 +60,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         setBorder(view: darkModeView)
         setBorder(view: logoutView)
         checkInformation()
+        checkVersion()
         setImage()
         configureImageView()
         addGestures()
@@ -141,6 +142,33 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     func configureImageView() {
+        let cameraView = UIView()
+        view.addSubview(cameraView)
+        userImageView.backgroundColor = .clear
+        cameraView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
+        cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
+        cameraView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
+        cameraView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        cameraView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        cameraView.isUserInteractionEnabled = true
+        cameraView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 30, height: 30)
+        cameraView.contentMode = . scaleAspectFill
+        cameraView.layer.cornerRadius = 15
+        cameraView.clipsToBounds = true
+        let cameraImageView = UIImageView()
+        cameraImageView.image = UIImage(named: "camera")
+        cameraView.addSubview(cameraImageView)
+        cameraImageView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
+        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: 5).isActive = true
+        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: 5).isActive = true
+        cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: 5).isActive = true
+        cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
+        cameraImageView.isUserInteractionEnabled = true
+        cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
+        
+        let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
+        cameraImageView.addGestureRecognizer(tapCamera)
+        
         userImageView.contentMode = . scaleAspectFill
         userImageView.layer.cornerRadius = 50
         userImageView.clipsToBounds = true
@@ -158,46 +186,65 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         userImageView.addGestureRecognizer(tapImage)
     }
     
+    @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                 imagePicker.delegate = self
+                 imagePicker.sourceType = .camera;
+                 imagePicker.allowsEditing = false
+                 self.present(imagePicker, animated: true, completion: nil)
+                     }
+             AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
+                 if response {
+                     print("Permission allowed")
+                 } else {
+                     print("Permission don't allowed")
+                 }
+             }
+        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+            imagePicker.sourceType = .savedPhotosAlbum
+            imagePicker.allowsEditing = false
+            present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
     @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
-//        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-//
-//            imagePicker.delegate = self
-//            imagePicker.sourceType = .camera;
-//            imagePicker.allowsEditing = false
-//            self.present(imagePicker, animated: true, completion: nil)
-        //        }
-        AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
-            if response {
-                print("Permission allowed")
-            } else {
-                print("Permission don't allowed")
-            }
-        }
-//        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
-//            imagePicker.sourceType = .savedPhotosAlbum
-//            imagePicker.allowsEditing = false
-//            present(imagePicker, animated: true, completion: nil)
-//        }
-        let newImageView = UIImageView(image: userImageView.image)
-        newImageView.frame = UIScreen.main.bounds
+     
+        let imageView = UIImageView(image: userImageView.image)
+        let closeButton = UIButton()
+        imageView.addSubview(closeButton)
+        closeButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 20).isActive = true
+        closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: 20).isActive = true
+        closeButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        closeButton.isUserInteractionEnabled = true
+        closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
+        
         if SharedConfigs.shared.mode == "dark" {
-            newImageView.backgroundColor = .black
+            closeButton.setImage(UIImage(named: "white@_"), for: .normal)
+            imageView.backgroundColor = .black
         } else {
-            newImageView.backgroundColor = .white
+            closeButton.setImage(UIImage(named: "close"), for: .normal)
+            imageView.backgroundColor = .white
         }
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
-        newImageView.addGestureRecognizer(tap)
-        self.view.addSubview(newImageView)
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
+        imageView.tag = 3
+        closeButton.addTarget(self, action: #selector(dismissFullscreenImage), for: .touchUpInside)
+        self.view.addSubview(imageView)
+        imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        imageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        imageView.isUserInteractionEnabled = true
+        imageView.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 25)
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
     }
 
-    @objc func dismissFullscreenImage(sender: UITapGestureRecognizer) {
+    @objc func dismissFullscreenImage() {
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
-        sender.view?.removeFromSuperview()
+        view.viewWithTag(3)?.removeFromSuperview()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -212,16 +259,15 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
+                    self.activityIndicator.stopAnimating()
                 }
             } else {
                 ImageCache.shared.getImage(url: avatarURL ?? "") { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
+                        self.activityIndicator.stopAnimating()
                     }
                 }
-            }
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
             }
         }
     }
@@ -296,10 +342,19 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
         }
+        if SharedConfigs.shared.mode == "dark" {
+            dropDown.backgroundColor = UIColor.gray //(red: 18/255, green: 19/255, blue: 18/255, alpha: 1)
+        } else {
+            dropDown.backgroundColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
+        }
         dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
             guard let cell = cell as? CustomCell else { return }
-            
+            if SharedConfigs.shared.mode == "dark" {
+                cell.optionLabel.textColor = UIColor.white
+                   } else {
+                cell.optionLabel.textColor = UIColor.black
+                   }
             cell.countryImageView.image = UIImage(named: "\(item)")
         }
         dropDown.show()

@@ -35,7 +35,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     let dropDown = DropDown()
     let moreOrLessImageView = UIImageView()
     var universities: [University] = []
-    var constant = 0
+    var constant: CGFloat = 0
     let button = UIButton()
     
     //MARK: @IBActions
@@ -118,6 +118,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         navigationBar?.isTranslucent = false
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .default
     }
@@ -133,7 +137,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         self.navigationController?.isNavigationBarHidden = true
         createAccountButton.isEnabled = false
 //        createAccountButton.backgroundColor?.withAlphaComponent(0.3)
-        constant = Int(stackViewTopConstraint.constant)
+        constant = stackViewTopConstraint.constant
         nameCustomView.delagate = self
         lastnameCustomView.delagate = self
         usernameCustomView.delagate = self
@@ -182,7 +186,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         if size.width > size.height {
             constant = 50
         } else {
-            constant = Int(size.height * 0.3)
+            constant = size.height * 0.3
             stackViewTopConstraint.constant = CGFloat(constant)
         }
     }
@@ -267,10 +271,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     func raiseStackView(_ keyboardFrame: CGRect?, _ isKeyboardShowing: Bool, _ customView: UIView) {
-        if self.view.frame.height - (CGFloat(constant) + customView.frame.maxY) < keyboardFrame!.height {
-            stackViewTopConstraint.constant = CGFloat(isKeyboardShowing ? constant - (Int(keyboardFrame!.height) - Int((self.view.frame.height - (CGFloat(constant) + customView.frame.maxY + 15)))) : constant)
+        if self.view.frame.height - (constant + customView.frame.maxY) < keyboardFrame!.height {
+            stackViewTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - (constant + customView.frame.maxY + 15))) : constant
         } else {
-            stackViewTopConstraint.constant = CGFloat(constant)
+            stackViewTopConstraint.constant = constant
         }
     }
     
