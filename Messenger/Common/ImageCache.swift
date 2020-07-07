@@ -23,7 +23,6 @@ class ImageCache {
             completion(image)
         } else {
             guard let imageURL = URL(string: url) else {
-                print(URL(string: url))
                 completion(UIImage(named: "noPhoto")!)
                 return }
             downloadImage(from: imageURL) { (image) in

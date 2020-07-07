@@ -19,7 +19,6 @@ class RegisterViewModel {
     }
     
     func getUniversities(completion: @escaping ([University]?, NetworkResponse?)->()) {
-        //TODO
         networkManager.getUniversities(token:  (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             completion(responseObject, error)
         }

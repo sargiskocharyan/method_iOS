@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Combine
 
 class RecentMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var timeLabel: UILabel!
@@ -20,13 +19,16 @@ class RecentMessageTableViewCell: UITableViewCell {
         changeShapeOfImageView()
     }
     
+    
+    
     func changeShapeOfImageView() {
         userImageView.clipsToBounds = true
         userImageView.layer.cornerRadius = 30
     }
+    
+    
 
     func configure(chat: Chat) {
-        print(chat)
         userImageView.image = UIImage(named: "noPhoto")
         ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "") { (image) in
             DispatchQueue.main.async {
@@ -41,7 +43,11 @@ class RecentMessageTableViewCell: UITableViewCell {
         if chat.message != nil {
             timeLabel.text = stringToDate(date: chat.message!.createdAt ?? "" )
         }
-        lastMessageLabel.text = chat.message?.text
+        if chat.id == chat.message?.sender?.id {
+            lastMessageLabel.text = chat.message?.text
+        } else {
+            lastMessageLabel.text = "You: " + (chat.message?.text)!
+        }
     }
     
     func stringToDate(date:String) -> String {

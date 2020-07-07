@@ -9,7 +9,7 @@
 
 import UIKit
 import UserNotifications
-
+import AVFoundation
 class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate {
     
     
@@ -24,7 +24,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         self.navigationController?.isNavigationBarHidden = true
         verifyToken()
         socketTaskManager.connect()
-//        HomeNetworkManager().uploadImage(tmpImage: UIImage(named: "Armenian"))
         Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -32,9 +31,14 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                 print("D'oh")
             }
         }
-        print(SharedConfigs.shared.signedUser)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getNewMessage()
+    }
+    
+    //MARK: Helper methods
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
@@ -56,7 +60,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
                 break
             case 4:
                 let profileNC = self.viewControllers![4] as! UINavigationController
-                print(profileNC.viewControllers.count)
                 if profileNC.viewControllers.count < 3 {
                     self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
                 } else if profileNC.viewControllers.count == 3 {
@@ -69,12 +72,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        getNewMessage()
-    }
-    
-    //MARK: Helper methods
     func verifyToken() {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {

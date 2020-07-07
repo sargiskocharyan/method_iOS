@@ -63,7 +63,7 @@ class UserDataController {
       }
       
       func populateUserProfile(model: UserModel ) {
-        let user = UserModel(name: model.name, lastname: model.lastname, username: model.username, email: model.email, university: model.university, token: model.token, id: model.id, avatar: model.avatar)
+        let user = UserModel(name: model.name, lastname: model.lastname, username: model.username, email: model.email, university: model.university, token: model.token, id: model.id, avatarURL: model.avatarURL)
        SharedConfigs.shared.signedUser = user
         saveUserInfo()
       }

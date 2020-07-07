@@ -13,7 +13,7 @@ class HomeNetworkManager: NetworkManager {
     
     let router = Router<HomeApi>()
     
-    func getUserContacts(completion: @escaping ([ContactResponseWithId]?, NetworkResponse?)->()) {
+    func getUserContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         router.request(.getUserContacts) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -28,7 +28,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([ContactResponseWithId].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode([User].self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -41,7 +41,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func findUsers(term: String, completion: @escaping (FoundUsers?, NetworkResponse?)->()) {
+    func findUsers(term: String, completion: @escaping (Users?, NetworkResponse?)->()) {
         router.request(.findUsers(term: term)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -56,7 +56,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode(FoundUsers.self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(Users.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -75,7 +75,6 @@ class HomeNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
@@ -87,6 +86,7 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
     func logout(completion: @escaping (NetworkResponse?)->()) {
         router.request(.logout) { data, response, error in
             if error != nil {
@@ -214,10 +214,10 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?)->()) {
+    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, String?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "http://192.168.0.106:3000/users/me/avatar")!)
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/users/me/avatar")!)
         request.httpMethod = "POST"
         request.timeoutInterval = 10
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -232,15 +232,20 @@ class HomeNetworkManager: NetworkManager {
         let session = URLSession.shared
         session.uploadTask(with: request, from: body as Data)  { data, response, error in
             guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed)
+                completion(NetworkResponse.failed, nil)
                 return }
             if error != nil {
                 print(error!.localizedDescription)
-                completion(NetworkResponse.failed)
+                completion(NetworkResponse.failed, nil)
             } else {
-                completion(nil)
+                guard let responseData = data else {
+                    completion(NetworkResponse.noData, nil)
+                    return
+                }
+                SharedConfigs.shared.signedUser?.avatarURL = String(data: responseData, encoding: .utf8)
+                UserDataController().saveUserInfo()
+                completion(nil, String(data: responseData, encoding: .utf8))
             }
-            
         }.resume()
     }
 }

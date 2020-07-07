@@ -8,11 +8,14 @@
 
 import UIKit
 import DropDown
+import AVFoundation
+protocol ProfileViewControllerDelegate: class {
+    func changeLanguage(key: String)
+}
 
 class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
-    @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var switchMode: UISwitch!
     @IBOutlet weak var universityLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
@@ -36,6 +39,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     @IBOutlet weak var logOutLanguageVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var logOutDarkModeVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var headerEmailLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
     var dropDown = DropDown()
@@ -43,6 +47,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
     var imagePicker = UIImagePickerController()
+    weak var delegate: ProfileViewControllerDelegate?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -58,10 +63,8 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         setImage()
         configureImageView()
         addGestures()
-        checkVersion()
         defineSwithState()
         localizeStrings()
-        print(SharedConfigs.shared.signedUser)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,15 +79,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     func setImage() {
-//        viewModel.getImage(avatar: SharedConfigs.shared.signedUser?.avatar ?? "") { (image, error) in
-//            if image != nil {
-//                DispatchQueue.main.async {
-//                    self.userImageView.image = image
-//                }
-//            }
-//        }
-        print(SharedConfigs.shared.signedUser?.avatar)
-        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatar ?? "") { (image) in
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "") { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -142,6 +137,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
             }
             SharedConfigs.shared.setMode(selectedMode: "light")
         }
+          self.viewDidLoad()
     }
     
     func configureImageView() {
@@ -163,21 +159,54 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
-            print("Button capture")
-            
-            imagePicker.sourceType = .savedPhotosAlbum
-            imagePicker.allowsEditing = false
-            present(imagePicker, animated: true, completion: nil)
+//        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+//
+//            imagePicker.delegate = self
+//            imagePicker.sourceType = .camera;
+//            imagePicker.allowsEditing = false
+//            self.present(imagePicker, animated: true, completion: nil)
+        //        }
+        AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
+            if response {
+                print("Permission allowed")
+            } else {
+                print("Permission don't allowed")
+            }
         }
+//        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+//            imagePicker.sourceType = .savedPhotosAlbum
+//            imagePicker.allowsEditing = false
+//            present(imagePicker, animated: true, completion: nil)
+//        }
+        let newImageView = UIImageView(image: userImageView.image)
+        newImageView.frame = UIScreen.main.bounds
+        if SharedConfigs.shared.mode == "dark" {
+            newImageView.backgroundColor = .black
+        } else {
+            newImageView.backgroundColor = .white
+        }
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.view.addSubview(newImageView)
+        self.navigationController?.isNavigationBarHidden = true
+        self.tabBarController?.tabBar.isHidden = true
     }
 
+    @objc func dismissFullscreenImage(sender: UITapGestureRecognizer) {
+        self.navigationController?.isNavigationBarHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        activityIndicator.startAnimating()
         picker.dismiss(animated: true, completion: nil)
         guard let image = info[.originalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
-        viewModel.uploadImage(image: image) { (error) in
+        viewModel.uploadImage(image: image) { (error, avatarURL) in
             if error != nil {
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
@@ -185,9 +214,14 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                     self.present(alert, animated: true)
                 }
             } else {
-                 DispatchQueue.main.async {
-                   self.userImageView.image = image
+                ImageCache.shared.getImage(url: avatarURL ?? "") { (image) in
+                    DispatchQueue.main.async {
+                        self.userImageView.image = image
+                    }
                 }
+            }
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
             }
         }
     }
@@ -232,7 +266,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                 }
             }
             self.socketTaskManager.disconnect()
-            print(self.socketTaskManager.socket.status)
         }
     }
     
@@ -260,6 +293,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
                 self.flagImageView.image = UIImage(named: "Armenian")
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Arm)
             }
+            self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
         }
         dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
@@ -275,38 +309,57 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         let user = SharedConfigs.shared.signedUser
         if user?.name == nil {
             nameLabel.text = "name".localized()
-            nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
-            nameLabel.textColor = .black
+            if SharedConfigs.shared.mode == "dark" {
+              nameLabel.textColor = .white
+            } else {
+                nameLabel.textColor = .black
+            }
         }
         if user?.lastname == nil {
             lastnameLabel.text = "lastname".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
-            lastnameLabel.textColor = .black
+            if SharedConfigs.shared.mode == "dark" {
+              lastnameLabel.textColor = .white
+            } else {
+                lastnameLabel.textColor = .black
+            }
         }
         if user?.email == nil {
             emailLabel.text = "email".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
-            emailLabel.textColor = .black
+            if SharedConfigs.shared.mode == "dark" {
+              emailLabel.textColor = .white
+            } else {
+                emailLabel.textColor = .black
+            }
         }
         if user?.username == nil {
             usernameLabel.text = "username".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
-            usernameLabel.textColor = .black
+            if SharedConfigs.shared.mode == "dark" {
+              usernameLabel.textColor = .white
+            } else {
+                usernameLabel.textColor = .black
+            }
         }
         
         if user?.university == nil {
             universityLabel.text = "university".localized()
             universityLabel.textColor = .lightGray
         } else {
-            universityLabel.textColor = .black
+            if SharedConfigs.shared.mode == "dark" {
+              universityLabel.textColor = .white
+            } else {
+                universityLabel.textColor = .black
+            }
             universityLabel.text = user?.university?.name
             switch SharedConfigs.shared.appLang {
             case AppLangKeys.Arm:

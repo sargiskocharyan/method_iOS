@@ -43,6 +43,7 @@
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
+		CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB42DB924B34487005EAA51 /* PhoneValidator.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
 		CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA66247BF29900115C99 /* Main.storyboard */; };
@@ -80,6 +81,7 @@
 		F1764361249CD60800492327 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SocketIO */; };
 		F1764364249CD61F00492327 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* Lottie */; };
 		F1764367249CD68B00492327 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* CryptoSwift */; };
+		F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +131,7 @@
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
+		CDB42DB924B34487005EAA51 /* PhoneValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneValidator.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDBCCA67247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -164,6 +167,7 @@
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -340,6 +344,7 @@
 		CDBE8E042476746B0049F971 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */,
 				CDBE8DFE2476744D0049F971 /* Info.plist */,
 				CDBE8DF02476744C0049F971 /* AppDelegate.swift */,
 				CDBE8DF22476744C0049F971 /* SceneDelegate.swift */,
@@ -528,6 +533,7 @@
 				CDD9C681247BC93B0048A9A1 /* Constants */,
 				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
 				CDF0776724A9F49800B1DAD7 /* ImageCache.swift */,
+				CDB42DB924B34487005EAA51 /* PhoneValidator.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -630,6 +636,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
+				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
 				CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */,
@@ -731,6 +738,7 @@
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
+				CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
@@ -914,12 +922,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				INFOPLIST_FILE = Messenger/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.messenger.Messenger;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -932,12 +942,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				INFOPLIST_FILE = Messenger/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.messenger.Messenger;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -8,34 +8,19 @@
 
 import Foundation
 
-struct ContactResponseWithId: Codable {
-    let _id: String
-    var name: String?
-    let lastname: String?
-    let email: String?
-    let username: String
-    let avatar: String?
-}
-
 struct User: Codable {
     var name: String?
     let lastname: String?
     let university: String?
     let _id: String
     let username: String
-    let avatar: String?
+    let avatarURL: String?
+    let email: String?
 }
 
-struct FoundUsers: Codable {
+struct Users: Codable { 
     let users: [User]
 }
-
-//struct ContactInformation {
-//    let username: String?
-//    let name: String?
-//    let lastname: String?
-//    let _id: String
-//}
 
 struct Sender: Codable{
     let id: String?
@@ -66,4 +51,6 @@ struct UserById: Codable {
     let username: String
     let lastname: String?
     let id: String
+    let avatarURL: String?
 }
+

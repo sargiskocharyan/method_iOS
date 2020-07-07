@@ -28,10 +28,9 @@ class ContactTableViewCell: UITableViewCell {
         contactImageView.layer.cornerRadius = 25
     }
     
-    func configure(contact: ContactResponseWithId) {
-        print(contact)
+    func configure(contact: User) {
         contactImageView.image = UIImage(named: "noPhoto")
-        ImageCache.shared.getImage(url: contact.avatar ?? "") { (image) in
+        ImageCache.shared.getImage(url: contact.avatarURL ?? "") { (image) in
             DispatchQueue.main.async {
                 self.contactImageView.image = image
             }

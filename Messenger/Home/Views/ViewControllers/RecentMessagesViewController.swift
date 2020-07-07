@@ -7,11 +7,8 @@
 //
 
 import UIKit
-import Combine
 
-class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
-    
+class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -24,14 +21,25 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     let viewModel = RecentMessagesViewModel()
     let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
+    let refreshControl = UIRefreshControl()
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        let nc = (self.tabBarController?.viewControllers?[4]) as? UINavigationController
+        let vc = nc?.viewControllers[0] as! ProfileViewController
+        vc.delegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
+         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,6 +56,15 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     //MARK: Helper methods
+    @objc func refreshData() {
+        getChats()
+    }
+    
+    @objc func addButtonTapped() {
+        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -65,6 +82,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
             }
         }
+    }
+    
+    func changeLanguage(key: String) {
+        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
     func setView(_ str: String) {
@@ -105,14 +126,16 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         let hour = calendar.component(.hour, from: parsedDate!)
         let minutes = calendar.component(.minute, from: parsedDate!)
         return ("\(hour):\(minutes)")
-        
     }
     
     func getChats() {
         self.isLoaded = true
-        DispatchQueue.main.async {
-            self.activityIndicator.startAnimating()
+        if isLoadedMessages == false {
+            DispatchQueue.main.async {
+                self.activityIndicator.startAnimating()
+            }
         }
+        
         viewModel.getChats { (messages, error) in
             if (error != nil) {
                 if error == NetworkResponse.authenticationError {
@@ -153,6 +176,9 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                     }
                 }
             }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
         }
     }
     
@@ -192,8 +218,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        print(self.chats[i])
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -201,7 +226,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
@@ -216,18 +241,21 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+        vc.name = chats[indexPath.row].name
+        vc.username = chats[indexPath.row].username
+        vc.avatar = chats[indexPath.row].recipientAvatarURL
         vc.id = chats[indexPath.row].id
         self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func cacheData() {
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
         cell.configure(chat: chats[indexPath.row])
+//        let showTap = UITapGestureRecognizer(target: self, action: #selector(cell.addImageViewWithImage(image:)))
+//        showTap.numberOfTapsRequired = 1
+//        cell.userImageView.addGestureRecognizer(showTap)
+        
         return cell
     }
     

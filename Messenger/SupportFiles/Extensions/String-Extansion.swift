@@ -24,6 +24,12 @@ extension String {
          let regex = try! NSRegularExpression(pattern:  "^[a-zA-Z0-9](_(?!(\\.|_|-))|\\.(?!(_|-|\\.))|-(?!(\\.|_|-))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$", options: .caseInsensitive)
                return regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)) != nil
     }
+    
+    
+    func isValidNumber() -> Bool {
+        let regex = try! NSRegularExpression(pattern: "^((\\+374)+([0-9]){8})$", options: .caseInsensitive)
+        return regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)) != nil
+    }
 
 }
 extension String  {

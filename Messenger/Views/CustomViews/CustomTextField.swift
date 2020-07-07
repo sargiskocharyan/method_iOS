@@ -29,6 +29,18 @@ class CustomTextField: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        self.addConstraint(NSLayoutConstraint(item: textField, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0))
+               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
+               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 35))
+               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 10))
+               self.addSubview(self.textField)
+        border.translatesAutoresizingMaskIntoConstraints = false
+        self.addConstraint(NSLayoutConstraint(item: border, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0))
+               self.addConstraint(NSLayoutConstraint(item: border, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
+               self.addConstraint(NSLayoutConstraint(item: border, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 1))
+               self.addConstraint(NSLayoutConstraint(item: border, attribute: .top, relatedBy: .equal, toItem: textField, attribute: .bottom, multiplier: 1, constant: -7))
+               self.addSubview(self.border)
         DispatchQueue.main.async {
             self.configureViews()
             self.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
@@ -36,17 +48,16 @@ class CustomTextField: UIView {
     }
     
     func configureViews() {
-        self.topLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 10)
-        self.textField.frame = CGRect(x: 0, y: 10, width: self.frame.width, height: 35)
-        self.errorLabel.frame = CGRect(x: 0, y: 48, width: self.frame.width, height: 10)
+        self.topLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 15)
+        self.errorLabel.frame = CGRect(x: 0, y: 48, width: self.frame.width, height: 15)
         self.topLabel.textColor = .darkGray
         self.border.backgroundColor = .lightGray
         self.topLabel.font = self.topLabel.font.withSize(13.0)
         self.errorLabel.font = self.errorLabel.font.withSize(13.0)
-        self.border.frame = CGRect(x: 0, y: self.topLabel.frame.height + self.textField.frame.height-7, width: self.frame.width, height: self.height)
-        self.addSubview(self.border)
+//        self.border.frame = CGRect(x: 0, y: self.topLabel.frame.height + self.textField.frame.height-7, width: self.frame.width, height: self.height)
+//        self.addSubview(self.border)
         self.border.tag = 1
-        self.addSubview(self.textField)
+//        self.addSubview(self.textField)
         self.addSubview(self.topLabel)
         self.addSubview(self.errorLabel)
     }
@@ -68,7 +79,7 @@ class CustomTextField: UIView {
     }
     
     func handleRotate() {
-        viewWithTag(1)?.removeFromSuperview()
+        //viewWithTag(1)?.removeFromSuperview()
         self.configureViews()
     }
     
