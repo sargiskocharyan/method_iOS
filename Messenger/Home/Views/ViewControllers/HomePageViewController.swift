@@ -10,7 +10,7 @@
 import UIKit
 import UserNotifications
 import AVFoundation
-class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate {
+class MainTabBarController: UITabBarController { 
     
     
     //MARK: Properties
@@ -39,14 +39,6 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
     }
     
     //MARK: Helper methods
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
-    }
-    
     func getNewMessage() {
         socketTaskManager.getChatMessage { (message) in
             let chatsNC = self.viewControllers![3] as! UINavigationController
@@ -102,4 +94,15 @@ class MainTabBarController: UITabBarController, UNUserNotificationCenterDelegate
             }
         }
     }
+}
+
+//MARK: Extension
+extension MainTabBarController: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+          completionHandler()
+      }
+      
+      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+          completionHandler([.alert, .badge, .sound])
+      }
 }

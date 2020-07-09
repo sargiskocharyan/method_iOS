@@ -9,13 +9,15 @@
 import UIKit
 import DropDown
 import AVFoundation
+
 protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
 }
 
-class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
+    @IBOutlet weak var hidePersonalDataLabel: UILabel!
     @IBOutlet weak var switchMode: UISwitch!
     @IBOutlet weak var universityLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
@@ -52,7 +54,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.center.delegate = self
         imagePicker.delegate = self
         setFlagImage()
         setBorder(view: contactView)
@@ -88,6 +89,7 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     func localizeStrings() {
+        hidePersonalDataLabel.text = "hide_personal_data".localized()
         headerEmailLabel.text = "email".localized()
         headerUsernameLabel.text = "username".localized()
         phoneTextLabel.text = "phone:".localized()
@@ -108,13 +110,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         }
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
-    }
     
     func setFlagImage() {
         if SharedConfigs.shared.appLang == AppLangKeys.Eng {
@@ -165,10 +160,8 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
         cameraImageView.isUserInteractionEnabled = true
         cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
-        
         let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
         cameraImageView.addGestureRecognizer(tapCamera)
-        
         userImageView.contentMode = . scaleAspectFill
         userImageView.layer.cornerRadius = 50
         userImageView.clipsToBounds = true
@@ -208,7 +201,6 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
     }
     
     @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
-     
         let imageView = UIImageView(image: userImageView.image)
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
@@ -218,6 +210,18 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
+        
+        let deleteImageButton = UIButton()
+        imageView.addSubview(deleteImageButton)
+        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
+        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
+        deleteImageButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: 20).isActive = true
+        deleteImageButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        deleteImageButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        deleteImageButton.isUserInteractionEnabled = true
+        deleteImageButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
+        closeButton.setImage(UIImage(named: "trash"), for: .normal)
+        
         
         if SharedConfigs.shared.mode == "dark" {
             closeButton.setImage(UIImage(named: "white@_"), for: .normal)
@@ -439,7 +443,5 @@ class ProfileViewController: UIViewController, UNUserNotificationCenterDelegate,
             logOutLanguageVerticalConstraint.priority = UILayoutPriority(rawValue: 990)
             darkModeView.isHidden = true
         }
-    }
-    
-    
+    }    
 }

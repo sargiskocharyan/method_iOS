@@ -25,6 +25,15 @@ extension String {
                return regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)) != nil
     }
     
+     func isValidDate() -> Bool {
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "dd/MM/yyyy"
+        if let _ = dateFormatterGet.date(from: self) {
+            return true
+        } else {
+            return false
+        }
+    }
     
     func isValidNumber() -> Bool {
         let regex = try! NSRegularExpression(pattern: "^((\\+374)+([0-9]){8})$", options: .caseInsensitive)

@@ -21,8 +21,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var animationTopConstraint: NSLayoutConstraint!
     @IBOutlet var storyboardView: UIView!
     
-    
-    // @IBOutlet weak var taboutLabelTopConstraint: NSLayoutConstraint!
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
     var bottomView = BottomShapeView()
@@ -34,7 +32,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     var constant: CGFloat = 0
     
     //MARK: @IBAction
-    
     @IBAction func continueButtonAction(_ sender: UIButton) {
         checkEmail()
     }
@@ -45,7 +42,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         super.viewWillAppear(animated)
         configureViews()
         continueButton.setTitle("continue".localized(), for: .normal)
-
     }
     
     override func viewDidLoad() {

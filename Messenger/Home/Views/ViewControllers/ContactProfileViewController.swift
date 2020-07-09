@@ -12,12 +12,15 @@ class ContactProfileViewController: UIViewController {
     
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var infoView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         userImageView.contentMode = . scaleAspectFill
         userImageView.layer.cornerRadius = 40
         userImageView.clipsToBounds = true
-        headerView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
+        infoView.layer.borderColor = UIColor.lightGray.cgColor
+        infoView.layer.borderWidth = 1.0
+        infoView.layer.masksToBounds = true
     }
 }

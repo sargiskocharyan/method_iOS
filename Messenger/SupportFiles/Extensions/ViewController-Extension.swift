@@ -26,11 +26,9 @@ extension UIViewController {
     
     func scheduleNotification(center: UNUserNotificationCenter, message: Message) {
         let content = UNMutableNotificationContent()
-        content.title = "You have a new message"
+        content.title = message.sender?.name ?? "New message"
         content.body = message.text ?? ""
-        content.categoryIdentifier = "alarm"
-        content.userInfo = ["customData": "fizzbuzz"]
-        content.sound = UNNotificationSound.default
+        content.sound = UNNotificationSound.defaultCritical
      let currentDateTime = Date()
      let userCalendar = Calendar.current
      let requestedComponents: Set<Calendar.Component> = [

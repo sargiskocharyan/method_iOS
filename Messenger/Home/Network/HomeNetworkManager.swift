@@ -93,18 +93,16 @@ class HomeNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                    completion(error)
+                    completion(nil)
                 case .failure( _):
                     completion(error)
                 }
             }
         }
-        
     }
     
     func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
@@ -248,6 +246,42 @@ class HomeNetworkManager: NetworkManager {
             }
         }.resume()
     }
+    
+    func deleteAccount(completion: @escaping (NetworkResponse?)->()) {
+           router.request(.deleteAccount) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       completion(nil)
+                   case .failure( _):
+                       completion(error)
+                   }
+               }
+           }
+       }
+    
+    func deactivateAccount(completion: @escaping (NetworkResponse?)->()) {
+              router.request(.deactivateAccount) { data, response, error in
+                  if error != nil {
+                      print(error!.rawValue)
+                      completion(error)
+                  }
+                  if let response = response as? HTTPURLResponse {
+                      let result = self.handleNetworkResponse(response)
+                      switch result {
+                      case .success:
+                          completion(nil)
+                      case .failure( _):
+                          completion(error)
+                      }
+                  }
+              }
+          }
 }
 
 extension NSMutableData {

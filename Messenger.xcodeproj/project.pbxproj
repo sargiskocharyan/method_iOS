@@ -56,6 +56,7 @@
 		CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */; };
 		CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */; };
 		CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */; };
+		CDCF9D7B24B601E20070B762 /* EditInformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */; };
 		CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD1755F24851E2A001E804B /* HomePageViewModel.swift */; };
 		CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */; };
 		CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C65F247BC4AE0048A9A1 /* EndPointOptions.swift */; };
@@ -147,6 +148,7 @@
 		CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCodeViewModel.swift; sourceTree = "<group>"; };
 		CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainWrapper.swift; sourceTree = "<group>"; };
 		CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-Extension.swift"; sourceTree = "<group>"; };
+		CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInformationViewModel.swift; sourceTree = "<group>"; };
 		CDD1755F24851E2A001E804B /* HomePageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewModel.swift; sourceTree = "<group>"; };
 		CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		CDD9C65F247BC4AE0048A9A1 /* EndPointOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndPointOptions.swift; sourceTree = "<group>"; };
@@ -299,6 +301,7 @@
 				CDC6A2FE24974C4B0014837F /* ProfileViewModel.swift */,
 				CD35E26D2497AC90003C53AB /* RecentMessagesViewModel.swift */,
 				CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */,
+				CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -732,6 +735,7 @@
 				CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */,
 				CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */,
 				CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */,
+				CDCF9D7B24B601E20070B762 /* EditInformationViewModel.swift in Sources */,
 				F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */,
 				CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */,
 				CD5E713F24865935008D876E /* HomePageViewController.swift in Sources */,

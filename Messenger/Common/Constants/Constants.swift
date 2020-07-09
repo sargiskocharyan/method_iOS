@@ -13,20 +13,22 @@ struct Environment {
 }
 
 struct AUTHUrls {
-    static let MailisExist      = "/mailExists"
-    static let Login            = "/login"
-    static let Register         = "/register"
-    static let UpdateUser       = "/updateuser"
-    static let VerifyToken      = "/tokenExists"
-    static let GetUniversities  = "/university/all"
-    static let GetUserContacts  = "/contacts"
-    static let FindUsers        = "/findusers"
-    static let AddContact       = "/addcontact"
-    static let Logout           = "/user/logout"
-    static let GetChats         = "/chats"
-    static let GetChatMessages  = "/chats/"
-    static let GetUserById      = "/user/"
-    static let GetImage         = "/avatars"
+    static let MailisExist       = "/mailExists"
+    static let Login             = "/login"
+    static let Register          = "/register"
+    static let UpdateUser        = "/updateuser"
+    static let VerifyToken       = "/tokenExists"
+    static let GetUniversities   = "/university/all"
+    static let GetUserContacts   = "/contacts"
+    static let FindUsers         = "/findusers"
+    static let AddContact        = "/addcontact"
+    static let Logout            = "/user/logout"
+    static let GetChats          = "/chats"
+    static let GetChatMessages   = "/chats/"
+    static let GetUserById       = "/user/"
+    static let GetImage          = "/avatars"
+    static let DeleteAccount     = "/users/me"
+    static let DeactivateAccount = "/deactivate/me"
 }
 
 struct AppLangKeys {

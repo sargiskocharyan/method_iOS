@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ContactsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ContactsViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -44,7 +44,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     @objc private func refreshWeatherData(_ sender: Any) {
         getContacts()
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -229,8 +228,11 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                 self.activityIndicator.stopAnimating()
             }
         }
-    }
-    
+    }    
+}
+
+//MARK: Extension
+extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if onContactPage == false {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -293,4 +295,3 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         return 70
     }
 }
-

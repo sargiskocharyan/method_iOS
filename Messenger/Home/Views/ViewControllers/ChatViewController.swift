@@ -9,7 +9,7 @@
 import UIKit
 import SocketIO
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UNUserNotificationCenterDelegate {
+class ChatViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -144,22 +144,17 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
-        
-//        messageInputContainerView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 0).isActive = true
         messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
         messageInputContainerView.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
-        
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
-//        bottomConstraintOnTableView = NSLayoutConstraint(item: tableView!, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -68)
         view.addConstraint(bottomConstraint!)
-//        view.addConstraint(bottomConstraintOnTableView!)
     }
     
     private func setupInputComponents() {
@@ -168,31 +163,19 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
-        
-        
-        //skzbic text fieldin enq dnm, chxarneq!!!
-        
-         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 2).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
         inputTextField.anchor(top: messageInputContainerView.topAnchor, paddingTop: 0, bottom: messageInputContainerView.bottomAnchor, paddingBottom: 0, left: messageInputContainerView.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 30, width: 25, height: 48)
-        
-        
         sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: 0).isActive = true
-        // sendButton.leftAnchor.constraint(equalTo: inputTextField.rightAnchor, constant: 0).isActive = true
         sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        // sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
         sendButton.isUserInteractionEnabled = true
         sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
         25)
-        
-//        messageInputContainerView.addConstraintsWithFormat("H:|-8-[v0][v1(30)]|", views: inputTextField, sendButton)
-//        messageInputContainerView.addConstraintsWithFormat("V:|[v0]|", views: inputTextField)
-//        messageInputContainerView.addConstraintsWithFormat("V:|[v0(30)]|", views: sendButton)
+
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
@@ -203,14 +186,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         ImageCache.shared.getImage(url: avatar ?? "") { (userImage) in
             self.image = userImage
         }
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
     }
     
     func getChatMessages() {
@@ -248,6 +223,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+}
+
+//MARK: Extension
+extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allMessages.count
     }
@@ -286,5 +265,3 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
 }
-
-
