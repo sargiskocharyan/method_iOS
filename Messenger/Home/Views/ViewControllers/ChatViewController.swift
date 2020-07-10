@@ -82,11 +82,13 @@ class ChatViewController: UIViewController {
     }
     
     func setTitle() {
-           if name == nil {
+           if name != nil {
+               self.title = name
+           } else if username != nil {
                self.title = username
            } else {
-               self.title = name
-           }
+            self.title = "Dynamic's user"
+        }
        }
     
     func setObservers() {
@@ -100,7 +102,6 @@ class ChatViewController: UIViewController {
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
             bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
             tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
-//            bottomConstraintOnTableView?.constant = isKeyboardShowing ? -keyboardFrame!.height - 48 : 20
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
@@ -183,7 +184,7 @@ class ChatViewController: UIViewController {
     }
     
     func getImage() {
-        ImageCache.shared.getImage(url: avatar ?? "") { (userImage) in
+        ImageCache.shared.getImage(url: avatar ?? "", id: id!) { (userImage) in
             self.image = userImage
         }
     }

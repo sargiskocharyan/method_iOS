@@ -14,7 +14,7 @@ class RecentMessagesViewModel {
             completion(chats, error)
         }
     }
-    func getuserById(id: String, completion: @escaping (UserById?, NetworkResponse?)->()) {
+    func getuserById(id: String, completion: @escaping (User?, NetworkResponse?)->()) {
         HomeNetworkManager().getuserById(id: id) { (user, error) in
             completion(user, error)
         }

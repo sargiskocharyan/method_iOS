@@ -21,7 +21,7 @@ extension String {
     }
     
     func isValidUsername() -> Bool {
-         let regex = try! NSRegularExpression(pattern:  "^[a-zA-Z0-9](_(?!(\\.|_|-))|\\.(?!(_|-|\\.))|-(?!(\\.|_|-))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$", options: .caseInsensitive)
+         let regex = try! NSRegularExpression(pattern:  "^[a-zA-Z0-9](_(?!(\\.|_|-))|\\.(?!(_|-|\\.))|-(?!(\\.|_|-))|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$", options: .caseInsensitive)
                return regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)) != nil
     }
     

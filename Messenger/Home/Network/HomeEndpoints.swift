@@ -20,6 +20,8 @@ public enum HomeApi {
     case getImage(avatar: String)
     case deleteAccount
     case deactivateAccount
+    case deleteAvatar
+    case editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String)
     
 }
 
@@ -52,6 +54,10 @@ extension HomeApi: EndPointType {
             return AUTHUrls.DeleteAccount
         case .deactivateAccount:
             return AUTHUrls.DeactivateAccount
+        case .deleteAvatar:
+            return AUTHUrls.DeleteAvatar
+        case .editInformation(let name, let lastname, let username, let phoneNumber, let info, let address, let gender, let birthDate):
+            return AUTHUrls.UpdateUser
         }
     }
     
@@ -77,6 +83,10 @@ extension HomeApi: EndPointType {
         case .deleteAccount:
             return .delete
         case .deactivateAccount:
+            return .post
+        case .deleteAvatar:
+            return .delete
+        case .editInformation(_, _, _, _, _, _, _, _):
             return .post
         }
         
@@ -120,6 +130,14 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .deactivateAccount:
             let parameters:Parameters = [:]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteAvatar:
+            let parameters:Parameters = [:]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, address: let address, gender: let gender, birthDate: let birthDate):
+            let parameters:Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "address": address, "gender": gender, "birthday": birthDate]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

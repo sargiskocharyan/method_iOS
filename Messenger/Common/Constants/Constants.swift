@@ -29,6 +29,7 @@ struct AUTHUrls {
     static let GetImage          = "/avatars"
     static let DeleteAccount     = "/users/me"
     static let DeactivateAccount = "/deactivate/me"
+    static let DeleteAvatar      = "/users/me/avatar"
 }
 
 struct AppLangKeys {

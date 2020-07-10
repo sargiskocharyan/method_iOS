@@ -13,6 +13,7 @@ class HomeNetworkManager: NetworkManager {
     
     let router = Router<HomeApi>()
     
+    
     func getUserContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         router.request(.getUserContacts) { data, response, error in
             if error != nil {
@@ -160,7 +161,7 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
-    func getuserById(id: String,  completion: @escaping (UserById?, NetworkResponse?)->()) {
+    func getuserById(id: String,  completion: @escaping (User?, NetworkResponse?)->()) {
         router.request(.getUserById(id: id)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -175,7 +176,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode(UserById.self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(User.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -282,6 +283,53 @@ class HomeNetworkManager: NetworkManager {
                   }
               }
           }
+    
+    func deleteAvatar(completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteAvatar) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(error)
+                }
+            }
+        }
+    }
+    
+    func editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, address: address, gender: gender, birthDate: birthDate)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(UserModel.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+    
 }
 
 extension NSMutableData {

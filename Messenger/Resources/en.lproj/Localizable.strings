@@ -58,17 +58,29 @@
 "close" = "Close";
 "select_gender" = "Select gender";
 "address" = "Address";
-"birdth_date" = "Birdth date(d/m/yy)";
+"birth_date" = "Birth date(d/m/yy)";
 "add_contact" = "Add contact";
 "number" = "Number";
 "correct_birdthdate" = "Correct birth date";
 "incorrect_birdthdate" = "Incorrect birth date";
 "invalid_phone_number" = "Invalid phone number";
-"correct_phone_number" = "Correct phone nuber";
+"correct_phone_number" = "Correct phone number";
 "hide_personal_data" = "Hide personal data";
 "are_you_sure_want_to_delete_your_account_your_infrtion_will_be_lost" = "Are you sure you want to delete your account? Your information will be lost";
 "delete" = "Delete";
 "cancel" = "Cancel";
 "attention" = "Attention";
+"info" = "Info";
+"address:" = "Address:";
+"gender:" = "Gender:";
+"username:" = "Username:";
+"birth_date:" = "Birth date:";
+"male" = "Male";
+"female" = "Female";
+"add_to_contact" = "Add to contact";
+"email:" = "Email:";
+
+
+
 
 

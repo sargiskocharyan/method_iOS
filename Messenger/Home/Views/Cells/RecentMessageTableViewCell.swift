@@ -26,15 +26,17 @@ class RecentMessageTableViewCell: UITableViewCell {
     
     func configure(chat: Chat) {
         userImageView.image = UIImage(named: "noPhoto")
-        ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "") { (image) in
+        ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "", id: chat.id) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
         }
         if chat.name != nil && chat.lastname != nil {
             nameLabel.text = "\(chat.name!) \(chat.lastname!)"
-        } else {
+        } else if chat.username != nil {
             nameLabel.text = chat.username
+        } else {
+            nameLabel.text = "no username"
         }
         if chat.message != nil {
             timeLabel.text = stringToDate(date: chat.message!.createdAt ?? "" )

@@ -52,10 +52,10 @@ class MainTabBarController: UITabBarController {
                 break
             case 4:
                 let profileNC = self.viewControllers![4] as! UINavigationController
-                if profileNC.viewControllers.count < 3 {
+                if profileNC.viewControllers.count < 4 {
                     self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
-                } else if profileNC.viewControllers.count == 3 {
-                    let chatVC = profileNC.viewControllers[2] as! ChatViewController
+                } else if profileNC.viewControllers.count == 4 {
+                    let chatVC = profileNC.viewControllers[3] as! ChatViewController
                     chatVC.getnewMessage(message: message)
                 }
             default:

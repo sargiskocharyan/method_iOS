@@ -13,9 +13,14 @@ struct User: Codable {
     let lastname: String?
     let university: String?
     let _id: String
-    let username: String
+    let username: String?
     let avatarURL: String?
     let email: String?
+    let info: String?
+    let phoneNumber: String?
+    let birthday: String?
+    let address: String?
+    let gender: String?
 }
 
 struct Users: Codable { 
@@ -41,14 +46,14 @@ struct Chat: Codable {
     let id: String
     let name: String?
     let lastname: String?
-    let username: String
+    let username: String?
     var message: Message?
     var recipientAvatarURL: String?
 }
 
 struct UserById: Codable {
     let name: String?
-    let username: String
+    let username: String?
     let lastname: String?
     let id: String
     let avatarURL: String?

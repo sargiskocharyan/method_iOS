@@ -23,6 +23,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var phoneCustomView: CustomTextField!
+    @IBOutlet weak var infoTextView: UITextView!
     
     //MARK: Properties
     let viewModel = RegisterViewModel()
@@ -72,6 +73,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         usernameView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
         phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
+        birdthdateView.textField.addTarget(self, action: #selector(birthDateTextFieldAction), for: .editingChanged)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -120,7 +122,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 university.nameEN == self.universityTextField.text!
                 }?._id
         }
-        if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil {
+        if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil && (phoneCustomView.textField.text?.isValidNumber())! && (birdthdateView.textField.text?.isValidDate())! {
             updateInformationButton.backgroundColor = .clear
             updateInformationButton.titleLabel?.textColor = .white
             updateInformationButton.isEnabled = true
@@ -141,6 +143,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     
     @objc func lastnameTextFieldAction() {
        checkFields()
+    }
+    
+    @objc func birthDateTextFieldAction() {
+        checkFields()
     }
     
     func raiseStackView(_ keyboardFrame: CGRect?, _ isKeyboardShowing: Bool, _ customView: UIView) {
@@ -253,9 +259,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         self.present(alert, animated: true)
     }
     
-//    @objc func deleteAccount() {
-//        print(<#T##items: Any...##Any#>)
-//    }
     
     func addImage(textField: UITextField, imageView: UIImageView) {
         textField.addSubview(imageView)
@@ -325,8 +328,25 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 university.nameEN == self.universityTextField.text!
                 }?._id
         }
-        if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil {
-            viewModel.updateUser(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, university: (id)!) { (user, error) in
+        if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil && (phoneCustomView.textField.text?.isValidNumber())! && (birdthdateView.textField.text?.isValidDate())! {
+//            viewModel.updateUser(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, university: (id)!) { (user, error) in
+//                if error != nil {
+//                    if error == NetworkResponse.authenticationError {
+//                        DispatchQueue.main.async {
+//                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+//                            vc.modalPresentationStyle = .fullScreen
+//                            self.present(vc, animated: true, completion: nil)
+//                        }
+//                    }
+//                } else if user != nil {
+//                    DispatchQueue.main.async {
+//                        let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, address: user?.address, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info)
+//                        UserDataController().populateUserProfile(model: userModel)
+//                        self.navigationController?.popViewController(animated: true)
+//                    }
+//                }
+//            }
+            editInformatioViewModel.editInformation(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, phoneNumber: phoneCustomView.textField.text!, info: infoTextView.text, address: addressView.textField.text!, gender: genderTextField.text!.lowercased(), birthDate: birdthdateView.textField.text!) { (user, error) in
                 if error != nil {
                     if error == NetworkResponse.authenticationError {
                         DispatchQueue.main.async {
@@ -337,8 +357,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else if user != nil {
                     DispatchQueue.main.async {
-                        let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id)
+                        let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, address: user?.address, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info)
                         UserDataController().populateUserProfile(model: userModel)
+                        
                         self.navigationController?.popViewController(animated: true)
                     }
                 }

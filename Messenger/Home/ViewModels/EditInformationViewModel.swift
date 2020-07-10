@@ -20,4 +20,10 @@ class EditInformationViewModel {
                completion(error)
            }
        }
+    
+    func editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        HomeNetworkManager().editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, address: address, gender: gender, birthDate: birthDate) { (user, error) in
+            completion(user, error)
+        }
+    }
 }

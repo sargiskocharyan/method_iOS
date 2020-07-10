@@ -233,7 +233,7 @@ class RecentMessagesViewController: UIViewController {
 }
 
 //MARK: Extension
-extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate {
+extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate, UNUserNotificationCenterDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return chats.count
     }
@@ -262,4 +262,11 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
 }

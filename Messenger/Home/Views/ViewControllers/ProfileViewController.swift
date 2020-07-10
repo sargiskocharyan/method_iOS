@@ -20,6 +20,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var hidePersonalDataLabel: UILabel!
     @IBOutlet weak var switchMode: UISwitch!
     @IBOutlet weak var universityLabel: UILabel!
+    @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
@@ -54,6 +55,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(SharedConfigs.shared.signedUser)
         imagePicker.delegate = self
         setFlagImage()
         setBorder(view: contactView)
@@ -67,6 +69,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         addGestures()
         defineSwithState()
         localizeStrings()
+        MainTabBarController.center.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,7 +84,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setImage() {
-        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "") { (image) in
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -180,27 +183,37 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                 imagePicker.delegate = self
-                 imagePicker.sourceType = .camera;
-                 imagePicker.allowsEditing = false
-                 self.present(imagePicker, animated: true, completion: nil)
-                     }
-             AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
-                 if response {
-                     print("Permission allowed")
-                 } else {
-                     print("Permission don't allowed")
-                 }
+        AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
+        if response {
+            print("Permission allowed")
+        } else {
+            print("Permission don't allowed")
              }
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
-            imagePicker.sourceType = .savedPhotosAlbum
-            imagePicker.allowsEditing = false
-            present(imagePicker, animated: true, completion: nil)
-        }
+         }
+        let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                self.imagePicker.delegate = self
+                self.imagePicker.sourceType = .camera;
+                self.imagePicker.allowsEditing = false
+                self.present(self.imagePicker, animated: true, completion: nil)
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "album".localized(), style: .default, handler: { (_) in
+            if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+                self.imagePicker.sourceType = .savedPhotosAlbum
+                self.imagePicker.allowsEditing = false
+                self.present(self.imagePicker, animated: true, completion: nil)
+            }
+        }))
+        self.present(alert, animated: true)
     }
     
     @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
+        if SharedConfigs.shared.signedUser?.avatarURL == nil {
+            return
+        }
         let imageView = UIImageView(image: userImageView.image)
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
@@ -210,19 +223,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
-        
-        let deleteImageButton = UIButton()
-        imageView.addSubview(deleteImageButton)
-        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
-        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
-        deleteImageButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: 20).isActive = true
-        deleteImageButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        deleteImageButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        deleteImageButton.isUserInteractionEnabled = true
-        deleteImageButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
-        closeButton.setImage(UIImage(named: "trash"), for: .normal)
-        
-        
         if SharedConfigs.shared.mode == "dark" {
             closeButton.setImage(UIImage(named: "white@_"), for: .normal)
             imageView.backgroundColor = .black
@@ -230,6 +230,19 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             closeButton.setImage(UIImage(named: "close"), for: .normal)
             imageView.backgroundColor = .white
         }
+        
+        let deleteImageButton = UIButton()
+        imageView.addSubview(deleteImageButton)
+        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40).isActive = true
+        deleteImageButton.leftAnchor.constraint(equalTo: imageView.leftAnchor, constant: self.view.frame.width / 2 - 15).isActive = true
+        deleteImageButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        deleteImageButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        deleteImageButton.isUserInteractionEnabled = true
+        deleteImageButton.anchor(top: nil, paddingTop: 0, bottom: imageView.bottomAnchor, paddingBottom: 40, left: imageView.leftAnchor, paddingLeft: self.view.frame.width / 2 - 15, right: nil, paddingRight: 0, width: 30, height: 30)
+        deleteImageButton.setImage(UIImage(named: "trash"), for: .normal)
+        deleteImageButton.addTarget(self, action: #selector(deleteAvatar), for: .touchUpInside)
+        
+        
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
         imageView.tag = 3
@@ -244,7 +257,38 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
     }
-
+    
+    @objc func deleteAvatar() {
+        viewModel.deleteAvatar { (error) in
+            if (error != nil) {
+                if error == NetworkResponse.authenticationError {
+                    UserDataController().logOutUser()
+                    DispatchQueue.main.async {
+                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                        let nav = UINavigationController(rootViewController: vc)
+                        let window: UIWindow? = UIApplication.shared.windows[0]
+                        window?.rootViewController = nav
+                        window?.makeKeyAndVisible()
+                    }
+                }
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+                return
+            } else {
+                let signedUser = SharedConfigs.shared.signedUser
+                let user = UserModel(name: signedUser?.name, lastname: signedUser?.lastname, username: signedUser?.username, email: signedUser?.email, university: signedUser?.university, token: signedUser?.token, id: signedUser!.id, avatarURL: nil)
+                UserDataController().populateUserProfile(model: user)
+                DispatchQueue.main.async {
+                    self.dismissFullscreenImage()
+                    self.userImageView.image = UIImage(named: "noPhoto")
+                }
+            }
+        }
+    }
+    
     @objc func dismissFullscreenImage() {
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
@@ -266,7 +310,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.activityIndicator.stopAnimating()
                 }
             } else {
-                ImageCache.shared.getImage(url: avatarURL ?? "") { (image) in
+                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
                         self.activityIndicator.stopAnimating()
@@ -368,6 +412,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let user = SharedConfigs.shared.signedUser
         if user?.name == nil {
             nameLabel.text = "name".localized()
+            nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
             if SharedConfigs.shared.mode == "dark" {
@@ -396,6 +441,17 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
               emailLabel.textColor = .white
             } else {
                 emailLabel.textColor = .black
+            }
+        }
+        if user?.phoneNumber == nil {
+            phoneLabel.text = "number".localized()
+            phoneLabel.textColor = .lightGray
+        } else {
+            phoneLabel.text = user?.phoneNumber
+            if SharedConfigs.shared.mode == "dark" {
+              phoneLabel.textColor = .white
+            } else {
+                phoneLabel.textColor = .black
             }
         }
         if user?.username == nil {
@@ -444,4 +500,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             darkModeView.isHidden = true
         }
     }    
+}
+
+extension ProfileViewController: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+          completionHandler()
+      }
+      
+      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+          completionHandler([.alert, .badge, .sound])
+      }
 }
