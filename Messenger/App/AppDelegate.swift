@@ -11,17 +11,41 @@ import DropDown
 import Firebase
 import CallKit
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
+    
+    class var shared: AppDelegate {
+       return UIApplication.shared.delegate as! AppDelegate
+     }
+    
+//    private func buildMainViewController() -> UIViewController {
+//
+//           let webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+//           let signalClient = self.buildSignalingClient()
+//           let mainViewController = MainViewController(signalClient: signalClient, webRTCClient: webRTCClient)
+//           let navViewController = UINavigationController(rootViewController: mainViewController)
+//           if #available(iOS 11.0, *) {
+//               navViewController.navigationBar.prefersLargeTitles = true
+//           }
+//           else {
+//               navViewController.navigationBar.isTranslucent = false
+//           }
+//           return navViewController
+//       }
+       
+      
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
+
         return true
     }
-
+    
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
@@ -47,9 +71,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         hasVideo: hasVideo,
         completion: completion)
     }
-
-
-
 }
 
 

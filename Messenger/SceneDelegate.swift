@@ -7,9 +7,24 @@
 //
 
 import UIKit
+fileprivate let defaultSignalingServerUrl = URL(string: "wss://192.168.0.105:8080")!
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+// We use Google's public stun servers. For production apps you should deploy your own stun/turn servers.
+fileprivate let defaultIceServers = ["stun:stun.l.google.com:19302",
+                                     "stun:stun1.l.google.com:19302",
+                                     "stun:stun2.l.google.com:19302",
+                                     "stun:stun3.l.google.com:19302",
+                                     "stun:stun4.l.google.com:19302"]
+
+struct Config {
+    let signalingServerUrl: URL
+    let webRTCIceServers: [String]
     
+    static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
+}
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    private let config = Config.default
+
     var window: UIWindow?
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -50,6 +65,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
+     private func buildSignalingClient() -> SignalingClient {
+               
+               // iOS 13 has native websocket support. For iOS 12 or lower we will use 3rd party library.
+    //           let webSocketProvider: WebSocketProvider
+    //
+    //           if #available(iOS 13.0, *) {
+    //               webSocketProvider = NativeWebSocket(url: self.config.signalingServerUrl)
+    //           } else {
+    //               webSocketProvider = StarscreamWebSocket(url: self.config.signalingServerUrl)
+    //           }
+               return SignalingClient()
+           }
+    
     func defineStartController() {
         UserDataController().loadUserInfo()
         if SharedConfigs.shared.signedUser == nil {
@@ -60,7 +88,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         } else {
             DispatchQueue.main.async {
+                let webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+                let signalClient = self.buildSignalingClient()
                 let rootVC = MainTabBarController.instantiate(fromAppStoryboard: .main)
+                let callNC = rootVC.viewControllers![0] as! UINavigationController
+                let callVC = callNC.viewControllers[0] as! CallViewController
+                callVC.signalClient = signalClient
+                callVC.webRTCClient = webRTCClient
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
             }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,6 +34,20 @@
 		CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */; };
 		CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
 		CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */; };
+		CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */; };
+		CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */; };
+		CD3F12D524BC28C900040D8E /* Call.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D424BC28C900040D8E /* Call.swift */; };
+		CD3F12D724BC290200040D8E /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D624BC290200040D8E /* CallManager.swift */; };
+		CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D824BC29EB00040D8E /* Audio.swift */; };
+		CD3F12E824BC558B00040D8E /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E124BC558B00040D8E /* Message.swift */; };
+		CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */; };
+		CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */; };
+		CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */; };
+		CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E624BC558B00040D8E /* WebRTCClient.swift */; };
+		CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E724BC558B00040D8E /* SignalingClient.swift */; };
+		CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EE24BC55C100040D8E /* RTCStates.swift */; };
+		CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EF24BC55C200040D8E /* IceCandidate.swift */; };
+		CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12F024BC55C200040D8E /* SessionDescription.swift */; };
 		CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */; };
 		CD424917248A315E00A38987 /* message.json in Resources */ = {isa = PBXBuildFile; fileRef = CD424916248A315D00A38987 /* message.json */; };
 		CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
@@ -124,6 +138,20 @@
 		CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesViewModel.swift; sourceTree = "<group>"; };
+		CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallTableViewCell.swift; sourceTree = "<group>"; };
+		CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
+		CD3F12D424BC28C900040D8E /* Call.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Call.swift; sourceTree = "<group>"; };
+		CD3F12D624BC290200040D8E /* CallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
+		CD3F12D824BC29EB00040D8E /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
+		CD3F12E124BC558B00040D8E /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
+		CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeWebSocket.swift; sourceTree = "<group>"; };
+		CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarscreamProvider.swift; sourceTree = "<group>"; };
+		CD3F12E624BC558B00040D8E /* WebRTCClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
+		CD3F12E724BC558B00040D8E /* SignalingClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
+		CD3F12EE24BC55C100040D8E /* RTCStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCStates.swift; sourceTree = "<group>"; };
+		CD3F12EF24BC55C200040D8E /* IceCandidate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IceCandidate.swift; sourceTree = "<group>"; };
+		CD3F12F024BC55C200040D8E /* SessionDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDescription.swift; sourceTree = "<group>"; };
 		CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditInformationViewController.swift; sourceTree = "<group>"; };
 		CD424916248A315D00A38987 /* message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = message.json; sourceTree = "<group>"; };
 		CD424918248A335100A38987 /* BeforeLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +241,7 @@
 				CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */,
 				CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */,
 				CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */,
+				CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -229,6 +258,9 @@
 		CD367338247949FA0002E606 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				CD3F12EF24BC55C200040D8E /* IceCandidate.swift */,
+				CD3F12EE24BC55C100040D8E /* RTCStates.swift */,
+				CD3F12F024BC55C200040D8E /* SessionDescription.swift */,
 				CD36733924794A2E0002E606 /* TextField-Extension.swift */,
 				CD36733B24794A730002E606 /* Button-Extension.swift */,
 				CDBCCA61247BE98900115C99 /* String-Extansion.swift */,
@@ -244,12 +276,16 @@
 			children = (
 				CD5E7144248661B2008D876E /* CallViewController.swift */,
 				CD5E713E24865935008D876E /* HomePageViewController.swift */,
+				CD3F12D824BC29EB00040D8E /* Audio.swift */,
 				CD3713BA248674BA0088A0CC /* ProfileViewController.swift */,
 				CD352E352488F71900747E32 /* ContactsViewController.swift */,
+				CD3F12D424BC28C900040D8E /* Call.swift */,
+				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */,
 				CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */,
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
+				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -271,6 +307,28 @@
 				CDA56E6E2488E70A0027AA4E /* ResponseModel */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		CD3F12E024BC558B00040D8E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CD3F12E124BC558B00040D8E /* Message.swift */,
+				CD3F12E624BC558B00040D8E /* WebRTCClient.swift */,
+				CD3F12E724BC558B00040D8E /* SignalingClient.swift */,
+				CD3F12E224BC558B00040D8E /* WebSocketProvider */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CD3F12E224BC558B00040D8E /* WebSocketProvider */ = {
+			isa = PBXGroup;
+			children = (
+				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
+				CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */,
+				CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */,
+				CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */,
+			);
+			path = WebSocketProvider;
 			sourceTree = "<group>";
 		};
 		CD5E713D2486590C008D876E /* Home */ = {
@@ -335,6 +393,7 @@
 		CDBE8DEF2476744C0049F971 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
+				CD3F12E024BC558B00040D8E /* Services */,
 				CDD9C651247BC3090048A9A1 /* Networking */,
 				CD5E713D2486590C008D876E /* Home */,
 				CDD9C680247BC92F0048A9A1 /* Common */,
@@ -537,7 +596,6 @@
 			children = (
 				CDD9C684247BC9880048A9A1 /* SharedConfigs */,
 				CDD9C681247BC93B0048A9A1 /* Constants */,
-				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
 				CDF0776724A9F49800B1DAD7 /* ImageCache.swift */,
 				CDB42DB924B34487005EAA51 /* PhoneValidator.swift */,
 			);
@@ -612,7 +670,7 @@
 				};
 			};
 			buildConfigurationList = CDBE8DE82476744C0049F971 /* Build configuration list for PBXProject "Messenger" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 11.4";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -709,29 +767,37 @@
 				CDD9C670247BC4AE0048A9A1 /* URLParameterEncoding.swift in Sources */,
 				CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */,
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
+				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
+				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
 				CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */,
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CDD9C67F247BC88C0048A9A1 /* ResponseModels.swift in Sources */,
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
+				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
 				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
 				CDD9C673247BC4AE0048A9A1 /* HTTPTask.swift in Sources */,
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
+				CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */,
 				CD355E46247FAEF90049517F /* Data-Extension.swift in Sources */,
 				CD35E268249797EC003C53AB /* RecentMessagesViewController.swift in Sources */,
 				CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */,
 				CDD9C674247BC4AE0048A9A1 /* HTTPMethod.swift in Sources */,
 				CD36733224790D430002E606 /* BottomShapeView.swift in Sources */,
+				CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */,
 				CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */,
 				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
+				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
+				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
 				CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */,
 				CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */,
 				CD3713C2248682710088A0CC /* DarkModeTableViewCell.swift in Sources */,
 				CDD9C67D247BC88C0048A9A1 /* Endpoints.swift in Sources */,
+				CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */,
 				CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */,
 				CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */,
 				CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */,
@@ -746,6 +812,7 @@
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
 				CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */,
+				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
@@ -753,11 +820,16 @@
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
+				CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */,
 				CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */,
+				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
+				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
+				CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
+				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,
 				CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */,
 				CDD9C677247BC4AE0048A9A1 /* EndPointType.swift in Sources */,
@@ -931,6 +1003,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CYZGM63QL7;
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -951,6 +1025,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CYZGM63QL7;
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

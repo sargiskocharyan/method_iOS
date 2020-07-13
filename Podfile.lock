@@ -59,6 +59,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (6.6.0):
     - GoogleUtilities/Logger
+  - GoogleWebRTC (1.1.29400)
   - nanopb (1.30905.0):
     - nanopb/decode (= 1.30905.0)
     - nanopb/encode (= 1.30905.0)
@@ -69,6 +70,7 @@ PODS:
 DEPENDENCIES:
   - DropDown
   - Firebase/Analytics
+  - GoogleWebRTC (~> 1.1)
 
 SPEC REPOS:
   trunk:
@@ -82,6 +84,7 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
     - GoogleUtilities
+    - GoogleWebRTC
     - nanopb
     - PromisesObjC
 
@@ -96,9 +99,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
   GoogleDataTransportCCTSupport: 489c1265d2c85b68187a83a911913d190012158d
   GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
+  GoogleWebRTC: cfb83bc346435a17fe06bb05f04ad826b858a7fb
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
 
-PODFILE CHECKSUM: 061abbe29ce9813854dcd6bd2fbc7d6b98e58761
+PODFILE CHECKSUM: 527282b3816a0ff6c4b10c8469d988c27307b18e
 
 COCOAPODS: 1.9.3
