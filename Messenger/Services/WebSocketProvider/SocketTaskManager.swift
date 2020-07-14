@@ -10,10 +10,15 @@ import Foundation
 import SocketIO
 import WebRTC
 
+protocol SocketIODelegate: class {
+    func receiveData(sdp: String)
+    func receiveCandidate(remoteCandidate: RTCIceCandidate)
+}
+
 class SocketTaskManager {
     
     static let shared = SocketTaskManager()
-    
+    weak var delegate: SocketIODelegate?
     var socket: SocketIOClient {
         return manager.defaultSocket
     }
@@ -40,8 +45,8 @@ class SocketTaskManager {
         }
     }
     
-    func send(data: Data) {
-        self.socket.emit("send", data) {
+    func send(data: Dictionary<String, Any>, roomName: String) {
+        self.socket.emit("candidates", roomName, data) {
             print("send data")
         }
     }
@@ -92,13 +97,23 @@ class SocketTaskManager {
     
     func answer(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
             socket.on("answer") { (dataArray, socketAck) in
-                let data = dataArray[0] as! Dictionary<String, String>
                 
+                let data = dataArray[0] as! Dictionary<String, String>
+                self.delegate?.receiveData(sdp: data["sdp"] ?? "")
     //                      let sender = data["sender"] as! NSDictionary
     //                      let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
                 completionHandler(data)
             }
         }
+    
+    func getCanditantes(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
+               socket.on("candidates") { (dataArray, socketAck) in
+                let data = dataArray[0] as! Dictionary<String, Any>
+                let json: Dictionary = ["candidate": data["candidate"] ?? "", "sdpMid": data["sdpMid"] ?? "", "sdpMLineIndex": data["sdpMLineIndex"] ?? ""] as [String : Any]
+                self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as! String))
+                completionHandler(json)
+               }
+           }
     
     func send(message: String, id: String) {
         socket.emit("sendMessage", message, id) 

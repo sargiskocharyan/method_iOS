@@ -53,8 +53,7 @@ final class WebRTCClient: NSObject {
         // gatherContinually will let WebRTC to listen to any network changes and send any new candidates to the other client
         config.continualGatheringPolicy = .gatherContinually
         
-        let constraints = RTCMediaConstraints(mandatoryConstraints: nil,
-                                              optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue])
+        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue])
         self.peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
         
         super.init()
@@ -65,13 +64,11 @@ final class WebRTCClient: NSObject {
     
     // MARK: Signaling
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
         self.peerConnection.offer(for: constrains) { (sdp, error) in
             guard let sdp = sdp else {
                 return
             }
-            
             self.peerConnection.setLocalDescription(sdp, completionHandler: { (error) in
                 completion(sdp)
             })
@@ -79,13 +76,11 @@ final class WebRTCClient: NSObject {
     }
     
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void)  {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
         self.peerConnection.answer(for: constrains) { (sdp, error) in
             guard let sdp = sdp else {
                 return
             }
-            
             self.peerConnection.setLocalDescription(sdp, completionHandler: { (error) in
                 completion(sdp)
             })

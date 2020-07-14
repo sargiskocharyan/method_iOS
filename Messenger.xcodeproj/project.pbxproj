@@ -72,6 +72,7 @@
 		CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */; };
 		CDCF9D7B24B601E20070B762 /* EditInformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */; };
 		CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD1755F24851E2A001E804B /* HomePageViewModel.swift */; };
+		CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD864A624BDA47700E33E07 /* VideoViewController.swift */; };
 		CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */; };
 		CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C65F247BC4AE0048A9A1 /* EndPointOptions.swift */; };
 		CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C661247BC4AE0048A9A1 /* NetworkManager.swift */; };
@@ -178,6 +179,7 @@
 		CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-Extension.swift"; sourceTree = "<group>"; };
 		CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInformationViewModel.swift; sourceTree = "<group>"; };
 		CDD1755F24851E2A001E804B /* HomePageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewModel.swift; sourceTree = "<group>"; };
+		CDD864A624BDA47700E33E07 /* VideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
 		CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		CDD9C65F247BC4AE0048A9A1 /* EndPointOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndPointOptions.swift; sourceTree = "<group>"; };
 		CDD9C661247BC4AE0048A9A1 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
 				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
+				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -817,6 +820,7 @@
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallViewController.swift in Sources */,
+				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
@@ -1006,7 +1010,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1028,7 +1032,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

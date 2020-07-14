@@ -26,10 +26,10 @@ final class SignalingClient {
     private let socketTaskManager = SocketTaskManager.shared
     weak var delegate: SignalClientDelegate?
     
-//    init(webSocket: SocketTaskManager) {
-//        self.socketTaskManager = webSocket
-//    }
-//
+    init() {
+        self.socketTaskManager.delegate = self
+    }
+
     func connect() {
         self.socketTaskManager.connect()
     }
@@ -50,11 +50,15 @@ final class SignalingClient {
         self.socketTaskManager.offer(roomName: roomName, payload: json)
     }
     
-    func send(candidate rtcIceCandidate: RTCIceCandidate) {
-        let message = MessageData.candidate(IceCandidate(from: rtcIceCandidate))
+    func send(candidate rtcIceCandidate: RTCIceCandidate, roomName: String) {
+//        let message = MessageData.candidate(IceCandidate(from: rtcIceCandidate))
+        print(rtcIceCandidate)
+        let json: Dictionary = ["candidate": rtcIceCandidate.sdp, "sdpMid": rtcIceCandidate.sdpMid, "sdpMLineIndex": rtcIceCandidate.sdpMLineIndex] as [String : Any]
         do {
-            let dataMessage = try self.encoder.encode(message)
-            self.socketTaskManager.send(data: dataMessage)
+//            let dataMessage = try self.encoder.encode(message)
+//            print(String(data: dataMessage, encoding: .utf8))
+            print(json)
+            self.socketTaskManager.send(data: json, roomName: roomName)
         }
         catch {
             debugPrint("Warning: Could not encode candidate: \(error)")
@@ -62,7 +66,15 @@ final class SignalingClient {
     }
 }
 
-
+extension SignalingClient: SocketIODelegate {
+    func receiveCandidate(remoteCandidate: RTCIceCandidate) {
+        self.delegate?.signalClient(self, didReceiveCandidate: remoteCandidate)
+    }
+    
+    func receiveData(sdp: String) {
+        self.delegate?.signalClient(self, didReceiveRemoteSdp: RTCSessionDescription(type: .answer, sdp: sdp))
+    }
+}
 //extension SignalingClient: WebSocketProviderDelegate {
 //    func webSocketDidConnect(_ webSocket: WebSocketProvider) {
 //        self.delegate?.signalClientDidConnect(self)

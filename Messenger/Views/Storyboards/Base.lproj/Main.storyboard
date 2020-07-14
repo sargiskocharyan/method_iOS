@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="lRq-Na-nvw">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="lRq-Na-nvw">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -676,6 +676,38 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EKX-Iv-pe8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-355.07246376811599" y="-1481.25"/>
+        </scene>
+        <!--Video View Controller-->
+        <scene sceneID="chD-se-VhI">
+            <objects>
+                <viewController storyboardIdentifier="VideoViewController" id="LxJ-sX-FLD" customClass="VideoViewController" customModule="Messenger" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="QtG-fd-yRl">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aRg-AX-a1e">
+                                <rect key="frame" x="150" y="420" width="150" height="128"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="KpV-BV-a0t"/>
+                                    <constraint firstAttribute="height" constant="128" id="tKU-cV-PXE"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="xGJ-da-agX" firstAttribute="bottom" secondItem="aRg-AX-a1e" secondAttribute="bottom" constant="20" id="jUI-E7-o8W"/>
+                            <constraint firstItem="xGJ-da-agX" firstAttribute="trailing" secondItem="aRg-AX-a1e" secondAttribute="trailing" constant="20" id="yOR-jj-1ny"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="xGJ-da-agX"/>
+                    </view>
+                    <connections>
+                        <outlet property="ourView" destination="aRg-AX-a1e" id="wo9-h1-2Gf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JeD-kD-I5A" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1155" y="-399.29577464788736"/>
         </scene>
         <!--Call View Controller-->
         <scene sceneID="Lja-Vl-KhK">
