@@ -53,6 +53,7 @@ class ProviderDelegate: NSObject {
   }()
   
   func reportIncomingCall(
+    id: String,
     uuid: UUID,
     handle: String,
     hasVideo: Bool = false,
@@ -64,7 +65,7 @@ class ProviderDelegate: NSObject {
     
     provider.reportNewIncomingCall(with: uuid, update: update) { error in
       if error == nil {
-        let call = Call(uuid: uuid, handle: handle)
+        let call = Call(id: id, uuid: uuid, handle: handle)
         self.callManager.add(call: call)
       }
       
@@ -96,6 +97,7 @@ extension ProviderDelegate: CXProviderDelegate {
     call.answer()
 
     action.fulfill()
+    SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
   }
   
   func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
@@ -115,6 +117,7 @@ extension ProviderDelegate: CXProviderDelegate {
     action.fulfill()
 
     callManager.remove(call: call)
+    SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
   }
   
   func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
@@ -132,7 +135,7 @@ extension ProviderDelegate: CXProviderDelegate {
   }
   
   func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
-    let call = Call(uuid: action.callUUID, outgoing: true,
+    let call = Call(id: "", uuid: action.callUUID, outgoing: true,
                     handle: action.handle.value)
 
     configureAudioSession()

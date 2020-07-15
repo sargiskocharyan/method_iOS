@@ -27,7 +27,7 @@ final class WebRTCClient: NSObject {
     }()
     
     weak var delegate: WebRTCClientDelegate?
-    private let peerConnection: RTCPeerConnection
+    let peerConnection: RTCPeerConnection
     private let rtcAudioSession =  RTCAudioSession.sharedInstance()
     private let audioQueue = DispatchQueue(label: "audio")
     private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
@@ -77,7 +77,12 @@ final class WebRTCClient: NSObject {
     
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void)  {
         let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
+        
         self.peerConnection.answer(for: constrains) { (sdp, error) in
+            print("errooooooooo44111112121212121212------------------------------------------------------")
+            print(error?.localizedDescription)
+            print("sdp348753478567fhdfjdhgfhdsfgdhf------------------------------------------------------")
+            print(sdp)
             guard let sdp = sdp else {
                 return
             }

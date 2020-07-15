@@ -64,6 +64,11 @@ final class SignalingClient {
             debugPrint("Warning: Could not encode candidate: \(error)")
         }
     }
+    
+    func sendAnswer(roomName: String, sdp: RTCSessionDescription) {
+        let json = ["type": "answer", "sdp": sdp.sdp]
+        SocketTaskManager.shared.answer(roomName: roomName, answer: json)
+    }
 }
 
 extension SignalingClient: SocketIODelegate {

@@ -47,27 +47,49 @@ class CallViewController: UIViewController, UITableViewDelegate, UITableViewData
         callManager = AppDelegate.shared.callManager
         tableView.delegate = self
         tableView.dataSource = self
-        SocketTaskManager.shared.callAccepted { (callAccepted, roomName) in
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+                       self.signalClient = self.buildSignalingClient()
+                       self.webRTCClient?.delegate = self
+                       self.signalClient?.delegate = self
+                       self.webRTCClient?.speakerOn()
+        SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
             print("callAccepted")
             print(callAccepted, roomName)
             self.roomName = roomName
             if callAccepted {
-                self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-                self.signalClient = self.buildSignalingClient()
-                self.webRTCClient?.delegate = self
-                self.signalClient?.delegate = self
                 self.webRTCClient?.offer { (sdp) in
                     print(sdp)
                     self.signalClient!.sendOffer(sdp: sdp, roomName: roomName)
+                    DispatchQueue.main.async {
+                        let vc = VideoViewController.instantiate(fromAppStoryboard: .main)
+                        vc.webRTCClient = self.webRTCClient
+                        self.navigationController?.present(vc, animated: true, completion: nil)
+                    }
                 }
             }
         }
         
-        SocketTaskManager.shared.answer { (data) in
+        SocketTaskManager.shared.handleAnswer { (data) in
             self.webRTCClient?.answer { (localSdp) in
                 self.hasLocalSdp = true
-                self.signalClient!.sendOffer(sdp: localSdp, roomName: self.roomName ?? "")
+                //self.signalClient!.sendOffer(sdp: localSdp, roomName: self.roomName ?? "")//Ero
             }
+        }
+        
+        SocketTaskManager.shared.handleCall { (id) in
+            let backgroundTaskIdentifier =
+              UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+              AppDelegate.shared.displayIncomingCall(
+                id: id, uuid: UUID(),
+                handle: "araa ekeq e!!!",
+                hasVideo: true
+              ) { _ in
+                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+              }
+            }
+//            SocketTaskManager.shared.callAccepted(id: id, isAccepted: true)
         }
         
         SocketTaskManager.shared.getCanditantes { (data) in
@@ -75,6 +97,20 @@ class CallViewController: UIViewController, UITableViewDelegate, UITableViewData
             
         }
         
+        SocketTaskManager.shared.handleOffer { (roomName, offer) in
+            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+                print(error?.localizedDescription)
+            })
+            self.webRTCClient?.answer { (localSdp) in
+                self.hasLocalSdp = true
+                self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
+                DispatchQueue.main.async {
+                    let vc = VideoViewController.instantiate(fromAppStoryboard: .main)
+                    vc.webRTCClient = self.webRTCClient
+                    self.navigationController?.present(vc, animated: true, completion: nil)
+                }
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -89,18 +125,7 @@ class CallViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        callManager.startCall(handle: "123", videoEnabled: true)
-        
         SocketTaskManager.shared.call(id: "5f05baa520d4310017ebc9bd")
-        let vc = VideoViewController.instantiate(fromAppStoryboard: .main)
-        vc.webRTCClient = webRTCClient
-        self.navigationController?.present(vc, animated: true, completion: nil)
-        
-//        self.webRTCClient!.offer { (sdp) in
-//            print(sdp)
-//            self.signalClient!.send(sdp: sdp)
-////            self.webRTCClient!.sendData(Data(base64Encoded: "mi string", options: .ignoreUnknownCharacters)!)
-//        }
     }
     
     private func buildSignalingClient() -> SignalingClient {
@@ -132,9 +157,11 @@ extension  CallViewController: SignalClientDelegate {
     func signalClient(_ signalClient: SignalingClient, didReceiveRemoteSdp sdp: RTCSessionDescription) {
         print("Received remote sdp")
         self.webRTCClient?.set(remoteSdp: sdp) { (error) in
+            print(sdp)
+            print(error?.localizedDescription ?? "error chka!!!!!!!!!!!")
             self.hasRemoteSdp = true
         }
-    }//nayel!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    } //nayel!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     func signalClient(_ signalClient: SignalingClient, didReceiveCandidate candidate: RTCIceCandidate) {
         print("Received remote candidate")

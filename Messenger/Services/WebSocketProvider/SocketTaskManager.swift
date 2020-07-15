@@ -57,7 +57,33 @@ class SocketTaskManager {
         }
     }
     
-    func callAccepted(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
+    func callAccepted(id: String, isAccepted: Bool) {
+        socket.emit("callAccepted", id, isAccepted) {
+            print("called")
+        }
+    }
+    
+     func handleCall(completionHandler: @escaping (_ id: String) -> Void) {
+            socket.on("call") { (dataArray, socketAck) in
+                completionHandler(dataArray[0] as! String)
+            }
+        }
+    
+    func handleOffer(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
+        socket.on("offer") { (dataArray, socketAck) in
+            let dic = dataArray[1] as! Dictionary<String, String>
+            self.delegate?.receiveData(sdp: dic["sdp"] ?? "")
+            completionHandler(dataArray[0] as! String, dataArray[1] as! Dictionary<String, String>)
+        }
+    }
+    
+    func answer(roomName: String, answer: Dictionary<String, String>) {
+        socket.emit("answer", roomName, answer) {
+            print("answered")
+        }
+    }
+    
+    func handleCallAccepted(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
         socket.on("callAccepted") { (dataArray, socketAck) in
 //                      let sender = data["sender"] as! NSDictionary
 //                      let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
@@ -95,7 +121,7 @@ class SocketTaskManager {
         socket.emit("offer", roomName, payload)
     }
     
-    func answer(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
+    func handleAnswer(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
             socket.on("answer") { (dataArray, socketAck) in
                 
                 let data = dataArray[0] as! Dictionary<String, String>

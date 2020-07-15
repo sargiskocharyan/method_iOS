@@ -41,6 +41,7 @@ enum ConnectedState {
 }
 
 class Call {
+    let id: String
   let uuid: UUID
   let outgoing: Bool
   let handle: String
@@ -60,8 +61,9 @@ class Call {
   var stateChanged: (() -> Void)?
   var connectedStateChanged: (() -> Void)?
   
-  init(uuid: UUID, outgoing: Bool = false, handle: String) {
+    init(id: String, uuid: UUID, outgoing: Bool = false, handle: String) {
     self.uuid = uuid
+        self.id = id
     self.outgoing = outgoing
     self.handle = handle
   }

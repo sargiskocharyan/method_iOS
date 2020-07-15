@@ -60,13 +60,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func displayIncomingCall(
+        id: String,
       uuid: UUID,
       handle: String,
       hasVideo: Bool = false,
       completion: ((Error?) -> Void)?
     ) {
       providerDelegate.reportIncomingCall(
-        uuid: uuid,
+        id: id, uuid: uuid,
         handle: handle,
         hasVideo: hasVideo,
         completion: completion)
