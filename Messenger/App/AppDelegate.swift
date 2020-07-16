@@ -10,7 +10,7 @@ import UIKit
 import DropDown
 import Firebase
 import CallKit
-
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,21 +21,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        return UIApplication.shared.delegate as! AppDelegate
      }
     
-//    private func buildMainViewController() -> UIViewController {
-//
-//           let webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-//           let signalClient = self.buildSignalingClient()
-//           let mainViewController = MainViewController(signalClient: signalClient, webRTCClient: webRTCClient)
-//           let navViewController = UINavigationController(rootViewController: mainViewController)
-//           if #available(iOS 11.0, *) {
-//               navViewController.navigationBar.prefersLargeTitles = true
-//           }
-//           else {
-//               navViewController.navigationBar.isTranslucent = false
-//           }
-//           return navViewController
-//       }
-       
+    lazy var persistentContainer: NSPersistentContainer = {
+
+        let container = NSPersistentContainer(name: "CallModel")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error {
+
+                fatalError("Unresolved error, \((error as NSError).userInfo)")
+            }
+        })
+        return container
+    }()
+
+       lazy var managedObjectContext : NSManagedObjectContext? = {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+           if let managedObjectContext = appDelegate.managedObjectContext {
+               return managedObjectContext
+           }
+           else {
+               return nil
+           }
+       }()
       
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -58,6 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
+    
+    
     
     func displayIncomingCall(
         id: String,

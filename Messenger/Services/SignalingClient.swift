@@ -51,12 +51,9 @@ final class SignalingClient {
     }
     
     func send(candidate rtcIceCandidate: RTCIceCandidate, roomName: String) {
-//        let message = MessageData.candidate(IceCandidate(from: rtcIceCandidate))
         print(rtcIceCandidate)
         let json: Dictionary = ["candidate": rtcIceCandidate.sdp, "sdpMid": rtcIceCandidate.sdpMid, "sdpMLineIndex": rtcIceCandidate.sdpMLineIndex] as [String : Any]
         do {
-//            let dataMessage = try self.encoder.encode(message)
-//            print(String(data: dataMessage, encoding: .utf8))
             print(json)
             self.socketTaskManager.send(data: json, roomName: roomName)
         }
@@ -80,38 +77,3 @@ extension SignalingClient: SocketIODelegate {
         self.delegate?.signalClient(self, didReceiveRemoteSdp: RTCSessionDescription(type: .answer, sdp: sdp))
     }
 }
-//extension SignalingClient: WebSocketProviderDelegate {
-//    func webSocketDidConnect(_ webSocket: WebSocketProvider) {
-//        self.delegate?.signalClientDidConnect(self)
-//    }
-//    
-//    func webSocketDidDisconnect(_ webSocket: WebSocketProvider) {
-//        self.delegate?.signalClientDidDisconnect(self)
-//        
-//        // try to reconnect every two seconds
-//        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-//            debugPrint("Trying to reconnect to signaling server...")
-//            self.webSocket.connect()
-//        }
-//    }
-//    
-//    func webSocket(_ webSocket: WebSocketProvider, didReceiveData data: Data) {
-//        let message: MessageData
-//        do {
-//            message = try self.decoder.decode(MessageData.self, from: data)
-//        }
-//        catch {
-//            debugPrint("Warning: Could not decode incoming message: \(error)")
-//            return
-//        }
-//        print(111)
-//        print(message)
-//        switch message {
-//        case .candidate(let iceCandidate):
-//            self.delegate?.signalClient(self, didReceiveCandidate: iceCandidate.rtcIceCandidate)
-//        case .sdp(let sessionDescription):
-//            self.delegate?.signalClient(self, didReceiveRemoteSdp: sessionDescription.rtcSessionDescription)
-//        }
-//
-//    }
-//}

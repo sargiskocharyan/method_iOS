@@ -18,6 +18,7 @@
 		CD35E26C2497A6E2003C53AB /* congr.json in Resources */ = {isa = PBXBuildFile; fileRef = CD35E26B2497A6E2003C53AB /* congr.json */; };
 		CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E26D2497AC90003C53AB /* RecentMessagesViewModel.swift */; };
 		CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD361E1F248B8DFA00BCF154 /* Localizable.strings */; };
+		CD36536824C05C4800432264 /* CallModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CD36536624C05C4800432264 /* CallModel.xcdatamodeld */; };
 		CD36733224790D430002E606 /* BottomShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD36733124790D430002E606 /* BottomShapeView.swift */; };
 		CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD36733324793BE90002E606 /* ConfirmCodeViewController.swift */; };
 		CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3673352479495F0002E606 /* CongratulationsViewController.swift */; };
@@ -122,6 +123,7 @@
 		CD361E1E248B8DFA00BCF154 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CD361E20248B8E0000BCF154 /* hy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hy; path = hy.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CD361E21248B8E0100BCF154 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CD36536724C05C4800432264 /* CallModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CallModel.xcdatamodel; sourceTree = "<group>"; };
 		CD36733124790D430002E606 /* BottomShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomShapeView.swift; sourceTree = "<group>"; };
 		CD36733324793BE90002E606 /* ConfirmCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCodeViewController.swift; sourceTree = "<group>"; };
 		CD3673352479495F0002E606 /* CongratulationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CongratulationsViewController.swift; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 		CDBE8DEF2476744C0049F971 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
+				CD36536624C05C4800432264 /* CallModel.xcdatamodeld */,
 				CD3F12E024BC558B00040D8E /* Services */,
 				CDD9C651247BC3090048A9A1 /* Networking */,
 				CD5E713D2486590C008D876E /* Home */,
@@ -781,6 +784,7 @@
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
 				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
+				CD36536824C05C4800432264 /* CallModel.xcdatamodeld in Sources */,
 				CDD9C673247BC4AE0048A9A1 /* HTTPTask.swift in Sources */,
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
 				CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */,
@@ -1015,7 +1019,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.esiminch.app;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1037,7 +1041,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.esiminch.app;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1111,6 +1115,19 @@
 			productName = CryptoSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		CD36536624C05C4800432264 /* CallModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CD36536724C05C4800432264 /* CallModel.xcdatamodel */,
+			);
+			currentVersion = CD36536724C05C4800432264 /* CallModel.xcdatamodel */;
+			path = CallModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CDBE8DE52476744C0049F971 /* Project object */;
 }

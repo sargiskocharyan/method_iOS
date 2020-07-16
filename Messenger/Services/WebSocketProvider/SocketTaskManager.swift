@@ -45,10 +45,12 @@ class SocketTaskManager {
         }
     }
     
+    func leaveRoom(roomName: String) {
+        self.socket.emit("leaveRoom", roomName)
+    }
+    
     func send(data: Dictionary<String, Any>, roomName: String) {
-        self.socket.emit("candidates", roomName, data) {
-            print("send data")
-        }
+        self.socket.emit("candidates", roomName, data)
     }
     
     func call(id: String) {
@@ -59,7 +61,7 @@ class SocketTaskManager {
     
     func callAccepted(id: String, isAccepted: Bool) {
         socket.emit("callAccepted", id, isAccepted) {
-            print("called")
+            print("callAccepted")
         }
     }
     
