@@ -78,13 +78,15 @@ class ChatViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func sendMessage() {
-        socketTaskManager.send(message: inputTextField.text!, id: id!)
+        if inputTextField.text != "" {
+            socketTaskManager.send(message: inputTextField.text!, id: id!)
+        }
     }
     
     func setTitle() {
-           if name != nil {
-               self.title = name
-           } else if username != nil {
+        if name != nil {
+            self.title = name
+        } else if username != nil {
                self.title = username
            } else {
             self.title = "Dynamic's user"

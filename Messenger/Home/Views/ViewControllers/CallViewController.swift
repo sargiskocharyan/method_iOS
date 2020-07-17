@@ -42,16 +42,16 @@ class CallViewController: UIViewController {
     private var hasLocalSdp: Bool = false
     private var roomName: String?
     var viewModel = RecentMessagesViewModel()
-    let vc = VideoViewController.instantiate(fromAppStoryboard: .main)
+    var vc: VideoViewController?
     var calls: [NSManagedObject] = []
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK: Lifecycles
+    //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        vc = VideoViewController.instantiate(fromAppStoryboard: .main)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         guard let appDelegate =
@@ -111,9 +111,9 @@ class CallViewController: UIViewController {
             if callAccepted {
                 self.webRTCClient?.offer { (sdp) in
                     print(sdp)
-                    self.vc.roomName = roomName
+                    self.vc!.handleAnswer()
+                    self.vc!.roomName = roomName
                     self.signalClient!.sendOffer(sdp: sdp, roomName: roomName)
-                    self.vc.handleAnswer()
                 }
             }
         }
@@ -179,17 +179,18 @@ class CallViewController: UIViewController {
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.roomName = roomName
-            self.vc.handleOffer(roomName: roomName)
+            self.vc?.handleOffer(roomName: roomName)
+            DispatchQueue.main.async {
+                           self.vc?.webRTCClient = self.webRTCClient
+                           self.navigationController?.pushViewController(self.vc!, animated: true)
+                       }
             self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription)
             })
+           
             self.webRTCClient?.answer { (localSdp) in
                 self.hasLocalSdp = true
                 self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
-                DispatchQueue.main.async {
-                    self.vc.webRTCClient = self.webRTCClient
-                    self.navigationController?.pushViewController(self.vc, animated: true)
-                }
             }
         }
     }
@@ -339,8 +340,8 @@ extension CallViewController: UITableViewDelegate, UITableViewDataSource {
         save(name: call.value(forKey: "name") as! String, lastname: call.value(forKey: "lastname") as! String, username: call.value(forKey: "username") as! String, id: call.value(forKey: "id") as! String, time: Date(), image: call.value(forKey: "image") as! String, isHandleCall: false)
         self.sort()
         tableView.reloadData()
-        vc.webRTCClient = self.webRTCClient
-        self.vc.startCall()
-        self.navigationController?.pushViewController(vc, animated: true)
+        vc?.webRTCClient = self.webRTCClient
+        self.vc?.startCall()
+        self.navigationController?.pushViewController(vc!, animated: true)
     }
 }

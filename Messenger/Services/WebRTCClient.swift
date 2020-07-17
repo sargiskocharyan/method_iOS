@@ -68,6 +68,7 @@ final class WebRTCClient: NSObject {
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
         let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
         self.peerConnection?.offer(for: constrains) { (sdp, error) in
+            print(error)
             guard let sdp = sdp else {
                 return
             }
@@ -178,6 +179,7 @@ final class WebRTCClient: NSObject {
         stream?.removeVideoTrack(self.localVideoTrack!)
         stream?.removeVideoTrack(self.remoteVideoTrack!)
         stream?.removeAudioTrack(audioTrackGlobal!)
+        
     }
     
     private func createVideoTrack() -> RTCVideoTrack {

@@ -74,7 +74,7 @@ class VideoViewController: UIViewController {
     var roomName: String?
     var webRTCClient: WebRTCClient?
     @IBOutlet weak var ourView: UIView!
-    
+    let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -82,47 +82,61 @@ class VideoViewController: UIViewController {
     
     @IBAction func endCallButton(_ sender: Any) {
         if roomName != nil {
-            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-//            webRTCClient?.removeThracks()
-////            webRTCClient?.peerConnection.remove((webRTCClient?.stream)!)
-//            webRTCClient?.peerConnection?.close()
+//            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
+            webRTCClient?.removeThracks()
+          
+//            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
+            webRTCClient?.peerConnection?.close()
         }
-        webRTCClient?.peerConnection = nil
+        for call in callManager.calls {
+            callManager.end(call: call)
+        }
+        callManager.removeAllCalls()
+        // self.view.backgroundColor = .white
+//        webRTCClient?.peerConnection = nil
      //   self.navigationController?.popViewController(animated: true)
-        
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
        // navigationController?.navigationBar.isHidden = true
+        self.webRTCClient?.delegate = self
+         #if arch(arm64)
+         // Using metal (arm64 only)
+         let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+         let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+         
+         localRenderer.videoContentMode = .scaleAspectFill
+         remoteRenderer.videoContentMode = .scaleAspectFill
+         
+         #else
+         // Using OpenGLES for the rest
+         let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+         let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
+         #endif
+         remoteRenderer.tag = 10
+         localRenderer.tag = 11
+         self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
+         self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
+        
+         if let localVideoView = self.ourView {
+             self.embedView(localRenderer, into: localVideoView)
+         }
+         self.embedView(remoteRenderer, into: self.view)
+         self.view.sendSubviewToBack(remoteRenderer)
        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("ROOMNAME \(roomName)")
-        self.webRTCClient?.delegate = self
-        #if arch(arm64)
-        // Using metal (arm64 only)
-        let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
         
-        localRenderer.videoContentMode = .scaleAspectFill
-        remoteRenderer.videoContentMode = .scaleAspectFill
-        #else
-        // Using OpenGLES for the rest
-        let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-        #endif
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
-        self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-       
-        if let localVideoView = self.ourView {
-            self.embedView(localRenderer, into: localVideoView)
-        }
-        self.embedView(remoteRenderer, into: self.view)
-        self.view.sendSubviewToBack(remoteRenderer)
     }
+    
+  //  view
     
     
     
@@ -180,11 +194,13 @@ extension VideoViewController: WebRTCClientDelegate {
         if state == .closed || state == .disconnected || state == .failed {
             if roomName != nil {
                 SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-                webRTCClient?.peerConnection?.close()
+                //webRTCClient?.peerConnection?.close()
+                DispatchQueue.main.async {
+                    self.view.viewWithTag(10)?.removeFromSuperview()
+                    self.view.viewWithTag(11)?.removeFromSuperview()
+                }
             }
-            DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
-            }
+            
         }
         print("did Change Connection State")
     }
