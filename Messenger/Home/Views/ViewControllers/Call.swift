@@ -45,6 +45,7 @@ class Call {
   let uuid: UUID
   let outgoing: Bool
   let handle: String
+    let roomName: String
   
   var state: CallState = .ended {
     didSet {
@@ -61,11 +62,12 @@ class Call {
   var stateChanged: (() -> Void)?
   var connectedStateChanged: (() -> Void)?
   
-    init(id: String, uuid: UUID, outgoing: Bool = false, handle: String) {
+    init(id: String, uuid: UUID, outgoing: Bool = false, handle: String, roomName: String) {
     self.uuid = uuid
         self.id = id
     self.outgoing = outgoing
     self.handle = handle
+        self.roomName = roomName
   }
   
   func start(completion: ((_ success: Bool) -> Void)?) {

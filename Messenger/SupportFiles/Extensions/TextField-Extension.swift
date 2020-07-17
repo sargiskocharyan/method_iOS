@@ -20,7 +20,6 @@ extension UITextField {
         border.tag = 1
         border.backgroundColor = .lightGray
         border.anchor(top: self.topAnchor, paddingTop: self.frame.height, bottom: self.bottomAnchor, paddingBottom: 0, left: leftAnchor, paddingLeft: 0, right: rightAnchor, paddingRight: 0, width: frame.width, height: 1)
-        
     }
     
     func underlinedUniversityTextField() {

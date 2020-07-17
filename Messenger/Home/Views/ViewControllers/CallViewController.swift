@@ -51,6 +51,7 @@ class CallViewController: UIViewController {
     //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         guard let appDelegate =
@@ -64,6 +65,8 @@ class CallViewController: UIViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient?.delegate = self
         self.sort()
     }
     
@@ -73,9 +76,7 @@ class CallViewController: UIViewController {
         callManager = AppDelegate.shared.callManager
         tableView.delegate = self
         tableView.dataSource = self
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.signalClient = self.buildSignalingClient()
-        self.webRTCClient?.delegate = self
         self.signalClient?.delegate = self
         self.webRTCClient?.speakerOn()
         handleCallAccepted()
@@ -135,8 +136,7 @@ class CallViewController: UIViewController {
                 AppDelegate.shared.displayIncomingCall(
                     id: id, uuid: UUID(),
                     handle: "araa ekeq e!fdgfdgfdgdfdfgdfdfdgfd!!",
-                    hasVideo: true
-                ) { _ in
+                    hasVideo: true, roomName: self.roomName ?? "") { _ in
                     UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                 }
             }
@@ -166,6 +166,7 @@ class CallViewController: UIViewController {
                     }
                 }
             }
+            
         }
     }
     
@@ -177,6 +178,8 @@ class CallViewController: UIViewController {
     
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
+            self.roomName = roomName
+            self.vc.handleOffer(roomName: roomName)
             self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription)
             })
@@ -184,66 +187,65 @@ class CallViewController: UIViewController {
                 self.hasLocalSdp = true
                 self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
                 DispatchQueue.main.async {
-                    let vc = VideoViewController.instantiate(fromAppStoryboard: .main)
-                    vc.webRTCClient = self.webRTCClient
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    self.vc.webRTCClient = self.webRTCClient
+                    self.navigationController?.pushViewController(self.vc, animated: true)
                 }
             }
         }
     }
     
-     func save(name: String, lastname: String, username: String, id: String, time: Date, image: String, isHandleCall: Bool) {
-         guard let appDelegate = AppDelegate.shared as? AppDelegate else {
-             return
-         }
-         let managedContext = appDelegate.persistentContainer.viewContext
-         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
-         let call = NSManagedObject(entity: entity, insertInto: managedContext)
-         call.setValue(name, forKeyPath: "name")
-         call.setValue(lastname, forKeyPath: "lastname")
-         call.setValue(username, forKeyPath: "username")
-         call.setValue(id, forKeyPath: "id")
-         call.setValue(image, forKeyPath: "image")
-         call.setValue(time, forKeyPath: "time")
-         call.setValue(isHandleCall, forKeyPath: "isHandleCall")
-         do {
-             try managedContext.save()
-             calls.append(call)
-         } catch let error as NSError {
-             print("Could not save. \(error), \(error.userInfo)")
-         }
-     }
+    func save(name: String, lastname: String, username: String, id: String, time: Date, image: String, isHandleCall: Bool) {
+        guard let appDelegate = AppDelegate.shared as? AppDelegate else {
+            return
+        }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
+        let call = NSManagedObject(entity: entity, insertInto: managedContext)
+        call.setValue(name, forKeyPath: "name")
+        call.setValue(lastname, forKeyPath: "lastname")
+        call.setValue(username, forKeyPath: "username")
+        call.setValue(id, forKeyPath: "id")
+        call.setValue(image, forKeyPath: "image")
+        call.setValue(time, forKeyPath: "time")
+        call.setValue(isHandleCall, forKeyPath: "isHandleCall")
+        do {
+            try managedContext.save()
+            calls.append(call)
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
     
     func deleteAllData(entity: String) {
-           let appDelegate = UIApplication.shared.delegate as! AppDelegate
-           let managedContext = appDelegate.managedObjectContext
-           let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
-           fetchRequest.returnsObjectsAsFaults = false
-           do {
-               let results = try managedContext!.fetch(fetchRequest)
-               for managedObject in results {
-                   let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
-                   managedContext!.delete(managedObjectData)
-               }
-           } catch let error as NSError {
-               print("Detele all data in \(entity) error : \(error) \(error.userInfo)")
-           }
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+        fetchRequest.returnsObjectsAsFaults = false
+        do {
+            let results = try managedContext!.fetch(fetchRequest)
+            for managedObject in results {
+                let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
+                managedContext!.delete(managedObjectData)
+            }
+        } catch let error as NSError {
+            print("Detele all data in \(entity) error : \(error) \(error.userInfo)")
+        }
     }
-       
-       func stringToDate(date: Date) -> String {
-           let parsedDate = date
-           let calendar = Calendar.current
-           let day = calendar.component(.day, from: parsedDate)
-           let month = calendar.component(.month, from: parsedDate)
-           let time = Date()
-           let currentDay = calendar.component(.day, from: time as Date)
-           if currentDay != day {
-               return ("\(day).0\(month)")
-           }
-           let hour = calendar.component(.hour, from: parsedDate)
-           let minutes = calendar.component(.minute, from: parsedDate)
-           return ("\(hour):\(minutes)")
-       }
+    
+    func stringToDate(date: Date) -> String {
+        let parsedDate = date
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: parsedDate)
+        let month = calendar.component(.month, from: parsedDate)
+        let time = Date()
+        let currentDay = calendar.component(.day, from: time as Date)
+        if currentDay != day {
+            return ("\(day).0\(month)")
+        }
+        let hour = calendar.component(.hour, from: parsedDate)
+        let minutes = calendar.component(.minute, from: parsedDate)
+        return ("\(hour):\(minutes)")
+    }
     
     
     private func buildSignalingClient() -> SignalingClient {
@@ -305,38 +307,40 @@ extension CallViewController: WebRTCClientDelegate {
     }
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-      print("did Change Connection State")
+        if state == .closed || state == .disconnected || state == .failed {
+//            print("Anjatec en meky")
+        }
+        print("did Change Connection State")
     }
 }
 
 extension CallViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-           return calls.count
-       }
-       
-       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-           let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
-           cell.configureCell(call: calls[indexPath.row])
-           return cell
-       }
-       
-      
-       
-       func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-           return 76
-       }
+        return calls.count
+    }
     
-       
-       func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-           let call = calls[indexPath.row]
-           SocketTaskManager.shared.call(id: call.value(forKey: "id") as! String)
-           callManager.startCall(handle: call.value(forKey: "id") as! String, videoEnabled: true)
-           save(name: call.value(forKey: "name") as! String, lastname: call.value(forKey: "lastname") as! String, username: call.value(forKey: "username") as! String, id: call.value(forKey: "id") as! String, time: Date(), image: call.value(forKey: "image") as! String, isHandleCall: false)
-           self.sort()
-           tableView.reloadData()
-           vc.webRTCClient = self.webRTCClient
-           self.vc.startCall()
-           self.navigationController?.pushViewController(vc, animated: true)
-       }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
+        cell.configureCell(call: calls[indexPath.row])
+        return cell
+    }
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 76
+    }
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let call = calls[indexPath.row]
+        SocketTaskManager.shared.call(id: call.value(forKey: "id") as! String)
+        callManager.startCall(handle: call.value(forKey: "id") as! String, videoEnabled: true)
+        save(name: call.value(forKey: "name") as! String, lastname: call.value(forKey: "lastname") as! String, username: call.value(forKey: "username") as! String, id: call.value(forKey: "id") as! String, time: Date(), image: call.value(forKey: "image") as! String, isHandleCall: false)
+        self.sort()
+        tableView.reloadData()
+        vc.webRTCClient = self.webRTCClient
+        self.vc.startCall()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }

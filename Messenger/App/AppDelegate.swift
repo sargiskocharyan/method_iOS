@@ -67,18 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
-    func displayIncomingCall(
-        id: String,
-      uuid: UUID,
-      handle: String,
-      hasVideo: Bool = false,
-      completion: ((Error?) -> Void)?
-    ) {
-      providerDelegate.reportIncomingCall(
-        id: id, uuid: uuid,
-        handle: handle,
-        hasVideo: hasVideo,
-        completion: completion)
+    func displayIncomingCall(id: String, uuid: UUID, handle: String, hasVideo: Bool = false, roomName: String, completion: ((Error?) -> Void)?) {
+      providerDelegate.reportIncomingCall( id: id, uuid: uuid, handle: handle, hasVideo: hasVideo, roomName: roomName, completion: completion)
     }
 }
 
