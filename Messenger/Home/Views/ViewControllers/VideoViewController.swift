@@ -109,10 +109,8 @@ class VideoViewController: UIViewController {
          // Using metal (arm64 only)
          let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
          let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-         
          localRenderer.videoContentMode = .scaleAspectFill
          remoteRenderer.videoContentMode = .scaleAspectFill
-         
          #else
          // Using OpenGLES for the rest
          let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
@@ -122,7 +120,7 @@ class VideoViewController: UIViewController {
          localRenderer.tag = 11
          self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
          self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-        
+        print(self.webRTCClient?.renderRemoteVideo(to: remoteRenderer))
          if let localVideoView = self.ourView {
              self.embedView(localRenderer, into: localVideoView)
          }
@@ -133,9 +131,15 @@ class VideoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("ROOMNAME \(roomName)")
-        
+        print(webRTCClient?.peerConnection?.signalingState)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(webRTCClient?.peerConnection?.iceConnectionState)
+        print(webRTCClient?.stream)
+        print(webRTCClient?.peerConnection?.signalingState)
+    }
   //  view
     
     
@@ -191,7 +195,7 @@ extension VideoViewController: WebRTCClientDelegate {
     }
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .closed || state == .disconnected || state == .failed {
+        if state == .closed  {
             if roomName != nil {
                 SocketTaskManager.shared.leaveRoom(roomName: roomName!)
                 //webRTCClient?.peerConnection?.close()
@@ -200,8 +204,8 @@ extension VideoViewController: WebRTCClientDelegate {
                     self.view.viewWithTag(11)?.removeFromSuperview()
                 }
             }
-            
         }
+        print(state)
         print("did Change Connection State")
     }
 }

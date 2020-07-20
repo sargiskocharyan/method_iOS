@@ -179,7 +179,6 @@ final class WebRTCClient: NSObject {
         stream?.removeVideoTrack(self.localVideoTrack!)
         stream?.removeVideoTrack(self.remoteVideoTrack!)
         stream?.removeAudioTrack(audioTrackGlobal!)
-        
     }
     
     private func createVideoTrack() -> RTCVideoTrack {
@@ -239,6 +238,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {
         debugPrint("peerConnection new gathering state: \(newState)")
         
+    }
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
+         debugPrint("peerConnection new RTCPeerConnectionState state: \(newState)")
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {

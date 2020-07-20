@@ -44,6 +44,7 @@ class CallViewController: UIViewController {
     var viewModel = RecentMessagesViewModel()
     var vc: VideoViewController?
     var calls: [NSManagedObject] = []
+    var onCall: Bool = false
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -51,6 +52,8 @@ class CallViewController: UIViewController {
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print(webRTCClient?.peerConnection?.signalingState)
+//        print(web)
         vc = VideoViewController.instantiate(fromAppStoryboard: .main)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
@@ -65,13 +68,42 @@ class CallViewController: UIViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-        self.webRTCClient?.delegate = self
+       
         self.sort()
+        
+        //                localRenderer.tag = 11
+        //                self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
+        
+        
+        //                if let localVideoView = self.ourView {
+        //                    self.embedView(localRenderer, into: localVideoView)
+        //                }
+//        if onCall {
+//            #if arch(arm64)
+//            // Using metal (arm64 only)
+//            let localRenderer = RTCMTLVideoView(frame: self.view.frame)
+//            localRenderer.videoContentMode = .scaleAspectFill
+//            #else
+//            // Using OpenGLES for the rest
+//            let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+//            #endif
+//            localRenderer.tag = 11
+//            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
+//            self.embedView(localRenderer, into: self.view)
+//        }
+}
+    
+    private func embedView(_ view: UIView, into containerView: UIView) {
+        containerView.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: ["view":view]))
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: [], metrics: nil, views: ["view":view]))
+        containerView.layoutIfNeeded()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.deleteAllData(entity: "CallEntity")
         MainTabBarController.center.delegate = self
         callManager = AppDelegate.shared.callManager
         tableView.delegate = self
@@ -84,6 +116,9 @@ class CallViewController: UIViewController {
         handleCall()
         getCanditantes()
         handleOffer()
+        navigationItem.title = "Call history"
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+               self.webRTCClient?.delegate = self
     }
     
     //MARK: Helper methods
@@ -137,7 +172,7 @@ class CallViewController: UIViewController {
                     id: id, uuid: UUID(),
                     handle: "araa ekeq e!fdgfdgfdgdfdfgdfdfdgfd!!",
                     hasVideo: true, roomName: self.roomName ?? "") { _ in
-                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                 }
             }
             self.viewModel.getuserById(id: id) { (user, error) in
@@ -181,13 +216,14 @@ class CallViewController: UIViewController {
             self.roomName = roomName
             self.vc?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
-                           self.vc?.webRTCClient = self.webRTCClient
-                           self.navigationController?.pushViewController(self.vc!, animated: true)
-                       }
+                self.vc?.webRTCClient = self.webRTCClient
+                self.navigationController?.pushViewController(self.vc!, animated: true)
+                self.onCall = true
+            }
             self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription)
             })
-           
+            
             self.webRTCClient?.answer { (localSdp) in
                 self.hasLocalSdp = true
                 self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
@@ -309,8 +345,9 @@ extension CallViewController: WebRTCClientDelegate {
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         if state == .closed || state == .disconnected || state == .failed {
-//            print("Anjatec en meky")
+            //            print("Anjatec en meky")
         }
+        print(state)
         print("did Change Connection State")
     }
 }
@@ -342,6 +379,7 @@ extension CallViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.reloadData()
         vc?.webRTCClient = self.webRTCClient
         self.vc?.startCall()
+        onCall = true
         self.navigationController?.pushViewController(vc!, animated: true)
     }
 }

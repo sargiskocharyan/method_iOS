@@ -38,7 +38,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>tox ogtagorcem</string>
+	<string>Messenger would like to use your camera</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
