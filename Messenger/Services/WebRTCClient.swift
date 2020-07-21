@@ -62,6 +62,7 @@ final class WebRTCClient: NSObject {
         self.createMediaSenders()
         self.configureAudioSession()
         self.peerConnection!.delegate = self
+        
     }
     
     // MARK: Signaling
@@ -124,9 +125,7 @@ final class WebRTCClient: NSObject {
             return
         }
 
-        capturer.startCapture(with: frontCamera,
-                              format: format,
-                              fps: Int(fps.maxFrameRate))
+        capturer.startCapture(with: frontCamera, format: format, fps: Int(fps.maxFrameRate))
         
         self.localVideoTrack?.add(renderer)
     }
@@ -145,7 +144,7 @@ final class WebRTCClient: NSObject {
         }
         self.rtcAudioSession.unlockForConfiguration()
     }
-    
+
     private func createMediaSenders() {
         let streamId = "stream"
         

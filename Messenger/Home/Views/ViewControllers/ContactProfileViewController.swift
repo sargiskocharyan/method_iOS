@@ -56,7 +56,10 @@ class ContactProfileViewController: UIViewController {
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
         addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
         sendMessageButton.backgroundColor = .clear
-        addToContactButton.isHidden = onContactPage!
+        if onContactPage! {
+            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
+        }
+        
     }
     
     @objc func startMessage() {
@@ -234,7 +237,6 @@ class ContactProfileViewController: UIViewController {
         birthDateTextLabel.text = "birth_date:".localized()
         emailTextLabel.text = "email:".localized()
         infoTextLabel.text = "info".localized()
-        addToContactButton.setTitle("add_to_contact".localized(), for: .normal)
         if contact?.avatarURL != nil {
             ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id) { (image) in
                 DispatchQueue.main.async {

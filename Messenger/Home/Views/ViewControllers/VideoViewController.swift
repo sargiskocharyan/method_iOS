@@ -70,9 +70,14 @@ import WebRTC
 //}
 
 
+protocol VideoViewControllerProtocol: class {
+    func handleClose()
+}
+
 class VideoViewController: UIViewController {
     var roomName: String?
     var webRTCClient: WebRTCClient?
+    weak var delegate: VideoViewControllerProtocol?
     @IBOutlet weak var ourView: UIView!
     let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
@@ -81,12 +86,15 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func endCallButton(_ sender: Any) {
+        delegate?.handleClose()
         if roomName != nil {
+            
 //            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-            webRTCClient?.removeThracks()
-          
+         //   webRTCClient?.removeThracks()
 //            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
             webRTCClient?.peerConnection?.close()
+            
+//            webRTCClient = nil
         }
         for call in callManager.calls {
             callManager.end(call: call)
@@ -120,7 +128,6 @@ class VideoViewController: UIViewController {
          localRenderer.tag = 11
          self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
          self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-        print(self.webRTCClient?.renderRemoteVideo(to: remoteRenderer))
          if let localVideoView = self.ourView {
              self.embedView(localRenderer, into: localVideoView)
          }
@@ -131,18 +138,11 @@ class VideoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("ROOMNAME \(roomName)")
-        print(webRTCClient?.peerConnection?.signalingState)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print(webRTCClient?.peerConnection?.iceConnectionState)
-        print(webRTCClient?.stream)
-        print(webRTCClient?.peerConnection?.signalingState)
     }
-  //  view
-    
-    
     
     func startCall() {
         print("startCall")
@@ -195,10 +195,10 @@ extension VideoViewController: WebRTCClientDelegate {
     }
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .closed  {
+        if state == .closed {
             if roomName != nil {
+                self.delegate?.handleClose()
                 SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-                //webRTCClient?.peerConnection?.close()
                 DispatchQueue.main.async {
                     self.view.viewWithTag(10)?.removeFromSuperview()
                     self.view.viewWithTag(11)?.removeFromSuperview()

@@ -54,7 +54,7 @@
 		CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
 		CD5E713F24865935008D876E /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E713E24865935008D876E /* HomePageViewController.swift */; };
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
-		CD5E7145248661B2008D876E /* CallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallViewController.swift */; };
+		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
@@ -160,7 +160,7 @@
 		CD424918248A335100A38987 /* BeforeLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewController.swift; sourceTree = "<group>"; };
 		CD5E713E24865935008D876E /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
-		CD5E7144248661B2008D876E /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
+		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
@@ -278,7 +278,7 @@
 		CD3713BD24867F780088A0CC /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				CD5E7144248661B2008D876E /* CallViewController.swift */,
+				CD5E7144248661B2008D876E /* CallListViewController.swift */,
 				CD5E713E24865935008D876E /* HomePageViewController.swift */,
 				CD3F12D824BC29EB00040D8E /* Audio.swift */,
 				CD3713BA248674BA0088A0CC /* ProfileViewController.swift */,
@@ -823,7 +823,7 @@
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
-				CD5E7145248661B2008D876E /* CallViewController.swift in Sources */,
+				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
 				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,

@@ -28,7 +28,7 @@ struct Config {
     static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
 }
 
-class CallViewController: UIViewController {
+class CallListViewController: UIViewController {
     
     //MARK: Properties
     var callManager: CallManager!
@@ -45,6 +45,10 @@ class CallViewController: UIViewController {
     var vc: VideoViewController?
     var calls: [NSManagedObject] = []
     var onCall: Bool = false
+    var id: String?
+    
+    
+    
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -52,9 +56,9 @@ class CallViewController: UIViewController {
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(webRTCClient?.peerConnection?.signalingState)
-//        print(web)
         vc = VideoViewController.instantiate(fromAppStoryboard: .main)
+        vc?.delegate = self
+        vc?.webRTCClient = self.webRTCClient
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         guard let appDelegate =
@@ -68,30 +72,21 @@ class CallViewController: UIViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
-       
         self.sort()
-        
-        //                localRenderer.tag = 11
-        //                self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
-        
-        
-        //                if let localVideoView = self.ourView {
-        //                    self.embedView(localRenderer, into: localVideoView)
-        //                }
-//        if onCall {
+        if onCall {
 //            #if arch(arm64)
 //            // Using metal (arm64 only)
-//            let localRenderer = RTCMTLVideoView(frame: self.view.frame)
-//            localRenderer.videoContentMode = .scaleAspectFill
+//            let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+//            remoteRenderer.videoContentMode = .scaleAspectFill
 //            #else
 //            // Using OpenGLES for the rest
-//            let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+//            let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
 //            #endif
-//            localRenderer.tag = 11
-//            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
-//            self.embedView(localRenderer, into: self.view)
-//        }
-}
+//            remoteRenderer.tag = 12
+//            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
+//            self.embedView(remoteRenderer, into: self.view)
+        }
+    }
     
     private func embedView(_ view: UIView, into containerView: UIView) {
         containerView.addSubview(view)
@@ -103,6 +98,8 @@ class CallViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
+        provider.setDelegate(self, queue: DispatchQueue.main)
 //        self.deleteAllData(entity: "CallEntity")
         MainTabBarController.center.delegate = self
         callManager = AppDelegate.shared.callManager
@@ -118,7 +115,8 @@ class CallViewController: UIViewController {
         handleOffer()
         navigationItem.title = "Call history"
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-               self.webRTCClient?.delegate = self
+        self.webRTCClient?.delegate = self
+    
     }
     
     //MARK: Helper methods
@@ -140,11 +138,14 @@ class CallViewController: UIViewController {
     
     func handleCallAccepted() {
         SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
-            print("callAccepted")
-            print(callAccepted, roomName)
+            self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+            self.webRTCClient!.delegate = self
+            self.vc?.webRTCClient = self.webRTCClient
+            self.onCall = true
             self.roomName = roomName
+            self.vc?.handleOffer(roomName: roomName)
             if callAccepted {
-                self.webRTCClient?.offer { (sdp) in
+                self.webRTCClient!.offer { (sdp) in
                     print(sdp)
                     self.vc!.handleAnswer()
                     self.vc!.roomName = roomName
@@ -156,7 +157,7 @@ class CallViewController: UIViewController {
     
     func handleAnswer() {
         SocketTaskManager.shared.handleAnswer { (data) in
-            self.webRTCClient?.answer { (localSdp) in
+            self.webRTCClient!.answer { (localSdp) in
                 self.hasLocalSdp = true
             }
         }
@@ -164,9 +165,8 @@ class CallViewController: UIViewController {
     
     func handleCall() {
         SocketTaskManager.shared.handleCall { (id) in
-            let backgroundTaskIdentifier =
-                UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-            
+            self.id = id
+            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 AppDelegate.shared.displayIncomingCall(
                     id: id, uuid: UUID(),
@@ -201,7 +201,6 @@ class CallViewController: UIViewController {
                     }
                 }
             }
-            
         }
     }
     
@@ -213,18 +212,21 @@ class CallViewController: UIViewController {
     
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
+            self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+            self.webRTCClient!.delegate = self
+            self.vc?.webRTCClient = self.webRTCClient
+            self.onCall = true
             self.roomName = roomName
             self.vc?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
-                self.vc?.webRTCClient = self.webRTCClient
-                self.navigationController?.pushViewController(self.vc!, animated: true)
-                self.onCall = true
+                self.navigationController?.pushViewController(self.vc!, animated: false)
             }
-            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+            print(self.webRTCClient!.peerConnection?.signalingState)
+            self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription)
             })
-            
-            self.webRTCClient?.answer { (localSdp) in
+            print(self.webRTCClient)
+            self.webRTCClient!.answer { (localSdp) in
                 self.hasLocalSdp = true
                 self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
             }
@@ -232,9 +234,7 @@ class CallViewController: UIViewController {
     }
     
     func save(name: String, lastname: String, username: String, id: String, time: Date, image: String, isHandleCall: Bool) {
-        guard let appDelegate = AppDelegate.shared as? AppDelegate else {
-            return
-        }
+        let appDelegate = AppDelegate.shared as AppDelegate
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
         let call = NSManagedObject(entity: entity, insertInto: managedContext)
@@ -291,7 +291,7 @@ class CallViewController: UIViewController {
     
 }
 
-extension CallViewController: UNUserNotificationCenterDelegate {
+extension CallListViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
@@ -301,7 +301,7 @@ extension CallViewController: UNUserNotificationCenterDelegate {
     }
 }
 
-extension  CallViewController: SignalClientDelegate {
+extension  CallListViewController: SignalClientDelegate {
     func signalClientDidConnect(_ signalClient: SignalingClient) {
         self.signalingConnected = true
     }
@@ -323,11 +323,20 @@ extension  CallViewController: SignalClientDelegate {
     func signalClient(_ signalClient: SignalingClient, didReceiveCandidate candidate: RTCIceCandidate) {
         print("Received remote candidate")
         self.remoteCandidateCount += 1
-        self.webRTCClient?.set(remoteCandidate: candidate)
+        self.webRTCClient!.set(remoteCandidate: candidate)
     }
 }
 
-extension CallViewController: WebRTCClientDelegate {
+extension CallListViewController: VideoViewControllerProtocol {
+    func handleClose() {
+        onCall = false
+        self.webRTCClient = nil
+        vc?.webRTCClient = nil
+        id = nil
+    }
+}
+
+extension CallListViewController: WebRTCClientDelegate {
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
         DispatchQueue.main.async {
             let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
@@ -344,15 +353,55 @@ extension CallViewController: WebRTCClientDelegate {
     }
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .closed || state == .disconnected || state == .failed {
-            //            print("Anjatec en meky")
+        if state == .closed {
+            onCall = false
+            self.webRTCClient = nil
+            vc?.webRTCClient = nil
+            id = nil
         }
         print(state)
         print("did Change Connection State")
     }
 }
 
-extension CallViewController: UITableViewDelegate, UITableViewDataSource {
+extension CallListViewController: CXProviderDelegate {
+    func providerDidReset(_ provider: CXProvider) {
+        
+      }
+      
+      func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
+        guard let call = callManager.callWithUUID(uuid: action.callUUID) else {
+             action.fail()
+             return
+        }
+        id = call.id
+      }
+      
+      func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
+      }
+      
+      func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
+      }
+      
+      func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+      }
+      
+      func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
+    }
+    
+    
+}
+
+extension CallListViewController: CallTableViewDelegate {
+    func callSelected(id: String) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+        vc.id = id
+        vc.onContactPage = true
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calls.count
@@ -360,26 +409,35 @@ extension CallViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
+        cell.calleId = calls[indexPath.row].value(forKey: "id") as? String
         cell.configureCell(call: calls[indexPath.row])
+        cell.delegate = self
         return cell
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 76
     }
     
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let call = calls[indexPath.row]
-        SocketTaskManager.shared.call(id: call.value(forKey: "id") as! String)
-        callManager.startCall(handle: call.value(forKey: "id") as! String, videoEnabled: true)
-        save(name: call.value(forKey: "name") as! String, lastname: call.value(forKey: "lastname") as! String, username: call.value(forKey: "username") as! String, id: call.value(forKey: "id") as! String, time: Date(), image: call.value(forKey: "image") as! String, isHandleCall: false)
-        self.sort()
-        tableView.reloadData()
-        vc?.webRTCClient = self.webRTCClient
-        self.vc?.startCall()
-        onCall = true
-        self.navigationController?.pushViewController(vc!, animated: true)
+        if onCall == false  {
+            SocketTaskManager.shared.call(id: call.value(forKey: "id") as! String)
+            callManager.startCall(handle: call.value(forKey: "id") as! String, videoEnabled: true)
+            save(name: call.value(forKey: "name") as! String, lastname: call.value(forKey: "lastname") as! String, username: call.value(forKey: "username") as! String, id: call.value(forKey: "id") as! String, time: Date(), image: call.value(forKey: "image") as! String, isHandleCall: false)
+            self.sort()
+            id = call.value(forKey: "id") as? String
+            tableView.reloadData()
+            vc?.webRTCClient = self.webRTCClient
+            self.vc?.startCall()
+            onCall = true
+            self.navigationController?.pushViewController(vc!, animated: true)
+        } else if onCall && id != nil {
+            if id == call.value(forKey: "id") as? String {
+                vc?.roomName = roomName
+                self.vc?.webRTCClient = self.webRTCClient
+               self.navigationController?.pushViewController(vc!, animated: true)
+            }
+        }
     }
 }

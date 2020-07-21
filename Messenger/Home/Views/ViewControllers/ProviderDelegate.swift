@@ -44,11 +44,9 @@ class ProviderDelegate: NSObject {
   
   static var providerConfiguration: CXProviderConfiguration = {
     let providerConfiguration = CXProviderConfiguration(localizedName: "Hotline")
-    
     providerConfiguration.supportsVideo = true
     providerConfiguration.maximumCallsPerCallGroup = 1
     providerConfiguration.supportedHandleTypes = [.phoneNumber]
-    
     return providerConfiguration
   }()
   
@@ -63,7 +61,6 @@ class ProviderDelegate: NSObject {
     let update = CXCallUpdate()
     update.remoteHandle = CXHandle(type: .phoneNumber, value: handle)
     update.hasVideo = hasVideo
-    
     provider.reportNewIncomingCall(with: uuid, update: update) { error in
       if error == nil {
         let call = Call(id: id, uuid: uuid, handle: handle, roomName: roomName)

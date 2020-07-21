@@ -8,19 +8,29 @@
 
 import UIKit
 import CoreData
+
+protocol CallTableViewDelegate: class {
+    func callSelected(id: String)
+}
+
+
 class CallTableViewCell: UITableViewCell {
 
     @IBOutlet weak var callIcon: UIImageView!
-    @IBAction func infoButon(_ sender: Any) {
-    }
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var infoButton: UIButton!
+    weak var delegate: CallTableViewDelegate?
+    var calleId: String?
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
     }
     
+    @IBAction func infoButtonAction(_ sender: UIButton) {
+        delegate?.callSelected(id: calleId!)
+    }
     override func awakeFromNib() {
            super.awakeFromNib()
            userImageView.contentMode = .scaleAspectFill
