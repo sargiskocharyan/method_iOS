@@ -72,7 +72,7 @@ extension SignalingClient: SocketIODelegate {
     func receiveCandidate(remoteCandidate: RTCIceCandidate) {
         self.delegate?.signalClient(self, didReceiveCandidate: remoteCandidate)
     }
-    
+
     func receiveData(sdp: String) {
         self.delegate?.signalClient(self, didReceiveRemoteSdp: RTCSessionDescription(type: .answer, sdp: sdp))
     }

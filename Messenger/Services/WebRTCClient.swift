@@ -85,12 +85,11 @@ final class WebRTCClient: NSObject {
         self.peerConnection?.answer(for: constrains) { (sdp, error) in
             print("errooooooooo44111112121212121212------------------------------------------------------")
             print(error?.localizedDescription)
-            print("sdp348753478567fhdfjdhgfhdsfgdhf------------------------------------------------------")
-            print(sdp)
             guard let sdp = sdp else {
                 return
             }
             self.peerConnection?.setLocalDescription(sdp, completionHandler: { (error) in
+                print(error?.localizedDescription)
                 completion(sdp)
             })
         }

@@ -55,7 +55,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(SharedConfigs.shared.signedUser)
         imagePicker.delegate = self
         setFlagImage()
         setBorder(view: contactView)
@@ -75,6 +74,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
+        tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
     }
     
     //MARK: Helper methods

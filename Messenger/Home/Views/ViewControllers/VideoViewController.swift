@@ -9,67 +9,6 @@
 import UIKit
 import WebRTC
 
-//class VideoViewController: UIViewController {
-//
-//    @IBOutlet private weak var localVideoView: UIView?
-//    private let webRTCClient: WebRTCClient?
-//
-////    init(webRTCClient: WebRTCClient) {
-////        self.webRTCClient = webRTCClient
-////        super.init(nibName: String(describing: VideoViewController.self), bundle: Bundle.main)
-////    }
-//
-//    @available(*, unavailable)
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-////    override func viewDidLoad() {
-////        super.viewDidLoad()
-////
-////        #if arch(arm64)
-////            // Using metal (arm64 only)
-////            let localRenderer = RTCMTLVideoView(frame: self.localVideoView?.frame ?? CGRect.zero)
-////            let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-////            localRenderer.videoContentMode = .scaleAspectFill
-////            remoteRenderer.videoContentMode = .scaleAspectFill
-////        #else
-////            // Using OpenGLES for the rest
-////            let localRenderer = RTCEAGLVideoView(frame: self.localVideoView?.frame ?? CGRect.zero)
-////            let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-////        #endif
-////
-////        self.webRTCClient.startCaptureLocalVideo(renderer: localRenderer)
-////        self.webRTCClient.renderRemoteVideo(to: remoteRenderer)
-////
-////        if let localVideoView = self.localVideoView {
-////            self.embedView(localRenderer, into: localVideoView)
-////        }
-////        self.embedView(remoteRenderer, into: self.view)
-////        self.view.sendSubviewToBack(remoteRenderer)
-////    }
-//
-////    private func embedView(_ view: UIView, into containerView: UIView) {
-////        containerView.addSubview(view)
-////        view.translatesAutoresizingMaskIntoConstraints = false
-////        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|",
-////                                                                    options: [],
-////                                                                    metrics: nil,
-////                                                                    views: ["view":view]))
-////
-////        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|",
-////                                                                    options: [],
-////                                                                    metrics: nil,
-////                                                                    views: ["view":view]))
-////        containerView.layoutIfNeeded()
-////    }
-//
-//    @IBAction private func backDidTap(_ sender: Any) {
-//        self.dismiss(animated: true)
-//    }
-//}
-
-
 protocol VideoViewControllerProtocol: class {
     func handleClose()
 }
@@ -86,62 +25,83 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func endCallButton(_ sender: Any) {
-        delegate?.handleClose()
-        if roomName != nil {
-            
-//            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-         //   webRTCClient?.removeThracks()
-//            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
+        //
+//        if roomName == nil {
+            for call in callManager.calls {
+                callManager.end(call: call)
+            }
+             
+            callManager.removeAllCalls()
+            self.view.viewWithTag(10)?.removeFromSuperview()
+            self.view.viewWithTag(11)?.removeFromSuperview()
+            //            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
+               webRTCClient?.removeThracks()
             webRTCClient?.peerConnection?.close()
+            //            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
+          //  delegate?.handleClose()
             
-//            webRTCClient = nil
-        }
-        for call in callManager.calls {
-            callManager.end(call: call)
-        }
-        callManager.removeAllCalls()
+            self.navigationController?.popViewController(animated: false)
+            //            webRTCClient = nil
+            
+//        } else {
+//
+//
+//        }
+
         // self.view.backgroundColor = .white
-//        webRTCClient?.peerConnection = nil
-     //   self.navigationController?.popViewController(animated: true)
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
-        }
+        //        webRTCClient?.peerConnection = nil
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
-       // navigationController?.navigationBar.isHidden = true
-        self.webRTCClient?.delegate = self
-         #if arch(arm64)
-         // Using metal (arm64 only)
-         let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-         let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-         localRenderer.videoContentMode = .scaleAspectFill
-         remoteRenderer.videoContentMode = .scaleAspectFill
-         #else
-         // Using OpenGLES for the rest
-         let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-         let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-         #endif
-         remoteRenderer.tag = 10
-         localRenderer.tag = 11
-         self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
-         self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-         if let localVideoView = self.ourView {
-             self.embedView(localRenderer, into: localVideoView)
-         }
-         self.embedView(remoteRenderer, into: self.view)
-         self.view.sendSubviewToBack(remoteRenderer)
-       }
+        // navigationController?.navigationBar.isHidden = true
+        //        self.webRTCClient?.delegate = self
+        #if arch(arm64)
+        // Using metal (arm64 only)
+        let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+        let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+        localRenderer.videoContentMode = .scaleAspectFill
+        remoteRenderer.videoContentMode = .scaleAspectFill
+        #else
+        // Using OpenGLES for the rest
+        let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+        let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
+        #endif
+        remoteRenderer.tag = 10
+        localRenderer.tag = 11
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
+        self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
+        if let localVideoView = self.ourView {
+            self.embedView(localRenderer, into: localVideoView)
+        }
+        self.embedView(remoteRenderer, into: self.view)
+        self.view.sendSubviewToBack(remoteRenderer)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("ROOMNAME \(roomName)")
+        print(webRTCClient)
+//        webRTCClient?.delegate = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+    }
+    
+    func closeAll() {
+        for call in callManager.calls {
+            callManager.end(call: call)
+        }
+        callManager.removeAllCalls()
+        webRTCClient?.removeThracks()
+        DispatchQueue.main.async {
+            self.view.viewWithTag(10)?.removeFromSuperview()
+            self.view.viewWithTag(11)?.removeFromSuperview()
+            self.navigationController?.popViewController(animated: false)
+        }
     }
     
     func startCall() {
@@ -153,7 +113,6 @@ class VideoViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
         label.heightAnchor.constraint(equalToConstant: 100).isActive = true
-//        label.widthAnchor.constraint(equalToConstant: 200).isActive = true
         label.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
         label.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
         label.isUserInteractionEnabled = true
@@ -180,32 +139,41 @@ class VideoViewController: UIViewController {
         containerView.layoutIfNeeded()
     }
 }
-extension VideoViewController: WebRTCClientDelegate {
-    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
-        DispatchQueue.main.async {
-            let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
-            let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-        print("discovered local candidate")
-    }
-    
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .closed {
-            if roomName != nil {
-                self.delegate?.handleClose()
-                SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-                DispatchQueue.main.async {
-                    self.view.viewWithTag(10)?.removeFromSuperview()
-                    self.view.viewWithTag(11)?.removeFromSuperview()
-                }
-            }
-        }
-        print(state)
-        print("did Change Connection State")
-    }
-}
+//extension VideoViewController: WebRTCClientDelegate {
+//    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
+//        DispatchQueue.main.async {
+//            let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
+//            let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+//            self.present(alert, animated: true, completion: nil)
+//        }
+//    }
+//
+//    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
+//        print("discovered local candidate")
+//    }
+//
+//    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+//        if state == .closed {
+//            if roomName != nil {
+//                for call in callManager.calls {
+//                    callManager.end(call: call)
+//                }
+//                callManager.removeAllCalls()
+//                webRTCClient?.removeThracks()
+//                SocketTaskManager.shared.leaveRoom(roomName: roomName!)
+//                roomName = nil
+//                webRTCClient = nil
+//                 self.delegate?.handleClose()
+//                DispatchQueue.main.async {
+//                    self.view.viewWithTag(10)?.removeFromSuperview()
+//                    self.view.viewWithTag(11)?.removeFromSuperview()
+//                    self.navigationController?.popViewController(animated: false)
+//                }
+//
+//            }
+//        }
+//        print(state)
+//        print("did Change Connection State")
+//    }
+//}

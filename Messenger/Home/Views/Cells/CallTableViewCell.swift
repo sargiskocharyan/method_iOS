@@ -53,15 +53,15 @@ class CallTableViewCell: UITableViewCell {
         return ("\(hour):\(minutes)")
     }
     
-    func configureCell(call: NSManagedObject) {
-        self.nameLabel.text = call.value(forKey: "name") as! String
-        ImageCache.shared.getImage(url: call.value(forKey: "image") as! String, id: call.value(forKey: "id") as! String) { (image) in
+    func configureCell(call: FetchedCall) {
+        self.nameLabel.text = call.name
+        ImageCache.shared.getImage(url: call.image ?? "", id: call.id) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
         }
-         self.timeLabel.text = dateToString(date: call.value(forKey: "time") as! Date)
-        if call.value(forKey: "isHandleCall") as? Bool != true {
+         self.timeLabel.text = dateToString(date: call.time)
+        if call.isHandleCall != true {
             self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.up.right")
         } else {
             self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.down.left")
