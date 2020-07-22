@@ -30,7 +30,7 @@ class ContactTableViewCell: UITableViewCell {
     
     func configure(contact: User) {
         contactImageView.image = UIImage(named: "noPhoto")
-        ImageCache.shared.getImage(url: contact.avatarURL ?? "") { (image) in
+        ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id) { (image) in
             DispatchQueue.main.async {
                 self.contactImageView.image = image
             }
@@ -41,12 +41,17 @@ class ContactTableViewCell: UITableViewCell {
         } else {
             nameLabel.text = contact.name
         }
-        usernameLabel.text = contact.username
         if contact.lastname == nil {
             lastnameLabel.textColor = .darkGray
             lastnameLabel.text = "lastname".localized()
         } else {
             lastnameLabel.text = contact.lastname
+        }
+        if contact.username == nil {
+            usernameLabel.textColor = .darkGray
+            usernameLabel.text = "username".localized()
+        } else {
+            usernameLabel.text = contact.username
         }
     }
 }

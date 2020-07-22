@@ -35,7 +35,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     let dropDown = DropDown()
     let moreOrLessImageView = UIImageView()
     var universities: [University] = []
-    var constant = 0
+    var constant: CGFloat = 0
     let button = UIButton()
     
     //MARK: @IBActions
@@ -78,10 +78,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @IBAction func skipButtonAction(_ sender: UIButton) {
         DispatchQueue.main.async {
             let vc = CongratulationsViewController.instantiate(fromAppStoryboard: .main) 
-           self.navigationController?.pushViewController(vc, animated: true)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
-        
+    
     //MARK: Lifecycles
     override func viewDidLayoutSubviews() {
         print("viewDidLayoutSubviews")
@@ -107,33 +107,34 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.navigationBar.isTranslucent = true
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         let navigationBar = self.navigationController?.navigationBar
-
+        
         navigationBar?.shadowImage = nil
         navigationBar?.setBackgroundImage(nil, for: .default)
         navigationBar?.isTranslucent = false
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .default
     }
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         header.backgroundColor = .clear
-        view.bringSubviewToFront(viewOnScroll)
-        view.bringSubviewToFront(universityTextField)
         stackViewTopConstraint.constant = self.view.frame.height * 0.3
         universityTextField.underlinedUniversityTextField()
         self.navigationController?.isNavigationBarHidden = true
         createAccountButton.isEnabled = false
-//        createAccountButton.backgroundColor?.withAlphaComponent(0.3)
-        constant = Int(stackViewTopConstraint.constant)
+        constant = stackViewTopConstraint.constant
         nameCustomView.delagate = self
         lastnameCustomView.delagate = self
         usernameCustomView.delagate = self
@@ -153,27 +154,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         nameCustomView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameCustomView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameCustomView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
-        if #available(iOS 13.0, *) {
-
-                      let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-                      var statusBarFrame = window?.windowScene?.statusBarManager?.statusBarFrame
-
-                      let statusBarView = UIView(frame: statusBarFrame!)
-                      self.view.addSubview(statusBarView)
-                      statusBarView.backgroundColor = .clear
-            headerTopConstraint.constant = -statusBarFrame!.height
-            statusBarFrame = CGRect.zero
-                  } else {
-                      //Below iOS13
-                      var statusBarFrame = UIApplication.shared.statusBarFrame
-                      let statusBarView = UIView(frame: statusBarFrame)
-                      self.view.addSubview(statusBarView)
-                      statusBarView.backgroundColor = .clear
-            headerTopConstraint.constant = -statusBarFrame.height
-            
-            statusBarFrame = CGRect.zero
-        }
-        
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -182,7 +162,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         if size.width > size.height {
             constant = 50
         } else {
-            constant = Int(size.height * 0.3)
+            constant = size.height * 0.3
             stackViewTopConstraint.constant = CGFloat(constant)
         }
     }
@@ -224,18 +204,18 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func lastnameTextFieldAction() {
-       checkFields()
+        checkFields()
     }
     
     func getUniversities() {
         viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
                 if error == NetworkResponse.authenticationError {
-                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                           let nav = UINavigationController(rootViewController: vc)
-                           let window: UIWindow? = UIApplication.shared.windows[0]
-                           window?.rootViewController = nav
-                           window?.makeKeyAndVisible()
+                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                    let nav = UINavigationController(rootViewController: vc)
+                    let window: UIWindow? = UIApplication.shared.windows[0]
+                    window?.rootViewController = nav
+                    window?.makeKeyAndVisible()
                 }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
@@ -267,45 +247,43 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     func raiseStackView(_ keyboardFrame: CGRect?, _ isKeyboardShowing: Bool, _ customView: UIView) {
-        if self.view.frame.height - (CGFloat(constant) + customView.frame.maxY) < keyboardFrame!.height {
-            stackViewTopConstraint.constant = CGFloat(isKeyboardShowing ? constant - (Int(keyboardFrame!.height) - Int((self.view.frame.height - (CGFloat(constant) + customView.frame.maxY + 15)))) : constant)
+        if self.view.frame.height - (constant + customView.frame.maxY) < keyboardFrame!.height {
+            stackViewTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - (constant + customView.frame.maxY + 15))) : constant
         } else {
-            stackViewTopConstraint.constant = CGFloat(constant)
+            stackViewTopConstraint.constant = constant
         }
     }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
-              if let userInfo = notification.userInfo {
-                  let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-                  let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-                
-                if usernameCustomView.textField.isFirstResponder {
-                    raiseStackView(keyboardFrame, isKeyboardShowing, usernameCustomView)
-                } else if lastnameCustomView.textField.isFirstResponder {
-                    raiseStackView(keyboardFrame, isKeyboardShowing, lastnameCustomView)
-                } else if nameCustomView.textField.isFirstResponder {
-                    raiseStackView(keyboardFrame, isKeyboardShowing, nameCustomView)
-                }
-                
-                  UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                      self.view.layoutIfNeeded()
-                  }, completion: nil)
-              }
-          }
-          
-          func setObservers() {
-              NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
-              NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
-          }
+        if let userInfo = notification.userInfo {
+            let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
+            
+            if usernameCustomView.textField.isFirstResponder {
+                raiseStackView(keyboardFrame, isKeyboardShowing, usernameCustomView)
+            } else if lastnameCustomView.textField.isFirstResponder {
+                raiseStackView(keyboardFrame, isKeyboardShowing, lastnameCustomView)
+            } else if nameCustomView.textField.isFirstResponder {
+                raiseStackView(keyboardFrame, isKeyboardShowing, nameCustomView)
+            }
+            
+            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func setObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     func configureView() {
         bottomWidth = view.frame.width * 0.6
         bottomHeight = view.frame.height * 0.08
         bottomView.frame = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
-      //  self.view.addSubview(bottomView)
         topWidth = view.frame.width * 0.83
         topHeight =  view.frame.height * 0.3
-//        self.view.addSubview(headerShapeView)
     }
     
     func addImage() {
@@ -377,14 +355,14 @@ class GradientView: UIView {
     }
     
     override class var layerClass: AnyClass {
-       get {
-          return CAGradientLayer.self
-       }
+        get {
+            return CAGradientLayer.self
+        }
     }
     
     @IBInspectable var isHorizontal: Bool = true {
-       didSet {
-        updateView()
+        didSet {
+            updateView()
         }
     }
     func updateView() {

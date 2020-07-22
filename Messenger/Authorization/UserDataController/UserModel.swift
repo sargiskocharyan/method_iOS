@@ -16,6 +16,11 @@ struct UserModel: Codable {
     var token: String?
     var id: String
     var avatarURL: String?
+    var address: String?
+    var phoneNumber: String?
+    var birthDate: String?
+    var gender: String?
+    var info: String?
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -26,5 +31,10 @@ struct UserModel: Codable {
         case token
         case id = "_id"
         case avatarURL
+        case address
+        case phoneNumber
+        case birthDate = "birthday"
+        case gender
+        case info
     }
 }

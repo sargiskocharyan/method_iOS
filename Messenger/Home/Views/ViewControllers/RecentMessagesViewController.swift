@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate {
+class RecentMessagesViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -33,7 +33,7 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         vc.delegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
-         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
         } else {
@@ -82,10 +82,6 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
                 }
             }
         }
-    }
-    
-    func changeLanguage(key: String) {
-        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
     }
     
     func setView(_ str: String) {
@@ -234,7 +230,10 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
             }
         }
     }
-    
+}
+
+//MARK: Extension
+extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSource, ProfileViewControllerDelegate, UNUserNotificationCenterDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return chats.count
     }
@@ -252,14 +251,22 @@ class RecentMessagesViewController: UIViewController, UITableViewDelegate, UITab
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
         cell.configure(chat: chats[indexPath.row])
-//        let showTap = UITapGestureRecognizer(target: self, action: #selector(cell.addImageViewWithImage(image:)))
-//        showTap.numberOfTapsRequired = 1
-//        cell.userImageView.addGestureRecognizer(showTap)
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
+    }
+    
+    func changeLanguage(key: String) {
+        self.navigationController?.navigationBar.topItem?.title = "chats".localized()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
 }

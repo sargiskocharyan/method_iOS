@@ -27,4 +27,10 @@ class ProfileViewModel {
         }
     }
     
+    func deleteAvatar(completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().deleteAvatar() { (error) in
+            completion(error)
+        }
+    }
+    
 }

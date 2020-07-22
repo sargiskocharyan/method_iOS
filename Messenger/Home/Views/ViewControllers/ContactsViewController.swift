@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ContactsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ContactsViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -44,7 +44,6 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
     @objc private func refreshWeatherData(_ sender: Any) {
         getContacts()
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -135,7 +134,7 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                         }
                     }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil)
+                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
                     })
                     DispatchQueue.main.async {
                         self.removeView()
@@ -229,53 +228,70 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
                 self.activityIndicator.stopAnimating()
             }
         }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if onContactPage == false {
-            self.navigationItem.rightBarButtonItem?.isEnabled = true
-            DispatchQueue.main.async {
-                self.activityIndicator.startAnimating()
-            }
-            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
-                if error != nil {
-                    if error == NetworkResponse.authenticationError {
-                        UserDataController().logOutUser()
-                        DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
-                        }
-                    }
-                    DispatchQueue.main.async {
-                        self.activityIndicator.stopAnimating()
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                    }
-                    
-                } else {
-                    self.contacts.append(User(name: self.findedUsers[indexPath.row].name, lastname:
-                        self.findedUsers[indexPath.row].lastname, university: nil, _id: self.findedUsers[indexPath.row]._id, username: self.findedUsers[indexPath.row].username, avatarURL: self.findedUsers[indexPath.row].avatarURL, email: nil))
-                    self.onContactPage = true
-                    self.contactsMiniInformation = self.contacts
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
-                        self.navigationItem.title = "contacts".localized()
-                        self.activityIndicator.stopAnimating()
-                    }
-                }
-            }
-        } else {
-            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-            vc.id = self.contactsMiniInformation[indexPath.row]._id
-            vc.name = self.contactsMiniInformation[indexPath.row].name
-            vc.username = self.contactsMiniInformation[indexPath.row].username
-            self.navigationController?.pushViewController(vc, animated: true)
+    }    
+}
+
+//MARK: Extension
+extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, ContactProfileDelegate {
+    func addNewContact(contact: User) {
+        self.contacts.append(contact)
+        self.onContactPage = true
+        self.contactsMiniInformation = self.contacts
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
+            self.navigationItem.title = "contacts".localized()
+            self.activityIndicator.stopAnimating()
         }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+        vc.delegate = self
+        vc.id = contactsMiniInformation[indexPath.row]._id
+        vc.contact = contactsMiniInformation[indexPath.row]
+        self.navigationController?.pushViewController(vc, animated: true)
+        vc.onContactPage = onContactPage
+//            self.navigationItem.rightBarButtonItem?.isEnabled = true
+//            DispatchQueue.main.async {
+//                self.activityIndicator.startAnimating()
+//            }
+//            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
+//                if error != nil {
+//                    if error == NetworkResponse.authenticationError {
+//                        UserDataController().logOutUser()
+//                        DispatchQueue.main.async {
+//                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+//                            let nav = UINavigationController(rootViewController: vc)
+//                            let window: UIWindow? = UIApplication.shared.windows[0]
+//                            window?.rootViewController = nav
+//                            window?.makeKeyAndVisible()
+//                        }
+//                    }
+//                    DispatchQueue.main.async {
+//                        self.activityIndicator.stopAnimating()
+//                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+//                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+//                        self.present(alert, animated: true)
+//                    }
+//
+//                }
+//                else {
+//                    self.contacts.append(User(name: self.findedUsers[indexPath.row].name, lastname:
+//                        self.findedUsers[indexPath.row].lastname, university: nil, _id: self.findedUsers[indexPath.row]._id, username: self.findedUsers[indexPath.row].username, avatarURL: self.findedUsers[indexPath.row].avatarURL, email: nil))
+//                    self.onContactPage = true
+//                    self.contactsMiniInformation = self.contacts
+//                    DispatchQueue.main.async {
+//                        self.tableView.reloadData()
+//                        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
+//                        self.navigationItem.title = "contacts".localized()
+//                        self.activityIndicator.stopAnimating()
+//                    }
+//                }
+//            }
+//        } else {
+           
+//
+//        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -293,4 +309,5 @@ class ContactsViewController: UIViewController, UITableViewDelegate, UITableView
         return 70
     }
 }
+
 

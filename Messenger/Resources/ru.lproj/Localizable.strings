@@ -56,3 +56,29 @@
 "chats" = "Чаты";
 "please_fill_all_fields" = "Пожалуйста заполните все поля";
 "close" = "Закрыть";
+"select_gender" = "Пол";
+"address" = "Адрес";
+"birth_date" = "Дата рождения(д/м/гг)";
+"add_contact" = "Добавить контакт";
+"number" = "Телефонный номер";
+"correct_birdthdate" = "Правильная дата рождения";
+"incorrect_birdthdate" = "Неверная дата рождения";
+"invalid_phone_number" = "Неправильный номер телефона";
+"correct_phone_number" = "Правильный номер телефона";
+"hide_personal_data" = "Скрыть личные данные";
+"are_you_sure_want_to_delete_your_account_your_infrtion_will_be_lost" = "Вы уверены, что хотите удалить свой аккаунт? Ваша информация будет потеряна";
+"delete" = "Удалить";
+"cancel" = "Отмена";
+"attention" = "Внимание";
+"info" = "Информация";
+"address:" = "Адрес:";
+"gender:" = "Пол:";
+"username:" = "Имя пользователя:";
+"birth_date:" = "Дата рождения:";
+"male" = "Мужской";
+"female" = "Женский";
+"add_to_contact" = "Добавить в контакты";
+"email:" = "Адрес электронной почты:";
+
+
+

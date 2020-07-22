@@ -9,18 +9,18 @@
 import UIKit
 import SocketIO
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UNUserNotificationCenterDelegate {
+class ChatViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var viewModel = ChatMessagesViewModel()
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
-    var bottomConstraintOnTableView: NSLayoutConstraint?
     var socketTaskManager: SocketTaskManager!
     let center = UNUserNotificationCenter.current()
     var name: String?
@@ -67,6 +67,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         setTitle()
         getImage()
         setObservers()
+        activity.tag = 5
     }
     
     
@@ -77,15 +78,19 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //MARK: Helper methods
     @objc func sendMessage() {
-        socketTaskManager.send(message: inputTextField.text!, id: id!)
+        if inputTextField.text != "" {
+            socketTaskManager.send(message: inputTextField.text!, id: id!)
+        }
     }
     
     func setTitle() {
-           if name == nil {
+        if name != nil {
+            self.title = name
+        } else if username != nil {
                self.title = username
            } else {
-               self.title = name
-           }
+            self.title = "Dynamic's user"
+        }
        }
     
     func setObservers() {
@@ -98,7 +103,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
             bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
-            bottomConstraintOnTableView?.constant = isKeyboardShowing ? -keyboardFrame!.height - 48 : 20
+            tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
@@ -142,13 +147,17 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
+        messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        messageInputContainerView.isUserInteractionEnabled = true
+        messageInputContainerView.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -20)
-        bottomConstraintOnTableView = NSLayoutConstraint(item: tableView!, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -68)
+        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
         view.addConstraint(bottomConstraint!)
-        view.addConstraint(bottomConstraintOnTableView!)
     }
     
     private func setupInputComponents() {
@@ -157,9 +166,19 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
-        messageInputContainerView.addConstraintsWithFormat("H:|-8-[v0][v1(30)]|", views: inputTextField, sendButton)
-        messageInputContainerView.addConstraintsWithFormat("V:|[v0]|", views: inputTextField)
-        messageInputContainerView.addConstraintsWithFormat("V:|[v0(30)]|", views: sendButton)
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 2).isActive = true
+        inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
+        inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        inputTextField.isUserInteractionEnabled = true
+        inputTextField.anchor(top: messageInputContainerView.topAnchor, paddingTop: 0, bottom: messageInputContainerView.bottomAnchor, paddingBottom: 0, left: messageInputContainerView.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 30, width: 25, height: 48)
+        sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: 0).isActive = true
+        sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
+        sendButton.isUserInteractionEnabled = true
+        sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
+        25)
+
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
@@ -167,17 +186,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getImage() {
-        ImageCache.shared.getImage(url: avatar ?? "") { (userImage) in
+        ImageCache.shared.getImage(url: avatar ?? "", id: id!) { (userImage) in
             self.image = userImage
         }
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
     }
     
     func getChatMessages() {
@@ -196,6 +207,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
+                    self.view.viewWithTag(5)?.removeFromSuperview()
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
@@ -204,6 +216,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.allMessages = messages!
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
+                    self.view.viewWithTag(5)?.removeFromSuperview()
                     self.tableView.reloadData()
                     if self.allMessages.count > 0 {
                         let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
@@ -213,6 +226,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+}
+
+//MARK: Extension
+extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allMessages.count
     }
@@ -251,5 +268,3 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
 }
-
-

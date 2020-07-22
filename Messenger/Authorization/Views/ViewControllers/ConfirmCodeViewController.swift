@@ -20,7 +20,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var registerOrLogintTopConstraint: NSLayoutConstraint!
     
     //MARK: properties
-    var constant = 0
+    var constant: CGFloat = 0
     var email: String?
     var code: String?
     var viewModel = ConfirmCodeViewModel()
@@ -107,7 +107,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         continueButton.isEnabled = true
         self.CodeField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
         self.hideKeyboardWhenTappedAround()
-        constant = Int(registerOrLogintTopConstraint.constant)
+        constant = registerOrLogintTopConstraint.constant
         setObservers()
     }
     
@@ -214,9 +214,9 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
             if self.view.frame.height - resendCodeButton.frame.maxY < keyboardFrame!.height {
-                registerOrLogintTopConstraint.constant = CGFloat(isKeyboardShowing ? constant - (Int(keyboardFrame!.height) - Int((self.view.frame.height - resendCodeButton.frame.maxY))) : constant)
+                registerOrLogintTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - resendCodeButton.frame.maxY)) : constant
             } else {
-                registerOrLogintTopConstraint.constant = CGFloat(constant)
+                registerOrLogintTopConstraint.constant = constant
             }
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()

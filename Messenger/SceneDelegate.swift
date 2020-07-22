@@ -7,14 +7,24 @@
 //
 
 import UIKit
-
+//fileprivate let defaultSignalingServerUrl = URL(string: "wss://192.168.0.105:8080")!
+//
+//// We use Google's public stun servers. For production apps you should deploy your own stun/turn servers.
+//fileprivate let defaultIceServers = ["stun:stun.l.google.com:19302",
+//                                     "stun:stun1.l.google.com:19302",
+//                                     "stun:stun2.l.google.com:19302",
+//                                     "stun:stun3.l.google.com:19302",
+//                                     "stun:stun4.l.google.com:19302"]
+//
+//struct Config {
+//    let signalingServerUrl: URL
+//    let webRTCIceServers: [String]
+//    
+//    static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
+//}
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    
+
     var window: UIWindow?
-    
-    
- 
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
@@ -54,25 +64,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
+    
+    
     func defineStartController() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         UserDataController().loadUserInfo()
-        
         if SharedConfigs.shared.signedUser == nil {
             DispatchQueue.main.async {
-                guard let rootVC = storyboard.instantiateViewController(identifier: "BeforeLoginViewController") as? BeforeLoginViewController else {
-                    print("BeforeLoginViewController not found")
-                    return
-                }
+                let rootVC = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
             }
         } else {
             DispatchQueue.main.async {
-                guard let rootVC = storyboard.instantiateViewController(identifier: "MainTabBarController") as? MainTabBarController else {
-                    print("MainTabBarController not found")
-                    return
-                }
+//                let webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+//                let signalClient = self.buildSignalingClient()
+                let rootVC = MainTabBarController.instantiate(fromAppStoryboard: .main)
+//                let callNC = rootVC.viewControllers![0] as! UINavigationController
+//                let callVC = callNC.viewControllers[0] as! CallViewController
+//                callVC.signalClient = signalClient
+//                callVC.webRTCClient = webRTCClient
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
             }

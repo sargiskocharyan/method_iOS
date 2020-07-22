@@ -8,19 +8,45 @@
 
 import Foundation
 import UIKit
-
+class Avatar {
+    var url: String
+    var image: UIImage
+    init(url: String, image: UIImage) {
+        self.url = url
+        self.image = image
+    }
+}
 class ImageCache {
     static let shared = ImageCache()
-    let cache = NSCache<AnyObject, UIImage>()
+    let cache = NSCache<AnyObject, Avatar>()
     private init() {}
     
-    func setImage(image: UIImage, url: String) {
-        cache.setObject(image, forKey: url as AnyObject)
+    func setImage(image: UIImage, url: String, id: String) { //6->2
+        cache.setObject(Avatar(url: url, image: image), forKey: id as AnyObject)
     }
     
-    func getImage(url: String, completion: @escaping (UIImage) -> ()) {
-        if let image = cache.object(forKey: url as AnyObject) {
-            completion(image)
+    func removeForKey(id: String) {
+        cache.removeObject(forKey: id as AnyObject)
+    }
+    
+    func getImage(url: String, id: String, completion: @escaping (UIImage) -> ()) {
+        if let avatar = cache.object(forKey: id as AnyObject) {
+            if avatar.url == url {
+                completion(avatar.image)
+            } else {
+                self.removeForKey(id: id)
+                guard let imageURL = URL(string: url) else {
+                    completion(UIImage(named: "noPhoto")!)
+                    return }
+                self.downloadImage(from: imageURL) { (image) in
+                    if image == nil {
+                        completion(UIImage(named: "noPhoto")!)
+                    } else {
+                        self.setImage(image: image!, url: url, id: id)
+                        completion(image!)
+                    }
+                }
+            }
         } else {
             guard let imageURL = URL(string: url) else {
                 completion(UIImage(named: "noPhoto")!)
@@ -29,7 +55,7 @@ class ImageCache {
                 if image == nil {
                     completion(UIImage(named: "noPhoto")!)
                 } else {
-                    self.setImage(image: image!, url: url)
+                    self.setImage(image: image!, url: url, id: id)
                     completion(image!)
                 }
             }
