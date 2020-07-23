@@ -36,7 +36,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure(_):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -64,7 +64,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -82,7 +82,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(NetworkResponse.failed)
+                    completion(NetworkResponse.authenticationError)
                 }
             }
         }
@@ -100,7 +100,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(error)
+                    completion(NetworkResponse.authenticationError)
                 }
             }
         }
@@ -128,7 +128,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -156,7 +156,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -183,7 +183,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -207,7 +207,7 @@ class HomeNetworkManager: NetworkManager {
                     let image = UIImage(data: responseData)
                     completion(image, nil)
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -260,7 +260,7 @@ class HomeNetworkManager: NetworkManager {
                    case .success:
                        completion(nil)
                    case .failure( _):
-                       completion(error)
+                       completion(NetworkResponse.authenticationError)
                    }
                }
            }
@@ -278,7 +278,7 @@ class HomeNetworkManager: NetworkManager {
                       case .success:
                           completion(nil)
                       case .failure( _):
-                          completion(error)
+                          completion(NetworkResponse.authenticationError)
                       }
                   }
               }
@@ -296,7 +296,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(error)
+                    completion(NetworkResponse.authenticationError)
                 }
             }
         }
@@ -324,7 +324,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }

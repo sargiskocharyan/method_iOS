@@ -204,7 +204,6 @@ class MainTabBarController: UITabBarController {
     func verifyToken() {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
                     DispatchQueue.main.async {
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                         let nav = UINavigationController(rootViewController: vc)
@@ -212,12 +211,6 @@ class MainTabBarController: UITabBarController {
                         window?.rootViewController = nav
                         window?.makeKeyAndVisible()
                     }
-                }
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                }
             } else if responseObject != nil && responseObject!.tokenExists == false {
                 DispatchQueue.main.async {
                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)

@@ -36,7 +36,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -64,7 +64,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, nil, NetworkResponse.failed)
+                    completion(nil, nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -92,7 +92,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, nil, NetworkResponse.failed)
+                    completion(nil, nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -120,7 +120,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -148,7 +148,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
@@ -176,7 +176,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(nil, NetworkResponse.authenticationError)
                 }
             }
         }
