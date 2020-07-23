@@ -107,14 +107,11 @@ class MainTabBarController: UITabBarController {
                     return
                 } else if user != nil {
                     DispatchQueue.main.async {
-                        switch self.selectedIndex {
-                        case 0:
+                        
                             let chatsNC = self.viewControllers![0] as! UINavigationController
                             let vc = chatsNC.viewControllers[0] as! CallListViewController
                             vc.handleCall(id: id, user: user!)
-                        default:
-                            print("uf esim e")
-                        }
+                        
                     }
                 }
             }
@@ -204,13 +201,17 @@ class MainTabBarController: UITabBarController {
     func verifyToken() {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
-                    DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
                         let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                         let nav = UINavigationController(rootViewController: vc)
                         let window: UIWindow? = UIApplication.shared.windows[0]
                         window?.rootViewController = nav
                         window?.makeKeyAndVisible()
-                    }
+                    }))
+                    self.present(alert, animated: true)
+                }
             } else if responseObject != nil && responseObject!.tokenExists == false {
                 DispatchQueue.main.async {
                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)

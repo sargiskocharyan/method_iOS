@@ -288,6 +288,7 @@
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
 				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
+				CD3F12D624BC290200040D8E /* CallManager.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -624,7 +625,6 @@
 		CDDE575B24C96A6400AFC790 /* CallKit */ = {
 			isa = PBXGroup;
 			children = (
-				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CD3F12D424BC28C900040D8E /* Call.swift */,
 				CD3F12D824BC29EB00040D8E /* Audio.swift */,
 				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,

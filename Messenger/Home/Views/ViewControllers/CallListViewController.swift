@@ -192,7 +192,6 @@ class CallListViewController: UIViewController {
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()
             self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.lastname, image: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname))
-            //
             self.sort()
             self.tableView.reloadData()
         }

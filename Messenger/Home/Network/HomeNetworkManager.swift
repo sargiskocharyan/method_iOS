@@ -36,7 +36,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure(_):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -64,7 +64,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -82,7 +82,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(NetworkResponse.authenticationError)
+                    completion(NetworkResponse.failed)
                 }
             }
         }
@@ -100,7 +100,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(NetworkResponse.authenticationError)
+                    completion(error)
                 }
             }
         }
@@ -128,7 +128,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -156,7 +156,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -183,7 +183,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -207,7 +207,7 @@ class HomeNetworkManager: NetworkManager {
                     let image = UIImage(data: responseData)
                     completion(image, nil)
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
@@ -260,7 +260,7 @@ class HomeNetworkManager: NetworkManager {
                    case .success:
                        completion(nil)
                    case .failure( _):
-                       completion(NetworkResponse.authenticationError)
+                       completion(error)
                    }
                }
            }
@@ -278,7 +278,7 @@ class HomeNetworkManager: NetworkManager {
                       case .success:
                           completion(nil)
                       case .failure( _):
-                          completion(NetworkResponse.authenticationError)
+                          completion(error)
                       }
                   }
               }
@@ -296,7 +296,7 @@ class HomeNetworkManager: NetworkManager {
                 case .success:
                     completion(nil)
                 case .failure( _):
-                    completion(NetworkResponse.authenticationError)
+                    completion(error)
                 }
             }
         }
@@ -324,7 +324,7 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, NetworkResponse.authenticationError)
+                    completion(nil, error)
                 }
             }
         }
