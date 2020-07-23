@@ -350,8 +350,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.present(alert, animated: true)
                 }
                 return
-            }
-            else {
+            } else {
                 DispatchQueue.main.async {
                     self.deleteAllRecords()
                     UserDataController().logOutUser()

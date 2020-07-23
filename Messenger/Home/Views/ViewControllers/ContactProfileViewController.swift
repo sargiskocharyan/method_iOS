@@ -11,6 +11,10 @@ import UIKit
 protocol ContactProfileDelegate: class {
     func addNewContact(contact: User)
 }
+
+protocol ContactProfileViewControllerDelegate: class {
+    func handleVideoCallClick()
+}
 class ContactProfileViewController: UIViewController {
     
     @IBOutlet weak var addToContactButton: UIButton!
@@ -41,7 +45,9 @@ class ContactProfileViewController: UIViewController {
     let viewModel = ContactsViewModel()
     let recentMessagesViewModel = RecentMessagesViewModel()
     weak var delegate: ContactProfileDelegate?
+    weak var callDelegate: ContactProfileViewControllerDelegate?
     var onContactPage: Bool?
+    let recentViewModel = RecentMessagesViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,14 +58,16 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.borderWidth = 1.0
         infoView.layer.masksToBounds = true
         getUserInformation()
-        sendMessageButton.setImage(UIImage(named: "sendMessage"), for: .normal)
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
         addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
         sendMessageButton.backgroundColor = .clear
         if onContactPage! {
             addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
+            addToContactButton.isEnabled = false
+        } else {
+            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+            addToContactButton.isEnabled = true
         }
-        
     }
     
     @objc func startMessage() {
@@ -98,9 +106,32 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-    @IBAction func sendMessageButtonAction(_ sender: Any) {
-        
+    @IBAction func startVideoCall(_ sender: Any) {
+        let tabBar = tabBarController as! MainTabBarController
+        if !tabBar.onCall {
+            tabBar.handleCallClick(id: id!)
+            recentViewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, image: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname))
+            self.sort()
+        } else {
+            tabBar.handleClickOnSamePerson()
+        }
     }
+    
+    func sort() {
+         let formatter = DateFormatter()
+         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+         for i in 0..<recentViewModel.calls.count {
+             for j in i..<recentViewModel.calls.count {
+                 let firstDate = recentViewModel.calls[i].time
+                 let secondDate = recentViewModel.calls[j].time
+                 if firstDate.compare(secondDate).rawValue == -1 {
+                     let temp = recentViewModel.calls[i]
+                     recentViewModel.calls[i] = recentViewModel.calls[j]
+                     recentViewModel.calls[j] = temp
+                 }
+             }
+         }
+     }
     
     @objc func addToContact() {
         viewModel.addContact(id: contact!._id) { (error) in
@@ -121,12 +152,12 @@ class ContactProfileViewController: UIViewController {
                     self.present(alert, animated: true)
                 }
                 
-            }
-            else {
+            } else {
                 self.delegate?.addNewContact(contact: self.contact!)
                 DispatchQueue.main.async {
-                    self.addToContactButton.setTitleColor(UIColor.lightGray.withAlphaComponent(0.7), for: .normal)
+                    self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
                     self.addToContactButton.isEnabled = false
+                    self.addToContactButton.tintColor.withAlphaComponent(1)
                 }
             }
             
@@ -246,9 +277,6 @@ class ContactProfileViewController: UIViewController {
         } else {
             userImageView.image = UIImage(named: "noPhoto")
         }
-        
-        
-        
     }
     
 }

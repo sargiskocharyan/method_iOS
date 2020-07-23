@@ -130,6 +130,13 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
     
     //MARK: Helper methods
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        return parsedDate
+    }
+    
     func confirmCode() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
@@ -144,7 +151,8 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
-                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL)
+                    
+                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire))
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
                     DispatchQueue.main.async {
@@ -172,6 +180,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else if token != nil {
                     SharedConfigs.shared.signedUser = loginResponse?.user
+                    SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
                     DispatchQueue.main.async {

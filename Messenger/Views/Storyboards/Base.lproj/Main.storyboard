@@ -1690,10 +1690,10 @@
                                                         </constraints>
                                                     </imageView>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y55-cE-PNW">
-                                                        <rect key="frame" x="133" y="130" width="30" height="30"/>
+                                                        <rect key="frame" x="103" y="130" width="50" height="50"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="30" id="qLR-GE-rth"/>
-                                                            <constraint firstAttribute="height" constant="30" id="ulA-Jg-iG2"/>
+                                                            <constraint firstAttribute="width" constant="50" id="qLR-GE-rth"/>
+                                                            <constraint firstAttribute="height" constant="50" id="ulA-Jg-iG2"/>
                                                         </constraints>
                                                         <color key="tintColor" red="0.5013250709" green="0.37268495559999998" blue="0.98328763249999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" image="person.badge.plus.fill" catalog="system">
@@ -1701,27 +1701,24 @@
                                                         </state>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8aJ-Wc-y7z">
-                                                        <rect key="frame" x="193" y="130" width="30" height="30"/>
+                                                        <rect key="frame" x="183" y="130" width="50" height="50"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="30" id="VZe-2X-V8m"/>
-                                                            <constraint firstAttribute="height" constant="30" id="fdS-T7-Qnv"/>
+                                                            <constraint firstAttribute="width" constant="50" id="VZe-2X-V8m"/>
+                                                            <constraint firstAttribute="height" constant="50" id="fdS-T7-Qnv"/>
                                                         </constraints>
                                                         <color key="tintColor" red="0.49803921568627452" green="0.37647058823529411" blue="0.96470588235294119" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" image="message.fill" catalog="system"/>
-                                                        <connections>
-                                                            <action selector="sendMessageButtonAction:" destination="YOH-td-ZuE" eventType="touchUpInside" id="vjy-sL-2QC"/>
-                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6w5-gj-oH5">
-                                                        <rect key="frame" x="253" y="130" width="30" height="30"/>
+                                                        <rect key="frame" x="263" y="130" width="50" height="50"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="30" id="Hdp-TJ-BnT"/>
-                                                            <constraint firstAttribute="width" constant="30" id="xwS-3Q-892"/>
+                                                            <constraint firstAttribute="height" constant="50" id="Hdp-TJ-BnT"/>
+                                                            <constraint firstAttribute="width" constant="50" id="xwS-3Q-892"/>
                                                         </constraints>
                                                         <color key="tintColor" red="0.49803921569999998" green="0.37647058820000001" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" image="video.fill" catalog="system"/>
                                                         <connections>
-                                                            <action selector="sendMessageButtonAction:" destination="YOH-td-ZuE" eventType="touchUpInside" id="fd3-C1-oql"/>
+                                                            <action selector="startVideoCall:" destination="YOH-td-ZuE" eventType="touchUpInside" id="gCz-ed-BTf"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

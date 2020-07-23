@@ -21,6 +21,7 @@ struct UserModel: Codable {
     var birthDate: String?
     var gender: String?
     var info: String?
+    var tokenExpire: Date?
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -36,5 +37,6 @@ struct UserModel: Codable {
         case birthDate = "birthday"
         case gender
         case info
+        case tokenExpire
     }
 }

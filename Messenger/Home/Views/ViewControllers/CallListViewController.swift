@@ -27,7 +27,7 @@ struct Config {
 }
 
 protocol CallListViewDelegate: class  {
-    func handleCallClick()
+    func handleCallClick(id: String)
     func handleClickOnSamePerson()
 }
 
@@ -46,7 +46,6 @@ class CallListViewController: UIViewController {
     var onCall: Bool = false
     weak var delegate: CallListViewDelegate?
     var id: String?
-    var callManager: CallManager!
     var viewModel = RecentMessagesViewModel()
     var calls: [FetchedCall] = []
     //    var vc: VideoViewController?
@@ -69,7 +68,7 @@ class CallListViewController: UIViewController {
         //        provider.setDelegate(self, queue: DispatchQueue.main)
         //        self.deleteAllData(entity: "CallEntity")
         MainTabBarController.center.delegate = self
-        callManager = AppDelegate.shared.callManager
+        
         tableView.delegate = self
         tableView.dataSource = self
         getHistory()
@@ -399,10 +398,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let call = viewModel.calls[indexPath.row]
         if onCall == false  {
-            
-            SocketTaskManager.shared.call(id: call.id)
-            callManager.startCall(handle: call.id, videoEnabled: true)
-            self.delegate?.handleCallClick()
+            self.delegate?.handleCallClick(id: call.id)
             if viewModel.calls.count >= 15 {
                 viewModel.deleteItem()
             }

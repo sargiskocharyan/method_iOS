@@ -16,7 +16,7 @@ class ProviderDelegate: NSObject {
   }
   
   static var providerConfiguration: CXProviderConfiguration = {
-    let providerConfiguration = CXProviderConfiguration(localizedName: "Hotline")
+    let providerConfiguration = CXProviderConfiguration(localizedName: "Dynamic Messenger")
     providerConfiguration.supportsVideo = true
     providerConfiguration.maximumCallsPerCallGroup = 1
     providerConfiguration.supportedHandleTypes = [.phoneNumber]

@@ -26,28 +26,28 @@ class VideoViewController: UIViewController {
     
     @IBAction func endCallButton(_ sender: Any) {
         //
-//        if roomName == nil {
-            for call in callManager.calls {
-                callManager.end(call: call)
-            }
-             
-            callManager.removeAllCalls()
-            self.view.viewWithTag(10)?.removeFromSuperview()
-            self.view.viewWithTag(11)?.removeFromSuperview()
-            //            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-               webRTCClient?.removeThracks()
-            webRTCClient?.peerConnection?.close()
-            //            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
-          //  delegate?.handleClose()
-            
-            self.navigationController?.popViewController(animated: false)
-            //            webRTCClient = nil
-            
-//        } else {
-//
-//
-//        }
-
+        //        if roomName == nil {
+        for call in callManager.calls {
+            callManager.end(call: call)
+        }
+        
+        callManager.removeAllCalls()
+        self.view.viewWithTag(10)?.removeFromSuperview()
+        self.view.viewWithTag(11)?.removeFromSuperview()
+        //            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
+        webRTCClient?.removeThracks()
+        webRTCClient?.peerConnection?.close()
+        //            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
+        //  delegate?.handleClose()
+        
+        self.navigationController?.popViewController(animated: false)
+        //            webRTCClient = nil
+        
+        //        } else {
+        //
+        //
+        //        }
+        
         // self.view.backgroundColor = .white
         //        webRTCClient?.peerConnection = nil
         

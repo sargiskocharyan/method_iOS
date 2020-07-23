@@ -22,6 +22,7 @@ class MainTabBarController: UITabBarController {
     private let config = Config.default
     var webRTCClient: WebRTCClient?
     private var roomName: String?
+    var callManager: CallManager!
     var recentMessagesViewModel = RecentMessagesViewModel()
     var vc: VideoViewController?
     var onCall: Bool = false
@@ -34,6 +35,8 @@ class MainTabBarController: UITabBarController {
     private var hasLocalSdp: Bool = false
     var callsNC: UINavigationController?
     var callsVC: CallListViewController?
+    let profileViewModel = ProfileViewModel()
+    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +45,7 @@ class MainTabBarController: UITabBarController {
 //        self.webRTCClient?.delegate = self
         verifyToken()
         socketTaskManager.connect()
+        callManager = AppDelegate.shared.callManager
         handleCall()
         handleAnswer()
         handleCallAccepted()
@@ -224,6 +228,27 @@ class MainTabBarController: UITabBarController {
                     }
                     sceneDelegate.window?.rootViewController = nav
                 }
+            } else if responseObject != nil && responseObject!.tokenExists {
+                let userCalendar = Calendar.current
+                let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
+                let timeDifference = userCalendar.dateComponents(requestedComponent, from: Date(), to: (SharedConfigs.shared.signedUser?.tokenExpire)!)
+                if timeDifference.day! <= 1 {
+                    self.profileViewModel.logout { (error) in
+                        self.socketTaskManager.disconnect()
+                        UserDataController().logOutUser()
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+                                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                                let nav = UINavigationController(rootViewController: vc)
+                                let window: UIWindow? = UIApplication.shared.windows[0]
+                                window?.rootViewController = nav
+                                window?.makeKeyAndVisible()
+                            }))
+                            self.present(alert, animated: true)
+                        }
+                    }
+                }
             }
         }
     }
@@ -314,6 +339,7 @@ extension  MainTabBarController: SignalClientDelegate {
 }
 
 extension MainTabBarController: CallListViewDelegate {
+    
     func handleClickOnSamePerson() {
         DispatchQueue.main.async {
             let selectedNC = self.selectedViewController as? UINavigationController
@@ -321,8 +347,10 @@ extension MainTabBarController: CallListViewDelegate {
         }
     }
     
-    func handleCallClick() {
+    func handleCallClick(id: String) {
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        SocketTaskManager.shared.call(id: id)
+        callManager.startCall(handle: id, videoEnabled: true)
         webRTCClient?.delegate = self
         self.vc?.webRTCClient = self.webRTCClient
         self.onCall = true
