@@ -9,6 +9,7 @@
 import UIKit
 import DropDown
 import AVFoundation
+import CoreData
 
 protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
@@ -352,6 +353,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             else {
                 DispatchQueue.main.async {
+                    self.deleteAllRecords()
                     UserDataController().logOutUser()
                     let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                     let nav = UINavigationController(rootViewController: vc)
@@ -407,6 +409,21 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             cell.countryImageView.image = UIImage(named: "\(item)")
         }
         dropDown.show()
+    }
+    
+    func deleteAllRecords() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+        } catch {
+            print ("There was an error")
+        }
     }
     
     func checkInformation() {

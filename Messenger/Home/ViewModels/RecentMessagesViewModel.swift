@@ -21,23 +21,49 @@ struct FetchedCall {
 class RecentMessagesViewModel {
      var calls: [FetchedCall] = []
     private var privateCalls: [NSManagedObject] = []
-    func getHistory() {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
+    func getHistory(completion: @escaping ([FetchedCall])->()) {
+//        DispatchQueue.global(qos: .background).async {
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                    completion([])
+                    return
+            }
+            let managedContext = appDelegate.persistentContainer.viewContext
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
+            do {
+                let callsFetched = try managedContext.fetch(fetchRequest)
+                self.privateCalls = callsFetched
+                self.calls = callsFetched.map { (call) -> FetchedCall in
+                    return FetchedCall(id: call.value(forKey: "id") as! String, name: call.value(forKey: "name") as? String, username: call.value(forKey: "username") as? String, image: call.value(forKey: "image") as? String, isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, lastname: call.value(forKey: "lastname") as? String)
+                }
+                completion(self.calls)
+            } catch let error as NSError {
+                print("Could not fetch. \(error), \(error.userInfo)")
+                completion([])
+            }
+//        }
+        
+    }
+    
+    func deleteItem() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        
+        // Configure Fetch Request
+        fetchRequest.includesPropertyValues = false
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
         }
         let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
         do {
-            let callsFetched = try managedContext.fetch(fetchRequest)
-            privateCalls = callsFetched
-            calls = callsFetched.map { (call) -> FetchedCall in
-                return FetchedCall(id: call.value(forKey: "id") as! String, name: call.value(forKey: "name") as? String, username: call.value(forKey: "username") as? String, image: call.value(forKey: "image") as? String, isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, lastname: call.value(forKey: "lastname") as? String)
-            }
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            managedContext.delete(privateCalls[0])
+            calls.removeLast()
+            try managedContext.save()
+            
+        } catch {
+            // Error Handling
+            // ...
         }
     }
+    
     func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
         HomeNetworkManager().getChats() { (chats, error) in
             completion(chats, error)

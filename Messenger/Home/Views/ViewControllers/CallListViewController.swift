@@ -28,6 +28,7 @@ struct Config {
 
 protocol CallListViewDelegate: class  {
     func handleCallClick()
+    func handleClickOnSamePerson()
 }
 
 class CallListViewController: UIViewController {
@@ -47,58 +48,23 @@ class CallListViewController: UIViewController {
     var id: String?
     var callManager: CallManager!
     var viewModel = RecentMessagesViewModel()
+    var calls: [FetchedCall] = []
     //    var vc: VideoViewController?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activity: UIActivityIndicatorView!
     
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //        vc = VideoViewController.instantiate(fromAppStoryboard: .main)
-        //        vc?.delegate = self
-        //        vc?.webRTCClient = self.webRTCClient
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        //        guard let appDelegate =
-        //            UIApplication.shared.delegate as? AppDelegate else {
-        //                return
-        //        }
-        //        let managedContext = appDelegate.persistentContainer.viewContext
-        //        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
-        //        do {
-        //            calls = try managedContext.fetch(fetchRequest)
-        //        } catch let error as NSError {
-        //            print("Could not fetch. \(error), \(error.userInfo)")
-        //        }
-        
         self.sort()
-        if onCall {
-            //            #if arch(arm64)
-            //            // Using metal (arm64 only)
-            //            let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-            //            remoteRenderer.videoContentMode = .scaleAspectFill
-            //            #else
-            //            // Using OpenGLES for the rest
-            //            let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-            //            #endif
-            //            remoteRenderer.tag = 12
-            //            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-            //            self.embedView(remoteRenderer, into: self.view)
-        }
     }
     
-    //    private func embedView(_ view: UIView, into containerView: UIView) {
-    //        containerView.addSubview(view)
-    //        view.translatesAutoresizingMaskIntoConstraints = false
-    //        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: ["view":view]))
-    //        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: [], metrics: nil, views: ["view":view]))
-    //        containerView.layoutIfNeeded()
-    //    }
-    //
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         //        let provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
         //        provider.setDelegate(self, queue: DispatchQueue.main)
         //        self.deleteAllData(entity: "CallEntity")
@@ -106,7 +72,7 @@ class CallListViewController: UIViewController {
         callManager = AppDelegate.shared.callManager
         tableView.delegate = self
         tableView.dataSource = self
-        viewModel.getHistory()
+        getHistory()
         //        self.signalClient = self.buildSignalingClient()
         //        self.signalClient?.delegate = self
         //        self.webRTCClient?.speakerOn()
@@ -117,9 +83,21 @@ class CallListViewController: UIViewController {
         navigationItem.title = "Call history"
         //        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         //        self.webRTCClient?.delegate = self
+        
     }
     
     //MARK: Helper methods
+    func getHistory() {
+        activity.startAnimating()
+        viewModel.getHistory { (calls) in
+            self.activity.stopAnimating()
+            self.calls = calls
+            if self.calls.count == 0 {
+                self.addNoCallView()
+            }
+        }
+    }
+    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -134,6 +112,20 @@ class CallListViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func addNoCallView() {
+       let label = UILabel()
+        label.text = "You have no calls"
+        label.tag = 20
+        label.textAlignment = .center
+        label.textColor = .lightGray
+        self.tableView.addSubview(label)
+        label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
     //    func handleCallAccepted() {
@@ -166,6 +158,9 @@ class CallListViewController: UIViewController {
     func handleCall(id: String, user: User) {
         //        SocketTaskManager.shared.handleCall { (id) in
         self.id = id
+        if viewModel.calls.count >= 15 {
+            viewModel.deleteItem()
+        }
         //            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
         //            DispatchQueue.main.asyncAfter(deadline: .now()) {
         //                AppDelegate.shared.displayIncomingCall(
@@ -195,6 +190,7 @@ class CallListViewController: UIViewController {
         //                    return
         //                } else if user != nil {
         DispatchQueue.main.async {
+            self.view.viewWithTag(20)?.removeFromSuperview()
             self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.lastname, image: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname))
             //
             self.sort()
@@ -235,7 +231,7 @@ class CallListViewController: UIViewController {
     //    }
     
     
-    
+
     func deleteAllData(entity: String) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
@@ -408,23 +404,17 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             SocketTaskManager.shared.call(id: call.id)
             callManager.startCall(handle: call.id, videoEnabled: true)
             self.delegate?.handleCallClick()
-            
+            if viewModel.calls.count >= 15 {
+                viewModel.deleteItem()
+            }
             viewModel.save(newCall: FetchedCall(id: call.id, name: call.name, username: call.username, image: call.image, isHandleCall: false, time: Date(), lastname: call.lastname))
             self.sort()
             id = call.id
             tableView.reloadData()
-            //            vc?.webRTCClient = self.webRTCClient
-            //            self.vc?.startCall()
-            //            self.navigationController?.pushViewController(vc!, animated: true)
-            
         } else if onCall && id != nil {
             if id == call.id {
-                //                vc?.roomName = roomName
-                //                self.vc?.webRTCClient = self.webRTCClient
-                //                self.navigationController?.pushViewController(vc!, animated: true)
-                self.delegate?.handleCallClick()
+                self.delegate?.handleClickOnSamePerson()
             }
         }
     }
 }
-//callintegration

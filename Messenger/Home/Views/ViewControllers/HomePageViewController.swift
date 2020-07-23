@@ -131,7 +131,7 @@ class MainTabBarController: UITabBarController {
         socketTaskManager.handleCallAccepted { (callAccepted, roomName) in
             self.roomName = roomName
             self.vc?.handleOffer(roomName: roomName)
-            if callAccepted || self.webRTCClient != nil {
+            if callAccepted && self.webRTCClient != nil {
                 self.webRTCClient!.offer { (sdp) in
                     self.vc!.handleAnswer()
                     self.vc!.roomName = roomName
@@ -205,11 +205,13 @@ class MainTabBarController: UITabBarController {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
                 if error == NetworkResponse.authenticationError {
-                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                    let nav = UINavigationController(rootViewController: vc)
-                    let window: UIWindow? = UIApplication.shared.windows[0]
-                    window?.rootViewController = nav
-                    window?.makeKeyAndVisible()
+                    DispatchQueue.main.async {
+                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                        let nav = UINavigationController(rootViewController: vc)
+                        let window: UIWindow? = UIApplication.shared.windows[0]
+                        window?.rootViewController = nav
+                        window?.makeKeyAndVisible()
+                    }
                 }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
@@ -318,6 +320,13 @@ extension  MainTabBarController: SignalClientDelegate {
 }
 
 extension MainTabBarController: CallListViewDelegate {
+    func handleClickOnSamePerson() {
+        DispatchQueue.main.async {
+            let selectedNC = self.selectedViewController as? UINavigationController
+            selectedNC?.pushViewController(self.vc!, animated: false)
+        }
+    }
+    
     func handleCallClick() {
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         webRTCClient?.delegate = self

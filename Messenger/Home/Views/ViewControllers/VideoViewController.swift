@@ -139,41 +139,4 @@ class VideoViewController: UIViewController {
         containerView.layoutIfNeeded()
     }
 }
-//extension VideoViewController: WebRTCClientDelegate {
-//    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
-//        DispatchQueue.main.async {
-//            let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
-//            let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-//            self.present(alert, animated: true, completion: nil)
-//        }
-//    }
-//
-//    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-//        print("discovered local candidate")
-//    }
-//
-//    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-//        if state == .closed {
-//            if roomName != nil {
-//                for call in callManager.calls {
-//                    callManager.end(call: call)
-//                }
-//                callManager.removeAllCalls()
-//                webRTCClient?.removeThracks()
-//                SocketTaskManager.shared.leaveRoom(roomName: roomName!)
-//                roomName = nil
-//                webRTCClient = nil
-//                 self.delegate?.handleClose()
-//                DispatchQueue.main.async {
-//                    self.view.viewWithTag(10)?.removeFromSuperview()
-//                    self.view.viewWithTag(11)?.removeFromSuperview()
-//                    self.navigationController?.popViewController(animated: false)
-//                }
-//
-//            }
-//        }
-//        print(state)
-//        print("did Change Connection State")
-//    }
-//}
+

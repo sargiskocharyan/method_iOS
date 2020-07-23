@@ -253,6 +253,7 @@
 		CD367337247949E20002E606 /* SupportFiles */ = {
 			isa = PBXGroup;
 			children = (
+				CDDE575B24C96A6400AFC790 /* CallKit */,
 				CDCA69B7247D42BD00F85145 /* Wrappers */,
 				CD367338247949FA0002E606 /* Extensions */,
 			);
@@ -280,16 +281,12 @@
 			children = (
 				CD5E7144248661B2008D876E /* CallListViewController.swift */,
 				CD5E713E24865935008D876E /* HomePageViewController.swift */,
-				CD3F12D824BC29EB00040D8E /* Audio.swift */,
 				CD3713BA248674BA0088A0CC /* ProfileViewController.swift */,
 				CD352E352488F71900747E32 /* ContactsViewController.swift */,
-				CD3F12D424BC28C900040D8E /* Call.swift */,
-				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */,
 				CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */,
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
-				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
 				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
 			);
 			path = ViewControllers;
@@ -622,6 +619,17 @@
 				CD5E71422486602B008D876E /* SharedConfigs.swift */,
 			);
 			path = SharedConfigs;
+			sourceTree = "<group>";
+		};
+		CDDE575B24C96A6400AFC790 /* CallKit */ = {
+			isa = PBXGroup;
+			children = (
+				CD3F12D624BC290200040D8E /* CallManager.swift */,
+				CD3F12D424BC28C900040D8E /* Call.swift */,
+				CD3F12D824BC29EB00040D8E /* Audio.swift */,
+				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
+			);
+			path = CallKit;
 			sourceTree = "<group>";
 		};
 		F16CBAD5249A0A0D00BCE77C /* UserDataController */ = {

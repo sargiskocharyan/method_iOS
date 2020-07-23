@@ -19,7 +19,6 @@ class AuthorizationNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(nil, error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
@@ -37,7 +36,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }
@@ -49,7 +48,6 @@ class AuthorizationNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(nil, nil, error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
@@ -66,7 +64,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, nil, error)
+                    completion(nil, nil, NetworkResponse.failed)
                 }
             }
         }
@@ -78,7 +76,6 @@ class AuthorizationNetworkManager: NetworkManager {
                 print(error!.rawValue)
                 completion(nil, nil, error)
             }
-            
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
@@ -95,7 +92,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, nil, error)
+                    completion(nil, nil, NetworkResponse.failed)
                 }
             }
         }
@@ -123,7 +120,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }
@@ -151,11 +148,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                        completion(nil, error)
-                    guard data != nil else {
-                        completion(nil, error)
-                        return
-                    }
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }
@@ -183,7 +176,7 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):
-                    completion(nil, error)
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }
