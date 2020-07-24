@@ -151,7 +151,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
-                    
                     let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire))
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)

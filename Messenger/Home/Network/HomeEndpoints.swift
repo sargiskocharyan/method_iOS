@@ -56,7 +56,7 @@ extension HomeApi: EndPointType {
             return AUTHUrls.DeactivateAccount
         case .deleteAvatar:
             return AUTHUrls.DeleteAvatar
-        case .editInformation(let name, let lastname, let username, let phoneNumber, let info, let address, let gender, let birthDate):
+        case .editInformation(_, _, _, _, _, _, _, _):
             return AUTHUrls.UpdateUser
         }
     }

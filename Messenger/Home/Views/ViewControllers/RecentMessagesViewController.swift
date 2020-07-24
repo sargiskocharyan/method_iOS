@@ -134,16 +134,6 @@ class RecentMessagesViewController: UIViewController {
         
         viewModel.getChats { (messages, error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -187,16 +177,6 @@ class RecentMessagesViewController: UIViewController {
         }
         self.viewModel.getuserById(id: id) { (user, error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))

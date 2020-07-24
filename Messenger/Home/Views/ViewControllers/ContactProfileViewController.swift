@@ -43,15 +43,19 @@ class ContactProfileViewController: UIViewController {
     var contact: User?
     var id: String?
     let viewModel = ContactsViewModel()
-    let recentMessagesViewModel = RecentMessagesViewModel()
     weak var delegate: ContactProfileDelegate?
     weak var callDelegate: ContactProfileViewControllerDelegate?
     var onContactPage: Bool?
-    let recentViewModel = RecentMessagesViewModel()
+    var tabBar: MainTabBarController?
+    var nc: UINavigationController?
+    var callListViewController: CallListViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        userImageView.contentMode = . scaleAspectFill
+        tabBar = tabBarController as? MainTabBarController
+        nc = tabBar?.viewControllers?[0] as? UINavigationController
+        callListViewController = nc?.viewControllers[0] as? CallListViewController
+        userImageView.contentMode = .scaleAspectFill
         userImageView.layer.cornerRadius = 40
         userImageView.clipsToBounds = true
         infoView.layer.borderColor = UIColor.lightGray.cgColor
@@ -80,18 +84,8 @@ class ContactProfileViewController: UIViewController {
     }
     
     func getUserInformation() {
-        recentMessagesViewModel.getuserById(id: id!) { (user, error) in
+        callListViewController?.viewModel.getuserById(id: id!) { (user, error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -110,8 +104,12 @@ class ContactProfileViewController: UIViewController {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!)
-            recentViewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, image: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname))
-            self.sort()
+            callListViewController?.viewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, imageURL: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname), completion: {
+                self.sort()
+                let nc = tabBar.viewControllers![0] as! UINavigationController
+                let vc = nc.viewControllers[0] as! CallListViewController
+                vc.tableView.reloadData()
+            })
         } else {
             tabBar.handleClickOnSamePerson()
         }
@@ -120,14 +118,14 @@ class ContactProfileViewController: UIViewController {
     func sort() {
          let formatter = DateFormatter()
          formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-         for i in 0..<recentViewModel.calls.count {
-             for j in i..<recentViewModel.calls.count {
-                 let firstDate = recentViewModel.calls[i].time
-                 let secondDate = recentViewModel.calls[j].time
-                 if firstDate.compare(secondDate).rawValue == -1 {
-                     let temp = recentViewModel.calls[i]
-                     recentViewModel.calls[i] = recentViewModel.calls[j]
-                     recentViewModel.calls[j] = temp
+         for i in 0..<callListViewController!.viewModel.calls.count {
+             for j in i..<callListViewController!.viewModel.calls.count {
+                 let firstDate = callListViewController!.viewModel.calls[i].time
+                 let secondDate = callListViewController?.viewModel.calls[j].time
+                if firstDate.compare(secondDate!).rawValue == -1 {
+                     let temp = callListViewController!.viewModel.calls[i]
+                    callListViewController?.viewModel.calls[i] = callListViewController?.viewModel.calls[j] as! FetchedCall
+                     callListViewController?.viewModel.calls[j] = temp
                  }
              }
          }
@@ -136,16 +134,6 @@ class ContactProfileViewController: UIViewController {
     @objc func addToContact() {
         viewModel.addContact(id: contact!._id) { (error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))

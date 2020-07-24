@@ -92,16 +92,6 @@ class ContactsViewController: UIViewController {
         if textField.text != "" {
             self.viewModel.findUsers(term: (textField.text)!) { (responseObject, error) in
                 if error != nil {
-                    if error == NetworkResponse.authenticationError {
-                        UserDataController().logOutUser()
-                        DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
-                        }
-                    }
                     DispatchQueue.main.async {
                         let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -196,20 +186,10 @@ class ContactsViewController: UIViewController {
         }
         viewModel.getContacts { (userContacts, error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                    }
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
                 }
             } else if userContacts != nil {
                 self.isLoaded = true
@@ -251,47 +231,6 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
         vc.contact = contactsMiniInformation[indexPath.row]
         self.navigationController?.pushViewController(vc, animated: true)
         vc.onContactPage = onContactPage
-//            self.navigationItem.rightBarButtonItem?.isEnabled = true
-//            DispatchQueue.main.async {
-//                self.activityIndicator.startAnimating()
-//            }
-//            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
-//                if error != nil {
-//                    if error == NetworkResponse.authenticationError {
-//                        UserDataController().logOutUser()
-//                        DispatchQueue.main.async {
-//                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-//                            let nav = UINavigationController(rootViewController: vc)
-//                            let window: UIWindow? = UIApplication.shared.windows[0]
-//                            window?.rootViewController = nav
-//                            window?.makeKeyAndVisible()
-//                        }
-//                    }
-//                    DispatchQueue.main.async {
-//                        self.activityIndicator.stopAnimating()
-//                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-//                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-//                        self.present(alert, animated: true)
-//                    }
-//
-//                }
-//                else {
-//                    self.contacts.append(User(name: self.findedUsers[indexPath.row].name, lastname:
-//                        self.findedUsers[indexPath.row].lastname, university: nil, _id: self.findedUsers[indexPath.row]._id, username: self.findedUsers[indexPath.row].username, avatarURL: self.findedUsers[indexPath.row].avatarURL, email: nil))
-//                    self.onContactPage = true
-//                    self.contactsMiniInformation = self.contacts
-//                    DispatchQueue.main.async {
-//                        self.tableView.reloadData()
-//                        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
-//                        self.navigationItem.title = "contacts".localized()
-//                        self.activityIndicator.stopAnimating()
-//                    }
-//                }
-//            }
-//        } else {
-           
-//
-//        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

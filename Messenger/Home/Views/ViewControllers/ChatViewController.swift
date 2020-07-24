@@ -79,6 +79,7 @@ class ChatViewController: UIViewController {
     //MARK: Helper methods
     @objc func sendMessage() {
         if inputTextField.text != "" {
+            print(socketTaskManager.manager.status)
             socketTaskManager.send(message: inputTextField.text!, id: id!)
         }
     }
@@ -195,16 +196,6 @@ class ChatViewController: UIViewController {
         self.activity.startAnimating()
         viewModel.getChatMessages(id: id!) { (messages, error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.view.viewWithTag(5)?.removeFromSuperview()

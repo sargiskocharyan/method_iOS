@@ -82,27 +82,9 @@ class MainTabBarController: UITabBarController {
     func handleCall() {
         SocketTaskManager.shared.handleCall { (id) in
             self.id = id
-            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                AppDelegate.shared.displayIncomingCall(
-                    id: id, uuid: UUID(),
-                    handle: "araa ekeq e!fdgfdgfdgdfdfgdfdfdgfd!!",
-                    hasVideo: true, roomName: self.roomName ?? "") { _ in
-                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                }
-            }
+            
             self.recentMessagesViewModel.getuserById(id: id) { (user, error) in
                 if (error != nil) {
-                    if error == NetworkResponse.authenticationError {
-                        UserDataController().logOutUser()
-                        DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
-                        }
-                    }
                     DispatchQueue.main.async {
                         let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -110,12 +92,19 @@ class MainTabBarController: UITabBarController {
                     }
                     return
                 } else if user != nil {
+                    let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now()) {
+                        AppDelegate.shared.displayIncomingCall(
+                            id: id, uuid: UUID(),
+                            handle: user?.name ?? (user?.username)!,
+                            hasVideo: true, roomName: self.roomName ?? "") { _ in
+                                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                        }
+                    }
                     DispatchQueue.main.async {
-                        
                             let chatsNC = self.viewControllers![0] as! UINavigationController
                             let vc = chatsNC.viewControllers[0] as! CallListViewController
                             vc.handleCall(id: id, user: user!)
-                        
                     }
                 }
             }
@@ -146,7 +135,7 @@ class MainTabBarController: UITabBarController {
         socketTaskManager.handleAnswer { (data) in
             self.vc?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
-                print(error?.localizedDescription)
+                print(error?.localizedDescription as Any)
             })
             self.webRTCClient!.answer { (localSdp) in
                 self.hasLocalSdp = true
@@ -206,27 +195,26 @@ class MainTabBarController: UITabBarController {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }))
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }
             } else if responseObject != nil && responseObject!.tokenExists == false {
+                UserDataController().logOutUser()
                 DispatchQueue.main.async {
-                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                    vc.modalPresentationStyle = .fullScreen
-                    let nav = UINavigationController(rootViewController: vc)
-                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                        let sceneDelegate = windowScene.delegate as? SceneDelegate
-                        else {
-                            return
-                    }
-                    sceneDelegate.window?.rootViewController = nav
+                    let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                        vc.modalPresentationStyle = .fullScreen
+                        let nav = UINavigationController(rootViewController: vc)
+                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                            let sceneDelegate = windowScene.delegate as? SceneDelegate
+                            else {
+                                return
+                        }
+                        sceneDelegate.window?.rootViewController = nav
+                    }))
+                     self.present(alert, animated: true)
                 }
             } else if responseObject != nil && responseObject!.tokenExists {
                 let userCalendar = Calendar.current

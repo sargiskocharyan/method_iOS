@@ -41,9 +41,6 @@
 		CD3F12D724BC290200040D8E /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D624BC290200040D8E /* CallManager.swift */; };
 		CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D824BC29EB00040D8E /* Audio.swift */; };
 		CD3F12E824BC558B00040D8E /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E124BC558B00040D8E /* Message.swift */; };
-		CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */; };
-		CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */; };
-		CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */; };
 		CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E624BC558B00040D8E /* WebRTCClient.swift */; };
 		CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E724BC558B00040D8E /* SignalingClient.swift */; };
 		CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EE24BC55C100040D8E /* RTCStates.swift */; };
@@ -147,9 +144,6 @@
 		CD3F12D624BC290200040D8E /* CallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CD3F12D824BC29EB00040D8E /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		CD3F12E124BC558B00040D8E /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
-		CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeWebSocket.swift; sourceTree = "<group>"; };
-		CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarscreamProvider.swift; sourceTree = "<group>"; };
 		CD3F12E624BC558B00040D8E /* WebRTCClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
 		CD3F12E724BC558B00040D8E /* SignalingClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
 		CD3F12EE24BC55C100040D8E /* RTCStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCStates.swift; sourceTree = "<group>"; };
@@ -318,20 +312,17 @@
 				CD3F12E124BC558B00040D8E /* Message.swift */,
 				CD3F12E624BC558B00040D8E /* WebRTCClient.swift */,
 				CD3F12E724BC558B00040D8E /* SignalingClient.swift */,
-				CD3F12E224BC558B00040D8E /* WebSocketProvider */,
+				CD3F12E224BC558B00040D8E /* SocketIO */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		CD3F12E224BC558B00040D8E /* WebSocketProvider */ = {
+		CD3F12E224BC558B00040D8E /* SocketIO */ = {
 			isa = PBXGroup;
 			children = (
 				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
-				CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */,
-				CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */,
-				CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */,
 			);
-			path = WebSocketProvider;
+			path = SocketIO;
 			sourceTree = "<group>";
 		};
 		CD5E713D2486590C008D876E /* Home */ = {
@@ -795,7 +786,6 @@
 				CD36536824C05C4800432264 /* CallModel.xcdatamodeld in Sources */,
 				CDD9C673247BC4AE0048A9A1 /* HTTPTask.swift in Sources */,
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
-				CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */,
 				CD355E46247FAEF90049517F /* Data-Extension.swift in Sources */,
 				CD35E268249797EC003C53AB /* RecentMessagesViewController.swift in Sources */,
 				CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */,
@@ -836,14 +826,12 @@
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
-				CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */,
 				CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */,
 				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
 				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
-				CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,

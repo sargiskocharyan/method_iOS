@@ -17,6 +17,8 @@ class VideoViewController: UIViewController {
     var roomName: String?
     var webRTCClient: WebRTCClient?
     weak var delegate: VideoViewControllerProtocol?
+    var cameraPosition = AVCaptureDevice.Position.front
+    var isMicrophoneOn = true
     @IBOutlet weak var ourView: UIView!
     let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
@@ -25,53 +27,32 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func endCallButton(_ sender: Any) {
-        //
-        //        if roomName == nil {
         for call in callManager.calls {
             callManager.end(call: call)
         }
-        
         callManager.removeAllCalls()
         self.view.viewWithTag(10)?.removeFromSuperview()
         self.view.viewWithTag(11)?.removeFromSuperview()
-        //            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
         webRTCClient?.removeThracks()
         webRTCClient?.peerConnection?.close()
-        //            webRTCClient?.peerConnection!.remove((webRTCClient?.stream)!)
-        //  delegate?.handleClose()
-        
         self.navigationController?.popViewController(animated: false)
-        //            webRTCClient = nil
-        
-        //        } else {
-        //
-        //
-        //        }
-        
-        // self.view.backgroundColor = .white
-        //        webRTCClient?.peerConnection = nil
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
-        // navigationController?.navigationBar.isHidden = true
-        //        self.webRTCClient?.delegate = self
         #if arch(arm64)
-        // Using metal (arm64 only)
         let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
         let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
         localRenderer.videoContentMode = .scaleAspectFill
         remoteRenderer.videoContentMode = .scaleAspectFill
         #else
-        // Using OpenGLES for the rest
         let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
         let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
         #endif
         remoteRenderer.tag = 10
         localRenderer.tag = 11
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer)
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
         self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
         if let localVideoView = self.ourView {
             self.embedView(localRenderer, into: localVideoView)
@@ -80,15 +61,38 @@ class VideoViewController: UIViewController {
         self.view.sendSubviewToBack(remoteRenderer)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("ROOMNAME \(roomName)")
-        print(webRTCClient)
-//        webRTCClient?.delegate = self
+    
+    @IBAction func switchCamera(_ sender: Any) {
+        #if arch(arm64)
+        let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+        localRenderer.videoContentMode = .scaleAspectFill
+        #else
+        let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+        #endif
+        localRenderer.tag = 11
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
+        
+        if cameraPosition == .front {
+            cameraPosition = .back
+        } else {
+            cameraPosition = .front
+        }
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
+        if let localVideoView = self.ourView {
+            self.view.viewWithTag(11)?.removeFromSuperview()
+                   self.embedView(localRenderer, into: localVideoView)
+               }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    @IBAction func speakerOnOff(_ sender: UIButton) {
+        if isMicrophoneOn {
+            webRTCClient?.muteAudio()
+            sender.setImage(UIImage(named: "micOff"), for: .normal)
+        } else {
+             sender.setImage(UIImage(named: "micOn"), for: .normal)
+            webRTCClient?.unmuteAudio()
+        }
+        isMicrophoneOn = !isMicrophoneOn
     }
     
     func closeAll() {

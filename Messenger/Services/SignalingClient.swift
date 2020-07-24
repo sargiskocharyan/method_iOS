@@ -34,14 +34,6 @@ final class SignalingClient {
         self.socketTaskManager.connect()
     }
     
-//    func sendAnswer(sdp rtcSdp: RTCSessionDescription, roomName: String) {
-//           let json = [
-//               "type": "answer",
-//               "sdp": "\(rtcSdp.sdp)"
-//           ]
-//           self.socketTaskManager.answer(roomName: roomName, payload: json)
-//       }
-    
     func sendOffer(sdp rtcSdp: RTCSessionDescription, roomName: String) {
         let json = [
             "type": "offer",
@@ -52,14 +44,8 @@ final class SignalingClient {
     
     func send(candidate rtcIceCandidate: RTCIceCandidate, roomName: String) {
         print(rtcIceCandidate)
-        let json: Dictionary = ["candidate": rtcIceCandidate.sdp, "sdpMid": rtcIceCandidate.sdpMid, "sdpMLineIndex": rtcIceCandidate.sdpMLineIndex] as [String : Any]
-        do {
-            print(json)
-            self.socketTaskManager.send(data: json, roomName: roomName)
-        }
-        catch {
-            debugPrint("Warning: Could not encode candidate: \(error)")
-        }
+        let json: Dictionary<String, Any> = ["candidate": rtcIceCandidate.sdp, "sdpMid": rtcIceCandidate.sdpMid as Any, "sdpMLineIndex": rtcIceCandidate.sdpMLineIndex]
+        self.socketTaskManager.send(data: json, roomName: roomName)
     }
     
     func sendAnswer(roomName: String, sdp: RTCSessionDescription) {

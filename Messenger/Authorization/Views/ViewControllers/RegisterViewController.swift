@@ -56,13 +56,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 }?._id
         }
         viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
-            if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        vc.modalPresentationStyle = .fullScreen
-                        self.present(vc, animated: true, completion: nil)
-                    }
+            if (error != nil) {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
@@ -210,13 +208,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     func getUniversities() {
         viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                    let nav = UINavigationController(rootViewController: vc)
-                    let window: UIWindow? = UIApplication.shared.windows[0]
-                    window?.rootViewController = nav
-                    window?.makeKeyAndVisible()
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))

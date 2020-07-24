@@ -34,13 +34,6 @@ protocol CallListViewDelegate: class  {
 class CallListViewController: UIViewController {
     
     //MARK: Properties
-    //    var webRTCClient: WebRTCClient?
-    //     var signalClient: SignalingClient?
-    //    private var signalingConnected: Bool = false
-    //    private var hasRemoteSdp: Bool = false
-    //    private var remoteCandidateCount: Int = 0
-    //    private var localCandidateCount: Int = 0
-    //    private var hasLocalSdp: Bool = false
     private let config = Config.default
     private var roomName: String?
     var onCall: Bool = false
@@ -48,7 +41,6 @@ class CallListViewController: UIViewController {
     var id: String?
     var viewModel = RecentMessagesViewModel()
     var calls: [FetchedCall] = []
-    //    var vc: VideoViewController?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -64,25 +56,12 @@ class CallListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //        let provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
-        //        provider.setDelegate(self, queue: DispatchQueue.main)
-        //        self.deleteAllData(entity: "CallEntity")
         MainTabBarController.center.delegate = self
         
         tableView.delegate = self
         tableView.dataSource = self
         getHistory()
-        //        self.signalClient = self.buildSignalingClient()
-        //        self.signalClient?.delegate = self
-        //        self.webRTCClient?.speakerOn()
-        //        handleCallAccepted()
-        //        handleAnswer()
-        //        getCanditantes()
-        //        handleOffer()
         navigationItem.title = "Call history"
-        //        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-        //        self.webRTCClient?.delegate = self
-        
     }
     
     //MARK: Helper methods
@@ -90,8 +69,8 @@ class CallListViewController: UIViewController {
         activity.startAnimating()
         viewModel.getHistory { (calls) in
             self.activity.stopAnimating()
-            self.calls = calls
-            if self.calls.count == 0 {
+            self.viewModel.calls = calls
+            if self.viewModel.calls.count == 0 {
                 self.addNoCallView()
             }
         }
@@ -127,107 +106,20 @@ class CallListViewController: UIViewController {
         label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
-    //    func handleCallAccepted() {
-    //        SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
-    //            self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-    //            self.webRTCClient!.delegate = self
-    //            self.vc?.webRTCClient = self.webRTCClient
-    //            self.onCall = true
-    //            self.roomName = roomName
-    //            self.vc?.handleOffer(roomName: roomName)
-    //            if callAccepted {
-    //                self.webRTCClient!.offer { (sdp) in
-    //                    print(sdp)
-    //                    self.vc!.handleAnswer()
-    //                    self.vc!.roomName = roomName
-    //                    self.signalClient!.sendOffer(sdp: sdp, roomName: roomName)
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    func handleAnswer() {
-    //        SocketTaskManager.shared.handleAnswer { (data) in
-    //            self.webRTCClient!.answer { (localSdp) in
-    //                self.hasLocalSdp = true
-    //            }
-    //        }
-    //    }
-    
     func handleCall(id: String, user: User) {
-        //        SocketTaskManager.shared.handleCall { (id) in
         self.id = id
         if viewModel.calls.count >= 15 {
             viewModel.deleteItem()
         }
-        //            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-        //            DispatchQueue.main.asyncAfter(deadline: .now()) {
-        //                AppDelegate.shared.displayIncomingCall(
-        //                    id: id, uuid: UUID(),
-        //                    handle: "araa ekeq e!fdgfdgfdgdfdfgdfdfdgfd!!",
-        //                    hasVideo: true, roomName: self.roomName ?? "") { _ in
-        //                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-        //                }
-        //            }
-        //            self.viewModel.getuserById(id: id) { (user, error) in
-        //                if (error != nil) {
-        //                    if error == NetworkResponse.authenticationError {
-        //                        UserDataController().logOutUser()
-        //                        DispatchQueue.main.async {
-        //                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-        //                            let nav = UINavigationController(rootViewController: vc)
-        //                            let window: UIWindow? = UIApplication.shared.windows[0]
-        //                            window?.rootViewController = nav
-        //                            window?.makeKeyAndVisible()
-        //                        }
-        //                    }
-        //                    DispatchQueue.main.async {
-        //                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-        //                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-        //                        self.present(alert, animated: true)
-        //                    }
-        //                    return
-        //                } else if user != nil {
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()
-            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.lastname, image: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname))
-            self.sort()
-            self.tableView.reloadData()
+            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
+                self.sort()
+                self.tableView.reloadData()
+            })
+          
         }
-        //                }
-        //            }
-        //        }
     }
-    
-    //    func getCanditantes() {
-    //        SocketTaskManager.shared.getCanditantes { (data) in
-    //            print(data)
-    //        }
-    //    }
-    //
-    //    func handleOffer() {
-    //        SocketTaskManager.shared.handleOffer { (roomName, offer) in
-    //            self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-    //            self.webRTCClient!.delegate = self
-    //            self.vc?.webRTCClient = self.webRTCClient
-    //            self.onCall = true
-    //            self.roomName = roomName
-    //            self.vc?.handleOffer(roomName: roomName)
-    //            DispatchQueue.main.async {
-    //                self.navigationController?.pushViewController(self.vc!, animated: false)
-    //            }
-    //            print(self.webRTCClient!.peerConnection?.signalingState)
-    //            self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
-    //                print(error?.localizedDescription)
-    //            })
-    //            print(self.webRTCClient)
-    //            self.webRTCClient!.answer { (localSdp) in
-    //                self.hasLocalSdp = true
-    //                self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
-    //            }
-    //        }
-    //    }
-    
     
 
     func deleteAllData(entity: String) {
@@ -277,95 +169,6 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
     }
 }
 
-//extension  CallListViewController: SignalClientDelegate {
-//    func signalClientDidConnect(_ signalClient: SignalingClient) {
-//        self.signalingConnected = true
-//    }
-//
-//    func signalClientDidDisconnect(_ signalClient: SignalingClient) {
-//        print("signalClientDidDisconnect")
-//        self.signalingConnected = false
-//    }
-//
-//    func signalClient(_ signalClient: SignalingClient, didReceiveRemoteSdp sdp: RTCSessionDescription) {
-//        print("Received remote sdp")
-//        self.webRTCClient?.set(remoteSdp: sdp) { (error) in
-//            print(sdp)
-//            print(error?.localizedDescription ?? "error chka!!!!!!!!!!!")
-//            self.hasRemoteSdp = true
-//        }
-//    }
-//
-//    func signalClient(_ signalClient: SignalingClient, didReceiveCandidate candidate: RTCIceCandidate) {
-//        print("Received remote candidate")
-//        self.remoteCandidateCount += 1
-//        self.webRTCClient!.set(remoteCandidate: candidate)
-//    }
-//}
-
-//extension CallListViewController: VideoViewControllerProtocol {
-//    func handleClose() {
-//
-//        //        self.webRTCClient = nil
-////        vc?.webRTCClient = nil
-//        id = nil
-//    }
-//}
-
-//extension CallListViewController: WebRTCClientDelegate {
-//    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
-//        DispatchQueue.main.async {
-//            let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
-//            let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-//            self.present(alert, animated: true, completion: nil)
-//        }
-//    }
-//
-//    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-//        print("discovered local candidate")
-//        self.localCandidateCount += 1
-//        self.signalClient!.send(candidate: candidate, roomName: self.roomName ?? "")
-//    }
-//
-//    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-//        if state == .closed {
-//            onCall = false
-//            self.webRTCClient = nil
-//            vc?.webRTCClient = nil
-//            id = nil
-//        }
-//        print(state)
-//        print("did Change Connection State")
-//    }
-//}
-
-//extension CallListViewController: CXProviderDelegate {
-//    func providerDidReset(_ provider: CXProvider) {
-//
-//      }
-//
-//      func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-//        guard let call = callManager.callWithUUID(uuid: action.callUUID) else {
-//             action.fail()
-//             return
-//        }
-//        id = call.id
-//      }
-//
-//      func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-//      }
-//
-//      func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-//      }
-//
-//      func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
-//      }
-//
-//      func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
-//    }
-//}
-
 extension CallListViewController: CallTableViewDelegate {
     func callSelected(id: String) {
         let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
@@ -384,6 +187,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
         cell.calleId = viewModel.calls[indexPath.row].id
+        print(viewModel.calls[indexPath.row].imageURL)
         cell.configureCell(call: viewModel.calls[indexPath.row])
         cell.delegate = self
         return cell
@@ -393,8 +197,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         return 76
     }
     
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let call = viewModel.calls[indexPath.row]
         if onCall == false  {
@@ -402,10 +204,12 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             if viewModel.calls.count >= 15 {
                 viewModel.deleteItem()
             }
-            viewModel.save(newCall: FetchedCall(id: call.id, name: call.name, username: call.username, image: call.image, isHandleCall: false, time: Date(), lastname: call.lastname))
-            self.sort()
-            id = call.id
-            tableView.reloadData()
+            viewModel.save(newCall: FetchedCall(id: call.id, name: call.name, username: call.username, imageURL: call.imageURL, isHandleCall: false, time: Date(), lastname: call.lastname), completion: {
+                self.sort()
+                self.id = call.id
+                self.tableView.reloadData()
+                })
+           
         } else if onCall && id != nil {
             if id == call.id {
                 self.delegate?.handleClickOnSamePerson()

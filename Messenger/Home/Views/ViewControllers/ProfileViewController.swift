@@ -263,16 +263,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @objc func deleteAvatar() {
         viewModel.deleteAvatar { (error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -333,24 +323,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
         viewModel.logout { (error) in
-            if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                }
-                return
-            } else {
                 DispatchQueue.main.async {
                     self.deleteAllRecords()
                     UserDataController().logOutUser()
@@ -360,7 +332,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     window?.rootViewController = nav
                     window?.makeKeyAndVisible()
                 }
-            }
             self.socketTaskManager.disconnect()
         }
     }

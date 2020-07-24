@@ -87,8 +87,6 @@ class SocketTaskManager {
     
     func handleCallAccepted(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
         socket.on("callAccepted") { (dataArray, socketAck) in
-//                      let sender = data["sender"] as! NSDictionary
-//                      let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
             completionHandler(Bool(exactly: dataArray[0] as! NSNumber) ?? false, dataArray[1] as! String)
         }
     }
@@ -100,23 +98,6 @@ class SocketTaskManager {
                       let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
                       completionHandler(message)
         }
-//        self.socket?.receive { [weak self] message in
-//            guard let self = self else { return }
-//            print("stex")
-//            print(message)
-//            switch message {
-//            case .success(.data(let data)):
-//                self.delegate?.webSocket(self, didReceiveData: data)
-//                self.readMessage()
-//
-//            case .success:
-//                debugPrint("Warning: Expected to receive data format but received a string. Check the websocket server config.")
-//                self.readMessage()
-//
-//            case .failure:
-//                self.disconnect()
-//            }
-//        }
     }
     
     func offer(roomName: String, payload: Dictionary<String, String>) {
@@ -128,8 +109,6 @@ class SocketTaskManager {
                 
                 let data = dataArray[0] as! Dictionary<String, String>
                 self.delegate?.receiveData(sdp: data["sdp"] ?? "")
-    //                      let sender = data["sender"] as! NSDictionary
-    //                      let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
                 completionHandler(data)
             }
         }
@@ -138,7 +117,7 @@ class SocketTaskManager {
                socket.on("candidates") { (dataArray, socketAck) in
                 let data = dataArray[0] as! Dictionary<String, Any>
                 let json: Dictionary = ["candidate": data["candidate"] ?? "", "sdpMid": data["sdpMid"] ?? "", "sdpMLineIndex": data["sdpMLineIndex"] ?? ""] as [String : Any]
-                self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as! String))
+                self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as? String))
                 completionHandler(json)
                }
            }

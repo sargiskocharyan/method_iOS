@@ -186,31 +186,20 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_want_to_deactivate_your_account_you_can_activate_account_again".localized(), preferredStyle: .alert)
                alert.addAction(UIAlertAction(title: "deactivate".localized(), style: .default, handler: { (_) in
                    self.editInformatioViewModel.deactivateAccount { (error) in
-                       if error != nil {
-                           if error == NetworkResponse.authenticationError {
-                               DispatchQueue.main.async {
-                                   UserDataController().logOutUser()
-                                   let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                                   let nav = UINavigationController(rootViewController: vc)
-                                   let window: UIWindow? = UIApplication.shared.windows[0]
-                                   window?.rootViewController = nav
-                                   window?.makeKeyAndVisible()
-                               }
-                           } else {
-                               DispatchQueue.main.async {
-                                   let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
-                                   alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                                   self.present(alert, animated: true)
-                               }
-                           }
-                       } else {
-                           DispatchQueue.main.async {
-                               UserDataController().logOutUser()
-                               let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                               let nav = UINavigationController(rootViewController: vc)
-                               let window: UIWindow? = UIApplication.shared.windows[0]
-                               window?.rootViewController = nav
-                               window?.makeKeyAndVisible()
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                            self.present(alert, animated: true)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            UserDataController().logOutUser()
+                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                            let nav = UINavigationController(rootViewController: vc)
+                            let window: UIWindow? = UIApplication.shared.windows[0]
+                            window?.rootViewController = nav
+                            window?.makeKeyAndVisible()
                            }
                        }
                        self.socketTaskManager.disconnect()
@@ -226,21 +215,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (_) in
             self.editInformatioViewModel.deleteAccount { (error) in
                 if error != nil {
-                    if error == NetworkResponse.authenticationError {
-                        DispatchQueue.main.async {
-                            UserDataController().logOutUser()
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                            self.present(alert, animated: true)
-                        }
+                    DispatchQueue.main.async {
+                        let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                        self.present(alert, animated: true)
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -329,31 +307,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 }?._id
         }
         if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil && (phoneCustomView.textField.text?.isValidNumber())! && (birdthdateView.textField.text?.isValidDate())! {
-//            viewModel.updateUser(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, university: (id)!) { (user, error) in
-//                if error != nil {
-//                    if error == NetworkResponse.authenticationError {
-//                        DispatchQueue.main.async {
-//                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-//                            vc.modalPresentationStyle = .fullScreen
-//                            self.present(vc, animated: true, completion: nil)
-//                        }
-//                    }
-//                } else if user != nil {
-//                    DispatchQueue.main.async {
-//                        let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, address: user?.address, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info)
-//                        UserDataController().populateUserProfile(model: userModel)
-//                        self.navigationController?.popViewController(animated: true)
-//                    }
-//                }
-//            }
             editInformatioViewModel.editInformation(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, phoneNumber: phoneCustomView.textField.text!, info: infoTextView.text, address: addressView.textField.text!, gender: genderTextField.text!.lowercased(), birthDate: birdthdateView.textField.text!) { (user, error) in
                 if error != nil {
-                    if error == NetworkResponse.authenticationError {
-                        DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            vc.modalPresentationStyle = .fullScreen
-                            self.present(vc, animated: true, completion: nil)
-                        }
+                  DispatchQueue.main.async {
+                        let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                        self.present(alert, animated: true)
                     }
                 } else if user != nil {
                     DispatchQueue.main.async {
@@ -389,13 +348,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     func getUniversities() {
         viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                    let nav = UINavigationController(rootViewController: vc)
-                    let window: UIWindow? = UIApplication.shared.windows[0]
-                    window?.rootViewController = nav
-                    window?.makeKeyAndVisible()
-                }
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
@@ -480,10 +432,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
         }
-
     }
-    
-    
 }
 
 //MARK: Extension
@@ -536,16 +485,15 @@ extension EditInformationViewController: CustomTextFieldDelegate {
             }
         }
         if placeholder == "number".localized() {
-                  if !phoneCustomView.textField.text!.isValidNumber() {
-                      phoneCustomView.errorLabel.text = phoneCustomView.errorMessage
-                      phoneCustomView.errorLabel.textColor = .red
-                      phoneCustomView.border.backgroundColor = .red
-                  } else {
-                      phoneCustomView.border.backgroundColor = .blue
-                      phoneCustomView.errorLabel.textColor = .blue
-                      phoneCustomView.errorLabel.text = phoneCustomView.successMessage
-                  }
-              }
-        
+            if !phoneCustomView.textField.text!.isValidNumber() {
+                phoneCustomView.errorLabel.text = phoneCustomView.errorMessage
+                phoneCustomView.errorLabel.textColor = .red
+                phoneCustomView.border.backgroundColor = .red
+            } else {
+                phoneCustomView.border.backgroundColor = .blue
+                phoneCustomView.errorLabel.textColor = .blue
+                phoneCustomView.errorLabel.text = phoneCustomView.successMessage
+            }
+        }
     }
 }

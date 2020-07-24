@@ -54,8 +54,14 @@ class CallTableViewCell: UITableViewCell {
     }
     
     func configureCell(call: FetchedCall) {
+        if call.name != nil {
         self.nameLabel.text = call.name
-        ImageCache.shared.getImage(url: call.image ?? "", id: call.id) { (image) in
+        } else if call.username != nil {
+            self.nameLabel.text = call.username
+        } else {
+            self.nameLabel.text = "Dynamic's user".localized()
+        }
+        ImageCache.shared.getImage(url: call.imageURL ?? "", id: call.id) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
