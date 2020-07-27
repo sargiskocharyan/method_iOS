@@ -5,13 +5,11 @@ import CallKit
 class ProviderDelegate: NSObject {
   private let callManager: CallManager
   private let provider: CXProvider
-  
+    var webrtcClient: WebRTCClient?
   init(callManager: CallManager) {
     self.callManager = callManager
     provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
-    
     super.init()
-
     provider.setDelegate(self, queue: nil)
   }
   
@@ -87,9 +85,12 @@ extension ProviderDelegate: CXProviderDelegate {
     call.end()
 
     action.fulfill()
-
+   
     callManager.remove(call: call)
     SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
+    print(self.webrtcClient)
+    self.webrtcClient?.peerConnection?.close()
+    
   }
   
   func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {

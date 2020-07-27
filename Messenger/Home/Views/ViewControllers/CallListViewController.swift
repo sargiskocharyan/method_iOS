@@ -41,6 +41,7 @@ class CallListViewController: UIViewController {
     var id: String?
     var viewModel = RecentMessagesViewModel()
     var calls: [FetchedCall] = []
+    var activeCall: FetchedCall?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -108,15 +109,16 @@ class CallListViewController: UIViewController {
     
     func handleCall(id: String, user: User) {
         self.id = id
+        activeCall = FetchedCall(id: id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname, callDuration: 0)
         if viewModel.calls.count >= 15 {
-            viewModel.deleteItem()
+            viewModel.deleteItem(index: viewModel.calls.count - 1)
         }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()
-            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
-                self.sort()
-                self.tableView.reloadData()
-            })
+//            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
+//                self.sort()
+//                self.tableView.reloadData()
+//            })
           
         }
     }
@@ -187,29 +189,53 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
         cell.calleId = viewModel.calls[indexPath.row].id
-        print(viewModel.calls[indexPath.row].imageURL)
         cell.configureCell(call: viewModel.calls[indexPath.row])
         cell.delegate = self
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            self.sort()
+            tableView.beginUpdates()
+            viewModel.deleteItem(index: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 76
     }
     
+    func saveCall(startDate: Date?) {
+        if viewModel.calls.count >= 15 {
+            viewModel.deleteItem(index: viewModel.calls.count - 1)
+        }
+        if startDate == nil {
+            activeCall?.callDuration = 0
+        } else {
+            let userCalendar = Calendar.current
+            let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
+            let timeDifference = userCalendar.dateComponents(requestedComponent, from: startDate!, to: Date())
+            let hourToSeconds = timeDifference.hour! * 3600
+            let minuteToSeconds = timeDifference.minute! * 60
+            let seconds = timeDifference.second!
+            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
+        }
+        viewModel.save(newCall: activeCall!, completion: {
+            self.sort()
+            print(self.activeCall?.callDuration)
+            self.id = self.activeCall?.id
+            self.tableView.reloadData()
+        })
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let call = viewModel.calls[indexPath.row]
+        activeCall = call
+        activeCall?.time = Date()
+       
         if onCall == false  {
             self.delegate?.handleCallClick(id: call.id)
-            if viewModel.calls.count >= 15 {
-                viewModel.deleteItem()
-            }
-            viewModel.save(newCall: FetchedCall(id: call.id, name: call.name, username: call.username, imageURL: call.imageURL, isHandleCall: false, time: Date(), lastname: call.lastname), completion: {
-                self.sort()
-                self.id = call.id
-                self.tableView.reloadData()
-                })
-           
         } else if onCall && id != nil {
             if id == call.id {
                 self.delegate?.handleClickOnSamePerson()

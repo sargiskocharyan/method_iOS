@@ -36,6 +36,7 @@ class MainTabBarController: UITabBarController {
     var callsNC: UINavigationController?
     var callsVC: CallListViewController?
     let profileViewModel = ProfileViewModel()
+    var startDate: Date?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -76,35 +77,40 @@ class MainTabBarController: UITabBarController {
     //MARK: Helper methods
     
     private func buildSignalingClient() -> SignalingClient {
-           return SignalingClient()
-       }
+        return SignalingClient()
+    }
     
     func handleCall() {
         SocketTaskManager.shared.handleCall { (id) in
-            self.id = id
-            
-            self.recentMessagesViewModel.getuserById(id: id) { (user, error) in
-                if (error != nil) {
-                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                    }
-                    return
-                } else if user != nil {
-                    let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                    DispatchQueue.main.asyncAfter(deadline: .now()) {
-                        AppDelegate.shared.displayIncomingCall(
-                            id: id, uuid: UUID(),
-                            handle: user?.name ?? (user?.username)!,
-                            hasVideo: true, roomName: self.roomName ?? "") { _ in
-                                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            if !self.onCall {
+                self.id = id
+                self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+                self.webRTCClient?.delegate = self
+                AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
+                self.vc?.webRTCClient = self.webRTCClient
+                self.recentMessagesViewModel.getuserById(id: id) { (user, error) in
+                    if (error != nil) {
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                            self.present(alert, animated: true)
                         }
-                    }
-                    DispatchQueue.main.async {
+                        return
+                    } else if user != nil {
+                        let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            AppDelegate.shared.displayIncomingCall(
+                                id: id, uuid: UUID(),
+                                handle: user?.name ?? (user?.username)!,
+                                hasVideo: true, roomName: self.roomName ?? "") { _ in
+                                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                            }
+                        }
+                        DispatchQueue.main.async {
                             let chatsNC = self.viewControllers![0] as! UINavigationController
                             let vc = chatsNC.viewControllers[0] as! CallListViewController
                             vc.handleCall(id: id, user: user!)
+                        }
                     }
                 }
             }
@@ -113,7 +119,7 @@ class MainTabBarController: UITabBarController {
     
     func getCanditantes() {
         socketTaskManager.getCanditantes { (data) in
-//            print(data)
+            //            print(data)
         }
     }
     
@@ -130,7 +136,7 @@ class MainTabBarController: UITabBarController {
             }
         }
     }
-
+    
     func handleAnswer() {
         socketTaskManager.handleAnswer { (data) in
             self.vc?.handleAnswer()
@@ -146,9 +152,6 @@ class MainTabBarController: UITabBarController {
     
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
-            self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-            self.webRTCClient?.delegate = self
-            self.vc?.webRTCClient = self.webRTCClient
             self.onCall = true
             self.callsVC?.onCall = true
             self.roomName = roomName
@@ -287,13 +290,27 @@ extension MainTabBarController: WebRTCClientDelegate {
     }
 
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .closed {
+        if state == .disconnected {
+            DispatchQueue.main.async {
+                self.vc?.startCall("Reconnecting...")
+            }
+        }
+        else if state == .connected {
+            vc?.handleAnswer()
+            startDate = Date()
+        }
+        else if state == .closed || state == .failed {
+            vc?.handleAnswer()
             onCall = false
             callsVC?.onCall = false
             self.webRTCClient = nil
             vc?.webRTCClient = nil
             id = nil
             vc?.closeAll()
+            DispatchQueue.main.async {
+                self.callsVC?.saveCall(startDate: self.startDate)
+                self.startDate = nil
+            }
         }
         print(state)
         print("did Change Connection State")
@@ -340,10 +357,11 @@ extension MainTabBarController: CallListViewDelegate {
         SocketTaskManager.shared.call(id: id)
         callManager.startCall(handle: id, videoEnabled: true)
         webRTCClient?.delegate = self
+        
         self.vc?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        vc?.startCall()
+        vc?.startCall("Calling...")
         DispatchQueue.main.async {
             let selectedNC = self.selectedViewController as? UINavigationController
             selectedNC?.pushViewController(self.vc!, animated: false)

@@ -108,11 +108,10 @@ class VideoViewController: UIViewController {
         }
     }
     
-    func startCall() {
-        print("startCall")
+    func startCall(_ callText: String) {
         let label = UILabel()
         label.tag = 6
-        label.text = "Calling..."
+        label.text = callText
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
@@ -124,7 +123,6 @@ class VideoViewController: UIViewController {
     }
     
     func handleAnswer() {
-        print("handleAnswer")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
             self.view.viewWithTag(6)?.removeFromSuperview()
         })

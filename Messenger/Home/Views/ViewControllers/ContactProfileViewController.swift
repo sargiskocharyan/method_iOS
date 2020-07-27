@@ -104,12 +104,12 @@ class ContactProfileViewController: UIViewController {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!)
-            callListViewController?.viewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, imageURL: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname), completion: {
-                self.sort()
-                let nc = tabBar.viewControllers![0] as! UINavigationController
-                let vc = nc.viewControllers[0] as! CallListViewController
-                vc.tableView.reloadData()
-            })
+//            callListViewController?.viewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, imageURL: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname), completion: {
+//                self.sort()
+//                let nc = tabBar.viewControllers![0] as! UINavigationController
+//                let vc = nc.viewControllers[0] as! CallListViewController
+//                vc.tableView.reloadData()
+//            })
         } else {
             tabBar.handleClickOnSamePerson()
         }

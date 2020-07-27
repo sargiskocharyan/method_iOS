@@ -15,8 +15,9 @@ struct FetchedCall {
     let username: String?
     var imageURL: String?
     let isHandleCall: Bool
-    let time: Date
+    var time: Date
     let lastname: String?
+    var callDuration: Int?
 }
 class RecentMessagesViewModel {
      var calls: [FetchedCall] = []
@@ -33,7 +34,7 @@ class RecentMessagesViewModel {
                 let callsFetched = try managedContext.fetch(fetchRequest)
                 self.privateCalls = callsFetched
                 self.calls = callsFetched.map { (call) -> FetchedCall in
-                    return FetchedCall(id: call.value(forKey: "id") as! String, name: call.value(forKey: "name") as? String, username: call.value(forKey: "username") as? String, imageURL: call.value(forKey: "image") as? String, isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, lastname: call.value(forKey: "lastname") as? String)
+                    return FetchedCall(id: call.value(forKey: "id") as! String, name: call.value(forKey: "name") as? String, username: call.value(forKey: "username") as? String, imageURL: call.value(forKey: "image") as? String, isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, lastname: call.value(forKey: "lastname") as? String, callDuration: call.value(forKey: "callDuration") as? Int)
                 }
                 completion(self.calls)
             } catch let error as NSError {
@@ -44,7 +45,7 @@ class RecentMessagesViewModel {
         
     }
     
-    func deleteItem() {
+    func deleteItem(index: Int) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
         
         // Configure Fetch Request
@@ -54,8 +55,9 @@ class RecentMessagesViewModel {
         }
         let managedContext = appDelegate.persistentContainer.viewContext
         do {
-            managedContext.delete(privateCalls[0])
-            calls.removeLast()
+            managedContext.delete(privateCalls[privateCalls.count - index - 1])
+            privateCalls.remove(at: privateCalls.count - index - 1)
+            calls.remove(at: index)
             try managedContext.save()
             
         } catch {
