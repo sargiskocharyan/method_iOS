@@ -8,20 +8,6 @@
 
 import Foundation
 
-struct User: Codable {
-    var name: String?
-    let lastname: String?
-    let university: String?
-    let _id: String
-    let username: String?
-    let avatarURL: String?
-    let email: String?
-    let info: String?
-    let phoneNumber: String?
-    let birthday: String?
-    let address: String?
-    let gender: String?
-}
 
 struct Users: Codable { 
     let users: [User]

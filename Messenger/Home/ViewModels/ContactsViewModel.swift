@@ -7,8 +7,11 @@
 //
 
 import Foundation
+import CoreData
+
 
 class ContactsViewModel {
+    var contacts: [User] = []
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         HomeNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
@@ -24,7 +27,6 @@ class ContactsViewModel {
     func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         HomeNetworkManager().addContact(id: id) { (error) in
             completion(error)
-
     }
   }
     
@@ -34,4 +36,87 @@ class ContactsViewModel {
         }
     }
     
+    func removeContact(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().removeContact(id: id) { (error) in
+            completion(error)
+        }
+    }
+    
+//
+//    func saveContacts(contacts: [User]) {
+//
+//        let appDelegate = AppDelegate.shared as AppDelegate
+//        let managedContext = appDelegate.persistentContainer.viewContext
+//        let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
+//
+//        let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
+//        let mContacts = Contacts(contacts: contacts)
+//        cmsg.setValue(mContacts, forKeyPath: "contacts")
+//        do {
+//            try managedContext.save()
+//            print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
+//
+//        } catch let error as NSError {
+//            print("Could not save. \(error), \(error.userInfo)")
+//        }
+//    }
+    
+    func retrieveData(completion: @escaping ([User]?)->()) {
+           let appDelegate = AppDelegate.shared as AppDelegate
+           let managedContext = appDelegate.persistentContainer.viewContext
+           let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ContactsEntity")
+           do {
+               let result = try managedContext.fetch(fetchRequest)
+               var i = 0
+               for data in result as! [NSManagedObject] {
+                   let mContacts = data.value(forKey: "contacts") as! Contacts
+                self.contacts = mContacts.contacts
+                   completion(mContacts.contacts)
+                   print(" contact batch : \(i)")
+                   for element in mContacts.contacts {
+                       print("name:\(element.name), username:\(element.username)")
+                   }
+                   i = i + 1
+               }
+           } catch {
+            self.contacts = []
+               completion(nil)
+               print("Failed")
+           }
+       }
+    
+    func addContactToCoreData(newContact: User, completion: @escaping (NSError?)->()) {
+        let appDelegate = AppDelegate.shared as AppDelegate
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
+        let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
+        contacts.append(newContact)
+        let mContacts = Contacts(contacts: contacts)
+        cmsg.setValue(mContacts, forKeyPath: "contacts")
+        do {
+            try managedContext.save()
+            completion(nil)
+            
+        } catch let error as NSError {
+            completion(error)
+        }
+    }
+    
+    func removeContactFromCoreData(id: String, completion: @escaping (NSError?)->()) {
+        let appDelegate = AppDelegate.shared as AppDelegate
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
+        let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
+        contacts = contacts.filter { (contact) -> Bool in
+            return contact._id != id
+        }
+        let mContacts = Contacts(contacts: contacts)
+        cmsg.setValue(mContacts, forKeyPath: "contacts")
+        do {
+            try managedContext.save()
+            completion(nil)
+        } catch let error as NSError {
+            completion(error)
+        }
+    }
 }

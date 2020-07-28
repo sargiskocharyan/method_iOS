@@ -28,7 +28,7 @@ class RecentMessagesViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        let nc = (self.tabBarController?.viewControllers?[4]) as? UINavigationController
+        let nc = (self.tabBarController?.viewControllers?[2]) as? UINavigationController
         let vc = nc?.viewControllers[0] as! ProfileViewController
         vc.delegate = self
         getChats()

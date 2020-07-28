@@ -11,7 +11,7 @@ import UIKit
 import UserNotifications
 import AVFoundation
 import WebRTC
-
+import CoreData
 class MainTabBarController: UITabBarController {
     
     
@@ -27,6 +27,7 @@ class MainTabBarController: UITabBarController {
     var vc: VideoViewController?
     var onCall: Bool = false
     var id: String?
+    var contactsViewModel = ContactsViewModel()
     var signalClient: SignalingClient?
     private var signalingConnected: Bool = false
     private var hasRemoteSdp: Bool = false
@@ -42,8 +43,14 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
-//        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-//        self.webRTCClient?.delegate = self
+//        let appDelegate = AppDelegate.shared as AppDelegate
+//        let managedContext = appDelegate.persistentContainer.viewContext
+//        let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+//        privateContext.persistentStoreCoordinator = managedContext.persistentStoreCoordinator
+//        privateContext.perform {
+            self.saveContacts()
+            self.retrieveContacts()
+//        }
         verifyToken()
         socketTaskManager.connect()
         callManager = AppDelegate.shared.callManager
@@ -52,6 +59,7 @@ class MainTabBarController: UITabBarController {
         handleCallAccepted()
         handleOffer()
         getCanditantes()
+       
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
@@ -107,9 +115,7 @@ class MainTabBarController: UITabBarController {
                             }
                         }
                         DispatchQueue.main.async {
-                            let chatsNC = self.viewControllers![0] as! UINavigationController
-                            let vc = chatsNC.viewControllers[0] as! CallListViewController
-                            vc.handleCall(id: id, user: user!)
+                            self.callsVC?.handleCall(id: id, user: user!)
                         }
                     }
                 }
@@ -119,7 +125,7 @@ class MainTabBarController: UITabBarController {
     
     func getCanditantes() {
         socketTaskManager.getCanditantes { (data) in
-            //            print(data)
+            
         }
     }
     
@@ -148,8 +154,29 @@ class MainTabBarController: UITabBarController {
             }
         }
     }
-
     
+    func saveContacts() {
+        viewModel.getContacts { (userContacts, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            } else if userContacts != nil {
+                DispatchQueue.main.async {
+                    self.viewModel.saveContacts(contacts: userContacts!)
+                }
+            }
+        }
+    }
+    
+    func retrieveContacts() {
+        contactsViewModel.retrieveData { (contacts) in
+            print("Data retrieved!!!")
+        }
+    }
+
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.onCall = true
@@ -160,9 +187,9 @@ class MainTabBarController: UITabBarController {
                 let selectedNC = self.selectedViewController as? UINavigationController
                 selectedNC?.pushViewController(self.vc!, animated: false)
             }
-            self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
             })
-            self.webRTCClient!.answer { (localSdp) in
+            self.webRTCClient?.answer { (localSdp) in
                 self.hasLocalSdp = true
                 self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
             }
@@ -171,17 +198,17 @@ class MainTabBarController: UITabBarController {
     
     func getNewMessage() {
         socketTaskManager.getChatMessage { (message) in
-            let chatsNC = self.viewControllers![3] as! UINavigationController
+            let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(message: message)
             } 
             switch self.selectedIndex {
-            case 0, 1, 2:
+            case 0:
                 self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
                 break
-            case 4:
-                let profileNC = self.viewControllers![4] as! UINavigationController
+            case 2:
+                let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
                     self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
                 } else if profileNC.viewControllers.count == 4 {
@@ -309,6 +336,7 @@ extension MainTabBarController: WebRTCClientDelegate {
             vc?.closeAll()
             DispatchQueue.main.async {
                 self.callsVC?.saveCall(startDate: self.startDate)
+                self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }
         }

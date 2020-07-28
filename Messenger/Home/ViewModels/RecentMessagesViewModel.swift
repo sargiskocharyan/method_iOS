@@ -10,14 +10,11 @@ import UIKit
 import CoreData
 
 struct FetchedCall {
-    let id: String
-    let name: String?
-    let username: String?
-    var imageURL: String?
+    let id: UUID
     let isHandleCall: Bool
     var time: Date
-    let lastname: String?
     var callDuration: Int?
+    let calleeId: String
 }
 class RecentMessagesViewModel {
      var calls: [FetchedCall] = []
@@ -34,7 +31,7 @@ class RecentMessagesViewModel {
                 let callsFetched = try managedContext.fetch(fetchRequest)
                 self.privateCalls = callsFetched
                 self.calls = callsFetched.map { (call) -> FetchedCall in
-                    return FetchedCall(id: call.value(forKey: "id") as! String, name: call.value(forKey: "name") as? String, username: call.value(forKey: "username") as? String, imageURL: call.value(forKey: "image") as? String, isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, lastname: call.value(forKey: "lastname") as? String, callDuration: call.value(forKey: "callDuration") as? Int)
+                    return FetchedCall(id: UUID(), isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, callDuration: (call.value(forKey: "callDuration") as! Int), calleeId: call.value(forKey: "calleeId") as!  String)
                 }
                 completion(self.calls)
             } catch let error as NSError {
@@ -82,13 +79,11 @@ class RecentMessagesViewModel {
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
         let call = NSManagedObject(entity: entity, insertInto: managedContext)
-        call.setValue(newCall.name, forKeyPath: "name")
-        call.setValue(newCall.lastname, forKeyPath: "lastname")
-        call.setValue(newCall.username, forKeyPath: "username")
         call.setValue(newCall.id, forKeyPath: "id")
-        call.setValue(newCall.imageURL, forKeyPath: "image")
         call.setValue(newCall.time, forKeyPath: "time")
+        call.setValue(newCall.callDuration, forKeyPath: "callDuration")
         call.setValue(newCall.isHandleCall, forKeyPath: "isHandleCall")
+        call.setValue(newCall.calleeId, forKeyPath: "calleeId")
         do {
             try managedContext.save()
             privateCalls.append(call)
@@ -96,29 +91,29 @@ class RecentMessagesViewModel {
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
-                fetchRequest.predicate = NSPredicate(format: "id == %@", newCall.id)
-                do {
-                    let fetchResults = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
-                    for fetchedResult in fetchResults {
-                        if fetchedResult.value(forKey: "image") as? String != newCall.imageURL {
-                            
-                            fetchedResult.setValue(newCall.imageURL, forKey: "image")
-                            try managedContext.save()
-                        }
-                    }
-                } catch let error {
-                    print(error.localizedDescription)
-                }
+//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+//        fetchRequest.predicate = NSPredicate(format: "id == %@", newCall.id as CVarArg)
+//                do {
+//                    let fetchResults = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
+//                    for fetchedResult in fetchResults {
+//                        if fetchedResult.value(forKey: "image") as? String != newCall.imageURL {
+//
+//                            fetchedResult.setValue(newCall.imageURL, forKey: "image")
+//                            try managedContext.save()
+//                        }
+//                    }
+//                } catch let error {
+//                    print(error.localizedDescription)
+//                }
         print(calls)
-        var newCalls: [FetchedCall] = []
-        for var call in calls {
-            if call.id == newCall.id && call.imageURL != newCall.imageURL {
-                call.imageURL = newCall.imageURL
-            }
-            newCalls.append(call)
-        }
-        calls = newCalls
+//        var newCalls: [FetchedCall] = []
+//        for var call in calls {
+//            if call.id == newCall.id && call.imageURL != newCall.imageURL {
+//                call.imageURL = newCall.imageURL
+//            }
+//            newCalls.append(call)
+//        }
+//        calls = newCalls
         completion()
        
     }

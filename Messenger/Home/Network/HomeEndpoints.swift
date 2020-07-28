@@ -22,7 +22,7 @@ public enum HomeApi {
     case deactivateAccount
     case deleteAvatar
     case editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String)
-    
+    case removeContact(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -58,6 +58,9 @@ extension HomeApi: EndPointType {
             return AUTHUrls.DeleteAvatar
         case .editInformation(_, _, _, _, _, _, _, _):
             return AUTHUrls.UpdateUser
+        case .removeContact(_):
+            return AUTHUrls.RemoveContact
+            
         }
     }
     
@@ -87,6 +90,8 @@ extension HomeApi: EndPointType {
         case .deleteAvatar:
             return .delete
         case .editInformation(_, _, _, _, _, _, _, _):
+            return .post
+        case .removeContact(_):
             return .post
         }
         
@@ -138,7 +143,12 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, address: let address, gender: let gender, birthDate: let birthDate):
             let parameters:Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "address": address, "gender": gender, "birthday": birthDate]
+            print(parameters)
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .removeContact(id: let id):
+            let parameters:Parameters = ["userId": id]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

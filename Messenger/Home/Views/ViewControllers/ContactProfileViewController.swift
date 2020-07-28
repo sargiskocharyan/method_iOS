@@ -10,6 +10,7 @@ import UIKit
 
 protocol ContactProfileDelegate: class {
     func addNewContact(contact: User)
+    func removeContact()
 }
 
 protocol ContactProfileViewControllerDelegate: class {
@@ -17,6 +18,7 @@ protocol ContactProfileViewControllerDelegate: class {
 }
 class ContactProfileViewController: UIViewController {
     
+    @IBOutlet weak var videoCallButton: UIButton!
     @IBOutlet weak var addToContactButton: UIButton!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var infoLabel: UILabel!
@@ -42,7 +44,7 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var sendMessageButton: UIButton!
     var contact: User?
     var id: String?
-    let viewModel = ContactsViewModel()
+    var viewModel: ContactsViewModel?
     weak var delegate: ContactProfileDelegate?
     weak var callDelegate: ContactProfileViewControllerDelegate?
     var onContactPage: Bool?
@@ -50,9 +52,27 @@ class ContactProfileViewController: UIViewController {
     var nc: UINavigationController?
     var callListViewController: CallListViewController?
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        if onContactPage! {
+                   addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+                   addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
+               } else {
+                   addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+                   addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
+               }
+               if tabBar!.onCall {
+                   videoCallButton.isEnabled = false
+               } else {
+                   videoCallButton.isEnabled = true
+               }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tabBar = tabBarController as? MainTabBarController
+        viewModel = tabBar?.contactsViewModel
         nc = tabBar?.viewControllers?[0] as? UINavigationController
         callListViewController = nc?.viewControllers[0] as? CallListViewController
         userImageView.contentMode = .scaleAspectFill
@@ -63,15 +83,9 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.masksToBounds = true
         getUserInformation()
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
-        addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
+        
         sendMessageButton.backgroundColor = .clear
-        if onContactPage! {
-            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
-            addToContactButton.isEnabled = false
-        } else {
-            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
-            addToContactButton.isEnabled = true
-        }
+       
     }
     
     @objc func startMessage() {
@@ -100,39 +114,56 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
+    @objc func removeFromContacts() {
+        viewModel?.removeContact(id: id!, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            } else {
+                self.onContactPage = false
+                DispatchQueue.main.async {
+                    self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+                    self.addToContactButton.addTarget(self, action: #selector(self.addToContact), for: .touchUpInside)
+                    self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
+                        self.delegate?.removeContact()
+                    })
+                }
+            }
+        })
+    }
+    
     @IBAction func startVideoCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!)
-//            callListViewController?.viewModel.save(newCall: FetchedCall(id: id!, name: contact?.name, username: contact?.username, imageURL: contact?.avatarURL, isHandleCall: false, time: Date(), lastname: contact?.lastname), completion: {
-//                self.sort()
-//                let nc = tabBar.viewControllers![0] as! UINavigationController
-//                let vc = nc.viewControllers[0] as! CallListViewController
-//                vc.tableView.reloadData()
-//            })
+            tabBar.startDate = Date()
+            callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabBar.handleClickOnSamePerson()
         }
     }
     
     func sort() {
-         let formatter = DateFormatter()
-         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-         for i in 0..<callListViewController!.viewModel.calls.count {
-             for j in i..<callListViewController!.viewModel.calls.count {
-                 let firstDate = callListViewController!.viewModel.calls[i].time
-                 let secondDate = callListViewController?.viewModel.calls[j].time
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        for i in 0..<callListViewController!.viewModel.calls.count {
+            for j in i..<callListViewController!.viewModel.calls.count {
+                let firstDate = callListViewController!.viewModel.calls[i].time
+                let secondDate = callListViewController?.viewModel.calls[j].time
                 if firstDate.compare(secondDate!).rawValue == -1 {
-                     let temp = callListViewController!.viewModel.calls[i]
+                    let temp = callListViewController!.viewModel.calls[i]
                     callListViewController?.viewModel.calls[i] = callListViewController?.viewModel.calls[j] as! FetchedCall
-                     callListViewController?.viewModel.calls[j] = temp
-                 }
-             }
-         }
-     }
+                    callListViewController?.viewModel.calls[j] = temp
+                }
+            }
+        }
+    }
     
     @objc func addToContact() {
-        viewModel.addContact(id: contact!._id) { (error) in
+        viewModel!.addContact(id: contact!._id!) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
@@ -141,14 +172,20 @@ class ContactProfileViewController: UIViewController {
                 }
                 
             } else {
-                self.delegate?.addNewContact(contact: self.contact!)
                 DispatchQueue.main.async {
-                    self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
-                    self.addToContactButton.isEnabled = false
-                    self.addToContactButton.tintColor.withAlphaComponent(1)
+                    self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
+                        if error != nil {
+                            print(error)
+                        } else {
+                            print("All is well!!!!")
+                             self.delegate?.addNewContact(contact: self.contact!)
+                            self.onContactPage = true
+                            self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+                            self.addToContactButton.addTarget(self, action: #selector(self.removeFromContacts), for: .touchUpInside)
+                        }
+                    })
                 }
             }
-            
         }
     }
     
@@ -257,7 +294,7 @@ class ContactProfileViewController: UIViewController {
         emailTextLabel.text = "email:".localized()
         infoTextLabel.text = "info".localized()
         if contact?.avatarURL != nil {
-            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id) { (image) in
+            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!) { (image) in
                 DispatchQueue.main.async {
                     self.userImageView.image = image
                 }

@@ -41,6 +41,7 @@ class VideoViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.isHidden = true
         #if arch(arm64)
         let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
         let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)

@@ -53,15 +53,15 @@ class CallTableViewCell: UITableViewCell {
         return ("\(hour):\(minutes)")
     }
     
-    func configureCell(call: FetchedCall) {
-        if call.name != nil {
-        self.nameLabel.text = call.name
-        } else if call.username != nil {
-            self.nameLabel.text = call.username
+    func configureCell(contact: User, call: FetchedCall) {
+        if contact.name != nil {
+        self.nameLabel.text = contact.name
+        } else if contact.username != nil {
+            self.nameLabel.text = contact.username
         } else {
             self.nameLabel.text = "Dynamic's user".localized()
         }
-        ImageCache.shared.getImage(url: call.imageURL ?? "", id: call.id) { (image) in
+        ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }

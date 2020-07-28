@@ -27,6 +27,7 @@ class ChatViewController: UIViewController {
     var username: String?
     var avatar: String?
     var image = UIImage(named: "noPhoto")
+    var tabbar: MainTabBarController?
     let messageInputContainerView: UIView = {
         let view = UIView()
         if SharedConfigs.shared.mode == "light" {
@@ -58,12 +59,15 @@ class ChatViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         getChatMessages()
+        tabbar = tabBarController as? MainTabBarController
         addConstraints()
         setupInputComponents()
         setObservers()
         socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
+       //  self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .info, target: self, action: #selector(infoButtonAction))
+        self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
         setTitle()
         getImage()
         setObservers()
@@ -77,6 +81,20 @@ class ChatViewController: UIViewController {
     }
     
     //MARK: Helper methods
+    @objc func infoButtonAction() {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+        vc.id = id
+//        vc.callDelegate = 
+        vc.onContactPage = false
+        for i in 0..<tabbar!.contactsViewModel.contacts.count {
+            if tabbar!.contactsViewModel.contacts[i]._id == id {
+                vc.onContactPage = true
+                break
+            }
+        }
+        self.navigationController?.pushViewController(vc, animated: false)
+    }
+    
     @objc func sendMessage() {
         if inputTextField.text != "" {
             print(socketTaskManager.manager.status)

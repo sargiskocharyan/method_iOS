@@ -42,6 +42,8 @@ class CallListViewController: UIViewController {
     var viewModel = RecentMessagesViewModel()
     var calls: [FetchedCall] = []
     var activeCall: FetchedCall?
+    var tabbar: MainTabBarController?
+    var count = 0
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -57,8 +59,9 @@ class CallListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tabbar = tabBarController as? MainTabBarController
         MainTabBarController.center.delegate = self
-        
+        count = tabbar!.contactsViewModel.contacts.count
         tableView.delegate = self
         tableView.dataSource = self
         getHistory()
@@ -109,7 +112,7 @@ class CallListViewController: UIViewController {
     
     func handleCall(id: String, user: User) {
         self.id = id
-        activeCall = FetchedCall(id: id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname, callDuration: 0)
+        activeCall = FetchedCall(id: UUID(), isHandleCall: true, time: Date(), callDuration: 0, calleeId: id)
         if viewModel.calls.count >= 15 {
             viewModel.deleteItem(index: viewModel.calls.count - 1)
         }
@@ -188,8 +191,15 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
-        cell.calleId = viewModel.calls[indexPath.row].id
-        cell.configureCell(call: viewModel.calls[indexPath.row])
+        cell.calleId = viewModel.calls[indexPath.row].calleeId
+        // harcnel
+        for i in 0..<count {
+            if tabbar?.contactsViewModel.contacts[i]._id == cell.calleId {
+                print(tabbar!.contactsViewModel.contacts[i])
+                cell.configureCell(contact: tabbar!.contactsViewModel.contacts[i], call: viewModel.calls[indexPath.row])
+                break
+            }
+        }
         cell.delegate = self
         return cell
     }
@@ -200,6 +210,11 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             viewModel.deleteItem(index: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             tableView.endUpdates()
+        if viewModel.calls.count == 0 {
+            self.addNoCallView()
+        } else {
+            self.view.viewWithTag(20)?.removeFromSuperview()
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -223,8 +238,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         }
         viewModel.save(newCall: activeCall!, completion: {
             self.sort()
-            print(self.activeCall?.callDuration)
-            self.id = self.activeCall?.id
+            self.id = self.activeCall?.calleeId
             self.tableView.reloadData()
         })
     }
@@ -233,11 +247,10 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         let call = viewModel.calls[indexPath.row]
         activeCall = call
         activeCall?.time = Date()
-       
         if onCall == false  {
-            self.delegate?.handleCallClick(id: call.id)
+            self.delegate?.handleCallClick(id: call.calleeId)
         } else if onCall && id != nil {
-            if id == call.id {
+            if id == call.calleeId {
                 self.delegate?.handleClickOnSamePerson()
             }
         }

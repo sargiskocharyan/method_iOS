@@ -15,23 +15,23 @@ class ContactsViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
-    var contacts: [User] = []
     var findedUsers: [User] = []
     var contactsMiniInformation: [User] = []
-    let viewModel = ContactsViewModel()
+    var viewModel: ContactsViewModel?
     var onContactPage = true
     var isLoaded = false
     var isLoadedFoundUsers = false
     let refreshControl = UIRefreshControl()
-    
+    var tabbar: MainTabBarController?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
+        tabbar = tabBarController as! MainTabBarController
+        viewModel = tabbar?.contactsViewModel
         tableView.dataSource = self
         setNavigationItems()
-        getContacts()
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
         } else {
@@ -48,11 +48,14 @@ class ContactsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+         getContacts()
+        contactsMiniInformation = viewModel!.contacts
+        tableView.reloadData()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        if isLoaded && contacts.count == 0 && onContactPage {
+        if isLoaded && viewModel!.contacts.count == 0 && onContactPage {
             removeView()
             setView("no_contacts".localized())
         }
@@ -74,10 +77,10 @@ class ContactsViewController: UIViewController {
     }
     
     @objc func backToContacts() {
-        contactsMiniInformation = contacts
+        contactsMiniInformation = viewModel!.contacts
         DispatchQueue.main.async {
             self.removeView()
-            if self.contacts.count == 0 {
+            if self.viewModel!.contacts.count == 0 {
                 self.setView("no_contacts".localized())
             }
             self.onContactPage = true
@@ -90,7 +93,7 @@ class ContactsViewController: UIViewController {
     @objc func handleAlertChange(sender: Any?) {
         let textField = sender as! UITextField
         if textField.text != "" {
-            self.viewModel.findUsers(term: (textField.text)!) { (responseObject, error) in
+            self.viewModel!.findUsers(term: (textField.text)!) { (responseObject, error) in
                 if error != nil {
                     DispatchQueue.main.async {
                         let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
@@ -113,8 +116,8 @@ class ContactsViewController: UIViewController {
                     self.findedUsers = []
                     for i in 0..<responseObject!.users.count {
                         var a = false
-                        for j in 0..<self.contacts.count {
-                            if responseObject!.users[i]._id == self.contacts[j]._id {
+                        for j in 0..<self.viewModel!.contacts.count {
+                            if responseObject!.users[i]._id == self.viewModel!.contacts[j]._id {
                                 a = true
                                 break
                             }
@@ -124,7 +127,7 @@ class ContactsViewController: UIViewController {
                         }
                     }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
+                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
                     })
                     DispatchQueue.main.async {
                         self.removeView()
@@ -184,39 +187,32 @@ class ContactsViewController: UIViewController {
         if !isLoaded {
             activityIndicator.startAnimating()
         }
-        viewModel.getContacts { (userContacts, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                }
-            } else if userContacts != nil {
-                self.isLoaded = true
-                if userContacts?.count == 0 {
-                    self.setView("no_contacts".localized())
-                    return
-                }
-                self.contacts = userContacts!
-                self.contactsMiniInformation = userContacts!
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+            self.isLoaded = true
+            if viewModel!.contacts.count == 0 {
+                self.setView("no_contacts".localized())
+                return
             }
+            self.contactsMiniInformation = viewModel!.contacts
             DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-                self.activityIndicator.stopAnimating()
+                self.tableView.reloadData()
             }
+        DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
+            self.activityIndicator.stopAnimating()
         }
-    }    
+    }
 }
 
 //MARK: Extension
 extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, ContactProfileDelegate {
+    func removeContact() {
+        contactsMiniInformation = viewModel!.contacts
+        tableView.reloadData()
+    }
+
     func addNewContact(contact: User) {
-        self.contacts.append(contact)
         self.onContactPage = true
-        self.contactsMiniInformation = self.contacts
+        self.contactsMiniInformation = self.viewModel!.contacts
         DispatchQueue.main.async {
             self.tableView.reloadData()
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
@@ -224,6 +220,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
             self.activityIndicator.stopAnimating()
         }
     }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
         vc.delegate = self
