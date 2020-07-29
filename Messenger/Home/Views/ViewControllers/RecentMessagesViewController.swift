@@ -88,7 +88,7 @@ class RecentMessagesViewController: UIViewController {
         DispatchQueue.main.async {
             self.removeView()
             let noResultView = UIView(frame: self.view.frame)
-            noResultView.tag = 1
+            noResultView.tag = 26
             noResultView.backgroundColor = .white
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
@@ -102,7 +102,7 @@ class RecentMessagesViewController: UIViewController {
     
     func removeView() {
         DispatchQueue.main.async {
-            let resultView = self.view.viewWithTag(1)
+            let resultView = self.view.viewWithTag(26)
             resultView?.removeFromSuperview()
         }
     }

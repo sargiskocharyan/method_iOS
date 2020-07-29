@@ -192,12 +192,25 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
         cell.calleId = viewModel.calls[indexPath.row].calleeId
-        // harcnel
+        var isThereContact = false
         for i in 0..<count {
             if tabbar?.contactsViewModel.contacts[i]._id == cell.calleId {
+                isThereContact = true
                 print(tabbar!.contactsViewModel.contacts[i])
                 cell.configureCell(contact: tabbar!.contactsViewModel.contacts[i], call: viewModel.calls[indexPath.row])
                 break
+            }
+        }
+        if !isThereContact {
+             // harcnel
+            viewModel.getuserById(id: cell.calleId!) { (user, error) in
+                DispatchQueue.main.async {
+                    if error != nil {
+                        cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel.calls[indexPath.row])
+                    } else if user != nil {
+                        cell.configureCell(contact: user!, call: self.viewModel.calls[indexPath.row])
+                    }
+                }
             }
         }
         cell.delegate = self
@@ -247,6 +260,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         let call = viewModel.calls[indexPath.row]
         activeCall = call
         activeCall?.time = Date()
+        activeCall?.isHandleCall = false
         if onCall == false  {
             self.delegate?.handleCallClick(id: call.calleeId)
         } else if onCall && id != nil {

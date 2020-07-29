@@ -11,7 +11,7 @@ import CoreData
 
 struct FetchedCall {
     let id: UUID
-    let isHandleCall: Bool
+    var isHandleCall: Bool
     var time: Date
     var callDuration: Int?
     let calleeId: String

@@ -13,7 +13,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var birdthdateView: CustomTextField!
-    @IBOutlet weak var addressView: CustomTextField!
     @IBOutlet weak var updateInformationButton: UIButton!
     @IBOutlet weak var usernameView: CustomTextField!
     @IBOutlet weak var genderTextField: UITextField!
@@ -307,7 +306,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 }?._id
         }
         if (nameView.textField.text?.isValidNameOrLastname())! && (lastnameView.textField.text?.isValidNameOrLastname())! && (usernameView.textField.text?.isValidUsername())! && id != nil && (phoneCustomView.textField.text?.isValidNumber())! && (birdthdateView.textField.text?.isValidDate())! {
-            editInformatioViewModel.editInformation(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, phoneNumber: phoneCustomView.textField.text!, info: infoTextView.text, address: addressView.textField.text!, gender: genderTextField.text!.lowercased(), birthDate: birdthdateView.textField.text!) { (user, error) in
+            editInformatioViewModel.editInformation(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, phoneNumber: phoneCustomView.textField.text!, info: infoTextView.text, address: "", gender: genderTextField.text!.lowercased(), birthDate: birdthdateView.textField.text!) { (user, error) in
                 if error != nil {
                   DispatchQueue.main.async {
                         let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
