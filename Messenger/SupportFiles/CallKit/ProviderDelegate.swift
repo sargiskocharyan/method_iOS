@@ -37,9 +37,9 @@ class ProviderDelegate: NSObject {
         let call = Call(id: id, uuid: uuid, handle: handle, roomName: roomName)
         self.callManager.add(call: call)
       }
-      
       completion?(error)
     }
+   
   }
 }
 

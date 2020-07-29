@@ -12,6 +12,8 @@ import CoreData
 
 class ContactsViewModel {
     var contacts: [User] = []
+    var otherContacts: [User] = []
+    
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         HomeNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
@@ -84,6 +86,30 @@ class ContactsViewModel {
                print("Failed")
            }
        }
+    
+    func retrieveOtherContactData(completion: @escaping ([User]?)->()) {
+              let appDelegate = AppDelegate.shared as AppDelegate
+              let managedContext = appDelegate.persistentContainer.viewContext
+              let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OtherContactEntity")
+              do {
+                  let result = try managedContext.fetch(fetchRequest)
+                  var i = 0
+                  for data in result as! [NSManagedObject] {
+                      let mOtherContacts = data.value(forKey: "otherContacts") as! Contacts
+                      self.otherContacts = mOtherContacts.contacts
+                      completion(mOtherContacts.contacts)
+                      print(" contact batch : \(i)")
+                      for element in mOtherContacts.contacts {
+                          print("name:\(element.name), username:\(element.username)")
+                      }
+                      i = i + 1
+                  }
+              } catch {
+               self.contacts = []
+                  completion(nil)
+                  print("Failed")
+              }
+          }
     
     func addContactToCoreData(newContact: User, completion: @escaping (NSError?)->()) {
         let appDelegate = AppDelegate.shared as AppDelegate

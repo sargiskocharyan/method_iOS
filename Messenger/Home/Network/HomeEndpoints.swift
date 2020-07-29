@@ -142,7 +142,18 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, address: let address, gender: let gender, birthDate: let birthDate):
-            let parameters:Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "address": address, "gender": gender, "birthday": birthDate]
+            let allParameters: Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "address": address, "gender": gender]
+            var parameters:Parameters = [:]
+            for (key, value) in allParameters {
+                if (value as? String) != SharedConfigs.shared.signedUser![key] as? String {
+                    if !(SharedConfigs.shared.signedUser![key] as? String == nil && value as? String == "") {
+                        parameters[key] = value as! String
+                    }
+                }
+            }
+            if SharedConfigs.shared.signedUser!.birthDate != birthDate  {
+                parameters["birthday"] = birthDate
+            }
             print(parameters)
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)

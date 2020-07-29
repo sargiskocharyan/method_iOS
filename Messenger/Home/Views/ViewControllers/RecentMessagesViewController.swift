@@ -45,6 +45,7 @@ class RecentMessagesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
         
     }
     
@@ -62,6 +63,7 @@ class RecentMessagesViewController: UIViewController {
     
     @objc func addButtonTapped() {
         let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+        vc.fromProfile = false
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -224,7 +226,7 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
         vc.username = chats[indexPath.row].username
         vc.avatar = chats[indexPath.row].recipientAvatarURL
         vc.id = chats[indexPath.row].id
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.navigationController?.pushViewController(vc, animated: false)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

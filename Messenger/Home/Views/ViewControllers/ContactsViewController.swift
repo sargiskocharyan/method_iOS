@@ -23,6 +23,7 @@ class ContactsViewController: UIViewController {
     var isLoadedFoundUsers = false
     let refreshControl = UIRefreshControl()
     var tabbar: MainTabBarController?
+    var fromProfile: Bool?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -48,6 +49,7 @@ class ContactsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
          getContacts()
         contactsMiniInformation = viewModel!.contacts
         tableView.reloadData()
@@ -222,12 +224,24 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-        vc.delegate = self
-        vc.id = contactsMiniInformation[indexPath.row]._id
-        vc.contact = contactsMiniInformation[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
-        vc.onContactPage = onContactPage
+        if self.fromProfile! {
+            let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+            vc.delegate = self
+            vc.id = contactsMiniInformation[indexPath.row]._id
+            vc.contact = contactsMiniInformation[indexPath.row]
+            vc.onContactPage = onContactPage
+            vc.fromChat = false
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+            vc.name = contactsMiniInformation[indexPath.row].name
+            vc.username = contactsMiniInformation[indexPath.row].username
+            vc.avatar = contactsMiniInformation[indexPath.row].avatarURL
+            vc.id = contactsMiniInformation[indexPath.row]._id
+            self.navigationController?.pushViewController(vc, animated: false)
+        }
+        
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

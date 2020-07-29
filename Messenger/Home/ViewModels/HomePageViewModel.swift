@@ -22,7 +22,7 @@ class HomePageViewModel {
         }
     }
     
-    func saveContacts(contacts: [User]) {
+    func saveContacts(contacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
         let appDelegate = AppDelegate.shared as AppDelegate
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
@@ -31,12 +31,32 @@ class HomePageViewModel {
         cmsg.setValue(mContacts, forKeyPath: "contacts")
         do {
             try managedContext.save()
+            completion(mContacts.contacts, nil)
             print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
             
         } catch let error as NSError {
+            completion(nil, NetworkResponse.noData)
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
+    
+    func saveOtherContacts(otherContacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
+           let appDelegate = AppDelegate.shared as AppDelegate
+           let managedContext = appDelegate.persistentContainer.viewContext
+           let entity = NSEntityDescription.entity(forEntityName: "OtherContactEntity", in: managedContext)!
+           let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
+           let mOtherContacts = Contacts(contacts: otherContacts)
+           cmsg.setValue(mOtherContacts, forKeyPath: "otherContacts")
+           do {
+               try managedContext.save()
+               completion(mOtherContacts.contacts, nil)
+               print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
+               
+           } catch let error as NSError {
+               completion(nil, NetworkResponse.noData)
+               print("Could not save. \(error), \(error.userInfo)")
+           }
+       }
     
 //    func retrieveData(completion: @escaping ([User]?)->()) {
 //        let appDelegate = AppDelegate.shared as AppDelegate

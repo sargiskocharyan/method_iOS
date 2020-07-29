@@ -86,6 +86,7 @@ class ChatViewController: UIViewController {
         vc.id = id
 //        vc.callDelegate = 
         vc.onContactPage = false
+        vc.fromChat = true
         for i in 0..<tabbar!.contactsViewModel.contacts.count {
             if tabbar!.contactsViewModel.contacts[i]._id == id {
                 vc.onContactPage = true
@@ -160,7 +161,9 @@ class ChatViewController: UIViewController {
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
-            self.scheduleNotification(center: MainTabBarController.center, message: message)
+            if message.sender?.id != SharedConfigs.shared.signedUser?.id {
+                self.scheduleNotification(center: MainTabBarController.center, message: message)
+            }
         }
     }
     

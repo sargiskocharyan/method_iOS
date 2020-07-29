@@ -51,6 +51,7 @@ class ContactProfileViewController: UIViewController {
     var tabBar: MainTabBarController?
     var nc: UINavigationController?
     var callListViewController: CallListViewController?
+    var fromChat: Bool?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -89,12 +90,17 @@ class ContactProfileViewController: UIViewController {
     }
     
     @objc func startMessage() {
-        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-        vc.id = contact?._id
-        vc.name = contact?.name
-        vc.username = contact?.username
-        vc.avatar = contact?.avatarURL
-        navigationController?.pushViewController(vc, animated: true)
+        if fromChat! {
+            navigationController?.popViewController(animated: false)
+        } else {
+            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+            vc.id = contact?._id
+            vc.name = contact?.name
+            vc.username = contact?.username
+            vc.avatar = contact?.avatarURL
+            navigationController?.pushViewController(vc, animated: true)
+            
+        }
     }
     
     func getUserInformation() {
@@ -138,7 +144,7 @@ class ContactProfileViewController: UIViewController {
     @IBAction func startVideoCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
-            tabBar.handleCallClick(id: id!)
+            tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!)
             tabBar.startDate = Date()
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {

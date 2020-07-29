@@ -27,7 +27,7 @@ struct Config {
 }
 
 protocol CallListViewDelegate: class  {
-    func handleCallClick(id: String)
+    func handleCallClick(id: String, name: String)
     func handleClickOnSamePerson()
 }
 
@@ -44,6 +44,7 @@ class CallListViewController: UIViewController {
     var activeCall: FetchedCall?
     var tabbar: MainTabBarController?
     var count = 0
+    var otherContactsCount = 0
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -62,6 +63,7 @@ class CallListViewController: UIViewController {
         tabbar = tabBarController as? MainTabBarController
         MainTabBarController.center.delegate = self
         count = tabbar!.contactsViewModel.contacts.count
+        otherContactsCount = tabbar!.contactsViewModel.otherContacts.count
         tableView.delegate = self
         tableView.dataSource = self
         getHistory()
@@ -97,7 +99,7 @@ class CallListViewController: UIViewController {
     }
     
     func addNoCallView() {
-       let label = UILabel()
+        let label = UILabel()
         label.text = "You have no calls"
         label.tag = 20
         label.textAlignment = .center
@@ -118,15 +120,15 @@ class CallListViewController: UIViewController {
         }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()
-//            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
-//                self.sort()
-//                self.tableView.reloadData()
-//            })
-          
+            //            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
+            //                self.sort()
+            //                self.tableView.reloadData()
+            //            })
+            
         }
     }
     
-
+    
     func deleteAllData(entity: String) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
@@ -178,6 +180,7 @@ extension CallListViewController: CallTableViewDelegate {
     func callSelected(id: String) {
         let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
         vc.id = id
+        vc.fromChat = false
         vc.onContactPage = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -202,13 +205,25 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         if !isThereContact {
-             // harcnel
-            viewModel.getuserById(id: cell.calleId!) { (user, error) in
-                DispatchQueue.main.async {
-                    if error != nil {
-                        cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel.calls[indexPath.row])
-                    } else if user != nil {
-                        cell.configureCell(contact: user!, call: self.viewModel.calls[indexPath.row])
+            for i in 0..<otherContactsCount {
+                if tabbar?.contactsViewModel.otherContacts[i]._id == cell.calleId {
+                    isThereContact = true
+                    print(tabbar!.contactsViewModel.otherContacts[i])
+                    cell.configureCell(contact: tabbar!.contactsViewModel.otherContacts[i], call: viewModel.calls[indexPath.row])
+                    break
+                }
+            }
+            if !isThereContact {
+                viewModel.getuserById(id: cell.calleId!) { (user, error) in
+                    DispatchQueue.main.async {
+                        if error != nil {
+                            cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel.calls[indexPath.row])
+                        } else if user != nil {
+                            self.tabbar?.viewModel.saveOtherContacts(otherContacts: [user!], completion: { (users, error) in
+                                self.tabbar?.contactsViewModel.otherContacts = users!
+                            })
+                            cell.configureCell(contact: user!, call: self.viewModel.calls[indexPath.row])
+                        }
                     }
                 }
             }
@@ -218,11 +233,11 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-            self.sort()
-            tableView.beginUpdates()
-            viewModel.deleteItem(index: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-            tableView.endUpdates()
+        self.sort()
+        tableView.beginUpdates()
+        viewModel.deleteItem(index: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
+        tableView.endUpdates()
         if viewModel.calls.count == 0 {
             self.addNoCallView()
         } else {
@@ -262,7 +277,21 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         activeCall?.time = Date()
         activeCall?.isHandleCall = false
         if onCall == false  {
-            self.delegate?.handleCallClick(id: call.calleeId)
+            var isThereContact = false
+            for i in 0..<count {
+                if tabbar?.contactsViewModel.contacts[i]._id == call.calleeId {
+                    isThereContact = true
+                    self.delegate?.handleCallClick(id: call.calleeId, name: (tabbar!.contactsViewModel.contacts[i].name ?? tabbar!.contactsViewModel.contacts[i].username!))
+                    break
+                }
+            }
+            if !isThereContact {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "Attension", message: "This user not is your contact", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
         } else if onCall && id != nil {
             if id == call.calleeId {
                 self.delegate?.handleClickOnSamePerson()

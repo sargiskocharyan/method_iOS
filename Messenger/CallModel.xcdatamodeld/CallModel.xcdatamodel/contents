@@ -10,8 +10,12 @@
     <entity name="ContactsEntity" representedClassName="ContactsEntity" syncable="YES" codeGenerationType="class">
         <attribute name="contacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
     </entity>
+    <entity name="OtherContactEntity" representedClassName="OtherContactEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="otherContacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
+    </entity>
     <elements>
         <element name="CallEntity" positionX="-63" positionY="-18" width="128" height="118"/>
         <element name="ContactsEntity" positionX="-63" positionY="45" width="128" height="58"/>
+        <element name="OtherContactEntity" positionX="-63" positionY="18" width="128" height="58"/>
     </elements>
 </model>

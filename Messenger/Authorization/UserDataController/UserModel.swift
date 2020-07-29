@@ -7,7 +7,24 @@
 //
 
 import Foundation
-struct UserModel: Codable {
+
+protocol PropertyReflectable: Equatable { }
+
+extension PropertyReflectable {
+    subscript(key: String) -> Any? {
+        let m = Mirror(reflecting: self)
+        for child in m.children {
+            if child.label == key { return child.value }
+        }
+        return nil
+    }
+}
+
+struct UserModel: Codable, PropertyReflectable {
+    static func == (lhs: UserModel, rhs: UserModel) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     var name: String?
     var lastname: String?
     var username: String?
@@ -16,12 +33,14 @@ struct UserModel: Codable {
     var token: String?
     var id: String
     var avatarURL: String?
-    var address: String?
     var phoneNumber: String?
     var birthDate: String?
     var gender: String?
     var info: String?
     var tokenExpire: Date?
+    var deactivated: Bool?
+    var blocked: Bool?
+    
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -32,11 +51,14 @@ struct UserModel: Codable {
         case token
         case id = "_id"
         case avatarURL
-        case address
         case phoneNumber
         case birthDate = "birthday"
         case gender
         case info
         case tokenExpire
+        case deactivated
+        case blocked
     }
 }
+
+

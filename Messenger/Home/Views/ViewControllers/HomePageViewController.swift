@@ -49,7 +49,7 @@ class MainTabBarController: UITabBarController {
 //        privateContext.persistentStoreCoordinator = managedContext.persistentStoreCoordinator
 //        privateContext.perform {
             self.saveContacts()
-            self.retrieveContacts()
+            self.retrieveCoreDataObjects()
 //        }
         verifyToken()
         socketTaskManager.connect()
@@ -165,18 +165,26 @@ class MainTabBarController: UITabBarController {
                 }
             } else if userContacts != nil {
                 DispatchQueue.main.async {
-                    self.viewModel.saveContacts(contacts: userContacts!)
+                    self.viewModel.saveContacts(contacts: userContacts!) { (users, error) in
+                        if users != nil {
+                            self.contactsViewModel.contacts = users!
+                        }
+                    }
                 }
             }
         }
     }
     
-    func retrieveContacts() {
+    func retrieveCoreDataObjects() {
         contactsViewModel.retrieveData { (contacts) in
             print("Data retrieved!!!")
         }
+        contactsViewModel.retrieveOtherContactData { (contacts) in
+            print("Other data retrieved!!!")
+        }
     }
 
+    
     func handleOffer() {
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.onCall = true
@@ -205,7 +213,14 @@ class MainTabBarController: UITabBarController {
             } 
             switch self.selectedIndex {
             case 0:
-                self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
+                 let callNc = self.viewControllers![0] as! UINavigationController
+                 if callNc.viewControllers.count <= 2 {
+                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
+                 } else {
+                    if let chatVC = callNc.viewControllers[2] as? ChatViewController {
+                        chatVC.getnewMessage(message: message)
+                    }
+                 }
                 break
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
@@ -216,8 +231,28 @@ class MainTabBarController: UITabBarController {
                     chatVC.getnewMessage(message: message)
                 }
             default:
-                break
+               break
             }
+        }
+    }
+    
+    func sessionExpires() {
+        self.socketTaskManager.disconnect()
+        UserDataController().logOutUser()
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
+                vc.modalPresentationStyle = .fullScreen
+                let nav = UINavigationController(rootViewController: vc)
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                    let sceneDelegate = windowScene.delegate as? SceneDelegate
+                    else {
+                        return
+                }
+                sceneDelegate.window?.rootViewController = nav
+            }))
+             self.present(alert, animated: true)
         }
     }
     
@@ -230,41 +265,14 @@ class MainTabBarController: UITabBarController {
                     self.present(alert, animated: true)
                 }
             } else if responseObject != nil && responseObject!.tokenExists == false {
-                UserDataController().logOutUser()
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        vc.modalPresentationStyle = .fullScreen
-                        let nav = UINavigationController(rootViewController: vc)
-                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                            let sceneDelegate = windowScene.delegate as? SceneDelegate
-                            else {
-                                return
-                        }
-                        sceneDelegate.window?.rootViewController = nav
-                    }))
-                     self.present(alert, animated: true)
-                }
+                self.sessionExpires()
             } else if responseObject != nil && responseObject!.tokenExists {
                 let userCalendar = Calendar.current
                 let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
                 let timeDifference = userCalendar.dateComponents(requestedComponent, from: Date(), to: (SharedConfigs.shared.signedUser?.tokenExpire)!)
                 if timeDifference.day! <= 1 {
                     self.profileViewModel.logout { (error) in
-                        self.socketTaskManager.disconnect()
-                        UserDataController().logOutUser()
-                        DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
-                                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                                let nav = UINavigationController(rootViewController: vc)
-                                let window: UIWindow? = UIApplication.shared.windows[0]
-                                window?.rootViewController = nav
-                                window?.makeKeyAndVisible()
-                            }))
-                            self.present(alert, animated: true)
-                        }
+                        self.sessionExpires()
                     }
                 }
             }
@@ -380,10 +388,10 @@ extension MainTabBarController: CallListViewDelegate {
         }
     }
     
-    func handleCallClick(id: String) {
+    func handleCallClick(id: String, name: String) {
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         SocketTaskManager.shared.call(id: id)
-        callManager.startCall(handle: id, videoEnabled: true)
+        callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
         
         self.vc?.webRTCClient = self.webRTCClient
