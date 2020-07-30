@@ -61,6 +61,8 @@ class RecentMessagesViewController: UIViewController {
         getChats()
     }
     
+   
+    
     @objc func addButtonTapped() {
         let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
         vc.fromProfile = false
@@ -155,6 +157,12 @@ class RecentMessagesViewController: UIViewController {
                         self.chats = messages!.filter({ (chat) -> Bool in
                             return chat.message != nil
                         })
+                        let ids = self.chats.map { (chat) -> String in
+                            return chat.id
+                        }
+//                        self.viewModel.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
+//                            print("jdhfhfsdhfh")
+//                        }
                         self.sort()
                         DispatchQueue.main.async {
                             self.removeView()
@@ -196,7 +204,7 @@ class RecentMessagesViewController: UIViewController {
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -204,7 +212,7 @@ class RecentMessagesViewController: UIViewController {
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
@@ -232,6 +240,7 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
+        cell.isOnline = chats[indexPath.row].online
         cell.configure(chat: chats[indexPath.row])
         return cell
     }

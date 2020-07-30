@@ -68,9 +68,9 @@ class CallTableViewCell: UITableViewCell {
         }
          self.timeLabel.text = dateToString(date: call.time)
         if call.isHandleCall != true {
-            self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.up.right")
+            self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
         } else {
-            self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.down.left")
+            self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
         }
     }
 }

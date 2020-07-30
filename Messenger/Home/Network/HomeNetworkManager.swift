@@ -302,8 +302,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, address: address, gender: gender, birthDate: birthDate)) { data, response, error in
+    func editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, university: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email, university: university)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -343,6 +343,34 @@ class HomeNetworkManager: NetworkManager {
                     completion(nil)
                 case .failure( _):
                     completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func onlineUsers(arrayOfId: [String],  completion: @escaping (OnlineUsers?, NetworkResponse?)->()) {
+        router.request(.onlineUsers(arrayOfId: arrayOfId)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(OnlineUsers.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }

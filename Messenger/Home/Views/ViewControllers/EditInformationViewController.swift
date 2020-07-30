@@ -23,6 +23,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var phoneCustomView: CustomTextField!
     @IBOutlet weak var infoTextView: UITextView!
+    @IBOutlet weak var emailView: CustomTextField!
     
     //MARK: Properties
     let viewModel = RegisterViewModel()
@@ -38,6 +39,16 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     let universityButton = UIButton()
     let genderButton = UIButton()
     let socketTaskManager = SocketTaskManager.shared
+    let datePicker = UIDatePicker()
+    var didSomethingChanges: Bool = false
+    var gender: String? = nil
+    var birthDate: String? = nil
+    var name: String?
+    var lastname: String?
+    var username: String?
+    var email: String?
+    var phoneNumber: String?
+    var universityId: String?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -55,6 +66,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         usernameView.delagate = self
         phoneCustomView.delagate = self
         birdthdateView.delagate = self
+        emailView.delagate = self
         addUniversityDropDown()
         getUniversities()
         addGenderDropDown()
@@ -62,8 +74,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         lastnameView.textField.text = SharedConfigs.shared.signedUser?.lastname
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
         genderTextField.text = SharedConfigs.shared.signedUser?.gender
-        //birdthdateView.textField.text = SharedConfigs.shared.signedUser?.birthDate
+        emailView.textField.text = SharedConfigs.shared.signedUser?.email
         phoneCustomView.textField.text = SharedConfigs.shared.signedUser?.phoneNumber
+        birdthdateView.textField.text = stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) ?? ""
         setUniversityName()
         universityTextField.underlinedUniversityTextField()
         genderTextField.underlinedUniversityTextField()
@@ -73,13 +86,14 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         self.hideKeyboardWhenTappedAround()
         setObservers()
         updateInformationButton.isEnabled = false
-        updateInformationButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
-        updateInformationButton.titleLabel?.textColor = UIColor.lightGray
+        updateInformationButton.titleLabel?.textColor = UIColor.white
+        updateInformationButton.backgroundColor = UIColor.lightGray
         nameView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
         phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
         birdthdateView.textField.addTarget(self, action: #selector(birthDateTextFieldAction), for: .editingChanged)
+        emailView.textField.addTarget(self, action: #selector(emailTextFieldAction), for: .editingChanged)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -112,6 +126,131 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
        checkFields()
     }
 
+     func checkUniverity(_ id: String?, _ signedUser: UserModel?) -> Bool? {
+        if id != nil && signedUser?.university?._id != id {
+            universityId = id!
+            return true
+        } else if signedUser?.university?._id == nil && id != nil {
+            universityId = id!
+            return true
+        }
+        universityId = nil
+        return nil
+    }
+    
+     func checkGender(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.gender?.lowercased() != genderTextField.text?.lowercased() {
+            if signedUser?.gender == nil && genderTextField.text == "" {
+                gender = nil
+                return nil
+            } else {
+                 gender = genderTextField.text!.lowercased()
+                return true
+            }
+        }
+        gender = nil
+        return nil
+    }
+    
+     func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.birthDate != birdthdateView.textField.text {
+            if signedUser?.birthDate == nil && birdthdateView.textField.text == "" {
+                birthDate = nil
+                return nil
+            } else {
+                birthDate = birdthdateView.textField.text!
+                return true
+            }
+        }
+        birthDate = nil
+        return nil
+    }
+    
+     func checkEmail(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.email != emailView.textField.text {
+            if (emailView.textField.text?.isValidEmail())! {
+                email = emailView.textField.text!
+                return true
+            } else {
+                email = nil
+                return false
+            }
+        }
+        email = nil
+        return nil
+    }
+    
+     func checkName(_ signedUser: UserModel?) -> Bool? {
+        if signedUser?.name != nameView.textField.text {
+            if (nameView.textField.text?.isValidNameOrLastname())! || nameView.textField.text == "" {
+                if (signedUser?.name == nil && nameView.textField.text == "") {
+                    name = nil
+                    return nil
+                } else {
+                    name = nameView.textField.text!
+                    return true
+                }
+            } else {
+                name = nil
+                return false
+            }
+        }
+        name = nil
+        return nil
+    }
+    
+     func checkUsername(_ signedUser: UserModel?) -> Bool? {
+        if signedUser?.username != usernameView.textField.text {
+            if (usernameView.textField.text?.isValidUsername())! {
+                username = usernameView.textField.text!
+                return true
+            } else {
+                username = nil
+                return false
+            }
+        }
+        username = nil
+        return nil
+    }
+    
+    func checkPhoneNumber(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.phoneNumber != phoneCustomView.textField.text {
+            if (phoneCustomView.textField.text?.isValidNumber())! || phoneCustomView.textField.text == "" {
+                if (signedUser?.phoneNumber == nil && phoneCustomView.textField.text == "") {
+                    phoneNumber = nil
+                    return nil
+                } else {
+                    phoneNumber = phoneCustomView.textField.text!
+                    return true
+                }
+            } else {
+                phoneNumber = nil
+                return false
+            }
+        }
+        phoneNumber = nil
+        return nil
+    }
+    
+     func checkLastname(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.lastname != lastnameView.textField.text {
+            if (lastnameView.textField.text?.isValidNameOrLastname())! || lastnameView.textField.text == "" {
+                if (signedUser?.lastname == nil && lastnameView.textField.text == "") {
+                    lastname = nil
+                    return nil
+                } else {
+                    lastname = lastnameView.textField.text!
+                    return true
+                }
+            } else {
+                lastname = nil
+                return false
+            }
+        }
+        lastname = nil
+        return nil
+    }
+    
     func checkFields() {
         var id: String?
         switch SharedConfigs.shared.appLang {
@@ -128,14 +267,22 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 university.nameEN == self.universityTextField.text!
                 }?._id
         }
-        if ((nameView.textField.text!.isValidNameOrLastname()) || (nameView.textField.text == "")) && ((lastnameView.textField.text!.isValidNameOrLastname()) || lastnameView.textField.text == "") && (usernameView.textField.text!.isValidUsername()) && id != nil && (phoneCustomView.textField.text!.isValidNumber() || phoneCustomView.textField.text == "") && ((birdthdateView.textField.text!.isValidDate()) || birdthdateView.textField.text == "") {
-            updateInformationButton.backgroundColor = .clear
-            updateInformationButton.titleLabel?.textColor = .white
-            updateInformationButton.isEnabled = true
+         let signedUser = SharedConfigs.shared.signedUser
+       
+        if checkUniverity(id, signedUser) != false && (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false {
+            if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil {
+                updateInformationButton.backgroundColor = .clear
+                updateInformationButton.titleLabel?.textColor = .white
+                updateInformationButton.isEnabled = true
+            } else {
+                updateInformationButton.isEnabled = false
+                updateInformationButton.titleLabel?.textColor = UIColor.white
+                updateInformationButton.backgroundColor = UIColor.lightGray
+            }
         } else {
             updateInformationButton.isEnabled = false
-            updateInformationButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
-            updateInformationButton.titleLabel?.textColor = UIColor.lightGray
+            updateInformationButton.titleLabel?.textColor = UIColor.white
+            updateInformationButton.backgroundColor = UIColor.lightGray
         }
     }
     
@@ -152,6 +299,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func birthDateTextFieldAction() {
+       checkFields()
+    }
+    
+    @objc func emailTextFieldAction() {
        checkFields()
     }
     
@@ -243,19 +394,50 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         self.present(alert, animated: true)
     }
     
+    @objc func handleTapViewUnderDatePicker(_ sender: UITapGestureRecognizer? = nil) {
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: datePicker.date)
+        let month = calendar.component(.month, from: datePicker.date)
+        let year = calendar.component(.year, from: datePicker.date)
+        let parsedDay = day < 10 ? "0\(day)" : "\(day)"
+        let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
+        birdthdateView.textField.text = "\(parsedDay)/\(parsedMonth)/\(year)"
+        view.viewWithTag(30)?.removeFromSuperview()
+        checkFields()
+    }
+    
     @objc func handleBirthDateViewTap(_ sender: UITapGestureRecognizer? = nil) {
-        let datePicker = UIDatePicker()
         datePicker.backgroundColor = .white
         datePicker.datePickerMode = .date
-       
-//        view.addSubview(datePicker)
-//        datePicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 25).isActive = true
-        datePicker.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
+        let viewUnderDatePicker = UIView()
+        viewUnderDatePicker.tag = 30
+        viewUnderDatePicker.backgroundColor = .white
+        viewUnderDatePicker.isUserInteractionEnabled = true
+        let tapViewUnderDatePicker = UITapGestureRecognizer(target: self, action: #selector(self.handleTapViewUnderDatePicker(_:)))
+        let okLabel = UILabel()
+        okLabel.text = "ok".localized()
+        viewUnderDatePicker.addSubview(okLabel)
+        okLabel.bottomAnchor.constraint(equalTo: viewUnderDatePicker.bottomAnchor, constant: 84).isActive = true
+        okLabel.leftAnchor.constraint(equalTo: viewUnderDatePicker.leftAnchor, constant: self.view.frame.width / 2 - 15).isActive = true
+        okLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        okLabel.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        okLabel.isUserInteractionEnabled = true
+        okLabel.anchor(top: nil, paddingTop: 0, bottom: viewUnderDatePicker.bottomAnchor, paddingBottom: 84, left: viewUnderDatePicker.leftAnchor, paddingLeft: self.view.frame.width / 2 - 15, right: nil, paddingRight: 0, width: 30, height: 30)
+        viewUnderDatePicker.addGestureRecognizer(tapViewUnderDatePicker)
+        view.addSubview(viewUnderDatePicker)
+        viewUnderDatePicker.addSubview(datePicker)
+        viewUnderDatePicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        viewUnderDatePicker.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
+        viewUnderDatePicker.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
+        viewUnderDatePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        viewUnderDatePicker.isUserInteractionEnabled = true
+        viewUnderDatePicker.anchor(top: view.topAnchor, paddingTop: 0, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: self.view.frame.width, height: 250)
+        datePicker.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
         datePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        datePicker.heightAnchor.constraint(equalToConstant: 400).isActive = true
+        datePicker.heightAnchor.constraint(equalToConstant: 250).isActive = true
         datePicker.widthAnchor.constraint(equalToConstant: self.view.frame.width).isActive = true
         datePicker.isUserInteractionEnabled = true
-        datePicker.anchor(top: view.topAnchor, paddingTop: 30, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: self.view.frame.width, height: 400)
+        datePicker.anchor(top: nil, paddingTop: 100, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: self.view.frame.width, height: 250)
     }
     
     func addImage(textField: UITextField, imageView: UIImageView) {
@@ -326,37 +508,53 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
             updateInformationButton.titleLabel?.textColor = .white
         } else {
             updateInformationButton.isEnabled = false
-            updateInformationButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
             updateInformationButton.titleLabel?.textColor = UIColor.lightGray
         }
     }
     
-    
+    func stringToDate(date:String?) -> String? {
+        if date == nil {
+            return nil
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date!)
+        let calendar = Calendar.current
+        if parsedDate == nil {
+            return nil
+        } else {
+            let day = calendar.component(.day, from: parsedDate!)
+            let month = calendar.component(.month, from: parsedDate!)
+            let year = calendar.component(.year, from: parsedDate!)
+            let parsedDay = day < 10 ? "0\(day)" : "\(day)"
+            let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
+            return "\(parsedDay)/\(parsedMonth)/\(year)"
+        }
+    }
     
     @IBAction func continueButtonAction(_ sender: UIButton) {
-            editInformatioViewModel.editInformation(name: nameView.textField.text!, lastname: lastnameView.textField.text!, username: usernameView.textField.text!, phoneNumber: phoneCustomView.textField.text!, info: infoTextView.text, address: "", gender: genderTextField.text!.lowercased(), birthDate: birdthdateView.textField.text!) { (user, error) in
-                if error != nil {
-                  DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                    }
-                } else if user != nil {
-                    DispatchQueue.main.async {
-                        let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
-                        UserDataController().populateUserProfile(model: userModel)
-                        self.navigationController?.popViewController(animated: true)
-                    }
+        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: infoTextView.text, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
                 }
-                else {
-                        DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                            self.present(alert, animated: true)
-                        }
+            } else if user != nil {
+                DispatchQueue.main.async {
+                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    UserDataController().populateUserProfile(model: userModel)
+                    self.navigationController?.popViewController(animated: true)
                 }
+            }
+            else {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            }
         }
-        
     }
     
     func setUniversityName() {
@@ -449,7 +647,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                     self.updateInformationButton.titleLabel?.textColor = .white
                   } else {
                     self.updateInformationButton.isEnabled = false
-                    self.updateInformationButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
                     self.updateInformationButton.titleLabel?.textColor = UIColor.lightGray
                   }
         }
@@ -551,5 +748,17 @@ extension EditInformationViewController: CustomTextFieldDelegate {
                 phoneCustomView.errorLabel.text = phoneCustomView.successMessage
             }
         }
+        
+        if placeholder == "email".localized() {
+                   if !emailView.textField.text!.isValidEmail() {
+                       emailView.errorLabel.text = emailView.errorMessage
+                       emailView.errorLabel.textColor = .red
+                       emailView.border.backgroundColor = .red
+                   } else {
+                       emailView.border.backgroundColor = .blue
+                       emailView.errorLabel.textColor = .blue
+                       emailView.errorLabel.text = emailView.successMessage
+                   }
+               }
     }
 }

@@ -28,6 +28,10 @@ struct Message: Codable {
     let sender: Sender?
 }
 
+struct OnlineUsers: Codable {
+    let usersOnline: Dictionary<String,Bool>
+}
+
 struct Chat: Codable {
     let id: String
     let name: String?
@@ -35,6 +39,7 @@ struct Chat: Codable {
     let username: String?
     var message: Message?
     var recipientAvatarURL: String?
+    let online: Bool?
 }
 
 struct UserById: Codable {

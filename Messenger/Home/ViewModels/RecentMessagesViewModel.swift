@@ -73,6 +73,12 @@ class RecentMessagesViewModel {
             completion(user, error)
         }
     }
+    func onlineUsers(arrayOfId: [String], completion: @escaping (OnlineUsers?, NetworkResponse?)->()) {
+           HomeNetworkManager().onlineUsers(arrayOfId: arrayOfId) { (user, error) in
+               completion(user, error)
+           }
+       }
+    
     
     func save(newCall: FetchedCall, completion: @escaping ()->()) {
         let appDelegate = AppDelegate.shared as AppDelegate

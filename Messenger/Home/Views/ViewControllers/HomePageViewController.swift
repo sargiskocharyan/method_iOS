@@ -342,6 +342,9 @@ extension MainTabBarController: WebRTCClientDelegate {
             vc?.webRTCClient = nil
             id = nil
             vc?.closeAll()
+            if roomName != nil {
+                self.socketTaskManager.leaveRoom(roomName: roomName!)
+            }
             DispatchQueue.main.async {
                 self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
