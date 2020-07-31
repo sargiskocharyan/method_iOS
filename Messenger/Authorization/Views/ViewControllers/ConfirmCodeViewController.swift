@@ -45,9 +45,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         viewModel.resendCode(email: email!) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else if code != nil {
@@ -145,9 +143,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
@@ -161,9 +157,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }
@@ -172,9 +166,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         self.activityIndicator.stopAnimating()
                     }
                 } else if token != nil {
@@ -189,9 +181,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }

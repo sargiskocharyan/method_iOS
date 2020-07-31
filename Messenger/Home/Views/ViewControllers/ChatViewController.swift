@@ -66,7 +66,6 @@ class ChatViewController: UIViewController {
         socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
-       //  self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .info, target: self, action: #selector(infoButtonAction))
         self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
         setTitle()
         getImage()
@@ -84,7 +83,6 @@ class ChatViewController: UIViewController {
     @objc func infoButtonAction() {
         let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
         vc.id = id
-//        vc.callDelegate = 
         vc.onContactPage = false
         vc.fromChat = true
         for i in 0..<tabbar!.contactsViewModel.contacts.count {
@@ -220,9 +218,7 @@ class ChatViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.view.viewWithTag(5)?.removeFromSuperview()
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if messages != nil {
                 self.allMessages = messages!

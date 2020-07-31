@@ -119,12 +119,7 @@ class CallListViewController: UIViewController {
             viewModel.deleteItem(index: viewModel.calls.count - 1)
         }
         DispatchQueue.main.async {
-            self.view.viewWithTag(20)?.removeFromSuperview()
-            //            self.viewModel.save(newCall: FetchedCall(id: user._id, name: user.name, username: user.username, imageURL: user.avatarURL, isHandleCall: true, time: Date(), lastname: user.lastname), completion: {
-            //                self.sort()
-            //                self.tableView.reloadData()
-            //            })
-            
+            self.view.viewWithTag(20)?.removeFromSuperview()   
         }
     }
     
@@ -179,9 +174,16 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 extension CallListViewController: CallTableViewDelegate {
     func callSelected(id: String) {
         let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+         vc.onContactPage = false
+            for j in 0..<tabbar!.contactsViewModel.contacts.count {
+                if id == tabbar!.contactsViewModel.contacts[j]._id {
+                    vc.onContactPage = true
+                    break
+            }
+        }
         vc.id = id
         vc.fromChat = false
-        vc.onContactPage = true
+        
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

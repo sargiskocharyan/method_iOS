@@ -18,11 +18,17 @@ class SharedConfigs {
     }
     
     var mode: String = ""
+    var isHidden: Bool = false
     
     func setMode(selectedMode: String) {
         mode = selectedMode
         UserDefaults.standard.set(mode, forKey: "mode")
     }
+    
+    func setIsHidden(selectIsHidden: Bool) {
+           isHidden = selectIsHidden
+           UserDefaults.standard.set(isHidden, forKey: "isHidden")
+       }
     
     private var _appLang: String?
     public var appLang: String? {

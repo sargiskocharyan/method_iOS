@@ -21,6 +21,7 @@ class CallTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var infoButton: UIButton!
+    @IBOutlet weak var callDurationLabel: UILabel!
     weak var delegate: CallTableViewDelegate?
     var calleId: String?
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -53,6 +54,15 @@ class CallTableViewCell: UITableViewCell {
         return ("\(hour):\(minutes)")
     }
     
+ func secondsToHoursMinutesSeconds(seconds : Int) -> String {
+    if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+        return "\((seconds % 3600) % 60) sec."
+    } else if seconds / 3600 == 0 {
+        return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
+    return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
+    
     func configureCell(contact: User, call: FetchedCall) {
         if contact.name != nil {
         self.nameLabel.text = contact.name
@@ -61,6 +71,7 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.nameLabel.text = "Dynamic's user".localized()
         }
+        callDurationLabel.text = secondsToHoursMinutesSeconds(seconds: call.callDuration ?? 0)
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image

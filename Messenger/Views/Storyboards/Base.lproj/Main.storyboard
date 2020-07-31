@@ -788,7 +788,7 @@
                                                         <constraint firstAttribute="height" constant="22" id="Dde-FO-L4k"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Messenger video" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JkH-lv-RTY">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JkH-lv-RTY">
                                                     <rect key="frame" x="98" y="49.5" width="208.5" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -836,6 +836,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="callDurationLabel" destination="JkH-lv-RTY" id="B17-JX-YRa"/>
                                             <outlet property="callIcon" destination="Dx5-yI-Gg6" id="jAF-d5-i3n"/>
                                             <outlet property="infoButton" destination="Ffx-RI-e4f" id="Q8r-Bk-S2W"/>
                                             <outlet property="nameLabel" destination="8SV-n3-99H" id="7E8-jZ-0oV"/>
@@ -1433,33 +1434,6 @@
                                                     <constraint firstItem="YgN-jA-fQJ" firstAttribute="top" secondItem="cT0-6W-znO" secondAttribute="bottom" constant="20" id="w9b-xI-ULf"/>
                                                 </constraints>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zsk-8L-B4r">
-                                                <rect key="frame" x="-1" y="543.5" width="416" height="57"/>
-                                                <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FUC-Ff-7KP">
-                                                        <rect key="frame" x="20" y="10" width="376" height="37"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <nil key="textColor"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="FUC-Ff-7KP" firstAttribute="top" secondItem="Zsk-8L-B4r" secondAttribute="top" constant="10" id="5Kv-zL-Ce9"/>
-                                                    <constraint firstAttribute="bottom" secondItem="FUC-Ff-7KP" secondAttribute="bottom" constant="10" id="8xf-f4-Uhj"/>
-                                                    <constraint firstItem="FUC-Ff-7KP" firstAttribute="leading" secondItem="Zsk-8L-B4r" secondAttribute="leading" constant="20" id="G4F-vw-AgE"/>
-                                                    <constraint firstAttribute="trailing" secondItem="FUC-Ff-7KP" secondAttribute="trailing" constant="20" id="JuQ-OR-tZj"/>
-                                                    <constraint firstAttribute="height" constant="57" id="tA6-FD-xS6"/>
-                                                </constraints>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth ">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                                                        <color key="value" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HiJ-82-uGj">
                                                 <rect key="frame" x="-1" y="376" width="416" height="56.5"/>
                                                 <subviews>
@@ -1572,28 +1546,17 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h3C-ih-iJ2">
                                                 <rect key="frame" x="0.0" y="487.5" width="416" height="57"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hide personal data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="phb-xF-M9e">
-                                                        <rect key="frame" x="20" y="10" width="144" height="37"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="phb-xF-M9e">
+                                                        <rect key="frame" x="20" y="10" width="58" height="37"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xw7-0L-NNO">
-                                                        <rect key="frame" x="347" y="10" width="51" height="37"/>
-                                                        <color key="onTintColor" systemColor="systemIndigoColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <connections>
-                                                            <action selector="selectMode:" destination="SSR-lC-C00" eventType="valueChanged" id="mqa-Qv-jqB"/>
-                                                        </connections>
-                                                    </switch>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="bottom" secondItem="Xw7-0L-NNO" secondAttribute="bottom" constant="10" id="Ky9-AT-1qr"/>
                                                     <constraint firstAttribute="bottom" secondItem="phb-xF-M9e" secondAttribute="bottom" constant="10" id="Nyg-mT-7w5"/>
                                                     <constraint firstItem="phb-xF-M9e" firstAttribute="top" secondItem="h3C-ih-iJ2" secondAttribute="top" constant="10" id="ZIQ-n3-3KL"/>
-                                                    <constraint firstItem="Xw7-0L-NNO" firstAttribute="top" secondItem="h3C-ih-iJ2" secondAttribute="top" constant="10" id="b8U-mJ-FEv"/>
                                                     <constraint firstItem="phb-xF-M9e" firstAttribute="leading" secondItem="h3C-ih-iJ2" secondAttribute="leading" constant="20" id="euE-Gl-HaK"/>
-                                                    <constraint firstAttribute="trailing" secondItem="Xw7-0L-NNO" secondAttribute="trailing" constant="20" id="nWA-CP-kny"/>
-                                                    <constraint firstItem="Xw7-0L-NNO" firstAttribute="leading" relation="lessThanOrEqual" secondItem="phb-xF-M9e" secondAttribute="trailing" constant="200" id="pYv-2K-yER"/>
                                                     <constraint firstAttribute="height" constant="57" id="svI-e0-ElG"/>
                                                 </constraints>
                                                 <userDefinedRuntimeAttributes>
@@ -1620,16 +1583,13 @@
                                             </constraint>
                                             <constraint firstItem="Gg7-jh-fE4" firstAttribute="top" secondItem="HiJ-82-uGj" secondAttribute="bottom" constant="-1" id="YWn-l5-DiB"/>
                                             <constraint firstItem="hSg-LN-Hnk" firstAttribute="top" secondItem="mwW-zP-en9" secondAttribute="bottom" id="ZQv-sy-H01"/>
-                                            <constraint firstItem="Zsk-8L-B4r" firstAttribute="top" secondItem="h3C-ih-iJ2" secondAttribute="bottom" constant="-1" id="eRt-DN-PDM"/>
                                             <constraint firstItem="hSg-LN-Hnk" firstAttribute="leading" secondItem="D2k-q4-o9o" secondAttribute="leading" constant="-1" id="fe7-Nd-3d7"/>
                                             <constraint firstAttribute="height" constant="600" id="gEc-Vf-8QW"/>
                                             <constraint firstItem="h3C-ih-iJ2" firstAttribute="top" secondItem="Gg7-jh-fE4" secondAttribute="bottom" priority="999" constant="-1" id="hEk-86-VIV"/>
-                                            <constraint firstAttribute="trailing" secondItem="Zsk-8L-B4r" secondAttribute="trailing" constant="-1" id="hg1-De-3ZT"/>
                                             <constraint firstAttribute="trailing" secondItem="HiJ-82-uGj" secondAttribute="trailing" constant="-1" id="i5H-Nl-OwL"/>
                                             <constraint firstItem="HiJ-82-uGj" firstAttribute="top" secondItem="hSg-LN-Hnk" secondAttribute="bottom" constant="-1" id="igC-Kd-X2u"/>
                                             <constraint firstItem="h3C-ih-iJ2" firstAttribute="top" secondItem="HiJ-82-uGj" secondAttribute="bottom" priority="998" constant="-1" id="lV0-ca-T81"/>
                                             <constraint firstItem="mwW-zP-en9" firstAttribute="leading" secondItem="D2k-q4-o9o" secondAttribute="leading" id="w42-IW-5DN"/>
-                                            <constraint firstItem="Zsk-8L-B4r" firstAttribute="leading" secondItem="D2k-q4-o9o" secondAttribute="leading" constant="-1" id="xPa-Tz-fak"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -1674,8 +1634,8 @@
                         <outlet property="lastnameTextLabel" destination="7Zl-3S-idA" id="8ZI-Ll-8mm"/>
                         <outlet property="logOutDarkModeVerticalConstraint" destination="hEk-86-VIV" id="nZ3-LD-la0"/>
                         <outlet property="logOutLanguageVerticalConstraint" destination="lV0-ca-T81" id="Wxe-Yf-vBv"/>
-                        <outlet property="logoutLabel" destination="FUC-Ff-7KP" id="SoJ-Nj-X5Y"/>
-                        <outlet property="logoutView" destination="Zsk-8L-B4r" id="fTC-dw-ZcQ"/>
+                        <outlet property="logoutLabel" destination="phb-xF-M9e" id="tsx-fs-JjG"/>
+                        <outlet property="logoutView" destination="h3C-ih-iJ2" id="60V-VT-tc5"/>
                         <outlet property="nameLabel" destination="rtX-lo-MsM" id="P1c-sH-iQo"/>
                         <outlet property="nameTextLabel" destination="YgN-jA-fQJ" id="6Cs-3P-FYz"/>
                         <outlet property="phoneLabel" destination="b1e-Z2-8cH" id="kya-dK-asg"/>
@@ -2079,6 +2039,7 @@
                                                                 <rect key="frame" x="275" y="10" width="51" height="37"/>
                                                                 <color key="onTintColor" systemColor="systemIndigoColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <connections>
+                                                                    <action selector="hidePersonalData:" destination="uDB-qx-gzn" eventType="valueChanged" id="1Za-gS-SCx"/>
                                                                     <action selector="selectMode:" destination="SSR-lC-C00" eventType="valueChanged" id="ygE-6r-KhC"/>
                                                                 </connections>
                                                             </switch>
@@ -2330,6 +2291,7 @@
                         <outlet property="birdthdateView" destination="G4H-Z2-Qdl" id="T5l-A8-cpr"/>
                         <outlet property="emailView" destination="aVg-gO-yzE" id="j0E-kA-rsB"/>
                         <outlet property="genderTextField" destination="D62-7i-bcg" id="ZmP-fI-e6n"/>
+                        <outlet property="hideDataSwitch" destination="86T-i4-Pbr" id="8DM-zV-NLy"/>
                         <outlet property="infoTextView" destination="D3Z-gJ-r4u" id="wCM-bq-w9w"/>
                         <outlet property="lastnameView" destination="L6j-1p-JqA" id="DjE-Kd-uhX"/>
                         <outlet property="nameView" destination="cz6-MA-tGk" id="lFN-XK-fby"/>

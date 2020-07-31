@@ -19,6 +19,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var nameView: CustomTextField!
     @IBOutlet weak var lastnameView: CustomTextField!
     @IBOutlet weak var universityTextField: UITextField!
+    @IBOutlet weak var hideDataSwitch: UISwitch!
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var phoneCustomView: CustomTextField!
@@ -94,6 +95,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
         birdthdateView.textField.addTarget(self, action: #selector(birthDateTextFieldAction), for: .editingChanged)
         emailView.textField.addTarget(self, action: #selector(emailTextFieldAction), for: .editingChanged)
+        hideDataSwitch.isOn = SharedConfigs.shared.isHidden
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -345,9 +347,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                    self.editInformatioViewModel.deactivateAccount { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                            self.present(alert, animated: true)
+                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         }
                     } else {
                         DispatchQueue.main.async {
@@ -373,9 +373,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
             self.editInformatioViewModel.deleteAccount { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -483,9 +481,21 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         button.heightAnchor.constraint(equalToConstant: textField.frame.height).isActive = true
         button.widthAnchor.constraint(equalToConstant: textField.frame.width).isActive = true
         button.anchor(top: textField.topAnchor, paddingTop: 0, bottom: textField.bottomAnchor, paddingBottom: 0, left: textField.leftAnchor, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: textField.frame.width, height: textField.frame.height)
-        
     }
     
+    @IBAction func hidePersonalData(_ sender: UISwitch) {
+        editInformatioViewModel.hideData(isHideData: sender.isOn) { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "error_message".localized(), message: error!.rawValue, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            } else {
+                SharedConfigs.shared.setIsHidden(selectIsHidden: sender.isOn)
+            }
+        }
+    }
     @IBAction func universityTextFieldAction(_ sender: Any) {
         var id: String?
         switch SharedConfigs.shared.appLang {
@@ -536,9 +546,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: infoTextView.text, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
@@ -549,9 +557,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
             }
             else {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: "please_fill_all_fields".localized(), preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: "please_fill_all_fields".localized())
                 }
             }
         }
@@ -574,9 +580,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         viewModel.getUniversities { (responseObject, error) in
             if(error != nil) {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if responseObject != nil {
                 self.universities = responseObject!

@@ -22,6 +22,7 @@ class RecentMessagesViewController: UIViewController {
     let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
     let refreshControl = UIRefreshControl()
+    var timer: Timer?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -42,9 +43,15 @@ class RecentMessagesViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        timer?.invalidate()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
         navigationController?.navigationBar.isHidden = false
         
     }
@@ -61,7 +68,35 @@ class RecentMessagesViewController: UIViewController {
         getChats()
     }
     
-   
+    @objc func getOnlineUsers() {
+        if isLoadedMessages {
+            let ids = self.chats.map { (chat) -> String in
+                return chat.id
+            }
+            self.viewModel.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                        self.activityIndicator.stopAnimating()
+                    }
+                } else if onlineUsers != nil {
+                    for i in 0..<self.chats.count {
+                        if onlineUsers!.usersOnline.contains(self.chats[i].id) {
+                            self.chats[i].online = true
+                        } else {
+                            self.chats[i].online = false
+                        }
+                    }
+                    self.sort()
+                    DispatchQueue.main.async {
+                        self.removeView()
+                        self.activityIndicator.stopAnimating()
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
+    }
     
     @objc func addButtonTapped() {
         let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
@@ -139,9 +174,7 @@ class RecentMessagesViewController: UIViewController {
         viewModel.getChats { (messages, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             }
@@ -157,12 +190,6 @@ class RecentMessagesViewController: UIViewController {
                         self.chats = messages!.filter({ (chat) -> Bool in
                             return chat.message != nil
                         })
-                        let ids = self.chats.map { (chat) -> String in
-                            return chat.id
-                        }
-//                        self.viewModel.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
-//                            print("jdhfhfsdhfh")
-//                        }
                         self.sort()
                         DispatchQueue.main.async {
                             self.removeView()
@@ -188,9 +215,7 @@ class RecentMessagesViewController: UIViewController {
         self.viewModel.getuserById(id: id) { (user, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else if user != nil {

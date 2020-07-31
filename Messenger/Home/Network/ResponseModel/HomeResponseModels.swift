@@ -29,7 +29,7 @@ struct Message: Codable {
 }
 
 struct OnlineUsers: Codable {
-    let usersOnline: Dictionary<String,Bool>
+    let usersOnline: [String]
 }
 
 struct Chat: Codable {
@@ -39,7 +39,7 @@ struct Chat: Codable {
     let username: String?
     var message: Message?
     var recipientAvatarURL: String?
-    let online: Bool?
+    var online: Bool?
 }
 
 struct UserById: Codable {

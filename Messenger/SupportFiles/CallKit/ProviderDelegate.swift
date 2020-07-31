@@ -88,7 +88,6 @@ extension ProviderDelegate: CXProviderDelegate {
    
     callManager.remove(call: call)
     SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
-    print(self.webrtcClient)
     self.webrtcClient?.peerConnection?.close()
     
   }

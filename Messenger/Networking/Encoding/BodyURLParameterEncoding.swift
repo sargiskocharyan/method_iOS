@@ -8,11 +8,12 @@
 import Foundation
 
 public struct BodyURLParameterEncoder: ParameterEncoder {
+    
     public func encode(urlRequest: inout URLRequest, with parameters: Parameters, encrypted: Bool = false) throws {
         
         var bodyString = ""
         for (key,value)in parameters {
-            let item = "\(key)=\(value)&"
+            let item = "\(key)=\(value ?? "")&"
             bodyString += item
         }
         

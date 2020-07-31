@@ -29,7 +29,7 @@ class ContactsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
-        tabbar = tabBarController as! MainTabBarController
+        tabbar = tabBarController as? MainTabBarController
         viewModel = tabbar?.contactsViewModel
         tableView.dataSource = self
         setNavigationItems()
@@ -98,9 +98,7 @@ class ContactsViewController: UIViewController {
             self.viewModel!.findUsers(term: (textField.text)!) { (responseObject, error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else if responseObject != nil {
                     self.isLoadedFoundUsers = true

@@ -26,4 +26,10 @@ class EditInformationViewModel {
             completion(user, error)
         }
     }
+    
+    func hideData(isHideData: Bool, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().hideData(isHideData: isHideData) { (error) in
+            completion(error)
+        }
+    }
 }

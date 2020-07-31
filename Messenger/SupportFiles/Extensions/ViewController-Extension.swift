@@ -15,6 +15,13 @@ enum AppStoryboard: String {
 
 
 extension UIViewController {
+    
+    func showErrorAlert(title: String, errorMessage: String) {
+           let alert = UIAlertController(title: "error_message".localized(), message: errorMessage, preferredStyle: .alert)
+           alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
+           self.present(alert, animated: true)
+       }
+    
     class var storyboardID : String {
         return "\(self)"
     }

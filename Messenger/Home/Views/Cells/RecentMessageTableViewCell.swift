@@ -16,6 +16,12 @@ class RecentMessageTableViewCell: UITableViewCell {
 
     var isOnline: Bool?
     
+    override public func prepareForReuse() {
+        super.prepareForReuse()
+        self.removeOnlineView()
+        userImageView.image = nil
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
@@ -27,6 +33,10 @@ class RecentMessageTableViewCell: UITableViewCell {
         userImageView.layer.cornerRadius = 30
     }
     
+    func removeOnlineView() {
+        self.viewWithTag(50)?.removeFromSuperview()
+    }
+    
     func setOnlineView() {
         let onlineView = UIView()
         self.addSubview(onlineView)
@@ -35,6 +45,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         onlineView.contentMode = . scaleAspectFill
         onlineView.layer.cornerRadius = 9
         onlineView.clipsToBounds = true
+        onlineView.tag = 50
         onlineView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
         onlineView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
         onlineView.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -46,6 +57,8 @@ class RecentMessageTableViewCell: UITableViewCell {
     func configure(chat: Chat) {
         if isOnline != nil && isOnline == true {
             setOnlineView()
+        } else {
+            removeOnlineView()
         }
         userImageView.image = UIImage(named: "noPhoto")
         ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "", id: chat.id) { (image) in
@@ -86,10 +99,5 @@ class RecentMessageTableViewCell: UITableViewCell {
         let minutes = calendar.component(.minute, from: parsedDate!)
         return ("\(hour):\(minutes)")
         
-    }
-    
-    override public func prepareForReuse() {
-        super.prepareForReuse()
-        userImageView.image = nil
     }
 }

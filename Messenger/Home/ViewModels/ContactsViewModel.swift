@@ -74,10 +74,6 @@ class ContactsViewModel {
                    let mContacts = data.value(forKey: "contacts") as! Contacts
                 self.contacts = mContacts.contacts
                    completion(mContacts.contacts)
-                   print(" contact batch : \(i)")
-                   for element in mContacts.contacts {
-                       print("name:\(element.name), username:\(element.username)")
-                   }
                    i = i + 1
                }
            } catch {
@@ -98,10 +94,6 @@ class ContactsViewModel {
                       let mOtherContacts = data.value(forKey: "otherContacts") as! Contacts
                       self.otherContacts = mOtherContacts.contacts
                       completion(mOtherContacts.contacts)
-                      print(" contact batch : \(i)")
-                      for element in mOtherContacts.contacts {
-                          print("name:\(element.name), username:\(element.username)")
-                      }
                       i = i + 1
                   }
               } catch {

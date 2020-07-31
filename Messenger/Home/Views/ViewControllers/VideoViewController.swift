@@ -30,6 +30,9 @@ class VideoViewController: UIViewController {
         for call in callManager.calls {
             callManager.end(call: call)
         }
+        if roomName != nil {
+            SocketTaskManager.shared.leaveRoom(roomName: roomName!)
+        }
         callManager.removeAllCalls()
         self.view.viewWithTag(10)?.removeFromSuperview()
         self.view.viewWithTag(11)?.removeFromSuperview()

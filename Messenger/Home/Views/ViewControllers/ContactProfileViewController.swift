@@ -57,17 +57,17 @@ class ContactProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
         if onContactPage! {
-                   addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
-                   addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
-               } else {
-                   addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
-                   addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
-               }
-               if tabBar!.onCall {
-                   videoCallButton.isEnabled = false
-               } else {
-                   videoCallButton.isEnabled = true
-               }
+            addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+            addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
+        } else {
+            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+            addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
+        }
+        if tabBar!.onCall || !onContactPage! {
+            videoCallButton.isEnabled = false
+        } else {
+            videoCallButton.isEnabled = true
+        }
     }
     
     override func viewDidLoad() {
@@ -107,9 +107,7 @@ class ContactProfileViewController: UIViewController {
         callListViewController?.viewModel.getuserById(id: id!) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if user != nil {
                 self.contact = user
@@ -124,9 +122,7 @@ class ContactProfileViewController: UIViewController {
         viewModel?.removeContact(id: id!, completion: { (error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else {
                 self.onContactPage = false
@@ -145,7 +141,7 @@ class ContactProfileViewController: UIViewController {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!)
-            tabBar.startDate = Date()
+            
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabBar.handleClickOnSamePerson()
@@ -161,8 +157,8 @@ class ContactProfileViewController: UIViewController {
                 let secondDate = callListViewController?.viewModel.calls[j].time
                 if firstDate.compare(secondDate!).rawValue == -1 {
                     let temp = callListViewController!.viewModel.calls[i]
-                    callListViewController?.viewModel.calls[i] = callListViewController?.viewModel.calls[j] as! FetchedCall
-                    callListViewController?.viewModel.calls[j] = temp
+                    callListViewController!.viewModel.calls[i] = callListViewController!.viewModel.calls[j] 
+                    callListViewController!.viewModel.calls[j] = temp
                 }
             }
         }
@@ -172,16 +168,14 @@ class ContactProfileViewController: UIViewController {
         viewModel!.addContact(id: contact!._id!) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
                 
             } else {
                 DispatchQueue.main.async {
                     self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
                         if error != nil {
-                            print(error)
+                            print(error as Any)
                         } else {
                             print("All is well!!!!")
                              self.delegate?.addNewContact(contact: self.contact!)

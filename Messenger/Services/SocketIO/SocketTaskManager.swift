@@ -131,6 +131,12 @@ class SocketTaskManager {
         
     }
     
+    func handleCallEnd(completionHandler: @escaping (_ roomName: String) -> Void) {
+           socket.on("callEnded") { (dataArray, socketAck) -> Void in
+               completionHandler(dataArray[0] as! String)
+           }
+       }
+    
     func getChatMessage(completionHandler: @escaping (_ message: Message) -> Void) {
         socket.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary

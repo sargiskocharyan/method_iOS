@@ -43,14 +43,8 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
-//        let appDelegate = AppDelegate.shared as AppDelegate
-//        let managedContext = appDelegate.persistentContainer.viewContext
-//        let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-//        privateContext.persistentStoreCoordinator = managedContext.persistentStoreCoordinator
-//        privateContext.perform {
-            self.saveContacts()
-            self.retrieveCoreDataObjects()
-//        }
+        self.saveContacts()
+        self.retrieveCoreDataObjects()
         verifyToken()
         socketTaskManager.connect()
         callManager = AppDelegate.shared.callManager
@@ -59,7 +53,7 @@ class MainTabBarController: UITabBarController {
         handleCallAccepted()
         handleOffer()
         getCanditantes()
-       
+        handleCallEnd()
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
@@ -83,9 +77,15 @@ class MainTabBarController: UITabBarController {
     }
     
     //MARK: Helper methods
-    
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
+    }
+    
+    func handleCallEnd() {
+        socketTaskManager.handleCallEnd { (roomName) in
+            self.webRTCClient?.peerConnection?.close()
+            print("Call ended")
+        }
     }
     
     func handleCall() {
@@ -99,9 +99,7 @@ class MainTabBarController: UITabBarController {
                 self.recentMessagesViewModel.getuserById(id: id) { (user, error) in
                     if (error != nil) {
                         DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                            self.present(alert, animated: true)
+                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         }
                         return
                     } else if user != nil {
@@ -152,6 +150,8 @@ class MainTabBarController: UITabBarController {
             self.webRTCClient!.answer { (localSdp) in
                 self.hasLocalSdp = true
             }
+            self.startDate = Date()
+            self.callsVC?.activeCall?.time = Date()
         }
     }
     
@@ -159,9 +159,7 @@ class MainTabBarController: UITabBarController {
         viewModel.getContacts { (userContacts, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if userContacts != nil {
                 DispatchQueue.main.async {
@@ -241,7 +239,7 @@ class MainTabBarController: UITabBarController {
         UserDataController().logOutUser()
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+             alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
                 let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
                 vc.modalPresentationStyle = .fullScreen
                 let nav = UINavigationController(rootViewController: vc)
@@ -260,9 +258,7 @@ class MainTabBarController: UITabBarController {
         viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if responseObject != nil && responseObject!.tokenExists == false {
                 self.sessionExpires()
@@ -323,7 +319,7 @@ extension MainTabBarController: WebRTCClientDelegate {
         self.localCandidateCount += 1
         self.signalClient!.send(candidate: candidate, roomName: self.roomName ?? "")
     }
-
+    
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         if state == .disconnected {
             DispatchQueue.main.async {
@@ -342,9 +338,6 @@ extension MainTabBarController: WebRTCClientDelegate {
             vc?.webRTCClient = nil
             id = nil
             vc?.closeAll()
-            if roomName != nil {
-                self.socketTaskManager.leaveRoom(roomName: roomName!)
-            }
             DispatchQueue.main.async {
                 self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()

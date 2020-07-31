@@ -145,9 +145,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
                if (error != nil) {
                    DispatchQueue.main.async {
                        self.activityIndicator.stopAnimating()
-                       let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                       alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                       self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                    }
                } else {
                    DispatchQueue.main.async {
