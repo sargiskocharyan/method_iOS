@@ -9,19 +9,19 @@
 import UIKit
 import DropDown
 
-class EditInformationViewController: UIViewController, UITextFieldDelegate {
+class EditInformationViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var birdthdateView: CustomTextField!
     @IBOutlet weak var updateInformationButton: UIButton!
     @IBOutlet weak var usernameView: CustomTextField!
-    @IBOutlet weak var genderTextField: UITextField!
     @IBOutlet weak var nameView: CustomTextField!
     @IBOutlet weak var lastnameView: CustomTextField!
-    @IBOutlet weak var universityTextField: UITextField!
     @IBOutlet weak var hideDataSwitch: UISwitch!
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
+    @IBOutlet weak var genderView: CustomTextField!
+    @IBOutlet weak var universityView: CustomTextField!
     @IBOutlet weak var phoneCustomView: CustomTextField!
     @IBOutlet weak var infoTextView: UITextView!
     @IBOutlet weak var emailView: CustomTextField!
@@ -40,6 +40,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     let universityButton = UIButton()
     let genderButton = UIButton()
     let socketTaskManager = SocketTaskManager.shared
+    let signedUser = SharedConfigs.shared.signedUser
     let datePicker = UIDatePicker()
     var didSomethingChanges: Bool = false
     var gender: String? = nil
@@ -50,6 +51,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     var email: String?
     var phoneNumber: String?
     var universityId: String?
+    var info: String?
+    var checkInfo: Bool?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -57,14 +60,18 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         birdthdateView.isUserInteractionEnabled = true
         let tapBirthdate = UITapGestureRecognizer(target: self, action: #selector(self.handleBirthDateViewTap(_:)))
         birdthdateView.textField.addGestureRecognizer(tapBirthdate)
-        
+        infoTextView.layer.borderColor = UIColor.lightGray.cgColor
+        infoTextView.layer.borderWidth = 1.0
+        infoTextView.layer.masksToBounds = true
         constant = stackViewTopConstraint.constant
         nameView.delagate = self
         nameView.textField.delegate = self
         lastnameView.textField.delegate = self
         usernameView.textField.delegate = self
         lastnameView.delagate = self
+        genderView.delagate = self
         usernameView.delagate = self
+        infoTextView.delegate = self
         phoneCustomView.delagate = self
         birdthdateView.delagate = self
         emailView.delagate = self
@@ -74,18 +81,17 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         nameView.textField.text = SharedConfigs.shared.signedUser?.name
         lastnameView.textField.text = SharedConfigs.shared.signedUser?.lastname
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
-        genderTextField.text = SharedConfigs.shared.signedUser?.gender
+        genderView.textField.text = SharedConfigs.shared.signedUser?.gender
+        infoTextView.text = signedUser?.info
         emailView.textField.text = SharedConfigs.shared.signedUser?.email
         phoneCustomView.textField.text = SharedConfigs.shared.signedUser?.phoneNumber
+        genderView.textField.text = signedUser?.gender
         birdthdateView.textField.text = stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) ?? ""
         setUniversityName()
-        universityTextField.underlinedUniversityTextField()
-        genderTextField.underlinedUniversityTextField()
-        universityTextField.placeholder = "select_university".localized()
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
-        genderTextField.placeholder = "select_gender".localized()
         self.hideKeyboardWhenTappedAround()
         setObservers()
+        setTopLabels()
         updateInformationButton.isEnabled = false
         updateInformationButton.titleLabel?.textColor = UIColor.white
         updateInformationButton.backgroundColor = UIColor.lightGray
@@ -112,7 +118,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLayoutSubviews() {
         universityDropDown.width = universityButton.frame.width
-        genderDropDown.width = genderTextField.frame.width
+        genderDropDown.width = genderView.textField.frame.width
         nameView.handleRotate()
         lastnameView.handleRotate()
         usernameView.handleRotate()
@@ -141,12 +147,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     }
     
      func checkGender(_ signedUser: UserModel?) -> Bool? {
-        if  signedUser?.gender?.lowercased() != genderTextField.text?.lowercased() {
-            if signedUser?.gender == nil && genderTextField.text == "" {
+        if  signedUser?.gender?.lowercased() != genderView.textField.text?.lowercased() {
+            if signedUser?.gender == nil && genderView.textField.text == "" {
                 gender = nil
                 return nil
             } else {
-                 gender = genderTextField.text!.lowercased()
+                 gender = genderView.textField.text!.lowercased()
                 return true
             }
         }
@@ -154,8 +160,51 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         return nil
     }
     
+    func setTopLabels() {
+        if nameView.textField.text != "" {
+            nameView.topLabel.text = "name".localized()
+        }
+        if lastnameView.textField.text != "" {
+            lastnameView.topLabel.text = "lastname".localized()
+        }
+        if usernameView.textField.text != "" {
+            usernameView.topLabel.text = "username".localized()
+        }
+        if birdthdateView.textField.text != "" {
+            birdthdateView.topLabel.text = "birthdate".localized()
+        }
+        if phoneCustomView.textField.text != "" {
+            phoneCustomView.topLabel.text = "number".localized()
+        }
+        if emailView.textField.text != "" {
+            emailView.topLabel.text = "email".localized()
+        }
+        if universityView.textField.text != "" {
+            universityView.topLabel.text = "university".localized()
+        }
+        if genderView.textField.text != "" {
+            genderView.topLabel.text = "gender".localized()
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if signedUser?.info != infoTextView.text {
+            if (signedUser?.info == nil && infoTextView.text == "") {
+                checkInfo = nil
+                info = nil
+            } else {
+                checkInfo = true
+                info = infoTextView.text
+            }
+        } else {
+            info = nil
+            checkInfo = nil
+        }
+        checkFields()
+    }
+    
      func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
-        if  signedUser?.birthDate != birdthdateView.textField.text {
+        if  stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) != birdthdateView.textField.text {
             if signedUser?.birthDate == nil && birdthdateView.textField.text == "" {
                 birthDate = nil
                 return nil
@@ -258,21 +307,21 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         switch SharedConfigs.shared.appLang {
         case AppLangKeys.Arm:
             id = self.universities.first { (university) -> Bool in
-                university.name == self.universityTextField.text!
+                university.name == self.universityView.textField.text!
                 }?._id
         case AppLangKeys.Rus:
             id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityTextField.text!
+                university.nameRU == self.universityView.textField.text!
                 }?._id
         default:
             id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityTextField.text!
+                university.nameEN == self.universityView.textField.text!
                 }?._id
         }
-         let signedUser = SharedConfigs.shared.signedUser
+         
        
-        if checkUniverity(id, signedUser) != false && (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false {
-            if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil {
+        if checkUniverity(id, signedUser) != false && (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false && checkInfo != false {
+            if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil || info != nil {
                 updateInformationButton.backgroundColor = .clear
                 updateInformationButton.titleLabel?.textColor = .white
                 updateInformationButton.isEnabled = true
@@ -399,7 +448,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
         let year = calendar.component(.year, from: datePicker.date)
         let parsedDay = day < 10 ? "0\(day)" : "\(day)"
         let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
-        birdthdateView.textField.text = "\(parsedDay)/\(parsedMonth)/\(year)"
+        birdthdateView.textField.text = "\(parsedMonth)/\(parsedDay)/\(year)"
         view.viewWithTag(30)?.removeFromSuperview()
         checkFields()
     }
@@ -441,12 +490,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     func addImage(textField: UITextField, imageView: UIImageView) {
         textField.addSubview(imageView)
         imageView.image = UIImage(named: "more")
-        imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 25).isActive = true
+        imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
         imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
         imageView.isUserInteractionEnabled = true
-        imageView.anchor(top: textField.topAnchor, paddingTop: 30, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 25, height: 20)
+        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 25, height: 20)
     }
     
     func addButtonOnUniversityTextField(button: UIButton, textField: UITextField) {
@@ -492,24 +541,27 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                     self.present(alert, animated: true)
                 }
             } else {
-                SharedConfigs.shared.setIsHidden(selectIsHidden: sender.isOn)
+                DispatchQueue.main.async {
+                    SharedConfigs.shared.setIsHidden(selectIsHidden: sender.isOn)
+                }
             }
         }
     }
+    
     @IBAction func universityTextFieldAction(_ sender: Any) {
         var id: String?
         switch SharedConfigs.shared.appLang {
         case AppLangKeys.Arm:
             id = self.universities.first { (university) -> Bool in
-                university.name == self.universityTextField.text!
+                university.name == self.universityView.textField.text!
                 }?._id
         case AppLangKeys.Rus:
             id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityTextField.text!
+                university.nameRU == self.universityView.textField.text!
                 }?._id
         default:
             id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityTextField.text!
+                university.nameEN == self.universityView.textField.text!
                 }?._id
         }
         if id != nil {
@@ -538,12 +590,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
             let year = calendar.component(.year, from: parsedDate!)
             let parsedDay = day < 10 ? "0\(day)" : "\(day)"
             let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
-            return "\(parsedDay)/\(parsedMonth)/\(year)"
+            return "\(parsedMonth)/\(parsedDay)/\(year)"
         }
     }
     
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: infoTextView.text, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
+        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -566,13 +618,13 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     func setUniversityName() {
         switch SharedConfigs.shared.appLang {
         case AppLangKeys.Arm:
-            universityTextField.text = SharedConfigs.shared.signedUser?.university?.name
+            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.name
         case AppLangKeys.Rus:
-            universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameRU
+            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameRU
         case AppLangKeys.Eng:
-            universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameEN
+            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
         default:
-            universityTextField.text = SharedConfigs.shared.signedUser?.university?.nameEN
+            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
         }
     }
     
@@ -621,28 +673,28 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     }
     
     func addUniversityDropDown() {
-        addButtonOnUniversityTextField(button: universityButton, textField: universityTextField)
-        addImage(textField: universityTextField, imageView: universityMoreOrLessImageView)
+        addButtonOnUniversityTextField(button: universityButton, textField: universityView.textField)
+        addImage(textField: universityView.textField, imageView: universityMoreOrLessImageView)
         universityDropDown.anchorView = universityButton
         universityDropDown.direction = .any
-        universityDropDown.bottomOffset = CGPoint(x: 0, y:((universityDropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5 - 25))
+        universityDropDown.bottomOffset = CGPoint(x: 0, y:((universityDropDown.anchorView?.plainView.bounds.height)! + universityView.textField.frame.height + 30))
         universityDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.universityTextField.text = item
+            self.universityView.textField.text = item
             self.universityMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreUniversity = false
             var id: String?
                   switch SharedConfigs.shared.appLang {
                   case AppLangKeys.Arm:
                       id = self.universities.first { (university) -> Bool in
-                          university.name == self.universityTextField.text!
+                          university.name == self.universityView.textField.text!
                           }?._id
                   case AppLangKeys.Rus:
                       id = self.universities.first { (university) -> Bool in
-                          university.nameRU == self.universityTextField.text!
+                          university.nameRU == self.universityView.textField.text!
                           }?._id
                   default:
                       id = self.universities.first { (university) -> Bool in
-                          university.nameEN == self.universityTextField.text!
+                          university.nameEN == self.universityView.textField.text!
                           }?._id
                   }
                   if id != nil {
@@ -654,10 +706,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                     self.updateInformationButton.titleLabel?.textColor = UIColor.lightGray
                   }
         }
-        universityDropDown.width = universityTextField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityTextField.frame.height))
-        universityTextField.rightView = paddingView
-        universityTextField.rightViewMode = UITextField.ViewMode.always
+        universityDropDown.width = universityView.textField.frame.width
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
+        universityView.textField.rightView = paddingView
+        universityView.textField.rightViewMode = UITextField.ViewMode.always
         universityDropDown.cancelAction = { [unowned self] in
             self.universityMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreUniversity = false
@@ -665,14 +717,14 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
     }
     
     func addGenderDropDown() {
-        addButtonOnGenderTextField(button: genderButton, textField: genderTextField)
-        addImage(textField: genderTextField, imageView: genderMoreOrLessImageView)
+        addButtonOnGenderTextField(button: genderButton, textField: genderView.textField)
+        addImage(textField: genderView.textField, imageView: genderMoreOrLessImageView)
         genderDropDown.anchorView = genderButton
         genderDropDown.direction = .any
         genderDropDown.dataSource = ["Male", "Female"]
-        genderDropDown.bottomOffset = CGPoint(x: 0, y:((genderDropDown.anchorView?.plainView.bounds.height)! + genderTextField.frame.height + 5 - 25))
+        genderDropDown.bottomOffset = CGPoint(x: 0, y:((genderDropDown.anchorView?.plainView.bounds.height)! + genderView.textField.frame.height + 30))
         genderDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.genderTextField.text = item
+            self.genderView.textField.text = item
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
             if item.lowercased() != SharedConfigs.shared.signedUser?.gender?.lowercased() {
@@ -681,15 +733,17 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate {
                 self.updateInformationButton.titleLabel?.textColor = .white
             }
         }
-        genderDropDown.width = genderTextField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityTextField.frame.height))
-        genderTextField.rightView = paddingView
-        genderTextField.rightViewMode = UITextField.ViewMode.always
+        genderDropDown.width = genderView.textField.frame.width
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
+        genderView.textField.rightView = paddingView
+        genderView.textField.rightViewMode = UITextField.ViewMode.always
         genderDropDown.cancelAction = { [unowned self] in
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
         }
     }
+    
+    
 }
 
 //MARK: Extension

@@ -106,9 +106,7 @@ class MainTabBarController: UITabBarController {
                         let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now()) {
                             AppDelegate.shared.displayIncomingCall(
-                                id: id, uuid: UUID(),
-                                handle: user?.name ?? (user?.username)!,
-                                hasVideo: true, roomName: self.roomName ?? "") { _ in
+                                id: id, uuid: UUID(), handle: user?.name ?? (user?.username)!, hasVideo: true, roomName: self.roomName ?? "") { _ in
                                     UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                             }
                         }

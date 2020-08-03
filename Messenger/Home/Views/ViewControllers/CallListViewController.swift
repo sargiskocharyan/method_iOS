@@ -172,17 +172,22 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 }
 
 extension CallListViewController: CallTableViewDelegate {
-    func callSelected(id: String) {
-        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+    func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String) {
+        let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
          vc.onContactPage = false
+        vc.name = name
+        vc.callDuration = duration
+        vc.callMode = callMode
+        vc.date = time
+        vc.avatarURL = avatarURL
+        vc.id = id
             for j in 0..<tabbar!.contactsViewModel.contacts.count {
                 if id == tabbar!.contactsViewModel.contacts[j]._id {
                     vc.onContactPage = true
                     break
             }
         }
-        vc.id = id
-        vc.fromChat = false
+  
         
         self.navigationController?.pushViewController(vc, animated: true)
     }

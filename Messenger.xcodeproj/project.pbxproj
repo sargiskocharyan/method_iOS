@@ -58,6 +58,7 @@
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
 		CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB42DB924B34487005EAA51 /* PhoneValidator.swift */; };
+		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
 		CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA66247BF29900115C99 /* Main.storyboard */; };
@@ -162,6 +163,7 @@
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
 		CDB42DB924B34487005EAA51 /* PhoneValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneValidator.swift; sourceTree = "<group>"; };
+		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDBCCA67247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
 				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
 				CD3F12D624BC290200040D8E /* CallManager.swift */,
+				CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -806,6 +809,7 @@
 				CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */,
 				CD3713C2248682710088A0CC /* DarkModeTableViewCell.swift in Sources */,
 				CDD9C67D247BC88C0048A9A1 /* Endpoints.swift in Sources */,
+				CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */,
 				CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */,
 				CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */,
 				CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */,

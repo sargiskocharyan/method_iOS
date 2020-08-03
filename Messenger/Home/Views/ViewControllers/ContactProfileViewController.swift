@@ -189,6 +189,26 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
+    func stringToDate(date:String?) -> String? {
+        if date == nil {
+            return nil
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date!)
+        let calendar = Calendar.current
+        if parsedDate == nil {
+            return nil
+        } else {
+            let day = calendar.component(.day, from: parsedDate!)
+            let month = calendar.component(.month, from: parsedDate!)
+            let year = calendar.component(.year, from: parsedDate!)
+            let parsedDay = day < 10 ? "0\(day)" : "\(day)"
+            let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
+            return "\(parsedMonth)/\(parsedDay)/\(year)"
+        }
+    }
+    
     func configureView() {
         if contact?.name == nil {
             nameLabel.text = "name".localized()
@@ -240,7 +260,7 @@ class ContactProfileViewController: UIViewController {
             birthDateLabel.text = "birth_date".localized()
             birthDateLabel.textColor = .lightGray
         } else {
-            birthDateLabel.text = contact?.birthday
+            birthDateLabel.text = stringToDate(date: contact?.birthday) 
             if SharedConfigs.shared.mode == "dark" {
                 birthDateLabel.textColor = .white
             } else {

@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol CallTableViewDelegate: class {
-    func callSelected(id: String)
+    func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String)
 }
 
 
@@ -24,13 +24,17 @@ class CallTableViewCell: UITableViewCell {
     @IBOutlet weak var callDurationLabel: UILabel!
     weak var delegate: CallTableViewDelegate?
     var calleId: String?
+    var call: FetchedCall?
+    var contact: User?
+ 
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
     }
     
     @IBAction func infoButtonAction(_ sender: UIButton) {
-        delegate?.callSelected(id: calleId!)
+        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: call?.time, callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
     }
     override func awakeFromNib() {
            super.awakeFromNib()
@@ -64,6 +68,8 @@ class CallTableViewCell: UITableViewCell {
     }
     
     func configureCell(contact: User, call: FetchedCall) {
+        self.call = call
+        self.contact = contact
         if contact.name != nil {
         self.nameLabel.text = contact.name
         } else if contact.username != nil {

@@ -151,8 +151,6 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, gender: let gender, birthDate: let birthDate, let email, let university):
             let allParameters: Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "gender": gender, "email": email, "university": university, "birthday": birthDate]
-            print(allParameters)
-            
             var parameters:Parameters = [:]
             for (key, value) in allParameters {
                 if (value as? String) != nil {
@@ -163,7 +161,6 @@ extension HomeApi: EndPointType {
                     }
                 }
             }
-            print(parameters)
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .removeContact(id: let id):
