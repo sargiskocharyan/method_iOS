@@ -14,6 +14,9 @@ struct LoginResponse: Codable {
     var user: UserModel
 }
 
+struct CheckUsername: Codable {
+    let usernameExists: Bool
+}
 
 struct MailExistsResponse: Codable {
     var mailExist: Bool

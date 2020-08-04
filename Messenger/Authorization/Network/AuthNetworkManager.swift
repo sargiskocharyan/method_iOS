@@ -70,6 +70,34 @@ class AuthorizationNetworkManager: NetworkManager {
         }
     }
     
+    func checkUsername(username: String, completion: @escaping (CheckUsername?, NetworkResponse?)->()) {
+        router.request(.checkUsername(username: username)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(nil, error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       guard let responseData = data else {
+                           completion(nil, error)
+                           return
+                       }
+                       do {
+                           let responseObject = try JSONDecoder().decode(CheckUsername.self, from: responseData)
+                           completion(responseObject, nil)
+                       } catch {
+                           print(error)
+                           completion(nil, NetworkResponse.unableToDecode)
+                       }
+                   case .failure( _):
+                       completion(nil, NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
     func register(email: String, code: String, completion: @escaping (String?, LoginResponse?, NetworkResponse?)->()) {
         router.request(.register(email: email, code: code)) { data, response, error in
             if error != nil {

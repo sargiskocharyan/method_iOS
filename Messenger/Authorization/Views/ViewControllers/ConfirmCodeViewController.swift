@@ -23,7 +23,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     var constant: CGFloat = 0
     var email: String?
     var code: String?
-    var viewModel = ConfirmCodeViewModel()
+    var viewModel: ConfirmCodeViewModel?
     var headerShapeView = HeaderShapeView()
     var isExists: Bool?
     let gradientColor = CAGradientLayer()
@@ -32,6 +32,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     let bottomView = BottomShapeView()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
+    var authRouter: AuthRouter?
     let buttonAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
@@ -42,7 +43,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        viewModel.resendCode(email: email!) { (code, error) in
+        viewModel!.resendCode(email: email!) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -140,7 +141,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             self.activityIndicator.startAnimating()
         }
         if isExists! {
-            viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
+            viewModel!.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -151,8 +152,9 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
                     DispatchQueue.main.async {
-                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
-                        self.view.window?.rootViewController = vc
+//                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
+//                        self.view.window?.rootViewController = vc
+                        MainRouter().assemblyModule()
                         self.activityIndicator.stopAnimating()
                     }
                 } else {
@@ -163,7 +165,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                 }
             }
         } else {
-            viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
+            viewModel!.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -175,8 +177,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
                     DispatchQueue.main.async {
-                        let vc = RegisterViewController.instantiate(fromAppStoryboard: .main)
-                        self.navigationController?.pushViewController(vc, animated: true)
+                        self.authRouter?.showRegisterViewController()
                         self.activityIndicator.stopAnimating()
                     }
                 } else {

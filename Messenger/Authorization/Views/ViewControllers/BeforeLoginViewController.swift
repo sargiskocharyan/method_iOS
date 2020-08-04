@@ -24,12 +24,13 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
     var bottomView = BottomShapeView()
-    var viewModel = BeforeLoginViewModel()
+    var viewModel: BeforeLoginViewModel?
     var topWidth = CGFloat()
     var topHeight = CGFloat()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
     var constant: CGFloat = 0
+    var authRouter: AuthRouter?
     
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
@@ -141,19 +142,15 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
        
        func checkEmail() {
            activityIndicator.startAnimating()
-           viewModel.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
+           viewModel!.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
                if (error != nil) {
                    DispatchQueue.main.async {
                        self.activityIndicator.stopAnimating()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                    }
-               } else {
+               } else if responseObject != nil {
                    DispatchQueue.main.async {
-                       let vc = ConfirmCodeViewController.instantiate(fromAppStoryboard: .main)
-                       vc.email = self.emaiCustomView.textField.text
-                       vc.isExists = responseObject?.mailExist
-                       vc.code = responseObject?.code
-                       self.navigationController?.pushViewController(vc, animated: true)
+                    self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist)
                        self.activityIndicator.stopAnimating()
                    }
                }

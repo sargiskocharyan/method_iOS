@@ -16,18 +16,18 @@ class MainTabBarController: UITabBarController {
     
     
     //MARK: Properties
-    let viewModel = HomePageViewModel()
+    var viewModel: HomePageViewModel?
+    var contactsViewModel: ContactsViewModel?
+    var recentMessagesViewModel: RecentMessagesViewModel?
     let socketTaskManager = SocketTaskManager.shared
     static let center = UNUserNotificationCenter.current()
     private let config = Config.default
     var webRTCClient: WebRTCClient?
     private var roomName: String?
     var callManager: CallManager!
-    var recentMessagesViewModel = RecentMessagesViewModel()
-    var vc: VideoViewController?
+    var videoVC: VideoViewController?
     var onCall: Bool = false
     var id: String?
-    var contactsViewModel = ContactsViewModel()
     var signalClient: SignalingClient?
     private var signalingConnected: Bool = false
     private var hasRemoteSdp: Bool = false
@@ -38,6 +38,8 @@ class MainTabBarController: UITabBarController {
     var callsVC: CallListViewController?
     let profileViewModel = ProfileViewModel()
     var startDate: Date?
+    var mainRouter: MainRouter?
+    var isFirstConnect: Bool?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -66,13 +68,11 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        vc = VideoViewController.instantiate(fromAppStoryboard: .main)
-        vc?.delegate = self
-        vc?.webRTCClient = self.webRTCClient
         getNewMessage()
     }
     
@@ -84,7 +84,6 @@ class MainTabBarController: UITabBarController {
     func handleCallEnd() {
         socketTaskManager.handleCallEnd { (roomName) in
             self.webRTCClient?.peerConnection?.close()
-            print("Call ended")
         }
     }
     
@@ -95,8 +94,8 @@ class MainTabBarController: UITabBarController {
                 self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
                 self.webRTCClient?.delegate = self
                 AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
-                self.vc?.webRTCClient = self.webRTCClient
-                self.recentMessagesViewModel.getuserById(id: id) { (user, error) in
+                self.videoVC?.webRTCClient = self.webRTCClient
+                self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
                     if (error != nil) {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -128,11 +127,11 @@ class MainTabBarController: UITabBarController {
     func handleCallAccepted() {
         socketTaskManager.handleCallAccepted { (callAccepted, roomName) in
             self.roomName = roomName
-            self.vc?.handleOffer(roomName: roomName)
+            self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
                 self.webRTCClient!.offer { (sdp) in
-                    self.vc!.handleAnswer()
-                    self.vc!.roomName = roomName
+                    self.videoVC!.handleAnswer()
+                    self.videoVC!.roomName = roomName
                     self.signalClient!.sendOffer(sdp: sdp, roomName: roomName)
                 }
             }
@@ -141,7 +140,7 @@ class MainTabBarController: UITabBarController {
     
     func handleAnswer() {
         socketTaskManager.handleAnswer { (data) in
-            self.vc?.handleAnswer()
+            self.videoVC?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription as Any)
             })
@@ -154,16 +153,16 @@ class MainTabBarController: UITabBarController {
     }
     
     func saveContacts() {
-        viewModel.getContacts { (userContacts, error) in
+        viewModel!.getContacts { (userContacts, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if userContacts != nil {
                 DispatchQueue.main.async {
-                    self.viewModel.saveContacts(contacts: userContacts!) { (users, error) in
+                    self.viewModel!.saveContacts(contacts: userContacts!) { (users, error) in
                         if users != nil {
-                            self.contactsViewModel.contacts = users!
+                            self.contactsViewModel!.contacts = users!
                         }
                     }
                 }
@@ -172,10 +171,10 @@ class MainTabBarController: UITabBarController {
     }
     
     func retrieveCoreDataObjects() {
-        contactsViewModel.retrieveData { (contacts) in
+        contactsViewModel!.retrieveData { (contacts) in
             print("Data retrieved!!!")
         }
-        contactsViewModel.retrieveOtherContactData { (contacts) in
+        contactsViewModel!.retrieveOtherContactData { (contacts) in
             print("Other data retrieved!!!")
         }
     }
@@ -186,10 +185,9 @@ class MainTabBarController: UITabBarController {
             self.onCall = true
             self.callsVC?.onCall = true
             self.roomName = roomName
-            self.vc?.handleOffer(roomName: roomName)
+            self.videoVC?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
-                let selectedNC = self.selectedViewController as? UINavigationController
-                selectedNC?.pushViewController(self.vc!, animated: false)
+                self.mainRouter?.showVideoViewController()
             }
             self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
             })
@@ -236,24 +234,25 @@ class MainTabBarController: UITabBarController {
         self.socketTaskManager.disconnect()
         UserDataController().logOutUser()
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "error_message".localized(), message: "Your session expires, please log in again", preferredStyle: .alert)
+            let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
              alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
-                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                vc.modalPresentationStyle = .fullScreen
-                let nav = UINavigationController(rootViewController: vc)
-                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                    let sceneDelegate = windowScene.delegate as? SceneDelegate
-                    else {
-                        return
-                }
-                sceneDelegate.window?.rootViewController = nav
+//                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .auth)
+//                vc.modalPresentationStyle = .fullScreen
+//                let nav = UINavigationController(rootViewController: vc)
+//                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//                    let sceneDelegate = windowScene.delegate as? SceneDelegate
+//                    else {
+//                        return
+//                }
+//                sceneDelegate.window?.rootViewController = nav
+                AuthRouter().assemblyModule()
             }))
              self.present(alert, animated: true)
         }
     }
     
     func verifyToken() {
-        viewModel.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
+        viewModel!.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -285,11 +284,7 @@ extension MainTabBarController: UNUserNotificationCenterDelegate {
       }
 }
 
-extension UIViewController {
-    func pushVideoVC(id: String) {
-        
-    }
-}
+
 
 extension MainTabBarController: VideoViewControllerProtocol {
     func handleClose() {
@@ -313,7 +308,6 @@ extension MainTabBarController: WebRTCClientDelegate {
     }
 
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-        print("discovered local candidate")
         self.localCandidateCount += 1
         self.signalClient!.send(candidate: candidate, roomName: self.roomName ?? "")
     }
@@ -321,29 +315,33 @@ extension MainTabBarController: WebRTCClientDelegate {
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         if state == .disconnected {
             DispatchQueue.main.async {
-                self.vc?.startCall("Reconnecting...")
+                self.videoVC?.startCall("reconnecting".localized())
             }
         }
         else if state == .connected {
-            vc?.handleAnswer()
+            if isFirstConnect == nil {
+                isFirstConnect = true
+                socketTaskManager.callStarted(roomname: roomName!)
+            } else {
+                socketTaskManager.callReconnected(roomname: roomName!)
+            }
+            videoVC?.handleAnswer()
             startDate = Date()
         }
         else if state == .closed || state == .failed {
-            vc?.handleAnswer()
+            videoVC?.handleAnswer()
             onCall = false
             callsVC?.onCall = false
             self.webRTCClient = nil
-            vc?.webRTCClient = nil
+            videoVC?.webRTCClient = nil
             id = nil
-            vc?.closeAll()
+            videoVC?.closeAll()
             DispatchQueue.main.async {
                 self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }
         }
-        print(state)
-        print("did Change Connection State")
     }
 }
 
@@ -353,21 +351,17 @@ extension  MainTabBarController: SignalClientDelegate {
     }
     
     func signalClientDidDisconnect(_ signalClient: SignalingClient) {
-        print("signalClientDidDisconnect")
         self.signalingConnected = false
     }
     
     func signalClient(_ signalClient: SignalingClient, didReceiveRemoteSdp sdp: RTCSessionDescription) {
-        print("Received remote sdp")
         self.webRTCClient?.set(remoteSdp: sdp) { (error) in
-            print(sdp)
-            print(error?.localizedDescription ?? "error chka!!!!!!!!!!!")
+            print(error?.localizedDescription as Any)
             self.hasRemoteSdp = true
         }
     }
     
     func signalClient(_ signalClient: SignalingClient, didReceiveCandidate candidate: RTCIceCandidate) {
-        print("Received remote candidate")
         self.remoteCandidateCount += 1
         self.webRTCClient!.set(remoteCandidate: candidate)
     }
@@ -376,25 +370,22 @@ extension  MainTabBarController: SignalClientDelegate {
 extension MainTabBarController: CallListViewDelegate {
     
     func handleClickOnSamePerson() {
-        DispatchQueue.main.async {
-            let selectedNC = self.selectedViewController as? UINavigationController
-            selectedNC?.pushViewController(self.vc!, animated: false)
-        }
+        mainRouter?.showVideoViewController()
     }
     
     func handleCallClick(id: String, name: String) {
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-        SocketTaskManager.shared.call(id: id)
+        SocketTaskManager.shared.call(id: id) { (roomname) in
+            self.roomName = roomname
+            self.videoVC?.handleOffer(roomName: roomname)
+        }
         callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
         
-        self.vc?.webRTCClient = self.webRTCClient
+        self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        vc?.startCall("Calling...")
-        DispatchQueue.main.async {
-            let selectedNC = self.selectedViewController as? UINavigationController
-            selectedNC?.pushViewController(self.vc!, animated: false)
-        }
+        videoVC?.startCall("calling".localized())
+        mainRouter?.showVideoViewController()
     }
 }

@@ -51,11 +51,11 @@ class CallTableViewCell: UITableViewCell {
         let time = Date()
         let currentDay = calendar.component(.day, from: time as Date)
         if currentDay != day {
-            return ("\(day).0\(month)")
+             return "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")"
         }
         let hour = calendar.component(.hour, from: parsedDate)
         let minutes = calendar.component(.minute, from: parsedDate)
-        return ("\(hour):\(minutes)")
+        return "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
     }
     
  func secondsToHoursMinutesSeconds(seconds : Int) -> String {

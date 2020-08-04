@@ -25,7 +25,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
-    let viewModel = RegisterViewModel()
+    var viewModel: RegisterViewModel?
     var topWidth = CGFloat()
     var topHeight = CGFloat()
     let bottomView = BottomShapeView()
@@ -37,6 +37,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     var universities: [University] = []
     var constant: CGFloat = 0
     let button = UIButton()
+    var authRouter: AuthRouter?
     
     //MARK: @IBActions
     @IBAction func createAccountAction(_ sender: UIButton) {
@@ -55,7 +56,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 university.nameEN == self.universityTextField.text!
                 }?._id
         }
-        viewModel.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
+        viewModel!.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -64,18 +65,14 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 DispatchQueue.main.async {
                     let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
                     UserDataController().populateUserProfile(model: userModel)
-                    let vc = CongratulationsViewController.instantiate(fromAppStoryboard: .main)
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    self.authRouter?.showCongratulationsViewController()
                 }
             }
         }
     }
     
     @IBAction func skipButtonAction(_ sender: UIButton) {
-        DispatchQueue.main.async {
-            let vc = CongratulationsViewController.instantiate(fromAppStoryboard: .main) 
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
+        authRouter?.showCongratulationsViewController()
     }
     
     //MARK: Lifecycles
@@ -204,7 +201,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     func getUniversities() {
-        viewModel.getUniversities { (responseObject, error) in
+        viewModel!.getUniversities { (responseObject, error) in
             if(error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)

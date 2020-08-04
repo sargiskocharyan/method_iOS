@@ -39,12 +39,15 @@ class CallListViewController: UIViewController {
     var onCall: Bool = false
     weak var delegate: CallListViewDelegate?
     var id: String?
-    var viewModel = RecentMessagesViewModel()
+    var viewModel: RecentMessagesViewModel?
     var calls: [FetchedCall] = []
     var activeCall: FetchedCall?
     var tabbar: MainTabBarController?
     var count = 0
     var otherContactsCount = 0
+    static let callCellIdentifier = "callCell"
+    var mainRouter: MainRouter?
+    
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -55,6 +58,8 @@ class CallListViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
+        count = tabbar!.contactsViewModel!.contacts.count
+        otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
         self.sort()
     }
     
@@ -62,21 +67,24 @@ class CallListViewController: UIViewController {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
         MainTabBarController.center.delegate = self
-        count = tabbar!.contactsViewModel.contacts.count
-        otherContactsCount = tabbar!.contactsViewModel.otherContacts.count
         tableView.delegate = self
         tableView.dataSource = self
         getHistory()
-        navigationItem.title = "Call history"
+        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.title = "calls".localized()
     }
     
     //MARK: Helper methods
+    @objc func addButtonTapped() {
+        mainRouter?.showContactsViewFromCallList()
+    }
+    
     func getHistory() {
         activity.startAnimating()
-        viewModel.getHistory { (calls) in
+        viewModel!.getHistory { (calls) in
             self.activity.stopAnimating()
-            self.viewModel.calls = calls
-            if self.viewModel.calls.count == 0 {
+            self.viewModel!.calls = calls
+            if self.viewModel!.calls.count == 0 {
                 self.addNoCallView()
             }
         }
@@ -85,14 +93,14 @@ class CallListViewController: UIViewController {
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        for i in 0..<viewModel.calls.count {
-            for j in i..<viewModel.calls.count {
-                let firstDate = viewModel.calls[i].time
-                let secondDate = viewModel.calls[j].time
+        for i in 0..<viewModel!.calls.count {
+            for j in i..<viewModel!.calls.count {
+                let firstDate = viewModel!.calls[i].time
+                let secondDate = viewModel!.calls[j].time
                 if firstDate.compare(secondDate).rawValue == -1 {
-                    let temp = viewModel.calls[i]
-                    viewModel.calls[i] = viewModel.calls[j]
-                    viewModel.calls[j] = temp
+                    let temp = viewModel!.calls[i]
+                    viewModel!.calls[i] = viewModel!.calls[j]
+                    viewModel!.calls[j] = temp
                 }
             }
         }
@@ -100,7 +108,7 @@ class CallListViewController: UIViewController {
     
     func addNoCallView() {
         let label = UILabel()
-        label.text = "You have no calls"
+        label.text = "you_have_no_calls".localized()
         label.tag = 20
         label.textAlignment = .center
         label.textColor = .lightGray
@@ -115,8 +123,8 @@ class CallListViewController: UIViewController {
     func handleCall(id: String, user: User) {
         self.id = id
         activeCall = FetchedCall(id: UUID(), isHandleCall: true, time: Date(), callDuration: 0, calleeId: id)
-        if viewModel.calls.count >= 15 {
-            viewModel.deleteItem(index: viewModel.calls.count - 1)
+        if viewModel!.calls.count >= 15 {
+            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
         }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()   
@@ -173,63 +181,60 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 
 extension CallListViewController: CallTableViewDelegate {
     func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String) {
-        let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
-         vc.onContactPage = false
-        vc.name = name
-        vc.callDuration = duration
-        vc.callMode = callMode
-        vc.date = time
-        vc.avatarURL = avatarURL
-        vc.id = id
-            for j in 0..<tabbar!.contactsViewModel.contacts.count {
-                if id == tabbar!.contactsViewModel.contacts[j]._id {
-                    vc.onContactPage = true
-                    break
-            }
-        }
-  
-        
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
+//        vc.onContactPage = false
+//        vc.name = name
+//        vc.callDuration = duration
+//        vc.callMode = callMode
+//        vc.date = time
+//        vc.avatarURL = avatarURL
+//        vc.id = id
+//            for j in 0..<tabbar!.contactsViewModel!.contacts.count {
+//                if id == tabbar!.contactsViewModel!.contacts[j]._id {
+//                    vc.onContactPage = true
+//                    break
+//            }
+//        }
+//        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: time, callMode: callMode, avatarURL: avatarURL)
     }
 }
 
 extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.calls.count
+        return viewModel!.calls.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "callCell", for: indexPath) as! CallTableViewCell
-        cell.calleId = viewModel.calls[indexPath.row].calleeId
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.callCellIdentifier, for: indexPath) as! CallTableViewCell
+        cell.calleId = viewModel!.calls[indexPath.row].calleeId
         var isThereContact = false
         for i in 0..<count {
-            if tabbar?.contactsViewModel.contacts[i]._id == cell.calleId {
+            if tabbar?.contactsViewModel!.contacts[i]._id == cell.calleId {
                 isThereContact = true
-                print(tabbar!.contactsViewModel.contacts[i])
-                cell.configureCell(contact: tabbar!.contactsViewModel.contacts[i], call: viewModel.calls[indexPath.row])
+                cell.configureCell(contact: tabbar!.contactsViewModel!.contacts[i], call: viewModel!.calls[indexPath.row])
                 break
             }
         }
         if !isThereContact {
             for i in 0..<otherContactsCount {
-                if tabbar?.contactsViewModel.otherContacts[i]._id == cell.calleId {
+                if tabbar?.contactsViewModel!.otherContacts[i]._id == cell.calleId {
                     isThereContact = true
-                    print(tabbar!.contactsViewModel.otherContacts[i])
-                    cell.configureCell(contact: tabbar!.contactsViewModel.otherContacts[i], call: viewModel.calls[indexPath.row])
+                    cell.configureCell(contact: tabbar!.contactsViewModel!.otherContacts[i], call: viewModel!.calls[indexPath.row])
                     break
                 }
             }
             if !isThereContact {
-                viewModel.getuserById(id: cell.calleId!) { (user, error) in
+                viewModel!.getuserById(id: cell.calleId!) { (user, error) in
                     DispatchQueue.main.async {
                         if error != nil {
-                            cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel.calls[indexPath.row])
+                            cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath.row])
                         } else if user != nil {
-                            self.tabbar?.viewModel.saveOtherContacts(otherContacts: [user!], completion: { (users, error) in
-                                self.tabbar?.contactsViewModel.otherContacts = users!
+                            self.tabbar?.viewModel!.saveOtherContacts(otherContacts: [user!], completion: { (users, error) in
+                                self.tabbar?.contactsViewModel!.otherContacts = users!
                             })
-                            cell.configureCell(contact: user!, call: self.viewModel.calls[indexPath.row])
+                            cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath.row])
                         }
                     }
                 }
@@ -242,10 +247,10 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         self.sort()
         tableView.beginUpdates()
-        viewModel.deleteItem(index: indexPath.row)
+        viewModel!.deleteItem(index: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .automatic)
         tableView.endUpdates()
-        if viewModel.calls.count == 0 {
+        if viewModel!.calls.count == 0 {
             self.addNoCallView()
         } else {
             self.view.viewWithTag(20)?.removeFromSuperview()
@@ -257,8 +262,8 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func saveCall(startDate: Date?) {
-        if viewModel.calls.count >= 15 {
-            viewModel.deleteItem(index: viewModel.calls.count - 1)
+        if viewModel!.calls.count >= 15 {
+            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
         }
         if startDate == nil {
             activeCall?.callDuration = 0
@@ -271,7 +276,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             let seconds = timeDifference.second!
             activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
         }
-        viewModel.save(newCall: activeCall!, completion: {
+        viewModel!.save(newCall: activeCall!, completion: {
             self.sort()
             self.id = self.activeCall?.calleeId
             self.tableView.reloadData()
@@ -279,23 +284,23 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let call = viewModel.calls[indexPath.row]
+        let call = viewModel!.calls[indexPath.row]
         activeCall = call
         activeCall?.time = Date()
         activeCall?.isHandleCall = false
         if onCall == false  {
             var isThereContact = false
             for i in 0..<count {
-                if tabbar?.contactsViewModel.contacts[i]._id == call.calleeId {
+                if tabbar?.contactsViewModel!.contacts[i]._id == call.calleeId {
                     isThereContact = true
-                    self.delegate?.handleCallClick(id: call.calleeId, name: (tabbar!.contactsViewModel.contacts[i].name ?? tabbar!.contactsViewModel.contacts[i].username!))
+                    self.delegate?.handleCallClick(id: call.calleeId, name: (tabbar!.contactsViewModel!.contacts[i].name ?? tabbar!.contactsViewModel!.contacts[i].username!))
                     break
                 }
             }
             if !isThereContact {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Attension", message: "This user not is your contact", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                    let alert = UIAlertController(title: "", message: "this_user_is_not_in_your_contacts".localized(), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .cancel, handler: nil))
                     self.present(alert, animated: true, completion: nil)
                 }
             }

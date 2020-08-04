@@ -33,6 +33,7 @@ struct AUTHUrls {
     static let RemoveContact     = "/removecontact"
     static let OnlineUsers       = "/onlineusers"
     static let HideData          = "/hidedata"
+    static let CheckUsername     = "/usernameExists"
 }
 
 struct AppLangKeys {

@@ -23,4 +23,10 @@ class RegisterViewModel {
             completion(responseObject, error)
         }
     }
+    
+    func checkUsername(username: String, completion: @escaping (CheckUsername?, NetworkResponse?)->()) {
+        networkManager.checkUsername(username: username) { (responseObject, error) in
+            completion(responseObject, error)
+        }
+    }
 }

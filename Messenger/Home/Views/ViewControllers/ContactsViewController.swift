@@ -8,6 +8,12 @@
 
 import UIKit
 
+enum ContactsMode {
+    case fromRecentMessages
+    case fromCallList
+    case fromProfile
+}
+
 class ContactsViewController: UIViewController {
     
     //MARK: IBOutlets
@@ -23,14 +29,15 @@ class ContactsViewController: UIViewController {
     var isLoadedFoundUsers = false
     let refreshControl = UIRefreshControl()
     var tabbar: MainTabBarController?
-    var fromProfile: Bool?
+    var contactsMode: ContactsMode?
+    static let cellIdentifier = "cell"
+    var mainRouter: MainRouter?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tabbar = tabBarController as? MainTabBarController
-        viewModel = tabbar?.contactsViewModel
         tableView.dataSource = self
         setNavigationItems()
         if #available(iOS 10.0, *) {
@@ -73,8 +80,8 @@ class ContactsViewController: UIViewController {
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
             self.navigationItem.title = "contacts".localized()
         } else {
-            self.navigationItem.rightBarButtonItem = .init(title: "reset", style: .plain, target: self, action: #selector(backToContacts))
-            self.navigationItem.title = "found_users"
+            self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(backToContacts))
+            self.navigationItem.title = "found_users".localized()
         }
     }
     
@@ -222,21 +229,33 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.fromProfile! {
-            let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-            vc.delegate = self
-            vc.id = contactsMiniInformation[indexPath.row]._id
-            vc.contact = contactsMiniInformation[indexPath.row]
-            vc.onContactPage = onContactPage
-            vc.fromChat = false
-            self.navigationController?.pushViewController(vc, animated: true)
+        if self.contactsMode == .fromProfile {
+//            let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+//            vc.delegate = self
+//            vc.id = contactsMiniInformation[indexPath.row]._id
+//            vc.contact = contactsMiniInformation[indexPath.row]
+//            vc.onContactPage = onContactPage
+//            vc.fromChat = false
+//            self.navigationController?.pushViewController(vc, animated: true)
+            mainRouter?.showContactProfileViewControllerFromContacts(id: contactsMiniInformation[indexPath.row]._id!, contact: contactsMiniInformation[indexPath.row], onContactPage: onContactPage)
+        } else if self.contactsMode == .fromCallList {
+            let tabBar = tabBarController as! MainTabBarController
+            if !tabBar.onCall {
+                tabBar.handleCallClick(id: contactsMiniInformation[indexPath.row]._id!, name: contactsMiniInformation[indexPath.row].name ?? contactsMiniInformation[indexPath.row].username!)
+                let nc = tabBar.viewControllers![0] as! UINavigationController
+                let callListViewController = nc.viewControllers[0] as! CallListViewController
+                callListViewController.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: contactsMiniInformation[indexPath.row]._id!)
+            } else {
+                tabBar.handleClickOnSamePerson()
+            }
         } else {
-            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-            vc.name = contactsMiniInformation[indexPath.row].name
-            vc.username = contactsMiniInformation[indexPath.row].username
-            vc.avatar = contactsMiniInformation[indexPath.row].avatarURL
-            vc.id = contactsMiniInformation[indexPath.row]._id
-            self.navigationController?.pushViewController(vc, animated: false)
+//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+//            vc.name = contactsMiniInformation[indexPath.row].name
+//            vc.username = contactsMiniInformation[indexPath.row].username
+//            vc.avatar = contactsMiniInformation[indexPath.row].avatarURL
+//            vc.id = contactsMiniInformation[indexPath.row]._id
+//            self.navigationController?.pushViewController(vc, animated: false)
+            mainRouter?.showChatViewControllerFromContacts(name: contactsMiniInformation[indexPath.row].name, username: contactsMiniInformation[indexPath.row].username, avatarURL: contactsMiniInformation[indexPath.row].avatarURL, id: contactsMiniInformation[indexPath.row]._id!)
         }
         
         
@@ -248,7 +267,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier, for: indexPath) as! ContactTableViewCell
         cell.configure(contact: contactsMiniInformation[indexPath.row])
         return cell
     }

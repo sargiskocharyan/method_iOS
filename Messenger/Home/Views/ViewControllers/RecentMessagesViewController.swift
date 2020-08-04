@@ -18,11 +18,12 @@ class RecentMessagesViewController: UIViewController {
     static let cellID = "messageCell"
     var chats: [Chat] = []
     var isLoaded: Bool = false
-    let viewModel = RecentMessagesViewModel()
+    var viewModel: RecentMessagesViewModel?
     let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
     let refreshControl = UIRefreshControl()
     var timer: Timer?
+    var mainRouter: MainRouter?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -59,7 +60,7 @@ class RecentMessagesViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if isLoadedMessages && chats.count == 0 {
-            setView("You have no message")
+            setView("you_have_no_message".localized())
         }
     }
     
@@ -73,7 +74,7 @@ class RecentMessagesViewController: UIViewController {
             let ids = self.chats.map { (chat) -> String in
                 return chat.id
             }
-            self.viewModel.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
+            self.viewModel!.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -99,9 +100,10 @@ class RecentMessagesViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
-        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-        vc.fromProfile = false
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+//        vc.fromProfile = false
+//        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showContactsViewControllerFromRecent()
     }
     
     func sort() {
@@ -171,7 +173,7 @@ class RecentMessagesViewController: UIViewController {
             }
         }
         
-        viewModel.getChats { (messages, error) in
+        viewModel!.getChats { (messages, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -182,7 +184,7 @@ class RecentMessagesViewController: UIViewController {
                 if (messages != nil) {
                     self.isLoadedMessages = true
                     if messages?.count == 0 {
-                        self.setView("You have no messages")
+                        self.setView("you_have_no_messages".localized())
                         DispatchQueue.main.async {
                             self.activityIndicator.stopAnimating()
                         }
@@ -212,7 +214,7 @@ class RecentMessagesViewController: UIViewController {
         } else {
             id = (message.sender?.id! ?? "") as String
         }
-        self.viewModel.getuserById(id: id) { (user, error) in
+        self.viewModel!.getuserById(id: id) { (user, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -254,12 +256,7 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-        vc.name = chats[indexPath.row].name
-        vc.username = chats[indexPath.row].username
-        vc.avatar = chats[indexPath.row].recipientAvatarURL
-        vc.id = chats[indexPath.row].id
-        self.navigationController?.pushViewController(vc, animated: false)
+        mainRouter?.showChatViewController(name: chats[indexPath.row].name, id: chats[indexPath.row].id, avatarURL: chats[indexPath.row].recipientAvatarURL, username: chats[indexPath.row].username)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

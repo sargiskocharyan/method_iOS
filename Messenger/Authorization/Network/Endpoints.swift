@@ -17,6 +17,7 @@ public enum AuthApi {
     case verifyToken(token: String)
     case getUniversities(token: String)
     case getUserContacts(token: String)
+    case checkUsername(username: String)
 }
 
 extension AuthApi: EndPointType {
@@ -43,6 +44,8 @@ extension AuthApi: EndPointType {
             return AUTHUrls.GetUniversities
         case .getUserContacts(_):
             return AUTHUrls.GetUserContacts
+        case .checkUsername(_):
+            return AUTHUrls.CheckUsername
         }
     }
     
@@ -64,6 +67,8 @@ extension AuthApi: EndPointType {
             return .get
         case .getUserContacts(_):
             return .get
+        case .checkUsername(_):
+            return .post
         }
     }
     
@@ -93,9 +98,13 @@ extension AuthApi: EndPointType {
         case .getUniversities(token: let token):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-            case .getUserContacts(token: let token):
+        case .getUserContacts(token: let token):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .checkUsername(username: let username):
+            let parameters:Parameters = ["username": username]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

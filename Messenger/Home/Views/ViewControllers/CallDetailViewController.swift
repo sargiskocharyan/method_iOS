@@ -24,7 +24,15 @@ class CallDetailViewController: UIViewController {
     var name: String?
     var avatarURL: String?
     var id: String?
+    var callListViewController: CallListViewController?
+    var tabBar: MainTabBarController?
+    var nc: UINavigationController?
+    var contactsViewModel: ContactsViewModel?
+    var isThereContacts: Bool = false
+    var mainRouter: MainRouter?
     
+    @IBOutlet weak var audioCallButton: UIButton!
+    @IBOutlet weak var videoCallButton: UIButton!
     @IBOutlet weak var aboutCallView: UIView!
     @IBOutlet weak var audioCallView: UIView!
     @IBOutlet weak var videoCallView: UIView!
@@ -39,7 +47,6 @@ class CallDetailViewController: UIViewController {
     @IBOutlet weak var videoOrAudioLabel: UILabel!
     @IBOutlet weak var username: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
-    
     
     func configureViews() {
         userImageView.contentMode = . scaleAspectFill
@@ -69,26 +76,65 @@ class CallDetailViewController: UIViewController {
         audioCallLabel.text = "call".localized()
     }
     
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        contactsViewModel = tabBar?.contactsViewModel
+        isThereContacts = false
+        for i in 0..<contactsViewModel!.contacts.count {
+            if contactsViewModel?.contacts[i]._id == id {
+                isThereContacts = true
+            }
+        }
+        if isThereContacts {
+            videoCallButton.isEnabled = true
+            audioCallButton.isEnabled = true
+        } else {
+            videoCallButton.isEnabled = false
+            audioCallButton.isEnabled = false
+        }
+        navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
         setLabels()
         username.text = name
+        tabBar = tabBarController as? MainTabBarController
+        nc = tabBar?.viewControllers?[0] as? UINavigationController
+        callListViewController = nc?.viewControllers[0] as? CallListViewController
         dateToString(date: date!)
         durationLabel.text = callDuration
-//        timeLabel.text = d
         callModeLabel.text = callMode?.rawValue
         ImageCache.shared.getImage(url: avatarURL ?? "", id: id!) { (image) in
             self.userImageView.image = image
         }
     }
-    
-    
 
     @IBAction func startVideoCall(_ sender: Any) {
+        let tabBar = tabBarController as! MainTabBarController
+        if !tabBar.onCall {
+            tabBar.handleCallClick(id: id!, name: name!)
+            callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+        } else {
+            tabBar.handleClickOnSamePerson()
+        }
     }
-    @IBOutlet weak var startAudioCall: NSLayoutConstraint!
+    
+    @IBAction func startAudioCall(_ sender: Any) {
+        
+    }
     @IBAction func sendMessageButton(_ sender: Any) {
+//        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+//        vc.id = id
+//        vc.name = name
+//        vc.username = name
+//        vc.avatar = avatarURL
+//        navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showChatViewControllerFromCallDetail(name: name, username: name, avatarURL: avatarURL, id: id!)
     }
   
     func dateToString(date: Date) {
@@ -104,10 +150,10 @@ class CallDetailViewController: UIViewController {
         } else if currentDay - 1 == day {
             dateLabel.text = "yesterday".localized()
         } else {
-            dateLabel.text = "\(day > 10 ? "\(day)" : "0\(day)"):\(month > 10 ? "\(month)" : "0\(month)"):\(year)"
+            dateLabel.text = "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)").\(year)"
         }
         let hour = calendar.component(.hour, from: parsedDate)
         let minutes = calendar.component(.minute, from: parsedDate)
-        timeLabel.text = "\(hour > 10 ? "\(hour)" : "0\(hour)"):\(minutes > 10 ? "\(minutes)" : "0\(minutes)")"
+        timeLabel.text = "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
     }
 }

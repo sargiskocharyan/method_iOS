@@ -20,7 +20,6 @@ class RecentMessagesViewModel {
      var calls: [FetchedCall] = []
     private var privateCalls: [NSManagedObject] = []
     func getHistory(completion: @escaping ([FetchedCall])->()) {
-//        DispatchQueue.global(qos: .background).async {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                     completion([])
                     return
@@ -38,8 +37,6 @@ class RecentMessagesViewModel {
                 print("Could not fetch. \(error), \(error.userInfo)")
                 completion([])
             }
-//        }
-        
     }
     
     func deleteItem(index: Int) {

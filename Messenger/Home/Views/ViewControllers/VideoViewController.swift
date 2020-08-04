@@ -133,7 +133,6 @@ class VideoViewController: UIViewController {
     }
     
     func handleOffer(roomName: String) {
-        print("handleOffer")
         self.roomName = roomName
     }
     

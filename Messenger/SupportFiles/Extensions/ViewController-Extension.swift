@@ -11,6 +11,7 @@ import UserNotifications
 
 enum AppStoryboard: String {
     case main = "Main"
+    case auth = "Auth"
 }
 
 

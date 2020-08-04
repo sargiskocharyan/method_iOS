@@ -54,6 +54,9 @@
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
+		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
+		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
+		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
@@ -159,6 +162,9 @@
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
+		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
+		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
+		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
@@ -337,6 +343,7 @@
 				CD3713C32486894C0088A0CC /* Network */,
 				CD5E71412486596D008D876E /* ViewModels */,
 				CD5E714024865965008D876E /* Views */,
+				CD9D5E1224D950AA007818E9 /* MainRouter.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -459,6 +466,7 @@
 			children = (
 				CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */,
 				CDBCCA66247BF29900115C99 /* Main.storyboard */,
+				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -470,6 +478,7 @@
 				CDD9C678247BC88C0048A9A1 /* Network */,
 				CDD9C64A247BC1D30048A9A1 /* ViewModels */,
 				CDD9C649247BC1CA0048A9A1 /* Views */,
+				CD9D5E1024D94600007818E9 /* AuthRouter.swift */,
 			);
 			path = Authorization;
 			sourceTree = "<group>";
@@ -710,6 +719,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
@@ -786,6 +796,7 @@
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
 				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
+				CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */,
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
 				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
@@ -824,6 +835,7 @@
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
+				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */,
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,

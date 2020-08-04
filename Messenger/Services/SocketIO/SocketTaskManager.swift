@@ -53,10 +53,18 @@ class SocketTaskManager {
         self.socket.emit("candidates", roomName, data)
     }
     
-    func call(id: String) {
-        socket.emit("call", id) {
-            print("called")
+    func call(id: String, completionHandler: @escaping (_ roomname: String) -> ()) {
+        socket.emitWithAck("call", id).timingOut(after: 0.0) { (dataArray) in
+            completionHandler(dataArray[0] as! String)
         }
+    }
+    
+    func callStarted(roomname: String) {
+        self.socket.emit("callStarted", roomname)
+    }
+    
+    func callReconnected(roomname: String) {
+        self.socket.emit("reconnectCallRoom", roomname)
     }
     
     func callAccepted(id: String, isAccepted: Bool) {
@@ -93,10 +101,10 @@ class SocketTaskManager {
     
     private func readMessage(completionHandler: @escaping (_ message: Message) -> Void) {
         socket.on("receive") { (dataArray, socketAck) in
-              let data = dataArray[0] as! NSDictionary
-                      let sender = data["sender"] as! NSDictionary
-                      let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
-                      completionHandler(message)
+            let data = dataArray[0] as! NSDictionary
+            let sender = data["sender"] as! NSDictionary
+            let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
+            completionHandler(message)
         }
     }
     
@@ -128,8 +136,9 @@ class SocketTaskManager {
     
     func disconnect() {
         socket.disconnect()
-        
     }
+    
+    
     
     func handleCallEnd(completionHandler: @escaping (_ roomName: String) -> Void) {
            socket.on("callEnded") { (dataArray, socketAck) -> Void in

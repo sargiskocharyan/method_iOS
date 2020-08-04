@@ -42,6 +42,7 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var emailTextLabel: UILabel!
     @IBOutlet weak var sendMessageButton: UIButton!
+    
     var contact: User?
     var id: String?
     var viewModel: ContactsViewModel?
@@ -52,10 +53,12 @@ class ContactProfileViewController: UIViewController {
     var nc: UINavigationController?
     var callListViewController: CallListViewController?
     var fromChat: Bool?
+    var mainRouter: MainRouter?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = false
         if onContactPage! {
             addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
             addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
@@ -73,7 +76,6 @@ class ContactProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tabBar = tabBarController as? MainTabBarController
-        viewModel = tabBar?.contactsViewModel
         nc = tabBar?.viewControllers?[0] as? UINavigationController
         callListViewController = nc?.viewControllers[0] as? CallListViewController
         userImageView.contentMode = .scaleAspectFill
@@ -93,18 +95,19 @@ class ContactProfileViewController: UIViewController {
         if fromChat! {
             navigationController?.popViewController(animated: false)
         } else {
-            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-            vc.id = contact?._id
-            vc.name = contact?.name
-            vc.username = contact?.username
-            vc.avatar = contact?.avatarURL
-            navigationController?.pushViewController(vc, animated: true)
+//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+//            vc.id = contact?._id
+//            vc.name = contact?.name
+//            vc.username = contact?.username
+//            vc.avatar = contact?.avatarURL
+//            navigationController?.pushViewController(vc, animated: true)
+            mainRouter?.showChatViewControllerFromContactProfile(name: contact?.name, username:  contact?.username, avatarURL: contact?.avatarURL, id: (contact?._id)!)
             
         }
     }
     
     func getUserInformation() {
-        callListViewController?.viewModel.getuserById(id: id!) { (user, error) in
+        callListViewController?.viewModel!.getuserById(id: id!) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -151,14 +154,14 @@ class ContactProfileViewController: UIViewController {
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        for i in 0..<callListViewController!.viewModel.calls.count {
-            for j in i..<callListViewController!.viewModel.calls.count {
-                let firstDate = callListViewController!.viewModel.calls[i].time
-                let secondDate = callListViewController?.viewModel.calls[j].time
+        for i in 0..<callListViewController!.viewModel!.calls.count {
+            for j in i..<callListViewController!.viewModel!.calls.count {
+                let firstDate = callListViewController!.viewModel!.calls[i].time
+                let secondDate = callListViewController?.viewModel!.calls[j].time
                 if firstDate.compare(secondDate!).rawValue == -1 {
-                    let temp = callListViewController!.viewModel.calls[i]
-                    callListViewController!.viewModel.calls[i] = callListViewController!.viewModel.calls[j] 
-                    callListViewController!.viewModel.calls[j] = temp
+                    let temp = callListViewController!.viewModel!.calls[i]
+                    callListViewController!.viewModel!.calls[i] = callListViewController!.viewModel!.calls[j]
+                    callListViewController!.viewModel!.calls[j] = temp
                 }
             }
         }
@@ -177,7 +180,6 @@ class ContactProfileViewController: UIViewController {
                         if error != nil {
                             print(error as Any)
                         } else {
-                            print("All is well!!!!")
                              self.delegate?.addNewContact(contact: self.contact!)
                             self.onContactPage = true
                             self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)

@@ -17,7 +17,7 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
-    var viewModel = ChatMessagesViewModel()
+    var viewModel: ChatMessagesViewModel?
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
@@ -26,8 +26,11 @@ class ChatViewController: UIViewController {
     var name: String?
     var username: String?
     var avatar: String?
+    static let sendMessageCellIdentifier = "sendMessageCell"
+    static let receiveMessageCellIdentifier = "receiveMessageCell"
     var image = UIImage(named: "noPhoto")
     var tabbar: MainTabBarController?
+    var mainRouter: MainRouter?
     let messageInputContainerView: UIView = {
         let view = UIView()
         if SharedConfigs.shared.mode == "light" {
@@ -81,17 +84,17 @@ class ChatViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func infoButtonAction() {
-        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-        vc.id = id
-        vc.onContactPage = false
-        vc.fromChat = true
-        for i in 0..<tabbar!.contactsViewModel.contacts.count {
-            if tabbar!.contactsViewModel.contacts[i]._id == id {
-                vc.onContactPage = true
-                break
-            }
-        }
-        self.navigationController?.pushViewController(vc, animated: false)
+//        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+//        vc.id = id
+//        vc.onContactPage = false
+//        vc.fromChat = true
+//        for i in 0..<tabbar!.contactsViewModel!.contacts.count {
+//            if tabbar!.contactsViewModel!.contacts[i]._id == id {
+//                vc.onContactPage = true
+//                break
+//            }
+//        }
+        mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
     }
     
     @objc func sendMessage() {
@@ -107,7 +110,7 @@ class ChatViewController: UIViewController {
         } else if username != nil {
                self.title = username
            } else {
-            self.title = "Dynamic's user"
+            self.title = "dynamics_user".localized()
         }
        }
     
@@ -212,7 +215,7 @@ class ChatViewController: UIViewController {
     
     func getChatMessages() {
         self.activity.startAnimating()
-        viewModel.getChatMessages(id: id!) { (messages, error) in
+        viewModel!.getChatMessages(id: id!) { (messages, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
@@ -258,14 +261,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text
             cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
             cell.messageLabel.textColor = .white
             cell.messageLabel.sizeToFit()
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.userImageView.image = image
