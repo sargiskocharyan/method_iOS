@@ -206,38 +206,44 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel!.calls.count
     }
     
+    func getUser(_ cell: CallTableViewCell, _ indexPath: IndexPath) {
+        viewModel!.getuserById(id: cell.calleId!) { (user, error) in
+            DispatchQueue.main.async {
+                if error != nil {
+                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath.row])
+                } else if user != nil {
+                    var newArray = self.tabbar?.contactsViewModel?.otherContacts
+                    newArray?.append(user!)
+                    self.tabbar?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
+                        self.tabbar?.contactsViewModel!.otherContacts = users!
+                    })
+                    cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath.row])
+                }
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.callCellIdentifier, for: indexPath) as! CallTableViewCell
         cell.calleId = viewModel!.calls[indexPath.row].calleeId
-        var isThereContact = false
+        var existsInContactList = false
         for i in 0..<count {
             if tabbar?.contactsViewModel!.contacts[i]._id == cell.calleId {
-                isThereContact = true
+                existsInContactList = true
                 cell.configureCell(contact: tabbar!.contactsViewModel!.contacts[i], call: viewModel!.calls[indexPath.row])
                 break
             }
         }
-        if !isThereContact {
+        if existsInContactList == false {
             for i in 0..<otherContactsCount {
                 if tabbar?.contactsViewModel!.otherContacts[i]._id == cell.calleId {
-                    isThereContact = true
+                    existsInContactList = true
                     cell.configureCell(contact: tabbar!.contactsViewModel!.otherContacts[i], call: viewModel!.calls[indexPath.row])
                     break
                 }
             }
-            if !isThereContact {
-                viewModel!.getuserById(id: cell.calleId!) { (user, error) in
-                    DispatchQueue.main.async {
-                        if error != nil {
-                            cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath.row])
-                        } else if user != nil {
-                            self.tabbar?.viewModel!.saveOtherContacts(otherContacts: [user!], completion: { (users, error) in
-                                self.tabbar?.contactsViewModel!.otherContacts = users!
-                            })
-                            cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath.row])
-                        }
-                    }
-                }
+            if existsInContactList == false {
+                getUser(cell, indexPath)
             }
         }
         cell.delegate = self

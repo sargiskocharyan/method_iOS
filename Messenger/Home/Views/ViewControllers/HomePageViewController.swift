@@ -385,7 +385,7 @@ extension MainTabBarController: CallListViewDelegate {
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        videoVC?.startCall("calling".localized())
+        videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
     }
 }

@@ -302,8 +302,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, university: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email, university: university)) { data, response, error in
+    func editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)

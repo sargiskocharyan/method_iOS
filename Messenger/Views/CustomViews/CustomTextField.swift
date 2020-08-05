@@ -54,10 +54,7 @@ class CustomTextField: UIView {
         self.border.backgroundColor = .lightGray
         self.topLabel.font = self.topLabel.font.withSize(13.0)
         self.errorLabel.font = self.errorLabel.font.withSize(13.0)
-//        self.border.frame = CGRect(x: 0, y: self.topLabel.frame.height + self.textField.frame.height-7, width: self.frame.width, height: self.height)
-//        self.addSubview(self.border)
         self.border.tag = 1
-//        self.addSubview(self.textField)
         self.addSubview(self.topLabel)
         self.addSubview(self.errorLabel)
     }
@@ -79,7 +76,6 @@ class CustomTextField: UIView {
     }
     
     func handleRotate() {
-        //viewWithTag(1)?.removeFromSuperview()
         self.configureViews()
     }
     

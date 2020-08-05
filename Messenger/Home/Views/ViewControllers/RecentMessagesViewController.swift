@@ -60,7 +60,7 @@ class RecentMessagesViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if isLoadedMessages && chats.count == 0 {
-            setView("you_have_no_message".localized())
+            setView("you_have_no_messages".localized())
         }
     }
     
@@ -100,9 +100,6 @@ class RecentMessagesViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
-//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-//        vc.fromProfile = false
-//        self.navigationController?.pushViewController(vc, animated: true)
         mainRouter?.showContactsViewControllerFromRecent()
     }
     
@@ -130,7 +127,7 @@ class RecentMessagesViewController: UIViewController {
             self.removeView()
             let noResultView = UIView(frame: self.view.frame)
             noResultView.tag = 26
-            noResultView.backgroundColor = .white
+            noResultView.backgroundColor = UIColor(named: "imputColor")
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
             label.text = str

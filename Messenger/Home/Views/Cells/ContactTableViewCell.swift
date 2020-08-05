@@ -39,18 +39,21 @@ class ContactTableViewCell: UITableViewCell {
             nameLabel.textColor = .darkGray
             nameLabel.text = "name".localized()
         } else {
+            nameLabel.textColor = UIColor(named: "color")
             nameLabel.text = contact.name
         }
         if contact.lastname == nil {
             lastnameLabel.textColor = .darkGray
             lastnameLabel.text = "lastname".localized()
         } else {
+            lastnameLabel.textColor = UIColor(named: "color")
             lastnameLabel.text = contact.lastname
         }
         if contact.username == nil {
             usernameLabel.textColor = .darkGray
             usernameLabel.text = "username".localized()
         } else {
+            usernameLabel.textColor = UIColor(named: "color")
             usernameLabel.text = contact.username
         }
     }

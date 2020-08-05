@@ -85,7 +85,7 @@
 "this_user_is_not_in_your_contacts" = "This user is not in your contacts";
 "your_session_expires_please_log_in_again" = "Your session expires, please log in again";
 "reconnecting" = "Reconnecting...";
-"calling" = "Calling...";
+"calling" = "Calling";
 "you_have_no_messages" = "You have no messages";
 "dynamics_user" = "Dynamic's user";
 "video" = "video";
@@ -96,4 +96,5 @@
 "choose_one_of_this_app_to_upload_photo" = "Choose one of this app to upload photo";
 "today" = "Today";
 "yesterday" = "Yesterday";
+"info_not_set" = "Info not set";
 

@@ -21,7 +21,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var genderView: CustomTextField!
-    @IBOutlet weak var universityView: CustomTextField!
     @IBOutlet weak var phoneCustomView: CustomTextField!
     @IBOutlet weak var infoTextView: UITextView!
     @IBOutlet weak var emailView: CustomTextField!
@@ -55,6 +54,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var checkInfo: Bool?
     var mainRouter: MainRouter?
     
+    
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,11 +62,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         configureInfoTextView()
         constant = stackViewTopConstraint.constant
         setDelegates()
-        addUniversityDropDown()
-        getUniversities()
         addGenderDropDown()
         setLabelTexts()
-        setUniversityName()
         self.hideKeyboardWhenTappedAround()
         setObservers()
         setTopLabels()
@@ -160,18 +157,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
     }
     
-    func checkUniverity(_ id: String?, _ signedUser: UserModel?) -> Bool? {
-        if id != nil && signedUser?.university?._id != id {
-            universityId = id!
-            return true
-        } else if signedUser?.university?._id == nil && id != nil {
-            universityId = id!
-            return true
-        }
-        universityId = nil
-        return nil
-    }
-    
     func checkGender(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.gender?.lowercased() != genderView.textField.text?.lowercased() {
             if signedUser?.gender == nil && genderView.textField.text == "" {
@@ -204,9 +189,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
         if emailView.textField.text != "" {
             emailView.topLabel.text = "email".localized()
-        }
-        if universityView.textField.text != "" {
-            universityView.topLabel.text = "university".localized()
         }
         if genderView.textField.text != "" {
             genderView.topLabel.text = "gender".localized()
@@ -335,24 +317,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     func checkFields() {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityView.textField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityView.textField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityView.textField.text!
-                }?._id
-        }
         
         
-        if checkUniverity(id, signedUser) != false && (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false && checkInfo != false {
+        if (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false && checkInfo != false {
             if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil || info != nil {
                 enableUpdateInfoButton()
             } else {
@@ -567,32 +534,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    @IBAction func universityTextFieldAction(_ sender: Any) {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityView.textField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityView.textField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityView.textField.text!
-                }?._id
-        }
-        if id != nil {
-            updateInformationButton.isEnabled = true
-            updateInformationButton.backgroundColor = .clear
-            updateInformationButton.titleLabel?.textColor = .white
-        } else {
-            updateInformationButton.isEnabled = false
-            updateInformationButton.titleLabel?.textColor = UIColor.lightGray
-        }
-    }
-    
     func stringToDate(date:String?) -> String? {
         if date == nil {
             return nil
@@ -614,7 +555,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
+        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -634,49 +575,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    func setUniversityName() {
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.name
-        case AppLangKeys.Rus:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameRU
-        case AppLangKeys.Eng:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
-        default:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
-        }
-    }
-    
-    func getUniversities() {
-        viewModel!.getUniversities { (responseObject, error) in
-            if(error != nil) {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                }
-            } else if responseObject != nil {
-                self.universities = responseObject!
-                switch SharedConfigs.shared.appLang {
-                case AppLangKeys.Arm:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.name
-                    })
-                case AppLangKeys.Rus:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameRU
-                    })
-                case AppLangKeys.Eng:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                default:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                }
-            }
-        }
-    }
-    
     @objc func imageTapped() {
         checkFields()
         if isMoreUniversity {
@@ -688,50 +586,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             isMoreUniversity = true
             universityDropDown.show()
             universityMoreOrLessImageView.image = UIImage(named: "less")
-        }
-    }
-    
-    func addUniversityDropDown() {
-        addButtonOnUniversityTextField(button: universityButton, textField: universityView.textField)
-        addImage(textField: universityView.textField, imageView: universityMoreOrLessImageView)
-        universityDropDown.anchorView = universityButton
-        universityDropDown.direction = .any
-        universityDropDown.bottomOffset = CGPoint(x: 0, y:((universityDropDown.anchorView?.plainView.bounds.height)! + universityView.textField.frame.height + 30))
-        universityDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.universityView.textField.text = item
-            self.universityMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreUniversity = false
-            var id: String?
-            switch SharedConfigs.shared.appLang {
-            case AppLangKeys.Arm:
-                id = self.universities.first { (university) -> Bool in
-                    university.name == self.universityView.textField.text!
-                    }?._id
-            case AppLangKeys.Rus:
-                id = self.universities.first { (university) -> Bool in
-                    university.nameRU == self.universityView.textField.text!
-                    }?._id
-            default:
-                id = self.universities.first { (university) -> Bool in
-                    university.nameEN == self.universityView.textField.text!
-                    }?._id
-            }
-            if id != nil {
-                self.updateInformationButton.isEnabled = true
-                self.updateInformationButton.backgroundColor = .clear
-                self.updateInformationButton.titleLabel?.textColor = .white
-            } else {
-                self.updateInformationButton.isEnabled = false
-                self.updateInformationButton.titleLabel?.textColor = UIColor.lightGray
-            }
-        }
-        universityDropDown.width = universityView.textField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
-        universityView.textField.rightView = paddingView
-        universityView.textField.rightViewMode = UITextField.ViewMode.always
-        universityDropDown.cancelAction = { [unowned self] in
-            self.universityMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreUniversity = false
         }
     }
     
@@ -753,7 +607,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             }
         }
         genderDropDown.width = genderView.textField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderView.textField.frame.height))
         genderView.textField.rightView = paddingView
         genderView.textField.rightViewMode = UITextField.ViewMode.always
         genderDropDown.cancelAction = { [unowned self] in

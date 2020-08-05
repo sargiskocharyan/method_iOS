@@ -65,6 +65,10 @@ class VideoViewController: UIViewController {
         self.view.sendSubviewToBack(remoteRenderer)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = UIColor(named: "videoColor")
+    }
     
     @IBAction func switchCamera(_ sender: Any) {
         #if arch(arm64)
@@ -116,7 +120,7 @@ class VideoViewController: UIViewController {
         let label = UILabel()
         label.tag = 6
         label.text = callText
-        label.textColor = .black
+        label.textColor = UIColor(named: "color")
         label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
         label.heightAnchor.constraint(equalToConstant: 100).isActive = true

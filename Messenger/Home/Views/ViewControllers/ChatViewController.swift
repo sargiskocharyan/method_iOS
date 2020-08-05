@@ -33,11 +33,7 @@ class ChatViewController: UIViewController {
     var mainRouter: MainRouter?
     let messageInputContainerView: UIView = {
         let view = UIView()
-        if SharedConfigs.shared.mode == "light" {
-            view.backgroundColor = .white
-        } else {
-            view.backgroundColor = .black
-        }
+        view.backgroundColor = UIColor(named: "imputColor")
         return view
     }()
     
