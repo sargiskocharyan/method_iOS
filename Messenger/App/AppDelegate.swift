@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let container = NSPersistentContainer(name: "CallModel")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error {
-
                 fatalError("Unresolved error, \((error as NSError).userInfo)")
             }
         })

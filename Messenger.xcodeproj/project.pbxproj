@@ -35,15 +35,13 @@
 		CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */; };
 		CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
 		CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */; };
+		CD3C9AEE24CFFDCF009AD586 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C9AED24CFFDCF009AD586 /* Contacts.swift */; };
 		CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */; };
 		CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */; };
 		CD3F12D524BC28C900040D8E /* Call.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D424BC28C900040D8E /* Call.swift */; };
 		CD3F12D724BC290200040D8E /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D624BC290200040D8E /* CallManager.swift */; };
 		CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D824BC29EB00040D8E /* Audio.swift */; };
 		CD3F12E824BC558B00040D8E /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E124BC558B00040D8E /* Message.swift */; };
-		CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */; };
-		CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */; };
-		CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */; };
 		CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E624BC558B00040D8E /* WebRTCClient.swift */; };
 		CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E724BC558B00040D8E /* SignalingClient.swift */; };
 		CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EE24BC55C100040D8E /* RTCStates.swift */; };
@@ -56,10 +54,14 @@
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
+		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
+		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
+		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
 		CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB42DB924B34487005EAA51 /* PhoneValidator.swift */; };
+		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
 		CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA66247BF29900115C99 /* Main.storyboard */; };
@@ -141,15 +143,13 @@
 		CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesViewModel.swift; sourceTree = "<group>"; };
+		CD3C9AED24CFFDCF009AD586 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallTableViewCell.swift; sourceTree = "<group>"; };
 		CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
 		CD3F12D424BC28C900040D8E /* Call.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Call.swift; sourceTree = "<group>"; };
 		CD3F12D624BC290200040D8E /* CallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CD3F12D824BC29EB00040D8E /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		CD3F12E124BC558B00040D8E /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
-		CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeWebSocket.swift; sourceTree = "<group>"; };
-		CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarscreamProvider.swift; sourceTree = "<group>"; };
 		CD3F12E624BC558B00040D8E /* WebRTCClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
 		CD3F12E724BC558B00040D8E /* SignalingClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
 		CD3F12EE24BC55C100040D8E /* RTCStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCStates.swift; sourceTree = "<group>"; };
@@ -162,10 +162,14 @@
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
+		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
+		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
+		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
 		CDB42DB924B34487005EAA51 /* PhoneValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneValidator.swift; sourceTree = "<group>"; };
+		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDBCCA67247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -253,8 +257,10 @@
 		CD367337247949E20002E606 /* SupportFiles */ = {
 			isa = PBXGroup;
 			children = (
+				CDDE575B24C96A6400AFC790 /* CallKit */,
 				CDCA69B7247D42BD00F85145 /* Wrappers */,
 				CD367338247949FA0002E606 /* Extensions */,
+				CD3C9AED24CFFDCF009AD586 /* Contacts.swift */,
 			);
 			path = SupportFiles;
 			sourceTree = "<group>";
@@ -280,17 +286,15 @@
 			children = (
 				CD5E7144248661B2008D876E /* CallListViewController.swift */,
 				CD5E713E24865935008D876E /* HomePageViewController.swift */,
-				CD3F12D824BC29EB00040D8E /* Audio.swift */,
 				CD3713BA248674BA0088A0CC /* ProfileViewController.swift */,
 				CD352E352488F71900747E32 /* ContactsViewController.swift */,
-				CD3F12D424BC28C900040D8E /* Call.swift */,
-				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CD3FEE51249CF387008CF774 /* EditInformationViewController.swift */,
 				CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */,
 				CD3C323E24989A7000E975DF /* ChatViewController.swift */,
 				CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */,
-				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
 				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
+				CD3F12D624BC290200040D8E /* CallManager.swift */,
+				CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -320,20 +324,17 @@
 				CD3F12E124BC558B00040D8E /* Message.swift */,
 				CD3F12E624BC558B00040D8E /* WebRTCClient.swift */,
 				CD3F12E724BC558B00040D8E /* SignalingClient.swift */,
-				CD3F12E224BC558B00040D8E /* WebSocketProvider */,
+				CD3F12E224BC558B00040D8E /* SocketIO */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		CD3F12E224BC558B00040D8E /* WebSocketProvider */ = {
+		CD3F12E224BC558B00040D8E /* SocketIO */ = {
 			isa = PBXGroup;
 			children = (
 				CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */,
-				CD3F12E324BC558B00040D8E /* WebSocketProvider.swift */,
-				CD3F12E424BC558B00040D8E /* NativeWebSocket.swift */,
-				CD3F12E524BC558B00040D8E /* StarscreamProvider.swift */,
 			);
-			path = WebSocketProvider;
+			path = SocketIO;
 			sourceTree = "<group>";
 		};
 		CD5E713D2486590C008D876E /* Home */ = {
@@ -342,6 +343,7 @@
 				CD3713C32486894C0088A0CC /* Network */,
 				CD5E71412486596D008D876E /* ViewModels */,
 				CD5E714024865965008D876E /* Views */,
+				CD9D5E1224D950AA007818E9 /* MainRouter.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -464,6 +466,7 @@
 			children = (
 				CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */,
 				CDBCCA66247BF29900115C99 /* Main.storyboard */,
+				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -475,6 +478,7 @@
 				CDD9C678247BC88C0048A9A1 /* Network */,
 				CDD9C64A247BC1D30048A9A1 /* ViewModels */,
 				CDD9C649247BC1CA0048A9A1 /* Views */,
+				CD9D5E1024D94600007818E9 /* AuthRouter.swift */,
 			);
 			path = Authorization;
 			sourceTree = "<group>";
@@ -624,6 +628,16 @@
 			path = SharedConfigs;
 			sourceTree = "<group>";
 		};
+		CDDE575B24C96A6400AFC790 /* CallKit */ = {
+			isa = PBXGroup;
+			children = (
+				CD3F12D424BC28C900040D8E /* Call.swift */,
+				CD3F12D824BC29EB00040D8E /* Audio.swift */,
+				CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */,
+			);
+			path = CallKit;
+			sourceTree = "<group>";
+		};
 		F16CBAD5249A0A0D00BCE77C /* UserDataController */ = {
 			isa = PBXGroup;
 			children = (
@@ -705,6 +719,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
@@ -781,16 +796,17 @@
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
 				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
+				CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */,
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
 				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
 				CD36536824C05C4800432264 /* CallModel.xcdatamodeld in Sources */,
 				CDD9C673247BC4AE0048A9A1 /* HTTPTask.swift in Sources */,
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
-				CD3F12E924BC558B00040D8E /* WebSocketProvider.swift in Sources */,
 				CD355E46247FAEF90049517F /* Data-Extension.swift in Sources */,
 				CD35E268249797EC003C53AB /* RecentMessagesViewController.swift in Sources */,
 				CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */,
+				CD3C9AEE24CFFDCF009AD586 /* Contacts.swift in Sources */,
 				CDD9C674247BC4AE0048A9A1 /* HTTPMethod.swift in Sources */,
 				CD36733224790D430002E606 /* BottomShapeView.swift in Sources */,
 				CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */,
@@ -804,6 +820,7 @@
 				CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */,
 				CD3713C2248682710088A0CC /* DarkModeTableViewCell.swift in Sources */,
 				CDD9C67D247BC88C0048A9A1 /* Endpoints.swift in Sources */,
+				CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */,
 				CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */,
 				CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */,
 				CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */,
@@ -818,6 +835,7 @@
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
+				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */,
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
@@ -828,14 +846,12 @@
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
-				CD3F12EB24BC558B00040D8E /* StarscreamProvider.swift in Sources */,
 				CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */,
 				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
 				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
-				CD3F12EA24BC558B00040D8E /* NativeWebSocket.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,

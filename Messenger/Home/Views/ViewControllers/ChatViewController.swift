@@ -17,7 +17,7 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
-    var viewModel = ChatMessagesViewModel()
+    var viewModel: ChatMessagesViewModel?
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
@@ -26,7 +26,11 @@ class ChatViewController: UIViewController {
     var name: String?
     var username: String?
     var avatar: String?
+    static let sendMessageCellIdentifier = "sendMessageCell"
+    static let receiveMessageCellIdentifier = "receiveMessageCell"
     var image = UIImage(named: "noPhoto")
+    var tabbar: MainTabBarController?
+    var mainRouter: MainRouter?
     let messageInputContainerView: UIView = {
         let view = UIView()
         if SharedConfigs.shared.mode == "light" {
@@ -58,12 +62,14 @@ class ChatViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         getChatMessages()
+        tabbar = tabBarController as? MainTabBarController
         addConstraints()
         setupInputComponents()
         setObservers()
         socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
+        self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
         setTitle()
         getImage()
         setObservers()
@@ -77,8 +83,23 @@ class ChatViewController: UIViewController {
     }
     
     //MARK: Helper methods
+    @objc func infoButtonAction() {
+//        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+//        vc.id = id
+//        vc.onContactPage = false
+//        vc.fromChat = true
+//        for i in 0..<tabbar!.contactsViewModel!.contacts.count {
+//            if tabbar!.contactsViewModel!.contacts[i]._id == id {
+//                vc.onContactPage = true
+//                break
+//            }
+//        }
+        mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
+    }
+    
     @objc func sendMessage() {
         if inputTextField.text != "" {
+            print(socketTaskManager.manager.status)
             socketTaskManager.send(message: inputTextField.text!, id: id!)
         }
     }
@@ -89,7 +110,7 @@ class ChatViewController: UIViewController {
         } else if username != nil {
                self.title = username
            } else {
-            self.title = "Dynamic's user"
+            self.title = "dynamics_user".localized()
         }
        }
     
@@ -141,7 +162,9 @@ class ChatViewController: UIViewController {
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
-            self.scheduleNotification(center: MainTabBarController.center, message: message)
+            if message.sender?.id != SharedConfigs.shared.signedUser?.id {
+                self.scheduleNotification(center: MainTabBarController.center, message: message)
+            }
         }
     }
     
@@ -167,18 +190,17 @@ class ChatViewController: UIViewController {
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 2).isActive = true
+        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
-        inputTextField.anchor(top: messageInputContainerView.topAnchor, paddingTop: 0, bottom: messageInputContainerView.bottomAnchor, paddingBottom: 0, left: messageInputContainerView.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 30, width: 25, height: 48)
+        inputTextField.anchor(top: messageInputContainerView.topAnchor, paddingTop: 0, bottom: messageInputContainerView.bottomAnchor, paddingBottom: 0, left: messageInputContainerView.leftAnchor, paddingLeft: 5, right: view.rightAnchor, paddingRight: 30, width: 25, height: 48)
         sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: 0).isActive = true
         sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
         sendButton.isUserInteractionEnabled = true
         sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
         25)
-
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
@@ -193,24 +215,12 @@ class ChatViewController: UIViewController {
     
     func getChatMessages() {
         self.activity.startAnimating()
-        viewModel.getChatMessages(id: id!) { (messages, error) in
+        viewModel!.getChatMessages(id: id!) { (messages, error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.view.viewWithTag(5)?.removeFromSuperview()
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if messages != nil {
                 self.allMessages = messages!
@@ -251,14 +261,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text
             cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
             cell.messageLabel.textColor = .white
             cell.messageLabel.sizeToFit()
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.userImageView.image = image

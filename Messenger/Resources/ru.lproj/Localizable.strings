@@ -79,6 +79,22 @@
 "female" = "Женский";
 "add_to_contact" = "Добавить в контакты";
 "email:" = "Адрес электронной почты:";
-
+"calls" = "Вызовы";
+"call" = "Вызов";
+"you_have_no_calls" = "У вас нет звонков";
+"this_user_is_not_in_your_contacts" = "Этого пользователя нет в ваших контактах";
+"your_session_expires_please_log_in_again" = "Ваша сессия истекает, пожалуйста, войдите снова";
+"calling" = "Вызов...";
+"reconnecting" = "Переподключения...";
+"you_have_no_messages" = "У вас нет сообщений";
+"dynamics_user" = "Пользователь Dynamic";
+"video" = "видео";
+"audio" = "аудио";
+"message" = "сообщение";
+"album" = "Альбом";
+"camera" = "камера";
+"choose_one_of_this_app_to_upload_photo" = "Выберите одно из приложений, чтобы загрузить фото";
+"today" = "Cегодня";
+"yesterday" = "Вчера";
 
 

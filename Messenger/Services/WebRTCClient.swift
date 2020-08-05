@@ -48,28 +48,21 @@ final class WebRTCClient: NSObject {
     required init(iceServers: [String]) {
         let config = RTCConfiguration()
         config.iceServers = [RTCIceServer(urlStrings: iceServers)]
-        
-        // Unified plan is more superior than planB
         config.sdpSemantics = .unifiedPlan
-        
-        // gatherContinually will let WebRTC to listen to any network changes and send any new candidates to the other client
         config.continualGatheringPolicy = .gatherContinually
-        
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue])
         self.peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
-        
         super.init()
         self.createMediaSenders()
         self.configureAudioSession()
         self.peerConnection!.delegate = self
-        
     }
     
     // MARK: Signaling
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
         let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
         self.peerConnection?.offer(for: constrains) { (sdp, error) in
-            print(error)
+            print(error?.localizedDescription as Any)
             guard let sdp = sdp else {
                 return
             }
@@ -83,14 +76,12 @@ final class WebRTCClient: NSObject {
         let constrains = RTCMediaConstraints(mandatoryConstraints: self.mediaConstrains, optionalConstraints: nil)
         
         self.peerConnection?.answer(for: constrains) { (sdp, error) in
-            print("errooooooooo44111112121212121212------------------------------------------------------")
-            print(error?.localizedDescription)
-            print("sdp348753478567fhdfjdhgfhdsfgdhf------------------------------------------------------")
-            print(sdp)
+            print(error?.localizedDescription as Any)
             guard let sdp = sdp else {
                 return
             }
             self.peerConnection?.setLocalDescription(sdp, completionHandler: { (error) in
+                print(error?.localizedDescription as Any)
                 completion(sdp)
             })
         }
@@ -105,28 +96,21 @@ final class WebRTCClient: NSObject {
     }
     
     // MARK: Media
-    func startCaptureLocalVideo(renderer: RTCVideoRenderer) {
+    func startCaptureLocalVideo(renderer: RTCVideoRenderer, cameraPosition: AVCaptureDevice.Position) {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
             return
         }
-
         guard
-            let frontCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .front }),
-        
-            // choose highest res
+            let frontCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == cameraPosition }),
             let format = (RTCCameraVideoCapturer.supportedFormats(for: frontCamera).sorted { (f1, f2) -> Bool in
                 let width1 = CMVideoFormatDescriptionGetDimensions(f1.formatDescription).width
                 let width2 = CMVideoFormatDescriptionGetDimensions(f2.formatDescription).width
                 return width1 < width2
             }).last,
-        
-            // choose highest fps
             let fps = (format.videoSupportedFrameRateRanges.sorted { return $0.maxFrameRate < $1.maxFrameRate }.last) else {
             return
         }
-
         capturer.startCapture(with: frontCamera, format: format, fps: Int(fps.maxFrameRate))
-        
         self.localVideoTrack?.add(renderer)
     }
     
@@ -210,7 +194,6 @@ final class WebRTCClient: NSObject {
 }
 
 extension WebRTCClient: RTCPeerConnectionDelegate {
-    
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
@@ -267,13 +250,11 @@ extension WebRTCClient {
         self.setAudioEnabled(true)
     }
     
-    // Fallback to the default playing device: headphones/bluetooth/ear speaker
     func speakerOff() {
         self.audioQueue.async { [weak self] in
             guard let self = self else {
                 return
             }
-            
             self.rtcAudioSession.lockForConfiguration()
             do {
                 try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)

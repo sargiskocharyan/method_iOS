@@ -69,24 +69,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func defineStartController() {
         UserDataController().loadUserInfo()
         if SharedConfigs.shared.signedUser == nil {
-            DispatchQueue.main.async {
-                let rootVC = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                
-                let rootNC = UINavigationController(rootViewController: rootVC)
-                self.window?.rootViewController = rootNC
-            }
+            AuthRouter().assemblyModule()
         } else {
-            DispatchQueue.main.async {
-//                let webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-//                let signalClient = self.buildSignalingClient()
-                let rootVC = MainTabBarController.instantiate(fromAppStoryboard: .main)
-//                let callNC = rootVC.viewControllers![0] as! UINavigationController
-//                let callVC = callNC.viewControllers[0] as! CallViewController
-//                callVC.signalClient = signalClient
-//                callVC.webRTCClient = webRTCClient
-                let rootNC = UINavigationController(rootViewController: rootVC)
-                self.window?.rootViewController = rootNC
-            }
+            MainRouter().assemblyModule()
         }
         self.window?.makeKeyAndVisible()
     }

@@ -24,17 +24,18 @@ class CongratulationsViewController: UIViewController {
     let bottomView = BottomShapeView()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
-    var count = false
+    var authRouter: AuthRouter?
     
     //MARK: @IBAction
     
     @IBAction func doneButtonAction(_ sender: UIButton) {
-        DispatchQueue.main.async {
-            let vc = MainTabBarController.instantiate(fromAppStoryboard: .main) 
-            vc.modalPresentationStyle = .fullScreen
-            self.navigationController?.pushViewController(vc, animated: true)
-           
-        }
+//        DispatchQueue.main.async {
+//            let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
+//            vc.modalPresentationStyle = .fullScreen
+//            self.navigationController?.pushViewController(vc, animated: true)
+//
+//        }
+        MainRouter().assemblyModule()
     }
     //MARK: Lifecycle
     override func viewWillAppear(_ animated: Bool) {

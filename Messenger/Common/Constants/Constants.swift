@@ -30,6 +30,10 @@ struct AUTHUrls {
     static let DeleteAccount     = "/users/me"
     static let DeactivateAccount = "/deactivate/me"
     static let DeleteAvatar      = "/users/me/avatar"
+    static let RemoveContact     = "/removecontact"
+    static let OnlineUsers       = "/onlineusers"
+    static let HideData          = "/hidedata"
+    static let CheckUsername     = "/usernameExists"
 }
 
 struct AppLangKeys {

@@ -18,17 +18,19 @@ class RecentMessagesViewController: UIViewController {
     static let cellID = "messageCell"
     var chats: [Chat] = []
     var isLoaded: Bool = false
-    let viewModel = RecentMessagesViewModel()
+    var viewModel: RecentMessagesViewModel?
     let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
     let refreshControl = UIRefreshControl()
+    var timer: Timer?
+    var mainRouter: MainRouter?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        let nc = (self.tabBarController?.viewControllers?[4]) as? UINavigationController
+        let nc = (self.tabBarController?.viewControllers?[2]) as? UINavigationController
         let vc = nc?.viewControllers[0] as! ProfileViewController
         vc.delegate = self
         getChats()
@@ -42,16 +44,23 @@ class RecentMessagesViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        timer?.invalidate()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
+        navigationController?.navigationBar.isHidden = false
         
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if isLoadedMessages && chats.count == 0 {
-            setView("You have no message")
+            setView("you_have_no_message".localized())
         }
     }
     
@@ -60,9 +69,41 @@ class RecentMessagesViewController: UIViewController {
         getChats()
     }
     
+    @objc func getOnlineUsers() {
+        if isLoadedMessages {
+            let ids = self.chats.map { (chat) -> String in
+                return chat.id
+            }
+            self.viewModel!.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                        self.activityIndicator.stopAnimating()
+                    }
+                } else if onlineUsers != nil {
+                    for i in 0..<self.chats.count {
+                        if onlineUsers!.usersOnline.contains(self.chats[i].id) {
+                            self.chats[i].online = true
+                        } else {
+                            self.chats[i].online = false
+                        }
+                    }
+                    self.sort()
+                    DispatchQueue.main.async {
+                        self.removeView()
+                        self.activityIndicator.stopAnimating()
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
+    }
+    
     @objc func addButtonTapped() {
-        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+//        vc.fromProfile = false
+//        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showContactsViewControllerFromRecent()
     }
     
     func sort() {
@@ -88,7 +129,7 @@ class RecentMessagesViewController: UIViewController {
         DispatchQueue.main.async {
             self.removeView()
             let noResultView = UIView(frame: self.view.frame)
-            noResultView.tag = 1
+            noResultView.tag = 26
             noResultView.backgroundColor = .white
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
@@ -102,7 +143,7 @@ class RecentMessagesViewController: UIViewController {
     
     func removeView() {
         DispatchQueue.main.async {
-            let resultView = self.view.viewWithTag(1)
+            let resultView = self.view.viewWithTag(26)
             resultView?.removeFromSuperview()
         }
     }
@@ -132,22 +173,10 @@ class RecentMessagesViewController: UIViewController {
             }
         }
         
-        viewModel.getChats { (messages, error) in
+        viewModel!.getChats { (messages, error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             }
@@ -155,7 +184,7 @@ class RecentMessagesViewController: UIViewController {
                 if (messages != nil) {
                     self.isLoadedMessages = true
                     if messages?.count == 0 {
-                        self.setView("You have no messages")
+                        self.setView("you_have_no_messages".localized())
                         DispatchQueue.main.async {
                             self.activityIndicator.stopAnimating()
                         }
@@ -185,22 +214,10 @@ class RecentMessagesViewController: UIViewController {
         } else {
             id = (message.sender?.id! ?? "") as String
         }
-        self.viewModel.getuserById(id: id) { (user, error) in
+        self.viewModel!.getuserById(id: id) { (user, error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else if user != nil {
@@ -214,7 +231,7 @@ class RecentMessagesViewController: UIViewController {
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -222,7 +239,7 @@ class RecentMessagesViewController: UIViewController {
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
@@ -239,17 +256,13 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-        vc.name = chats[indexPath.row].name
-        vc.username = chats[indexPath.row].username
-        vc.avatar = chats[indexPath.row].recipientAvatarURL
-        vc.id = chats[indexPath.row].id
-        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showChatViewController(name: chats[indexPath.row].name, id: chats[indexPath.row].id, avatarURL: chats[indexPath.row].recipientAvatarURL, username: chats[indexPath.row].username)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellID, for: indexPath) as! RecentMessageTableViewCell
+        cell.isOnline = chats[indexPath.row].online
         cell.configure(chat: chats[indexPath.row])
         return cell
     }

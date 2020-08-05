@@ -78,4 +78,20 @@
 "female" = "Իգական";
 "add_to_contact" = "Ավելացնել կոնտակտներին";
 "email:" = "Էլ. Փոստ:";
-
+"calls" = "Զանգեր";
+"call" = "Զանգ";
+"you_have_no_calls" = "Դուք զանգեր չունեք";
+"this_user_is_not_in_your_contacts" = "Այս օգտվողը ձեր կոնտակտներում չէ";
+"your_session_expires_please_log_in_again" = "Ձեր նիստը լրանում է, խնդրում ենք կրկին մուտք գործեք";
+"calling" = "Զանգ...";
+"reconnecting" = "Վերամիացում";
+"you_have_no_messages" = "Դուք հաղորդագրություն չունեք";
+"dynamics_user" = "Dynamic օգտատեր";
+"video" = "տեսազանգ";
+"audio" = "աուդիոզանգ";
+"message" = "հաղորդագրություն";
+"album" = "Ալբոմ";
+"camera" = "Տեսախցիկ";
+"choose_one_of_this_app_to_upload_photo" = "Լուսանկարը վերբեռնելու համար ընտրեք այս ծրագրերից մեկը";
+"today" = "Այսօր";
+"yesterday" = "Երեկ";

@@ -9,6 +9,7 @@
 import UIKit
 import DropDown
 import AVFoundation
+import CoreData
 
 protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
@@ -46,16 +47,17 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK: Properties
     var dropDown = DropDown()
-    let viewModel = ProfileViewModel()
+    var viewModel: ProfileViewModel?
     let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
     var imagePicker = UIImagePickerController()
+    static let nameOfDropdownCell = "CustomCell"
     weak var delegate: ProfileViewControllerDelegate?
+    var mainRouter: MainRouter?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(SharedConfigs.shared.signedUser)
         imagePicker.delegate = self
         setFlagImage()
         setBorder(view: contactView)
@@ -75,12 +77,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
+        tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
     }
     
     //MARK: Helper methods
     @IBAction func editButton(_ sender: Any) {
-        let vc = EditInformationViewController.instantiate(fromAppStoryboard: .main)
-        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showEditViewController()
     }
     
     func setImage() {
@@ -182,6 +185,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         userImageView.addGestureRecognizer(tapImage)
     }
     
+    
+    
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
         if response {
@@ -190,7 +195,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             print("Permission don't allowed")
              }
          }
-        let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo", preferredStyle: .alert)
+        let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 self.imagePicker.delegate = self
@@ -259,22 +264,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func deleteAvatar() {
-        viewModel.deleteAvatar { (error) in
+        viewModel!.deleteAvatar { (error) in
             if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
                 return
             } else {
@@ -301,12 +294,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         guard let image = info[.originalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
-        viewModel.uploadImage(image: image) { (error, avatarURL) in
+        viewModel!.uploadImage(image: image) { (error, avatarURL) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else {
@@ -321,8 +312,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleContactsTap(_ sender: UITapGestureRecognizer? = nil) {
-        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
+//        vc.fromProfile = true
+//        self.navigationController?.pushViewController(vc, animated: true)
+        mainRouter?.showContactsViewControllerFromProfile()
     }
     
     @objc func handleLanguageTab(_ sender: UITapGestureRecognizer? = nil) {
@@ -330,35 +323,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
-        viewModel.logout { (error) in
-            if (error != nil) {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
+        viewModel!.logout { (error) in
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                }
-                return
-            }
-            else {
-                DispatchQueue.main.async {
+                    self.deleteAllRecords()
                     UserDataController().logOutUser()
-                    let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                    let nav = UINavigationController(rootViewController: vc)
-                    let window: UIWindow? = UIApplication.shared.windows[0]
-                    window?.rootViewController = nav
-                    window?.makeKeyAndVisible()
+                    AuthRouter().assemblyModule()
                 }
-            }
             self.socketTaskManager.disconnect()
         }
     }
@@ -395,7 +365,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             dropDown.backgroundColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
         }
-        dropDown.cellNib = UINib(nibName: "CustomCell", bundle: nil)
+        dropDown.cellNib = UINib(nibName: Self.nameOfDropdownCell, bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
             guard let cell = cell as? CustomCell else { return }
             if SharedConfigs.shared.mode == "dark" {
@@ -406,6 +376,21 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             cell.countryImageView.image = UIImage(named: "\(item)")
         }
         dropDown.show()
+    }
+    
+    func deleteAllRecords() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+        } catch {
+            print ("There was an error")
+        }
     }
     
     func checkInformation() {

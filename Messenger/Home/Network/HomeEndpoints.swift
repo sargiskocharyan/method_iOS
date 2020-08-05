@@ -21,8 +21,10 @@ public enum HomeApi {
     case deleteAccount
     case deactivateAccount
     case deleteAvatar
-    case editInformation(name: String, lastname: String, username: String, phoneNumber: String, info: String, address: String, gender: String, birthDate: String)
-    
+    case editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, university: String?)
+    case removeContact(id: String)
+    case onlineUsers(arrayOfId: [String])
+    case hideData(isHideData: Bool)
 }
 
 extension HomeApi: EndPointType {
@@ -56,8 +58,14 @@ extension HomeApi: EndPointType {
             return AUTHUrls.DeactivateAccount
         case .deleteAvatar:
             return AUTHUrls.DeleteAvatar
-        case .editInformation(let name, let lastname, let username, let phoneNumber, let info, let address, let gender, let birthDate):
+        case .editInformation(_, _, _, _, _, _, _, _, _):
             return AUTHUrls.UpdateUser
+        case .removeContact(_):
+            return AUTHUrls.RemoveContact
+        case .onlineUsers(_):
+            return AUTHUrls.OnlineUsers
+        case .hideData(_):
+            return AUTHUrls.HideData
         }
     }
     
@@ -86,10 +94,15 @@ extension HomeApi: EndPointType {
             return .post
         case .deleteAvatar:
             return .delete
-        case .editInformation(_, _, _, _, _, _, _, _):
+        case .editInformation(_, _, _, _, _, _, _, _, _):
+            return .post
+        case .removeContact(_):
+            return .post
+        case .onlineUsers(_):
+            return .post
+        case .hideData(_):
             return .post
         }
-        
     }
     
     var task: HTTPTask {
@@ -136,9 +149,31 @@ extension HomeApi: EndPointType {
             let parameters:Parameters = [:]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, address: let address, gender: let gender, birthDate: let birthDate):
-            let parameters:Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "address": address, "gender": gender, "birthday": birthDate]
+        case .editInformation(name: let name, lastname: let lastname, username: let username, phoneNumber: let phoneNumber, info: let info, gender: let gender, birthDate: let birthDate, let email, let university):
+            let allParameters: Parameters = ["name": name, "lastname": lastname, "username": username, "phoneNumber": phoneNumber, "info": info, "gender": gender, "email": email, "university": university, "birthday": birthDate]
+            var parameters:Parameters = [:]
+            for (key, value) in allParameters {
+                if (value as? String) != nil {
+                    if value as? String == "" {
+                        parameters[key] = nil as Any?
+                    } else {
+                        parameters[key] = value
+                    }
+                }
+            }
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .removeContact(id: let id):
+            let parameters:Parameters = ["userId": id ]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .onlineUsers(arrayOfId: let arrayOfId):
+            let parameters:Parameters = ["usersArray": arrayOfId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .hideData(isHideData: let isHideData):
+            let parameters:Parameters = ["hide": isHideData]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

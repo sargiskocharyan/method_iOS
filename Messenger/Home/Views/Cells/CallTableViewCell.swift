@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol CallTableViewDelegate: class {
-    func callSelected(id: String)
+    func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String)
 }
 
 
@@ -21,15 +21,20 @@ class CallTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var infoButton: UIButton!
+    @IBOutlet weak var callDurationLabel: UILabel!
     weak var delegate: CallTableViewDelegate?
     var calleId: String?
+    var call: FetchedCall?
+    var contact: User?
+ 
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
     }
     
     @IBAction func infoButtonAction(_ sender: UIButton) {
-        delegate?.callSelected(id: calleId!)
+        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: call?.time, callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
     }
     override func awakeFromNib() {
            super.awakeFromNib()
@@ -46,25 +51,43 @@ class CallTableViewCell: UITableViewCell {
         let time = Date()
         let currentDay = calendar.component(.day, from: time as Date)
         if currentDay != day {
-            return ("\(day).0\(month)")
+             return "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")"
         }
         let hour = calendar.component(.hour, from: parsedDate)
         let minutes = calendar.component(.minute, from: parsedDate)
-        return ("\(hour):\(minutes)")
+        return "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
     }
     
-    func configureCell(call: NSManagedObject) {
-        self.nameLabel.text = call.value(forKey: "name") as! String
-        ImageCache.shared.getImage(url: call.value(forKey: "image") as! String, id: call.value(forKey: "id") as! String) { (image) in
+ func secondsToHoursMinutesSeconds(seconds : Int) -> String {
+    if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+        return "\((seconds % 3600) % 60) sec."
+    } else if seconds / 3600 == 0 {
+        return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
+    return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
+    
+    func configureCell(contact: User, call: FetchedCall) {
+        self.call = call
+        self.contact = contact
+        if contact.name != nil {
+        self.nameLabel.text = contact.name
+        } else if contact.username != nil {
+            self.nameLabel.text = contact.username
+        } else {
+            self.nameLabel.text = "Dynamic's user".localized()
+        }
+        callDurationLabel.text = secondsToHoursMinutesSeconds(seconds: call.callDuration ?? 0)
+        ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
         }
-         self.timeLabel.text = dateToString(date: call.value(forKey: "time") as! Date)
-        if call.value(forKey: "isHandleCall") as? Bool != true {
-            self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.up.right")
+         self.timeLabel.text = dateToString(date: call.time)
+        if call.isHandleCall != true {
+            self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
         } else {
-            self.callIcon.image = UIImage.init(systemName: "phone.fill.arrow.down.left")
+            self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
         }
     }
 }

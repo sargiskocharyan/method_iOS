@@ -10,7 +10,12 @@ import Foundation
 
 struct LoginResponse: Codable {
     var token: String
+    var tokenExpire: String
     var user: UserModel
+}
+
+struct CheckUsername: Codable {
+    let usernameExists: Bool
 }
 
 struct MailExistsResponse: Codable {

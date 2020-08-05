@@ -10,9 +10,15 @@ import UIKit
 
 protocol ContactProfileDelegate: class {
     func addNewContact(contact: User)
+    func removeContact()
+}
+
+protocol ContactProfileViewControllerDelegate: class {
+    func handleVideoCallClick()
 }
 class ContactProfileViewController: UIViewController {
     
+    @IBOutlet weak var videoCallButton: UIButton!
     @IBOutlet weak var addToContactButton: UIButton!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var infoLabel: UILabel!
@@ -36,58 +42,75 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var emailTextLabel: UILabel!
     @IBOutlet weak var sendMessageButton: UIButton!
+    
     var contact: User?
     var id: String?
-    let viewModel = ContactsViewModel()
-    let recentMessagesViewModel = RecentMessagesViewModel()
+    var viewModel: ContactsViewModel?
     weak var delegate: ContactProfileDelegate?
+    weak var callDelegate: ContactProfileViewControllerDelegate?
     var onContactPage: Bool?
+    var tabBar: MainTabBarController?
+    var nc: UINavigationController?
+    var callListViewController: CallListViewController?
+    var fromChat: Bool?
+    var mainRouter: MainRouter?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = false
+        if onContactPage! {
+            addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+            addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
+        } else {
+            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+            addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
+        }
+        if tabBar!.onCall || !onContactPage! {
+            videoCallButton.isEnabled = false
+        } else {
+            videoCallButton.isEnabled = true
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        userImageView.contentMode = . scaleAspectFill
+        tabBar = tabBarController as? MainTabBarController
+        nc = tabBar?.viewControllers?[0] as? UINavigationController
+        callListViewController = nc?.viewControllers[0] as? CallListViewController
+        userImageView.contentMode = .scaleAspectFill
         userImageView.layer.cornerRadius = 40
         userImageView.clipsToBounds = true
         infoView.layer.borderColor = UIColor.lightGray.cgColor
         infoView.layer.borderWidth = 1.0
         infoView.layer.masksToBounds = true
         getUserInformation()
-        sendMessageButton.setImage(UIImage(named: "sendMessage"), for: .normal)
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
-        addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
-        sendMessageButton.backgroundColor = .clear
-        if onContactPage! {
-            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.checkmark"), for: .normal)
-        }
         
+        sendMessageButton.backgroundColor = .clear
+       
     }
     
     @objc func startMessage() {
-        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-        vc.id = contact?._id
-        vc.name = contact?.name
-        vc.username = contact?.username
-        vc.avatar = contact?.avatarURL
-        navigationController?.pushViewController(vc, animated: true)
+        if fromChat! {
+            navigationController?.popViewController(animated: false)
+        } else {
+//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+//            vc.id = contact?._id
+//            vc.name = contact?.name
+//            vc.username = contact?.username
+//            vc.avatar = contact?.avatarURL
+//            navigationController?.pushViewController(vc, animated: true)
+            mainRouter?.showChatViewControllerFromContactProfile(name: contact?.name, username:  contact?.username, avatarURL: contact?.avatarURL, id: (contact?._id)!)
+            
+        }
     }
     
     func getUserInformation() {
-        recentMessagesViewModel.getuserById(id: id!) { (user, error) in
+        callListViewController?.viewModel!.getuserById(id: id!) { (user, error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if user != nil {
                 self.contact = user
@@ -98,38 +121,93 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-    @IBAction func sendMessageButtonAction(_ sender: Any) {
-        
+    @objc func removeFromContacts() {
+        viewModel?.removeContact(id: id!, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                self.onContactPage = false
+                DispatchQueue.main.async {
+                    self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+                    self.addToContactButton.addTarget(self, action: #selector(self.addToContact), for: .touchUpInside)
+                    self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
+                        self.delegate?.removeContact()
+                    })
+                }
+            }
+        })
+    }
+    
+    @IBAction func startVideoCall(_ sender: Any) {
+        let tabBar = tabBarController as! MainTabBarController
+        if !tabBar.onCall {
+            tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!)
+            
+            callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+        } else {
+            tabBar.handleClickOnSamePerson()
+        }
+    }
+    
+    func sort() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        for i in 0..<callListViewController!.viewModel!.calls.count {
+            for j in i..<callListViewController!.viewModel!.calls.count {
+                let firstDate = callListViewController!.viewModel!.calls[i].time
+                let secondDate = callListViewController?.viewModel!.calls[j].time
+                if firstDate.compare(secondDate!).rawValue == -1 {
+                    let temp = callListViewController!.viewModel!.calls[i]
+                    callListViewController!.viewModel!.calls[i] = callListViewController!.viewModel!.calls[j]
+                    callListViewController!.viewModel!.calls[j] = temp
+                }
+            }
+        }
     }
     
     @objc func addToContact() {
-        viewModel.addContact(id: contact!._id) { (error) in
+        viewModel!.addContact(id: contact!._id!) { (error) in
             if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                }
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
                 
-            }
-            else {
-                self.delegate?.addNewContact(contact: self.contact!)
+            } else {
                 DispatchQueue.main.async {
-                    self.addToContactButton.setTitleColor(UIColor.lightGray.withAlphaComponent(0.7), for: .normal)
-                    self.addToContactButton.isEnabled = false
+                    self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
+                        if error != nil {
+                            print(error as Any)
+                        } else {
+                             self.delegate?.addNewContact(contact: self.contact!)
+                            self.onContactPage = true
+                            self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+                            self.addToContactButton.addTarget(self, action: #selector(self.removeFromContacts), for: .touchUpInside)
+                        }
+                    })
                 }
             }
-            
+        }
+    }
+    
+    func stringToDate(date:String?) -> String? {
+        if date == nil {
+            return nil
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date!)
+        let calendar = Calendar.current
+        if parsedDate == nil {
+            return nil
+        } else {
+            let day = calendar.component(.day, from: parsedDate!)
+            let month = calendar.component(.month, from: parsedDate!)
+            let year = calendar.component(.year, from: parsedDate!)
+            let parsedDay = day < 10 ? "0\(day)" : "\(day)"
+            let parsedMonth = month < 10 ? "0\(month)" : "\(month)"
+            return "\(parsedMonth)/\(parsedDay)/\(year)"
         }
     }
     
@@ -184,7 +262,7 @@ class ContactProfileViewController: UIViewController {
             birthDateLabel.text = "birth_date".localized()
             birthDateLabel.textColor = .lightGray
         } else {
-            birthDateLabel.text = contact?.birthday
+            birthDateLabel.text = stringToDate(date: contact?.birthday) 
             if SharedConfigs.shared.mode == "dark" {
                 birthDateLabel.textColor = .white
             } else {
@@ -238,7 +316,7 @@ class ContactProfileViewController: UIViewController {
         emailTextLabel.text = "email:".localized()
         infoTextLabel.text = "info".localized()
         if contact?.avatarURL != nil {
-            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id) { (image) in
+            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!) { (image) in
                 DispatchQueue.main.async {
                     self.userImageView.image = image
                 }
@@ -246,9 +324,6 @@ class ContactProfileViewController: UIViewController {
         } else {
             userImageView.image = UIImage(named: "noPhoto")
         }
-        
-        
-        
     }
     
 }

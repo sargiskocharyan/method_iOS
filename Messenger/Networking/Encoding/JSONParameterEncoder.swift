@@ -9,7 +9,7 @@ import Foundation
 import CryptoSwift
 
 public struct JSONParameterEncoder: ParameterEncoder {
-    
+ 
     public func encode(urlRequest: inout URLRequest, with parameters: Parameters, encrypted: Bool) throws {
         do {
             let jsonAsData = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)

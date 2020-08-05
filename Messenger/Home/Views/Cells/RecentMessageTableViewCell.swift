@@ -14,9 +14,18 @@ class RecentMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var lastMessageLabel: UILabel!
 
+    var isOnline: Bool?
+    
+    override public func prepareForReuse() {
+        super.prepareForReuse()
+        self.removeOnlineView()
+        userImageView.image = nil
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
+        
     }
     
     func changeShapeOfImageView() {
@@ -24,7 +33,33 @@ class RecentMessageTableViewCell: UITableViewCell {
         userImageView.layer.cornerRadius = 30
     }
     
+    func removeOnlineView() {
+        self.viewWithTag(50)?.removeFromSuperview()
+    }
+    
+    func setOnlineView() {
+        let onlineView = UIView()
+        self.addSubview(onlineView)
+        userImageView.backgroundColor = .clear
+        onlineView.backgroundColor = .green
+        onlineView.contentMode = . scaleAspectFill
+        onlineView.layer.cornerRadius = 9
+        onlineView.clipsToBounds = true
+        onlineView.tag = 50
+        onlineView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
+        onlineView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
+        onlineView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        onlineView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        onlineView.isUserInteractionEnabled = true
+        onlineView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 18, height: 18)
+    }
+    
     func configure(chat: Chat) {
+        if isOnline != nil && isOnline == true {
+            setOnlineView()
+        } else {
+            removeOnlineView()
+        }
         userImageView.image = UIImage(named: "noPhoto")
         ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "", id: chat.id) { (image) in
             DispatchQueue.main.async {
@@ -44,7 +79,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         if chat.id == chat.message?.sender?.id {
             lastMessageLabel.text = chat.message?.text
         } else {
-            lastMessageLabel.text = "You: " + (chat.message?.text)!
+            lastMessageLabel.text = "You: " + (chat.message?.text ?? "dfghfkjg")
         }
     }
     
@@ -58,16 +93,11 @@ class RecentMessageTableViewCell: UITableViewCell {
         let time = Date()
         let currentDay = calendar.component(.day, from: time as Date)
         if currentDay != day {
-            return ("\(day).0\(month)")
+            return "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")"
         }
         let hour = calendar.component(.hour, from: parsedDate!)
         let minutes = calendar.component(.minute, from: parsedDate!)
-        return ("\(hour):\(minutes)")
+        return "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
         
-    }
-    
-    override public func prepareForReuse() {
-        super.prepareForReuse()
-        userImageView.image = nil
     }
 }

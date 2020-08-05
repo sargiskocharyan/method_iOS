@@ -8,6 +8,12 @@
 
 import UIKit
 
+enum ContactsMode {
+    case fromRecentMessages
+    case fromCallList
+    case fromProfile
+}
+
 class ContactsViewController: UIViewController {
     
     //MARK: IBOutlets
@@ -15,23 +21,25 @@ class ContactsViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
-    var contacts: [User] = []
     var findedUsers: [User] = []
     var contactsMiniInformation: [User] = []
-    let viewModel = ContactsViewModel()
+    var viewModel: ContactsViewModel?
     var onContactPage = true
     var isLoaded = false
     var isLoadedFoundUsers = false
     let refreshControl = UIRefreshControl()
-    
+    var tabbar: MainTabBarController?
+    var contactsMode: ContactsMode?
+    static let cellIdentifier = "cell"
+    var mainRouter: MainRouter?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
+        tabbar = tabBarController as? MainTabBarController
         tableView.dataSource = self
         setNavigationItems()
-        getContacts()
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
         } else {
@@ -48,11 +56,15 @@ class ContactsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
+         getContacts()
+        contactsMiniInformation = viewModel!.contacts
+        tableView.reloadData()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        if isLoaded && contacts.count == 0 && onContactPage {
+        if isLoaded && viewModel!.contacts.count == 0 && onContactPage {
             removeView()
             setView("no_contacts".localized())
         }
@@ -68,16 +80,16 @@ class ContactsViewController: UIViewController {
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
             self.navigationItem.title = "contacts".localized()
         } else {
-            self.navigationItem.rightBarButtonItem = .init(title: "reset", style: .plain, target: self, action: #selector(backToContacts))
-            self.navigationItem.title = "found_users"
+            self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(backToContacts))
+            self.navigationItem.title = "found_users".localized()
         }
     }
     
     @objc func backToContacts() {
-        contactsMiniInformation = contacts
+        contactsMiniInformation = viewModel!.contacts
         DispatchQueue.main.async {
             self.removeView()
-            if self.contacts.count == 0 {
+            if self.viewModel!.contacts.count == 0 {
                 self.setView("no_contacts".localized())
             }
             self.onContactPage = true
@@ -90,22 +102,10 @@ class ContactsViewController: UIViewController {
     @objc func handleAlertChange(sender: Any?) {
         let textField = sender as! UITextField
         if textField.text != "" {
-            self.viewModel.findUsers(term: (textField.text)!) { (responseObject, error) in
+            self.viewModel!.findUsers(term: (textField.text)!) { (responseObject, error) in
                 if error != nil {
-                    if error == NetworkResponse.authenticationError {
-                        UserDataController().logOutUser()
-                        DispatchQueue.main.async {
-                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                            let nav = UINavigationController(rootViewController: vc)
-                            let window: UIWindow? = UIApplication.shared.windows[0]
-                            window?.rootViewController = nav
-                            window?.makeKeyAndVisible()
-                        }
-                    }
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized() , message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else if responseObject != nil {
                     self.isLoadedFoundUsers = true
@@ -123,8 +123,8 @@ class ContactsViewController: UIViewController {
                     self.findedUsers = []
                     for i in 0..<responseObject!.users.count {
                         var a = false
-                        for j in 0..<self.contacts.count {
-                            if responseObject!.users[i]._id == self.contacts[j]._id {
+                        for j in 0..<self.viewModel!.contacts.count {
+                            if responseObject!.users[i]._id == self.viewModel!.contacts[j]._id {
                                 a = true
                                 break
                             }
@@ -134,7 +134,7 @@ class ContactsViewController: UIViewController {
                         }
                     }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id, username: user.username, avatarURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
+                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
                     })
                     DispatchQueue.main.async {
                         self.removeView()
@@ -171,7 +171,7 @@ class ContactsViewController: UIViewController {
     func setView(_ str: String) {
         DispatchQueue.main.async {
             let noResultView = UIView(frame: self.view.frame)
-            noResultView.tag = 1
+            noResultView.tag = 25
             noResultView.backgroundColor = .white
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
@@ -185,7 +185,7 @@ class ContactsViewController: UIViewController {
     
     func removeView() {
         DispatchQueue.main.async {
-            let resultView = self.view.viewWithTag(1)
+            let resultView = self.view.viewWithTag(25)
             resultView?.removeFromSuperview()
         }
     }
@@ -194,49 +194,32 @@ class ContactsViewController: UIViewController {
         if !isLoaded {
             activityIndicator.startAnimating()
         }
-        viewModel.getContacts { (userContacts, error) in
-            if error != nil {
-                if error == NetworkResponse.authenticationError {
-                    UserDataController().logOutUser()
-                    DispatchQueue.main.async {
-                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-                        let nav = UINavigationController(rootViewController: vc)
-                        let window: UIWindow? = UIApplication.shared.windows[0]
-                        window?.rootViewController = nav
-                        window?.makeKeyAndVisible()
-                    }
-                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
-                    }
-                }
-            } else if userContacts != nil {
-                self.isLoaded = true
-                if userContacts?.count == 0 {
-                    self.setView("no_contacts".localized())
-                    return
-                }
-                self.contacts = userContacts!
-                self.contactsMiniInformation = userContacts!
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+            self.isLoaded = true
+            if viewModel!.contacts.count == 0 {
+                self.setView("no_contacts".localized())
+                return
             }
+            self.contactsMiniInformation = viewModel!.contacts
             DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-                self.activityIndicator.stopAnimating()
+                self.tableView.reloadData()
             }
+        DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
+            self.activityIndicator.stopAnimating()
         }
-    }    
+    }
 }
 
 //MARK: Extension
 extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, ContactProfileDelegate {
+    func removeContact() {
+        contactsMiniInformation = viewModel!.contacts
+        tableView.reloadData()
+    }
+
     func addNewContact(contact: User) {
-        self.contacts.append(contact)
         self.onContactPage = true
-        self.contactsMiniInformation = self.contacts
+        self.contactsMiniInformation = self.viewModel!.contacts
         DispatchQueue.main.async {
             self.tableView.reloadData()
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
@@ -244,54 +227,38 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
             self.activityIndicator.stopAnimating()
         }
     }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-        vc.delegate = self
-        vc.id = contactsMiniInformation[indexPath.row]._id
-        vc.contact = contactsMiniInformation[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
-        vc.onContactPage = onContactPage
-//            self.navigationItem.rightBarButtonItem?.isEnabled = true
-//            DispatchQueue.main.async {
-//                self.activityIndicator.startAnimating()
-//            }
-//            viewModel.addContact(id: contactsMiniInformation[indexPath.row]._id) { (error) in
-//                if error != nil {
-//                    if error == NetworkResponse.authenticationError {
-//                        UserDataController().logOutUser()
-//                        DispatchQueue.main.async {
-//                            let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .main)
-//                            let nav = UINavigationController(rootViewController: vc)
-//                            let window: UIWindow? = UIApplication.shared.windows[0]
-//                            window?.rootViewController = nav
-//                            window?.makeKeyAndVisible()
-//                        }
-//                    }
-//                    DispatchQueue.main.async {
-//                        self.activityIndicator.stopAnimating()
-//                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-//                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-//                        self.present(alert, animated: true)
-//                    }
-//
-//                }
-//                else {
-//                    self.contacts.append(User(name: self.findedUsers[indexPath.row].name, lastname:
-//                        self.findedUsers[indexPath.row].lastname, university: nil, _id: self.findedUsers[indexPath.row]._id, username: self.findedUsers[indexPath.row].username, avatarURL: self.findedUsers[indexPath.row].avatarURL, email: nil))
-//                    self.onContactPage = true
-//                    self.contactsMiniInformation = self.contacts
-//                    DispatchQueue.main.async {
-//                        self.tableView.reloadData()
-//                        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
-//                        self.navigationItem.title = "contacts".localized()
-//                        self.activityIndicator.stopAnimating()
-//                    }
-//                }
-//            }
-//        } else {
-           
-//
-//        }
+        if self.contactsMode == .fromProfile {
+//            let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+//            vc.delegate = self
+//            vc.id = contactsMiniInformation[indexPath.row]._id
+//            vc.contact = contactsMiniInformation[indexPath.row]
+//            vc.onContactPage = onContactPage
+//            vc.fromChat = false
+//            self.navigationController?.pushViewController(vc, animated: true)
+            mainRouter?.showContactProfileViewControllerFromContacts(id: contactsMiniInformation[indexPath.row]._id!, contact: contactsMiniInformation[indexPath.row], onContactPage: onContactPage)
+        } else if self.contactsMode == .fromCallList {
+            let tabBar = tabBarController as! MainTabBarController
+            if !tabBar.onCall {
+                tabBar.handleCallClick(id: contactsMiniInformation[indexPath.row]._id!, name: contactsMiniInformation[indexPath.row].name ?? contactsMiniInformation[indexPath.row].username!)
+                let nc = tabBar.viewControllers![0] as! UINavigationController
+                let callListViewController = nc.viewControllers[0] as! CallListViewController
+                callListViewController.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: contactsMiniInformation[indexPath.row]._id!)
+            } else {
+                tabBar.handleClickOnSamePerson()
+            }
+        } else {
+//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+//            vc.name = contactsMiniInformation[indexPath.row].name
+//            vc.username = contactsMiniInformation[indexPath.row].username
+//            vc.avatar = contactsMiniInformation[indexPath.row].avatarURL
+//            vc.id = contactsMiniInformation[indexPath.row]._id
+//            self.navigationController?.pushViewController(vc, animated: false)
+            mainRouter?.showChatViewControllerFromContacts(name: contactsMiniInformation[indexPath.row].name, username: contactsMiniInformation[indexPath.row].username, avatarURL: contactsMiniInformation[indexPath.row].avatarURL, id: contactsMiniInformation[indexPath.row]._id!)
+        }
+        
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -300,7 +267,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier, for: indexPath) as! ContactTableViewCell
         cell.configure(contact: contactsMiniInformation[indexPath.row])
         return cell
     }

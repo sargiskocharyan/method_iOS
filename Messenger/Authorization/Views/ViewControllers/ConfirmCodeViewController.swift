@@ -23,7 +23,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     var constant: CGFloat = 0
     var email: String?
     var code: String?
-    var viewModel = ConfirmCodeViewModel()
+    var viewModel: ConfirmCodeViewModel?
     var headerShapeView = HeaderShapeView()
     var isExists: Bool?
     let gradientColor = CAGradientLayer()
@@ -32,6 +32,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     let bottomView = BottomShapeView()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
+    var authRouter: AuthRouter?
     let buttonAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
@@ -42,12 +43,10 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        viewModel.resendCode(email: email!) { (code, error) in
+        viewModel!.resendCode(email: email!) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else if code != nil {
@@ -130,60 +129,60 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
     
     //MARK: Helper methods
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        return parsedDate
+    }
+    
     func confirmCode() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
         if isExists! {
-            viewModel.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
+            viewModel!.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
-                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL)
+                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email, university: loginResponse!.user.university, token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire))
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
                     DispatchQueue.main.async {
-                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
-                        self.view.window?.rootViewController = vc
+//                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
+//                        self.view.window?.rootViewController = vc
+                        MainRouter().assemblyModule()
                         self.activityIndicator.stopAnimating()
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }
             }
         } else {
-            viewModel.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
+            viewModel!.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
                 if error != nil {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: error?.rawValue, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                         self.activityIndicator.stopAnimating()
                     }
                 } else if token != nil {
                     SharedConfigs.shared.signedUser = loginResponse?.user
+                    SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
                     DispatchQueue.main.async {
-                        let vc = RegisterViewController.instantiate(fromAppStoryboard: .main)
-                        self.navigationController?.pushViewController(vc, animated: true)
+                        self.authRouter?.showRegisterViewController()
                         self.activityIndicator.stopAnimating()
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "error_message".localized(), message: "incorrect_code".localized(), preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }
