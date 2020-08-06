@@ -53,7 +53,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var info: String?
     var checkInfo: Bool?
     var mainRouter: MainRouter?
-    
+    var isChangingUsername = false
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -159,7 +159,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkGender(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.gender?.lowercased() != genderView.textField.text?.lowercased() {
-            if signedUser?.gender == nil && genderView.textField.text == "" {
+            if genderView.textField.text == "" {
                 gender = nil
                 return nil
             } else {
@@ -258,18 +258,56 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         return nil
     }
     
-    func checkUsername(_ signedUser: UserModel?) -> Bool? {
-        if signedUser?.username != usernameView.textField.text {
+    func checkUsername(_ signedUser: UserModel?, completion: @escaping (Bool?)->()) {
+        if signedUser?.username?.lowercased() != usernameView.textField.text?.lowercased() {
             if (usernameView.textField.text?.isValidUsername())! {
-                username = usernameView.textField.text!
-                return true
+                if (usernameView.textField.text == "") {
+                    self.usernameView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                    self.usernameView.errorLabel.textColor = .red
+                    username = nil
+                    completion(false)
+                    return
+                } else {
+                    if isChangingUsername {
+                        self.usernameView.errorLabel.text = ""
+                        self.usernameView.borderColor = .red
+                        viewModel?.checkUsername(username: usernameView.textField.text!, completion: { (responseObject, error) in
+                            if responseObject != nil && responseObject?.usernameExists == false {
+                                DispatchQueue.main.async {
+                                    self.username = self.usernameView.textField.text!
+                                    self.usernameView.errorLabel.text = "correct_username".localized()
+                                    self.usernameView.errorLabel.textColor = .blue
+                                    completion(true)
+                                }
+                            } else if responseObject != nil && responseObject?.usernameExists == true {
+                                DispatchQueue.main.async {
+                                    self.usernameView.errorLabel.text = "this_username_is_taken".localized()
+                                    self.username = nil
+                                    self.usernameView.errorLabel.textColor = .red
+                                    completion(false)
+                                }
+                            }
+                        })
+                    }
+                }
             } else {
+                self.usernameView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                self.usernameView.errorLabel.textColor = .red
                 username = nil
-                return false
+                completion(false)
+                return
             }
+        } else {
+            completion(nil)
+            return
         }
-        username = nil
-        return nil
+        if username == nil {
+            completion(false)
+            return
+        } else {
+            completion(true)
+            return
+        }
     }
     
     func checkPhoneNumber(_ signedUser: UserModel?) -> Bool? {
@@ -317,36 +355,41 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     func checkFields() {
-        
-        
-        if (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false && checkInfo != false {
-            if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil || info != nil {
-                enableUpdateInfoButton()
+        checkUsername(signedUser) { (isAllWell) in
+            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkEmail(self.signedUser) != false  && self.checkLastname(self.signedUser) != false && self.checkPhoneNumber(self.signedUser) != false && self.checkInfo != false {
+                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.phoneNumber != nil || self.info != nil || self.email != nil {
+                    self.enableUpdateInfoButton()
+                } else {
+                    self.disableUpdateInfoButton()
+                }
             } else {
-                disableUpdateInfoButton()
+                self.disableUpdateInfoButton()
             }
-        } else {
-            disableUpdateInfoButton()
         }
     }
     
     @objc func nameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func usernameTextFieldAction() {
+        isChangingUsername = true
         checkFields()
     }
     
     @objc func lastnameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func birthDateTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func emailTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
@@ -394,11 +437,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 } else {
                     DispatchQueue.main.async {
                         UserDataController().logOutUser()
-//                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .auth)
-//                        let nav = UINavigationController(rootViewController: vc)
-//                        let window: UIWindow? = UIApplication.shared.windows[0]
-//                        window?.rootViewController = nav
-//                        window?.makeKeyAndVisible()
                         AuthRouter().assemblyModule()
                     }
                 }
@@ -600,11 +638,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             self.genderView.textField.text = item
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
-            if item.lowercased() != SharedConfigs.shared.signedUser?.gender?.lowercased() {
-                self.updateInformationButton.isEnabled = true
-                self.updateInformationButton.backgroundColor = .clear
-                self.updateInformationButton.titleLabel?.textColor = .white
-            }
+            self.isChangingUsername = false
+            self.checkFields()
         }
         genderDropDown.width = genderView.textField.frame.width
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderView.textField.frame.height))
@@ -653,17 +688,6 @@ extension EditInformationViewController: CustomTextFieldDelegate {
                 lastnameView.border.backgroundColor = .blue
                 lastnameView.errorLabel.textColor = .blue
                 lastnameView.errorLabel.text = lastnameView.successMessage
-            }
-        }
-        if placeholder == "username".localized() {
-            if !usernameView.textField.text!.isValidUsername() {
-                usernameView.errorLabel.text = usernameView.errorMessage
-                usernameView.errorLabel.textColor = .red
-                usernameView.border.backgroundColor = .red
-            } else {
-                usernameView.border.backgroundColor = .blue
-                usernameView.errorLabel.textColor = .blue
-                usernameView.errorLabel.text = usernameView.successMessage
             }
         }
         if placeholder == "number".localized() {

@@ -79,6 +79,12 @@ class SocketTaskManager {
             }
         }
     
+    func handleCallSessionEnded(completionHandler: @escaping (_ roomName: String) -> Void) {
+        socket.on("callSessionEnded") { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        }
+    }
+    
     func handleOffer(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
         socket.on("offer") { (dataArray, socketAck) in
             let dic = dataArray[1] as! Dictionary<String, String>
@@ -99,14 +105,16 @@ class SocketTaskManager {
         }
     }
     
-    private func readMessage(completionHandler: @escaping (_ message: Message) -> Void) {
-        socket.on("receive") { (dataArray, socketAck) in
-            let data = dataArray[0] as! NSDictionary
-            let sender = data["sender"] as! NSDictionary
-            let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
-            completionHandler(message)
-        }
-    }
+//    private func readMessage(completionHandler: @escaping (_ message: Message) -> Void) {
+//        socket.on("receive") { (dataArray, socketAck) in
+//            let data = dataArray[0] as! NSDictionary
+//            if let call = data["call"] as? NSDictionary {
+//                let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
+//                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+//            completionHandler(message)
+//            }
+//        }
+//    }
     
     func offer(roomName: String, payload: Dictionary<String, String>) {
         socket.emit("offer", roomName, payload)
@@ -146,12 +154,20 @@ class SocketTaskManager {
            }
        }
     
-    func getChatMessage(completionHandler: @escaping (_ message: Message) -> Void) {
+    func getChatMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
-            let sender = data["sender"] as! NSDictionary
-            let message = Message(_id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, sender: Sender(id: sender["id"] as? String, name: sender["name"] as? String ?? ""))
-            completionHandler(message)
+            if let call = data["call"] as? NSDictionary {
+                let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
+                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+            completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                return
+            }
+            if let text = data["text"] as? String {
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                return
+            }
         }
     }
 }

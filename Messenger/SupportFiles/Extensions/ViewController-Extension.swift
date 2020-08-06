@@ -32,22 +32,28 @@ extension UIViewController {
         return appStoryboard.viewController(viewControllerClass: self)
     }
     
-    func scheduleNotification(center: UNUserNotificationCenter, message: Message) {
+    func scheduleNotification(center: UNUserNotificationCenter, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         let content = UNMutableNotificationContent()
-        content.title = message.sender?.name ?? "New message"
+        if lastname != nil && name != nil {
+            content.title = "\(name!) \(lastname!)"
+        } else if username != nil {
+            content.title = username!
+        } else {
+            content.title = "New message"
+        }
         content.body = message.text ?? ""
         content.sound = UNNotificationSound.defaultCritical
-     let currentDateTime = Date()
-     let userCalendar = Calendar.current
-     let requestedComponents: Set<Calendar.Component> = [
-         .year,
-         .month,
-         .day,
-         .hour,
-         .minute,
-         .second
+        let currentDateTime = Date()
+        let userCalendar = Calendar.current
+        let requestedComponents: Set<Calendar.Component> = [
+            .year,
+            .month,
+            .day,
+            .hour,
+            .minute,
+            .second
         ]
-     let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
+        let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         center.add(request) { (error) in

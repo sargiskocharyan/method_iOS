@@ -44,6 +44,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     var signedUser = SharedConfigs.shared.signedUser
     var isMoreGender = false
     var isChangingUsername = false
+    var isChangingGender = false
     
     //MARK: @IBActions
     @IBAction func createAccountAction(_ sender: UIButton) {
@@ -149,8 +150,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: Helper methodes
   
     func checkGender(_ signedUser: UserModel?) -> Bool? {
-        if  signedUser?.gender?.lowercased() != genderCustomView.textField.text?.lowercased() {
-            if signedUser?.gender == nil && genderCustomView.textField.text == "" {
+        if signedUser?.gender?.lowercased() != genderCustomView.textField.text?.lowercased() {
+            if genderCustomView.textField.text == "" {
                 gender = nil
                 return nil
             } else {
@@ -158,8 +159,13 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 return true
             }
         }
-        gender = nil
-        return nil
+        if isChangingGender {
+            gender = genderCustomView.textField.text!.lowercased()
+            return true
+        } else {
+            gender = nil
+            return nil
+        }
     }
     
     func checkName(_ signedUser: UserModel?) -> Bool? {
@@ -183,25 +189,29 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     
     func checkUsername(_ signedUser: UserModel?, completion: @escaping (Bool?)->()) {
         if signedUser?.username != usernameCustomView.textField.text {
-            if (usernameCustomView.textField.text?.isValidNameOrLastname())! || usernameCustomView.textField.text == "" {
-                if (signedUser?.username == nil && usernameCustomView.textField.text == "") {
+            if (usernameCustomView.textField.text?.isValidUsername())! || usernameCustomView.textField.text == "" {
+                if (usernameCustomView.textField.text == "") {
+                    self.usernameCustomView.errorLabel.text = ""
                     username = nil
                     completion(nil)
+                    return
                 } else {
                     if isChangingUsername {
+                        self.usernameCustomView.errorLabel.text = ""
+                        self.usernameCustomView.borderColor = .red
                         viewModel?.checkUsername(username: usernameCustomView.textField.text!, completion: { (responseObject, error) in
                             if responseObject != nil && responseObject?.usernameExists == false {
                                 DispatchQueue.main.async {
                                     self.username = self.usernameCustomView.textField.text!
-                                    self.usernameCustomView.errorLabel.text = "lav username"
-                                    self.usernameCustomView.borderColor = .blue
+                                    self.usernameCustomView.errorLabel.text = "correct_username".localized()
+                                    self.usernameCustomView.errorLabel.textColor = .blue
                                     completion(true)
                                 }
                             } else if responseObject != nil && responseObject?.usernameExists == true {
                                 DispatchQueue.main.async {
-                                    self.usernameCustomView.errorLabel.text = "The username is zbaxvac"
+                                    self.usernameCustomView.errorLabel.text = "this_username_is_taken".localized()
                                     self.username = nil
-                                    self.usernameCustomView.borderColor = .red
+                                    self.usernameCustomView.errorLabel.textColor = .red
                                     completion(false)
                                 }
                             }
@@ -209,12 +219,20 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                     }
                 }
             } else {
+                self.usernameCustomView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                self.usernameCustomView.errorLabel.textColor = .red
                 username = nil
                 completion(false)
+                return
             }
         }
-        username = nil
-        completion(nil)
+        if username == nil {
+            completion(false)
+            return
+        } else {
+            completion(true)
+            return
+        }
     }
     
     
@@ -262,7 +280,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 self.disableUpdateInfoButton()
             }
         }
-        
     }
     
     @objc func nameTextFieldAction() {
@@ -273,28 +290,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @objc func usernameTextFieldAction() {
         isChangingUsername = true
         checkFields()
-//        if usernameCustomView.textField.text!.count >= 4 && usernameCustomView.textField.text!.count <= 20 {
-//            viewModel?.checkUsername(username: usernameCustomView.textField.text!, completion: { (responseObject, error) in
-//                if responseObject != nil && responseObject?.usernameExists == false {
-//                    DispatchQueue.main.async {
-//                        self.username = self.usernameCustomView.textField.text!
-//                        self.usernameCustomView.errorLabel.text = "lav username"
-//                        self.usernameCustomView.borderColor = .blue
-//                        self.checkFields()
-//                    }
-//                } else if responseObject != nil && responseObject?.usernameExists == true {
-//                    DispatchQueue.main.async {
-//                        self.usernameCustomView.errorLabel.text = "The username is zbaxvac"
-//                    self.username = nil
-//                    self.checkFields()
-//                    self.usernameCustomView.borderColor = .red
-//                    }
-//                }
-//            })
-//        } else {
-//            username = nil
-//            checkFields()
-//        }
     }
     
     @objc func lastnameTextFieldAction() {
@@ -376,6 +371,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
             self.moreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
             self.isChangingUsername = false
+            self.isChangingGender = true
             self.checkFields()
         }
         dropDown.cancelAction = { [unowned self] in
@@ -468,18 +464,18 @@ extension RegisterViewController: CustomTextFieldDelegate {
                 lastnameCustomView.errorLabel.text = lastnameCustomView.successMessage
             }
         }
-        if placeholder == "username".localized() {
-            if !usernameCustomView.textField.text!.isValidUsername() {
-                usernameCustomView.errorLabel.text = usernameCustomView.errorMessage
-                usernameCustomView.errorLabel.textColor = .red
-                usernameCustomView.border.backgroundColor = .red
-            } else {
-                
-                usernameCustomView.border.backgroundColor = .blue
-                usernameCustomView.errorLabel.textColor = .blue
-                usernameCustomView.errorLabel.text = usernameCustomView.successMessage
-            }
-        }
+//        if placeholder == "username".localized() {
+//            if !usernameCustomView.textField.text!.isValidUsername() {
+//                usernameCustomView.errorLabel.text = usernameCustomView.errorMessage
+//                usernameCustomView.errorLabel.textColor = .red
+//                usernameCustomView.border.backgroundColor = .red
+//            } else {
+//
+//                usernameCustomView.border.backgroundColor = .blue
+//                usernameCustomView.errorLabel.textColor = .blue
+//                usernameCustomView.errorLabel.text = usernameCustomView.successMessage
+//            }
+//        }
         
     }
 }

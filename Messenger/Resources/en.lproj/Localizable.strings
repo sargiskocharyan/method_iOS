@@ -47,7 +47,7 @@
 "correct_name" = "Correct name";
 "name_must_contain_at_least_2_letters" = "Name must contain at least 2 letters";
 "correct_lastname" = "Correct lastname";
-"lastname_must_contain_at_least_2_letters" = "lastname must contain at least 2 letters";
+"lastname_must_contain_at_least_2_letters" = "Lastname must contain at least 2 letters";
 "code" = "Code";
 "update_information" = "Update information";
 "enter_message" = "Enter message...";
@@ -97,4 +97,11 @@
 "today" = "Today";
 "yesterday" = "Yesterday";
 "info_not_set" = "Info not set";
+"the_username_must_contain_at_least_4_letters" = "The username must contain at least 4 letters";
+"this_username_is_taken" = "This username is taken";
+"accepted"  = "Accepted call";
+"missed_call"  = "Missed call";
+"cancelled_call"  = "Cancelled call";
+"incoming_call"  = "Incoming call";
+"outgoing_call"  = "Outgoing call";
 

@@ -57,26 +57,4 @@ class HomePageViewModel {
                print("Could not save. \(error), \(error.userInfo)")
            }
        }
-    
-//    func retrieveData(completion: @escaping ([User]?)->()) {
-//        let appDelegate = AppDelegate.shared as AppDelegate
-//        let managedContext = appDelegate.persistentContainer.viewContext
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ContactsEntity")
-//        do {
-//            let result = try managedContext.fetch(fetchRequest)
-//            var i = 0
-//            for data in result as! [NSManagedObject] {
-//                let mContacts = data.value(forKey: "contacts") as! Contacts
-//                completion(mContacts.contacts)
-//                print(" contact batch : \(i)")
-//                for element in mContacts.contacts {
-//                    print("name:\(element.name), username:\(element.username)")
-//                }
-//                i = i + 1
-//            }
-//        } catch {
-//            completion(nil)
-//            print("Failed")
-//        }
-//    }
 }

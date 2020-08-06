@@ -9,14 +9,9 @@
 import UIKit
 import WebRTC
 
-protocol VideoViewControllerProtocol: class {
-    func handleClose()
-}
-
 class VideoViewController: UIViewController {
     var roomName: String?
     var webRTCClient: WebRTCClient?
-    weak var delegate: VideoViewControllerProtocol?
     var cameraPosition = AVCaptureDevice.Position.front
     var isMicrophoneOn = true
     @IBOutlet weak var ourView: UIView!

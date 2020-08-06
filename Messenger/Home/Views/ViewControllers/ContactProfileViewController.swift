@@ -87,7 +87,6 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.masksToBounds = true
         getUserInformation()
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
-        
         sendMessageButton.backgroundColor = .clear
         
     }

@@ -306,9 +306,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleContactsTap(_ sender: UITapGestureRecognizer? = nil) {
-//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-//        vc.fromProfile = true
-//        self.navigationController?.pushViewController(vc, animated: true)
         mainRouter?.showContactsViewControllerFromProfile()
     }
     

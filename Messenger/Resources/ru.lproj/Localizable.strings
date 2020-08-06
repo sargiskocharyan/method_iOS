@@ -97,5 +97,6 @@
 "today" = "Cегодня";
 "yesterday" = "Вчера";
 "info_not_set" = "Информация не установлена";
-
+"the_username_must_contain_at_least_4_letters" = "Имя пользователя должно содержать не менее 4 букв";
+"this_username_is_taken" = "Это имя пользователя уже занято";
 
