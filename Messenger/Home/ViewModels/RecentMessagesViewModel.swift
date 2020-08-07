@@ -17,9 +17,9 @@ struct FetchedCall {
     let calleeId: String
 }
 class RecentMessagesViewModel {
-     var calls: [FetchedCall] = []
+     var calls: [CallHistory] = []
     private var privateCalls: [NSManagedObject] = []
-    func getHistory(completion: @escaping ([FetchedCall])->()) {
+    func getHistory(completion: @escaping ([CallHistory])->()) {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                     completion([])
                     return
@@ -29,14 +29,29 @@ class RecentMessagesViewModel {
             do {
                 let callsFetched = try managedContext.fetch(fetchRequest)
                 self.privateCalls = callsFetched
-                self.calls = callsFetched.map { (call) -> FetchedCall in
-                    return FetchedCall(id: UUID(), isHandleCall: call.value(forKey: "isHandleCall") as! Bool, time: call.value(forKey: "time") as! Date, callDuration: (call.value(forKey: "callDuration") as! Int), calleeId: call.value(forKey: "calleeId") as!  String)
-                }
+                self.calls = callsFetched.map({ (call) -> CallHistory in
+                    return CallHistory(type: call.value(forKey: "type") as? String, status: call.value(forKey: "status") as? String, participants: call.value(forKey: "participants") as! [String], callSuggestTime: call.value(forKey: "callSuggestTime") as? String, _id: call.value(forKey: "id") as? String, createdAt: call.value(forKey: "createdAt") as? String, caller: call.value(forKey: "caller") as? String, callEndTime: call.value(forKey: "callEndTime") as? String, callStartTime: call.value(forKey: "callStartTime") as? String)
+                })
                 completion(self.calls)
+                return
             } catch let error as NSError {
                 print("Could not fetch. \(error), \(error.userInfo)")
                 completion([])
             }
+    }
+    
+    func saveCalls(calls: [CallHistory], completion: @escaping ([CallHistory]?, NetworkResponse?)->()) {
+        var count = 0
+        for call in calls {
+            save(newCall: call) {
+                count += 1
+                print("pahec")
+                if count == calls.count {
+                    completion(calls, nil)
+                    return
+                }
+            }
+        }
     }
     
     func deleteItem(index: Int) {
@@ -77,16 +92,21 @@ class RecentMessagesViewModel {
        }
     
     
-    func save(newCall: FetchedCall, completion: @escaping ()->()) {
+    func save(newCall: CallHistory, completion: @escaping ()->()) {
         let appDelegate = AppDelegate.shared as AppDelegate
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
         let call = NSManagedObject(entity: entity, insertInto: managedContext)
-        call.setValue(newCall.id, forKeyPath: "id")
-        call.setValue(newCall.time, forKeyPath: "time")
-        call.setValue(newCall.callDuration, forKeyPath: "callDuration")
-        call.setValue(newCall.isHandleCall, forKeyPath: "isHandleCall")
-        call.setValue(newCall.calleeId, forKeyPath: "calleeId")
+        call.setValue(newCall._id, forKeyPath: "id")
+        call.setValue(newCall.type, forKeyPath: "type")
+        call.setValue(newCall.status, forKeyPath: "status")
+        call.setValue(newCall.callEndTime, forKeyPath: "callEndTime")
+        call.setValue(newCall.callSuggestTime, forKeyPath: "callSuggestTime")
+        call.setValue(newCall.caller, forKeyPath: "caller")
+        call.setValue(newCall.participants, forKeyPath: "participants")
+        call.setValue(newCall.createdAt, forKeyPath: "createdAt")
+        call.setValue(newCall.callStartTime, forKeyPath: "callStartTime")
+        
         do {
             try managedContext.save()
             privateCalls.append(call)
@@ -118,6 +138,6 @@ class RecentMessagesViewModel {
 //        }
 //        calls = newCalls
         completion()
-       
+       return
     }
 }

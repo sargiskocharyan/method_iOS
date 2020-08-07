@@ -25,6 +25,7 @@ public enum HomeApi {
     case removeContact(id: String)
     case onlineUsers(arrayOfId: [String])
     case hideData(isHideData: Bool)
+    case getCallHistory
 }
 
 extension HomeApi: EndPointType {
@@ -66,6 +67,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.OnlineUsers
         case .hideData(_):
             return AUTHUrls.HideData
+        case .getCallHistory:
+            return AUTHUrls.GetCallHistory
         }
     }
     
@@ -102,6 +105,8 @@ extension HomeApi: EndPointType {
             return .post
         case .hideData(_):
             return .post
+        case .getCallHistory:
+            return .get
         }
     }
     
@@ -177,6 +182,9 @@ extension HomeApi: EndPointType {
             let parameters:Parameters = ["hide": isHideData]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getCallHistory:
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

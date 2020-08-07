@@ -32,7 +32,7 @@ extension UIViewController {
         return appStoryboard.viewController(viewControllerClass: self)
     }
     
-    func scheduleNotification(center: UNUserNotificationCenter, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func scheduleNotification(center: UNUserNotificationCenter, _ callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         let content = UNMutableNotificationContent()
         if lastname != nil && name != nil {
             content.title = "\(name!) \(lastname!)"

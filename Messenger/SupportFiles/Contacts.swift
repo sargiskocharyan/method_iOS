@@ -98,38 +98,3 @@ public class User: NSObject,  Codable, NSCoding {
     }
     
 }
-
-
-public class Range: NSObject, NSCoding {
-
-    public var location: Int = 0
-    public var length: Int = 0
-
-    enum Key:String {
-        case location = "location"
-        case length = "length"
-    }
-
-    init(location: Int, length: Int) {
-        self.location = location
-        self.length = length
-    }
-
-    public override init() {
-        super.init()
-    }
-
-    public func encode(with aCoder: NSCoder) {
-        aCoder.encode(location, forKey: "name")
-        aCoder.encode(length, forKey: "lastname")
-        
-    }
-
-    public required convenience init?(coder aDecoder: NSCoder) {
-        let mlocation = aDecoder.decodeInt32(forKey: Key.location.rawValue)
-        let mlength = aDecoder.decodeInt32(forKey: Key.length.rawValue)
-
-        self.init(location: Int(mlocation), length:
-            Int(mlength))
-    }
-}

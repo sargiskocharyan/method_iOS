@@ -22,6 +22,12 @@ class HomePageViewModel {
         }
     }
     
+    func getCallHistory(completion: @escaping ([CallHistory]?, NetworkResponse?)->()) {
+           HomeNetworkManager().getCallHistory() { (calls, error) in
+               completion(calls, error)
+           }
+       }
+    
     func saveContacts(contacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
         let appDelegate = AppDelegate.shared as AppDelegate
         let managedContext = appDelegate.persistentContainer.viewContext

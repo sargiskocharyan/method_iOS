@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol CallTableViewDelegate: class {
-    func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String)
+    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String,  name: String, avatarURL: String)
 }
 
 
@@ -24,7 +24,7 @@ class CallTableViewCell: UITableViewCell {
     @IBOutlet weak var callDurationLabel: UILabel!
     weak var delegate: CallTableViewDelegate?
     var calleId: String?
-    var call: FetchedCall?
+    var call: CallHistory?
     var contact: User?
  
     
@@ -34,7 +34,8 @@ class CallTableViewCell: UITableViewCell {
     }
     
     @IBAction func infoButtonAction(_ sender: UIButton) {
-        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: call?.time, callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
+        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, callStartTime: stringToDate(date: call?.callStartTime ?? call!.callSuggestTime!), callStatus: call!.status!, type: call!.type!, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
+        //delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: stringToDate(date: call?.createdAt) , callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
     }
     override func awakeFromNib() {
            super.awakeFromNib()
@@ -43,6 +44,17 @@ class CallTableViewCell: UITableViewCell {
            userImageView.clipsToBounds = true
        }
 
+    func stringToDate(date:String) -> Date? {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+           let parsedDate = formatter.date(from: date)
+           if parsedDate == nil {
+               return nil
+           } else {
+              return parsedDate
+           }
+       }
+    
     func dateToString(date: Date) -> String {
         let parsedDate = date
         let calendar = Calendar.current
@@ -67,7 +79,7 @@ class CallTableViewCell: UITableViewCell {
     return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
     }
     
-    func configureCell(contact: User, call: FetchedCall) {
+    func configureCell(contact: User, call: CallHistory) {
         self.call = call
         self.contact = contact
         if contact.name != nil {
@@ -77,14 +89,26 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.nameLabel.text = "Dynamic's user".localized()
         }
-        callDurationLabel.text = secondsToHoursMinutesSeconds(seconds: call.callDuration ?? 0)
+        let userCalendar = Calendar.current
+        let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
+        if call.callStartTime != nil && call.callEndTime != nil {
+            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: call.callEndTime!)!, to: stringToDate(date: call.callStartTime!)! )
+            let hourSeconds = timeDifference.hour ?? 0 * 3600
+            let minuteSeconds = timeDifference.minute ?? 0 * 60
+            let seconds = hourSeconds + minuteSeconds + (timeDifference.second ?? 0)
+        callDurationLabel.text = secondsToHoursMinutesSeconds(seconds: seconds)
+            self.timeLabel.text = dateToString(date: stringToDate(date: call.callStartTime!)!)
+        } else {
+            self.timeLabel.text = dateToString(date: stringToDate(date: call.callSuggestTime!)!)
+            callDurationLabel.text = ""
+        }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
         }
-         self.timeLabel.text = dateToString(date: call.time)
-        if call.isHandleCall != true {
+         
+        if call.caller == SharedConfigs.shared.signedUser?.id {
             self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
         } else {
             self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
