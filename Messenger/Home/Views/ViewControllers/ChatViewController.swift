@@ -316,7 +316,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
                 if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
-                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration ?? 0)))"
+                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
                 } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
@@ -345,7 +345,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration!)))"
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
                 } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red

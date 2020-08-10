@@ -55,30 +55,6 @@ class CallTableViewCell: UITableViewCell {
            }
        }
     
-    func dateToString(date: Date) -> String {
-        let parsedDate = date
-        let calendar = Calendar.current
-        let day = calendar.component(.day, from: parsedDate)
-        let month = calendar.component(.month, from: parsedDate)
-        let time = Date()
-        let currentDay = calendar.component(.day, from: time as Date)
-        if currentDay != day {
-             return "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")"
-        }
-        let hour = calendar.component(.hour, from: parsedDate)
-        let minutes = calendar.component(.minute, from: parsedDate)
-        return "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
-    }
-    
- func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-    if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-        return "\((seconds % 3600) % 60) sec."
-    } else if seconds / 3600 == 0 {
-        return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-    }
-    return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-    }
-    
     func configureCell(contact: User, call: CallHistory) {
         self.call = call
         self.contact = contact
@@ -96,10 +72,10 @@ class CallTableViewCell: UITableViewCell {
             let hourSeconds = timeDifference.hour ?? 0 * 3600
             let minuteSeconds = timeDifference.minute ?? 0 * 60
             let seconds = hourSeconds + minuteSeconds + (timeDifference.second ?? 0)
-        callDurationLabel.text = secondsToHoursMinutesSeconds(seconds: seconds)
-            self.timeLabel.text = dateToString(date: stringToDate(date: call.callStartTime!)!)
+            callDurationLabel.text = seconds.secondsToHoursMinutesSeconds()
+            self.timeLabel.text = stringToDate(date: call.callStartTime!)?.dateToString()
         } else {
-            self.timeLabel.text = dateToString(date: stringToDate(date: call.callSuggestTime!)!)
+            self.timeLabel.text = stringToDate(date: call.callSuggestTime!)?.dateToString()
             callDurationLabel.text = ""
         }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
@@ -107,11 +83,11 @@ class CallTableViewCell: UITableViewCell {
                 self.userImageView.image = image
             }
         }
-         
+        
         if call.caller == SharedConfigs.shared.signedUser?.id {
-            self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
-        } else {
-            self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
+                self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
+            } else {
+                self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
+            }
         }
-    }
 }
