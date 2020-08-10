@@ -65,6 +65,7 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.nameLabel.text = "Dynamic's user".localized()
         }
+       
         let userCalendar = Calendar.current
         let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
         if call.callStartTime != nil && call.callEndTime != nil {
@@ -85,9 +86,12 @@ class CallTableViewCell: UITableViewCell {
         }
         
         if call.caller == SharedConfigs.shared.signedUser?.id {
-                self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
-            } else {
-                self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
+            self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
+        } else {
+            if call.status == CallStatus.missed.rawValue {
+                self.callIcon.tintColor = .red
             }
+            self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
         }
+    }
 }

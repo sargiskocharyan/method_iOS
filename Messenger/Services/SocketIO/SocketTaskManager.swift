@@ -73,9 +73,9 @@ class SocketTaskManager {
         }
     }
     
-     func handleCall(completionHandler: @escaping (_ id: String) -> Void) {
+    func handleCall(completionHandler: @escaping (_ id: String, _ roomname: String) -> Void) {
             socket.on("call") { (dataArray, socketAck) in
-                completionHandler(dataArray[0] as! String)
+                completionHandler(dataArray[0] as! String, dataArray[1] as! String)
             }
         }
     

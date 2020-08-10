@@ -143,8 +143,6 @@ class CallListViewController: UIViewController {
     func getCallHistory() {
         viewModel?.getHistory(completion: { (callsFromDB) in
             if callsFromDB.count == 0 {
-                print(self.tabbar?.contactsViewModel?.contacts)
-                print(self.tabbar?.contactsViewModel?.otherContacts)
                 self.tabbar?.viewModel?.getCallHistory(completion: { (calls, error) in
                     if error != nil {
                         self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -283,16 +281,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         var existsInContactList = false
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
-        print(cell.calleId)
-        print("----------------------------------------")
-        tabbar?.contactsViewModel?.contacts.map({ (ontac) -> String in
-            print(ontac.username)
-            print(ontac._id)
-            print("--------------------------")
-            return ""
-        })
-        print("----------------------------------------")
-        print(tabbar?.contactsViewModel?.otherContacts)
         for i in 0..<count {
             if tabbar?.contactsViewModel!.contacts[i]._id == cell.calleId {
                 existsInContactList = true
@@ -348,11 +336,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             let seconds = timeDifference.second!
             activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
         }
-//        viewModel!.save(newCall: CallHistory(type: "video", status: "", participants: <#T##[String?]?#>, callSuggestTime: <#T##String?#>, _id: <#T##String?#>, createdAt: <#T##String?#>, caller: <#T##String?#>, callEndTime: <#T##String?#>, callStartTime: <#T##String?#>), completion: {
-//            self.sort()
-//            self.id = self.activeCall?.calleeId
-//            self.tableView.reloadData()
-//        })
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

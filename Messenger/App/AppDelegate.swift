@@ -12,9 +12,31 @@ import Firebase
 import CallKit
 import CoreData
 import UserNotifications
+import PushKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
+    
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        let tokenParts = pushCredentials.token.map { data -> String in
+            return String(format: "%02x", data)
+        }
+        let token = tokenParts.joined()
+        // 2. Print device token to use for PNs payloads
+        print("Our Token: \(token)")
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        print("payload: ", payload.dictionaryPayload)
+        displayIncomingCall(id: "", uuid: UUID(), handle: "mi ban", roomName: "fcgfh") { (error) in
+            print(error as Any)
+        }
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        print("pushRegistry:didInvalidatePushTokenForType:")
+    }
+    
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     
@@ -49,7 +71,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
         registerForPushNotifications()
+        self.voipRegistration()
         return true
+    }
+    
+    func voipRegistration() {
+        let mainQueue = DispatchQueue.main
+        let voipRegistry: PKPushRegistry = PKPushRegistry(queue: mainQueue)
+        voipRegistry.delegate = self
+        voipRegistry.desiredPushTypes = [PKPushType.voIP]
     }
     
     // MARK: UISceneSession Lifecycle

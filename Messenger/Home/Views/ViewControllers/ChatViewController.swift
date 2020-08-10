@@ -162,7 +162,9 @@ class ChatViewController: UIViewController {
             }
         } else {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
-                self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
+                if (callHistory != nil && callHistory?.status == CallStatus.missed.rawValue) || callHistory == nil {
+                    self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
+                }
             }
         }
     }

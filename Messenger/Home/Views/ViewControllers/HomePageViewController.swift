@@ -12,8 +12,8 @@ import UserNotifications
 import AVFoundation
 import WebRTC
 import CoreData
+
 class MainTabBarController: UITabBarController {
-    
     
     //MARK: Properties
     var viewModel: HomePageViewModel?
@@ -69,7 +69,7 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
-        
+//        NotificationCenter.default.addObserver(self, selector: #selector(reactToNotification(_:)), name: Notification.Name(rawValue: "kNotification"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,6 +81,10 @@ class MainTabBarController: UITabBarController {
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
     }
+    
+//    @objc func reactToNotification(_ sender: Notification) {
+//        startCall(sender.userInfo!["id"] as! String, sender.userInfo!["roomname"] as! String)
+//    }
     
     func handleCallEnd() {
         socketTaskManager.handleCallEnd { (roomName) in
@@ -102,40 +106,44 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func handleCall() {
-        SocketTaskManager.shared.handleCall { (id) in
-            if !self.onCall {
-                self.id = id
-                self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-                self.webRTCClient?.delegate = self
-                AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
-                self.videoVC?.webRTCClient = self.webRTCClient
-                self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-                    if (error != nil) {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        }
-                        return
-                    } else if user != nil {
-                        let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                        DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            AppDelegate.shared.displayIncomingCall(
-                                id: id, uuid: UUID(), handle: user?.name ?? (user?.username)!, hasVideo: true, roomName: self.roomName ?? "") { _ in
-                                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                            }
-                        }
-                        DispatchQueue.main.async {
-                            self.callsVC?.handleCall(id: id, user: user!)
-                        }
+    func startCall(_ id: String, _ roomname: String) {
+        self.id = id
+        self.roomName = roomname
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient?.delegate = self
+        AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
+        self.videoVC?.webRTCClient = self.webRTCClient
+        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
+            if (error != nil) {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+                return
+            } else if user != nil {
+                let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                    AppDelegate.shared.displayIncomingCall(
+                    id: id, uuid: UUID(), handle: user?.name ?? (user?.username)!, hasVideo: true, roomName: roomname) { _ in
+                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                     }
                 }
+                DispatchQueue.main.async {
+                    self.callsVC?.handleCall(id: id, user: user!)
+                }
+            }
+        }
+    }
+    
+    func handleCall() {
+        SocketTaskManager.shared.handleCall { (id, roomname) in
+            if !self.onCall {
+                self.startCall(id, roomname)
             }
         }
     }
     
     func getCanditantes() {
         socketTaskManager.getCanditantes { (data) in
-            
         }
     }
     
@@ -222,15 +230,17 @@ class MainTabBarController: UITabBarController {
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
-            if callHistory != nil {
+            if callHistory != nil  {
                 self.callsVC?.showEndedCall(callHistory!)
             }
             switch self.selectedIndex {
             case 0:
-                 let callNc = self.viewControllers![0] as! UINavigationController
-                 if callNc.viewControllers.count <= 2 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
-                 } else {
+                let callNc = self.viewControllers![0] as! UINavigationController
+                if callNc.viewControllers.count <= 2 {
+                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else {
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
                         chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     }
@@ -239,7 +249,9 @@ class MainTabBarController: UITabBarController {
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
                 } else if profileNC.viewControllers.count == 4 {
                     let chatVC = profileNC.viewControllers[3] as! ChatViewController
                     chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
