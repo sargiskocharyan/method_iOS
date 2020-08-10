@@ -27,6 +27,18 @@ struct ErrorResponse: Codable {
     var Error: String?
 }
 
+struct CallHistory: Codable {
+    var type: String?
+    var status: String?
+    var participants: [String?]?
+    var callSuggestTime: String?
+    var _id: String?
+    var createdAt: String?
+    var caller: String?
+    var callEndTime: String?
+    var callStartTime: String?
+}
+
 struct VerifyTokenResponse: Codable {
     let tokenExists: Bool
 }

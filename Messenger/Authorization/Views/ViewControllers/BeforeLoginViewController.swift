@@ -35,7 +35,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
         checkEmail()
-    }
+    } 
     
    
     //MARK: Lifecycle methods

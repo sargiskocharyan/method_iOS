@@ -34,6 +34,7 @@ struct AUTHUrls {
     static let OnlineUsers       = "/onlineusers"
     static let HideData          = "/hidedata"
     static let CheckUsername     = "/usernameExists"
+    static let GetCallHistory    = "/callhistory"
 }
 
 struct AppLangKeys {

@@ -149,6 +149,8 @@ class MainTabBarController: UITabBarController {
                     self.videoVC!.roomName = roomName
                     self.signalClient!.sendOffer(sdp: sdp, roomName: roomName)
                 }
+            } else if callAccepted == false {
+                self.webRTCClient?.peerConnection?.close()
             }
         }
     }
@@ -214,30 +216,33 @@ class MainTabBarController: UITabBarController {
     }
     
     func getNewMessage() {
-        socketTaskManager.getChatMessage { (message, name, lastname, username) in
+        socketTaskManager.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
             if chatsVC.isLoaded {
-                chatsVC.getnewMessage(message: message, name, lastname, username)
-            } 
+                chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+            }
+            if callHistory != nil {
+                self.callsVC?.showEndedCall(callHistory!)
+            }
             switch self.selectedIndex {
             case 0:
                  let callNc = self.viewControllers![0] as! UINavigationController
                  if callNc.viewControllers.count <= 2 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message, name, lastname, username)
+                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                  } else {
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
-                        chatVC.getnewMessage(message: message, name, lastname, username)
+                        chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     }
                  }
                 break
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message, name, lastname, username)
+                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                 } else if profileNC.viewControllers.count == 4 {
                     let chatVC = profileNC.viewControllers[3] as! ChatViewController
-                    chatVC.getnewMessage(message: message, name, lastname, username)
+                    chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                 }
             default:
                break
@@ -322,6 +327,9 @@ extension MainTabBarController: WebRTCClientDelegate {
             startDate = Date()
         }
         else if state == .closed || state == .failed {
+            if state == .failed {
+                socketTaskManager.leaveRoom(roomName: roomName!)
+            }
             videoVC?.handleAnswer()
             onCall = false
             callsVC?.onCall = false
@@ -330,7 +338,7 @@ extension MainTabBarController: WebRTCClientDelegate {
             id = nil
             videoVC?.closeAll()
             DispatchQueue.main.async {
-                self.callsVC?.saveCall(startDate: self.startDate)
+//                self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }

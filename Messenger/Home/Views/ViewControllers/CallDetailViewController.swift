@@ -8,18 +8,11 @@
 
 import UIKit
 
-enum CallMode: String {
-    case incoming = "Incomming call"
-    case outgoing = "Outgoing call"
-    case missed = "Missed call"
-    case canceled = "Canceled call"
-}
-
 class CallDetailViewController: UIViewController {
 
     var date: Date?
     var callDuration: String?
-    var callMode: CallMode?
+    var callMode: CallStatus?
     var onContactPage: Bool?
     var name: String?
     var avatarURL: String?

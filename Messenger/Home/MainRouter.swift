@@ -55,7 +55,7 @@ class MainRouter {
         selectedNC?.pushViewController(self.mainTabBarController!.videoVC!, animated: false)
     }
     
-    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallMode, avatarURL: String) {
+    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String) {
         let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = callListViewController?.mainRouter
         vc.name = name

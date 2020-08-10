@@ -40,14 +40,13 @@ class CallListViewController: UIViewController {
     weak var delegate: CallListViewDelegate?
     var id: String?
     var viewModel: RecentMessagesViewModel?
-    var calls: [FetchedCall] = []
+    var calls: [CallHistory] = []
     var activeCall: FetchedCall?
     var tabbar: MainTabBarController?
     var count = 0
     var otherContactsCount = 0
     static let callCellIdentifier = "callCell"
     var mainRouter: MainRouter?
-    
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -58,8 +57,7 @@ class CallListViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        count = tabbar!.contactsViewModel!.contacts.count
-        otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
+        
         self.sort()
     }
     
@@ -69,7 +67,8 @@ class CallListViewController: UIViewController {
         MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-        getHistory()
+//        getHistory()
+        getCallHistory()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         navigationItem.title = "calls".localized()
     }
@@ -90,14 +89,25 @@ class CallListViewController: UIViewController {
         }
     }
     
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        if parsedDate == nil {
+            return nil
+        } else {
+           return parsedDate
+        }
+    }
+    
     func sort() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         for i in 0..<viewModel!.calls.count {
             for j in i..<viewModel!.calls.count {
-                let firstDate = viewModel!.calls[i].time
-                let secondDate = viewModel!.calls[j].time
-                if firstDate.compare(secondDate).rawValue == -1 {
+                let firstDate = stringToDate(date: viewModel!.calls[i].createdAt!)
+                let secondDate = stringToDate(date: viewModel!.calls[j].createdAt!)
+                if firstDate!.compare(secondDate!).rawValue == -1 {
                     let temp = viewModel!.calls[i]
                     viewModel!.calls[i] = viewModel!.calls[j]
                     viewModel!.calls[j] = temp
@@ -122,7 +132,6 @@ class CallListViewController: UIViewController {
     
     func handleCall(id: String, user: User) {
         self.id = id
-        activeCall = FetchedCall(id: UUID(), isHandleCall: true, time: Date(), callDuration: 0, calleeId: id)
         if viewModel!.calls.count >= 15 {
             viewModel!.deleteItem(index: viewModel!.calls.count - 1)
         }
@@ -131,6 +140,33 @@ class CallListViewController: UIViewController {
         }
     }
     
+    func getCallHistory() {
+        viewModel?.getHistory(completion: { (callsFromDB) in
+            if callsFromDB.count == 0 {
+                print(self.tabbar?.contactsViewModel?.contacts)
+                print(self.tabbar?.contactsViewModel?.otherContacts)
+                self.tabbar?.viewModel?.getCallHistory(completion: { (calls, error) in
+                    if error != nil {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    } else if calls != nil {
+                        DispatchQueue.main.async {
+                            self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
+                                if calls != nil {
+                                    self.calls = calls!
+                                    self.sort()
+                                    self.tableView.reloadData()
+                                }
+                            })
+                        }
+                    }
+                })
+            } else {
+                self.calls = callsFromDB
+                self.sort()
+                self.tableView.reloadData()
+            }
+        })
+    }
     
     func deleteAllData(entity: String) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -146,6 +182,27 @@ class CallListViewController: UIViewController {
         } catch let error as NSError {
             print("Detele all data in \(entity) error : \(error) \(error.userInfo)")
         }
+    }
+    
+    func showEndedCall(_ callHistory: CallHistory) {
+        viewModel?.save(newCall: callHistory, completion: {
+            self.sort()
+            self.tableView.reloadData()
+        })
+//        if viewModel!.calls.count >= 15 {
+//                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+//               }
+//        if callHistory.callStartTime == nil || callHistory.callEndTime == nil {
+//            activeCall?.callDuration = 0
+//        } else {
+//            let userCalendar = Calendar.current
+//            let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
+//            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: callHistory.callStartTime!)!, to: stringToDate(date: callHistory.callEndTime!)!)
+//            let hourToSeconds = timeDifference.hour! * 3600
+//            let minuteToSeconds = timeDifference.minute! * 60
+//            let seconds = timeDifference.second!
+//            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
+//        }
     }
     
     func stringToDate(date: Date) -> String {
@@ -180,9 +237,21 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 }
 
 extension CallListViewController: CallTableViewDelegate {
-    func callSelected(id: String, duration: String, time: Date?, callMode: CallMode, name: String, avatarURL: String) {
-        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: time, callMode: callMode, avatarURL: avatarURL)
+   
+    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String) {
+        var status: CallStatus?
+        if callStatus == "ongoing" {
+            status = .ongoing
+        } else if callStatus == "missed" {
+            status = .missed
+        } else if callStatus == "accepted" {
+            status = .accepted
+        } else {
+            status = .cancelled
+        }
+        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: callStartTime!, callMode: status!, avatarURL: avatarURL)
     }
+    
 }
 
 extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -210,8 +279,20 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.callCellIdentifier, for: indexPath) as! CallTableViewCell
-        cell.calleId = viewModel!.calls[indexPath.row].calleeId
+        cell.calleId = viewModel!.calls[indexPath.row].participants![0] == SharedConfigs.shared.signedUser?.id ? viewModel!.calls[indexPath.row].participants![1] : viewModel!.calls[indexPath.row].participants![0]
         var existsInContactList = false
+        count = tabbar!.contactsViewModel!.contacts.count
+        otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
+        print(cell.calleId)
+        print("----------------------------------------")
+        tabbar?.contactsViewModel?.contacts.map({ (ontac) -> String in
+            print(ontac.username)
+            print(ontac._id)
+            print("--------------------------")
+            return ""
+        })
+        print("----------------------------------------")
+        print(tabbar?.contactsViewModel?.otherContacts)
         for i in 0..<count {
             if tabbar?.contactsViewModel!.contacts[i]._id == cell.calleId {
                 existsInContactList = true
@@ -267,24 +348,25 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             let seconds = timeDifference.second!
             activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
         }
-        viewModel!.save(newCall: activeCall!, completion: {
-            self.sort()
-            self.id = self.activeCall?.calleeId
-            self.tableView.reloadData()
-        })
+//        viewModel!.save(newCall: CallHistory(type: "video", status: "", participants: <#T##[String?]?#>, callSuggestTime: <#T##String?#>, _id: <#T##String?#>, createdAt: <#T##String?#>, caller: <#T##String?#>, callEndTime: <#T##String?#>, callStartTime: <#T##String?#>), completion: {
+//            self.sort()
+//            self.id = self.activeCall?.calleeId
+//            self.tableView.reloadData()
+//        })
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let call = viewModel!.calls[indexPath.row]
-        activeCall = call
+        activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: SharedConfigs.shared.signedUser!.id)
         activeCall?.time = Date()
         activeCall?.isHandleCall = false
+        let calleeId = call.participants![0] == SharedConfigs.shared.signedUser?.id ? call.participants![1] : call.participants![0]
         if onCall == false  {
             var isThereContact = false
             for i in 0..<count {
-                if tabbar?.contactsViewModel!.contacts[i]._id == call.calleeId {
+                if tabbar?.contactsViewModel!.contacts[i]._id == calleeId  {
                     isThereContact = true
-                    self.delegate?.handleCallClick(id: call.calleeId, name: (tabbar!.contactsViewModel!.contacts[i].name ?? tabbar!.contactsViewModel!.contacts[i].username!))
+                    self.delegate?.handleCallClick(id: (call.participants![0] == SharedConfigs.shared.signedUser?.id ? call.participants![1] : call.participants![0])!, name: (tabbar!.contactsViewModel!.contacts[i].name ?? tabbar!.contactsViewModel!.contacts[i].username!))
                     break
                 }
             }
@@ -296,7 +378,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         } else if onCall && id != nil {
-            if id == call.calleeId {
+            if id == calleeId {
                 self.delegate?.handleClickOnSamePerson()
             }
         }

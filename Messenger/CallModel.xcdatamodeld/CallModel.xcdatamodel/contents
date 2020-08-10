@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CallEntity" representedClassName="CallEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="callDuration" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="calleeId" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="isHandleCall" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="callEndTime" optional="YES" attributeType="String"/>
+        <attribute name="caller" optional="YES" attributeType="String"/>
+        <attribute name="callStartTime" optional="YES" attributeType="String"/>
+        <attribute name="callSuggestTime" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="participants" optional="YES" attributeType="Transformable" customClassName="Participants"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ContactsEntity" representedClassName="ContactsEntity" syncable="YES" codeGenerationType="class">
         <attribute name="contacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
@@ -14,7 +18,7 @@
         <attribute name="otherContacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
     </entity>
     <elements>
-        <element name="CallEntity" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="CallEntity" positionX="-63" positionY="-18" width="128" height="178"/>
         <element name="ContactsEntity" positionX="-63" positionY="45" width="128" height="58"/>
         <element name="OtherContactEntity" positionX="-63" positionY="18" width="128" height="58"/>
     </elements>

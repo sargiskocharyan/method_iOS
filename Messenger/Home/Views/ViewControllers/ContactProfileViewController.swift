@@ -181,9 +181,9 @@ class ContactProfileViewController: UIViewController {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         for i in 0..<callListViewController!.viewModel!.calls.count {
             for j in i..<callListViewController!.viewModel!.calls.count {
-                let firstDate = callListViewController!.viewModel!.calls[i].time
-                let secondDate = callListViewController?.viewModel!.calls[j].time
-                if firstDate.compare(secondDate!).rawValue == -1 {
+                let firstDate = stringToDate(date: callListViewController!.viewModel!.calls[i].createdAt)
+                let secondDate = stringToDate(date: callListViewController?.viewModel!.calls[j].createdAt)
+                if firstDate!.compare(secondDate!).rawValue == -1 {
                     let temp = callListViewController!.viewModel!.calls[i]
                     callListViewController!.viewModel!.calls[i] = callListViewController!.viewModel!.calls[j]
                     callListViewController!.viewModel!.calls[j] = temp
@@ -192,7 +192,17 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-   
+   func stringToDate(date:String) -> Date? {
+         let formatter = DateFormatter()
+         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+         let parsedDate = formatter.date(from: date)
+         if parsedDate == nil {
+             return nil
+         } else {
+            return parsedDate
+         }
+     }
+    
     func stringToDate(date:String?) -> String? {
         if date == nil {
             return nil

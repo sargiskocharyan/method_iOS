@@ -84,6 +84,7 @@ class ChatViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.endEditing(true)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = false
     }
@@ -126,7 +127,9 @@ class ChatViewController: UIViewController {
             }, completion: { (completed) in
                 if isKeyboardShowing {
                     if self.allMessages.count > 0 {
-                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                        let indexPath = IndexPath(item: self.allMessages.count - 2, section: 0)
+                        print(indexPath.row)
+                        print(self.allMessages.count)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
                 }
@@ -134,7 +137,7 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.reciever == self.id {
                 DispatchQueue.main.async {
@@ -159,7 +162,7 @@ class ChatViewController: UIViewController {
             }
         } else {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
-                self.scheduleNotification(center: MainTabBarController.center, message: message, name, lastname, username)
+                self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
             }
         }
     }
@@ -313,7 +316,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
                 if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
-                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration ?? 0)))"
+                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
                 } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
@@ -342,7 +345,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration!)))"
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
                 } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red
