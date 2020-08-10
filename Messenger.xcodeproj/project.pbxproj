@@ -179,7 +179,7 @@
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDBCCA67247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		CDBE8DED2476744C0049F971 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDBE8DED2476744C0049F971 /* method.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDBE8DF02476744C0049F971 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Messenger/App/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		CDBE8DF22476744C0049F971 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = ../SceneDelegate.swift; sourceTree = "<group>"; };
 		CDBE8DF92476744D0049F971 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -215,6 +215,7 @@
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
+		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -407,7 +408,7 @@
 		CDBE8DEE2476744C0049F971 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CDBE8DED2476744C0049F971 /* Messenger.app */,
+				CDBE8DED2476744C0049F971 /* method.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -415,6 +416,7 @@
 		CDBE8DEF2476744C0049F971 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
+				F118AD2924DDA92C00832864 /* methodRelease.entitlements */,
 				CD36536624C05C4800432264 /* CallModel.xcdatamodeld */,
 				CD3F12E024BC558B00040D8E /* Services */,
 				CDD9C651247BC3090048A9A1 /* Networking */,
@@ -686,7 +688,7 @@
 				F1764366249CD68B00492327 /* CryptoSwift */,
 			);
 			productName = Messenger;
-			productReference = CDBE8DED2476744C0049F971 /* Messenger.app */;
+			productReference = CDBE8DED2476744C0049F971 /* method.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1045,8 +1047,9 @@
 			baseConfigurationReference = 2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = CYZGM63QL7;
+				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
@@ -1055,8 +1058,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+				PRODUCT_NAME = method;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1067,8 +1070,9 @@
 			baseConfigurationReference = BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = CYZGM63QL7;
+				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
@@ -1077,8 +1081,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.messenger;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+				PRODUCT_NAME = method;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
