@@ -12,7 +12,7 @@ import AVFoundation
 import WebRTC
 import CoreData
 
-let defaultSignalingServerUrl = URL(string: "wss://192.168.0.105:8080")!
+let defaultSignalingServerUrl = URL(string: Environment.socketUrl)! //TODO !!!! move to constants
 let defaultIceServers = ["stun:stun.l.google.com:19302",
                          "stun:stun1.l.google.com:19302",
                          "stun:stun2.l.google.com:19302",
