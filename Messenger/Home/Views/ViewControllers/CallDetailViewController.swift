@@ -110,7 +110,9 @@ class CallDetailViewController: UIViewController {
         durationLabel.text = callDuration
         callModeLabel.text = callMode?.rawValue
         ImageCache.shared.getImage(url: avatarURL ?? "", id: id!) { (image) in
-            self.userImageView.image = image
+            DispatchQueue.main.async {
+                self.userImageView.image = image
+            }
         }
     }
 
@@ -128,12 +130,6 @@ class CallDetailViewController: UIViewController {
         
     }
     @IBAction func sendMessageButton(_ sender: Any) {
-//        let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-//        vc.id = id
-//        vc.name = name
-//        vc.username = name
-//        vc.avatar = avatarURL
-//        navigationController?.pushViewController(vc, animated: true)
         mainRouter?.showChatViewControllerFromCallDetail(name: name, username: name, avatarURL: avatarURL, id: id!)
     }
   

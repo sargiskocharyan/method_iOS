@@ -13,19 +13,28 @@ struct Users: Codable {
     let users: [User]
 }
 
-struct Sender: Codable{
-    let id: String?
-    let name: String?
+//struct Sender: Codable{
+//    let id: String?
+//    let name: String?
+//}
+
+struct MessageCall: Codable {
+    var callSuggestTime: String?
+    var type: String?
+    var status: String?
+    var duration: Float?
 }
 
 struct Message: Codable {
+    var call: MessageCall?
+    var type: String?
     let _id: String?
     let reciever: String?
     var text: String?
     let createdAt: String?
     let updatedAt: String?
     let owner: String?
-    let sender: Sender?
+    let senderId: String?
 }
 
 struct OnlineUsers: Codable {

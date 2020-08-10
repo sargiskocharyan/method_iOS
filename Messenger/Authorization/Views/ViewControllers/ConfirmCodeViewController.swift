@@ -152,8 +152,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
                     DispatchQueue.main.async {
-//                        let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
-//                        self.view.window?.rootViewController = vc
                         MainRouter().assemblyModule()
                         self.activityIndicator.stopAnimating()
                     }

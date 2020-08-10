@@ -30,7 +30,6 @@ class MainRouter {
         vc.recentMessagesViewModel = RecentMessagesViewModel()
         router.mainTabBarController = vc
         let videoVC = VideoViewController.instantiate(fromAppStoryboard: .main)
-        videoVC.delegate = router.mainTabBarController
         videoVC.webRTCClient = router.mainTabBarController!.webRTCClient
         router.videoViewController = videoVC
         router.mainTabBarController?.videoVC = videoVC

@@ -13,7 +13,7 @@ public enum AuthApi {
     case beforeLogin(email: String)
     case login(email: String, code:String)
     case register(email: String, code: String)
-    case updateUser(name: String, lastname: String, username: String, university: String, token: String)
+    case updateUser(name: String?, lastname: String?, username: String?, gender: String?)
     case verifyToken(token: String)
     case getUniversities(token: String)
     case getUserContacts(token: String)
@@ -36,7 +36,7 @@ extension AuthApi: EndPointType {
             return AUTHUrls.Login
         case .register(_,_):
             return AUTHUrls.Register
-        case .updateUser(_,_,_,_,_):
+        case .updateUser(_,_,_,_):
             return AUTHUrls.UpdateUser
         case .verifyToken(_):
             return AUTHUrls.VerifyToken
@@ -59,7 +59,7 @@ extension AuthApi: EndPointType {
             return .post
         case .register(_,_):
             return .post
-        case .updateUser(_,_,_,_,_):
+        case .updateUser(_,_,_,_):
             return .post
         case .verifyToken(_):
             return .post
@@ -87,9 +87,17 @@ extension AuthApi: EndPointType {
             let parameters:Parameters = ["email": email, "code": code]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  nil)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .updateUser(name: let name, lastname: let lastname, username: let username, university: let university, token: let token):
-            let parameters:Parameters = ["name": name, "lastname": lastname, "username": username, "university": university]
-            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+        case .updateUser(name: let name, lastname: let lastname, username: let username, gender: let gender):
+            let allParameters:Parameters = ["name": name, "lastname": lastname, "username": username, "gender": gender]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token)
+            var parameters: Dictionary<String,Any> = [:]
+            for (key, value) in allParameters {
+                if value != nil && value as! String != "" {
+                    parameters[key] = value
+                }
+            }
+            print(allParameters)
+            print(parameters)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .verifyToken(token: let token):
             let parameters:Parameters = [:]

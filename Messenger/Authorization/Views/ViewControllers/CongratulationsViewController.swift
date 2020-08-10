@@ -29,12 +29,6 @@ class CongratulationsViewController: UIViewController {
     //MARK: @IBAction
     
     @IBAction func doneButtonAction(_ sender: UIButton) {
-//        DispatchQueue.main.async {
-//            let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
-//            vc.modalPresentationStyle = .fullScreen
-//            self.navigationController?.pushViewController(vc, animated: true)
-//
-//        }
         MainRouter().assemblyModule()
     }
     //MARK: Lifecycle

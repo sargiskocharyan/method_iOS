@@ -9,6 +9,15 @@
 import UIKit
 import SocketIO
 
+enum CallStatus: String {
+    case accepted  = "accepted"
+    case missed    = "missed"
+    case cancelled = "cancelled"
+    case incoming  = "incoming_call"
+    case outgoing  = "outgoing_call"
+    case ongoing   = "onging"
+}
+
 class ChatViewController: UIViewController {
     
     //MARK: IBOutlets
@@ -33,11 +42,7 @@ class ChatViewController: UIViewController {
     var mainRouter: MainRouter?
     let messageInputContainerView: UIView = {
         let view = UIView()
-        if SharedConfigs.shared.mode == "light" {
-            view.backgroundColor = .white
-        } else {
-            view.backgroundColor = .black
-        }
+        view.backgroundColor = UIColor(named: "imputColor")
         return view
     }()
     
@@ -80,20 +85,11 @@ class ChatViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.isHidden = false
     }
     
     //MARK: Helper methods
     @objc func infoButtonAction() {
-//        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-//        vc.id = id
-//        vc.onContactPage = false
-//        vc.fromChat = true
-//        for i in 0..<tabbar!.contactsViewModel!.contacts.count {
-//            if tabbar!.contactsViewModel!.contacts[i]._id == id {
-//                vc.onContactPage = true
-//                break
-//            }
-//        }
         mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
     }
     
@@ -138,8 +134,8 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func getnewMessage(message: Message) {
-        if (message.reciever == self.id || message.sender?.id == self.id) &&  message.sender?.id != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
+    func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+        if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.reciever == self.id {
                 DispatchQueue.main.async {
                     self.inputTextField.text = ""
@@ -151,7 +147,7 @@ class ChatViewController: UIViewController {
                 let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
-        } else if self.id == SharedConfigs.shared.signedUser?.id && message.sender?.id == message.reciever  {
+        } else if self.id == SharedConfigs.shared.signedUser?.id && message.senderId == message.reciever  {
             DispatchQueue.main.async {
                 self.inputTextField.text = ""
             }
@@ -162,8 +158,8 @@ class ChatViewController: UIViewController {
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
-            if message.sender?.id != SharedConfigs.shared.signedUser?.id {
-                self.scheduleNotification(center: MainTabBarController.center, message: message)
+            if message.senderId != SharedConfigs.shared.signedUser?.id {
+                self.scheduleNotification(center: MainTabBarController.center, message: message, name, lastname, username)
             }
         }
     }
@@ -248,33 +244,120 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         var size: CGSize?
         
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        if (allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id) {
-            size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-            let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-            return frame.height + 30
+        if (allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
+            if allMessages[indexPath.row].type == "text" {
+                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+                let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+                return frame.height + 30
+            } else {
+                return 80
+            }
         } else {
-            size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-            let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-            return frame.height + 30
+            if allMessages[indexPath.row].type == "text" {
+                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+                let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+                return frame.height + 30
+            } else {
+                return 80
+            }
         }
     }
     
+    func secondsToHoursMinutesSeconds(seconds : Int) -> String {
+       if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+           return "\((seconds % 3600) % 60) sec."
+       } else if seconds / 3600 == 0 {
+           return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+       }
+       return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+       }
+    
+    func stringToDate(date:String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: parsedDate!)
+        let month = calendar.component(.month, from: parsedDate!)
+        let time = Date()
+        let currentDay = calendar.component(.day, from: time as Date)
+        if currentDay != day {
+            return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
+        }
+        let hour = calendar.component(.hour, from: parsedDate!)
+        let minutes = calendar.component(.minute, from: parsedDate!)
+        return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        if !tabbar!.onCall {
+            tabbar!.handleCallClick(id: id!, name: name ?? username ?? "")
+            tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+               } else {
+            tabbar!.handleClickOnSamePerson()
+               }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if allMessages[indexPath.row].sender?.id == SharedConfigs.shared.signedUser?.id {
+        if allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            if allMessages[indexPath.row].type == "text" {
             let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.text = allMessages[indexPath.row].text
             cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
             cell.messageLabel.textColor = .white
             cell.messageLabel.sizeToFit()
             return cell
+            } else if allMessages[indexPath.row].type == "call" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
+                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+                cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
+                if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
+                    cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
+                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration ?? 0)))"
+                    return cell
+                } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
+                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    return cell
+                } else {
+                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
+                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    return cell
+                }
+            } 
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
-            cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
-            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-            cell.userImageView.image = image
-            cell.messageLabel.text = allMessages[indexPath.row].text
-            cell.messageLabel.sizeToFit()
-            return cell
+            if allMessages[indexPath.row].type == "text" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
+                cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
+                cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+                cell.userImageView.image = image
+                cell.messageLabel.text = allMessages[indexPath.row].text
+                cell.messageLabel.sizeToFit()
+                return cell
+            }  else if allMessages[indexPath.row].type == "call" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
+                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+                cell.cellMessageView.addGestureRecognizer(tapSendCallTableViewCell)
+                cell.userImageView.image = image
+                if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
+                    cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
+                    cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(secondsToHoursMinutesSeconds(seconds: Int(allMessages[indexPath.row].call!.duration!)))"
+                    return cell
+                } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+                    cell.arrowImageView.tintColor = .red
+                    cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    return cell
+                } else  {
+                    cell.arrowImageView.tintColor = .red
+                    cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    return cell
+                }
+                
+            }
         }
+        return UITableViewCell()
     }
 }

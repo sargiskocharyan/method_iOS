@@ -20,7 +20,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: IBOutlets
     @IBOutlet weak var hidePersonalDataLabel: UILabel!
     @IBOutlet weak var switchMode: UISwitch!
-    @IBOutlet weak var universityLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
@@ -228,13 +227,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
-        if SharedConfigs.shared.mode == "dark" {
-            closeButton.setImage(UIImage(named: "white@_"), for: .normal)
-            imageView.backgroundColor = .black
-        } else {
-            closeButton.setImage(UIImage(named: "close"), for: .normal)
-            imageView.backgroundColor = .white
-        }
+        closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
+        imageView.backgroundColor = UIColor(named: "imputColor")
         
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
@@ -312,9 +306,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleContactsTap(_ sender: UITapGestureRecognizer? = nil) {
-//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-//        vc.fromProfile = true
-//        self.navigationController?.pushViewController(vc, animated: true)
         mainRouter?.showContactsViewControllerFromProfile()
     }
     
@@ -360,19 +351,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
         }
-        if SharedConfigs.shared.mode == "dark" {
-            dropDown.backgroundColor = UIColor.gray //(red: 18/255, green: 19/255, blue: 18/255, alpha: 1)
-        } else {
-            dropDown.backgroundColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
-        }
+        dropDown.backgroundColor = UIColor(named: "dropDownColor")
         dropDown.cellNib = UINib(nibName: Self.nameOfDropdownCell, bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
             guard let cell = cell as? CustomCell else { return }
-            if SharedConfigs.shared.mode == "dark" {
-                cell.optionLabel.textColor = UIColor.white
-                   } else {
-                cell.optionLabel.textColor = UIColor.black
-                   }
             cell.countryImageView.image = UIImage(named: "\(item)")
         }
         dropDown.show()
@@ -400,79 +382,36 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
-            if SharedConfigs.shared.mode == "dark" {
-              nameLabel.textColor = .white
-            } else {
-                nameLabel.textColor = .black
-            }
+            nameLabel.textColor = UIColor(named: "color")
         }
         if user?.lastname == nil {
             lastnameLabel.text = "lastname".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
-            if SharedConfigs.shared.mode == "dark" {
-              lastnameLabel.textColor = .white
-            } else {
-                lastnameLabel.textColor = .black
-            }
+             lastnameLabel.textColor = UIColor(named: "color")
         }
         if user?.email == nil {
             emailLabel.text = "email".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
-            if SharedConfigs.shared.mode == "dark" {
-              emailLabel.textColor = .white
-            } else {
-                emailLabel.textColor = .black
-            }
+            emailLabel.textColor = UIColor(named: "color")
         }
         if user?.phoneNumber == nil {
             phoneLabel.text = "number".localized()
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = user?.phoneNumber
-            if SharedConfigs.shared.mode == "dark" {
-              phoneLabel.textColor = .white
-            } else {
-                phoneLabel.textColor = .black
-            }
+            phoneLabel.textColor = UIColor(named: "color")
         }
         if user?.username == nil {
             usernameLabel.text = "username".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
-            if SharedConfigs.shared.mode == "dark" {
-              usernameLabel.textColor = .white
-            } else {
-                usernameLabel.textColor = .black
-            }
+            usernameLabel.textColor = UIColor(named: "color")
         }
-        
-        if user?.university == nil {
-            universityLabel.text = "university".localized()
-            universityLabel.textColor = .lightGray
-        } else {
-            if SharedConfigs.shared.mode == "dark" {
-              universityLabel.textColor = .white
-            } else {
-                universityLabel.textColor = .black
-            }
-            universityLabel.text = user?.university?.name
-            switch SharedConfigs.shared.appLang {
-            case AppLangKeys.Arm:
-                universityLabel.text = user?.university?.name
-            case AppLangKeys.Rus:
-                universityLabel.text = user?.university?.nameRU
-            case AppLangKeys.Eng:
-                universityLabel.text = user?.university?.nameEN
-            default:
-                universityLabel.text = user?.university?.nameEN
-            }
-        }
-        
     }
     
     private func checkVersion() {

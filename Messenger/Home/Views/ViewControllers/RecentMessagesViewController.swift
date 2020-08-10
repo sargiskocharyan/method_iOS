@@ -60,7 +60,7 @@ class RecentMessagesViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if isLoadedMessages && chats.count == 0 {
-            setView("you_have_no_message".localized())
+            setView("you_have_no_messages".localized())
         }
     }
     
@@ -100,9 +100,6 @@ class RecentMessagesViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
-//        let vc = ContactsViewController.instantiate(fromAppStoryboard: .main)
-//        vc.fromProfile = false
-//        self.navigationController?.pushViewController(vc, animated: true)
         mainRouter?.showContactsViewControllerFromRecent()
     }
     
@@ -130,7 +127,7 @@ class RecentMessagesViewController: UIViewController {
             self.removeView()
             let noResultView = UIView(frame: self.view.frame)
             noResultView.tag = 26
-            noResultView.backgroundColor = .white
+            noResultView.backgroundColor = UIColor(named: "imputColor")
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
             label.text = str
@@ -207,12 +204,12 @@ class RecentMessagesViewController: UIViewController {
         }
     }
     
-    func getnewMessage(message: Message) {
+    func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         var id = ""
-        if message.sender?.id == SharedConfigs.shared.signedUser?.id {
+        if message.senderId == SharedConfigs.shared.signedUser?.id {
             id = message.reciever ?? ""
         } else {
-            id = (message.sender?.id! ?? "") as String
+            id = (message.senderId ?? "") as String
         }
         self.viewModel!.getuserById(id: id) { (user, error) in
             if (error != nil) {
@@ -226,7 +223,7 @@ class RecentMessagesViewController: UIViewController {
                     let visibleViewController = self.navigationController?.visibleViewController
                     if visibleViewController is ChatViewController {
                         let chatViewController = visibleViewController as! ChatViewController
-                        chatViewController.getnewMessage( message: message)
+                        chatViewController.getnewMessage( message: message, name, lastname, username)
                     }
                 }
                 for i in 0..<self.chats.count {

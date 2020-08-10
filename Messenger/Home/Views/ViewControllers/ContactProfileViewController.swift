@@ -32,14 +32,12 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var birthDateTextLabel: UILabel!
     @IBOutlet weak var infoTextLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
-    @IBOutlet weak var addressTextLabel: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var genderLabel: UILabel!
     @IBOutlet weak var birthDateLabel: UILabel!
-    @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var emailTextLabel: UILabel!
     @IBOutlet weak var sendMessageButton: UIButton!
     
@@ -54,17 +52,20 @@ class ContactProfileViewController: UIViewController {
     var callListViewController: CallListViewController?
     var fromChat: Bool?
     var mainRouter: MainRouter?
+    var isAdd: Bool?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
+        addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
+
         if onContactPage! {
+            isAdd = false
             addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
-            addToContactButton.addTarget(self, action: #selector(removeFromContacts), for: .touchUpInside)
         } else {
+            isAdd = true
             addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
-            addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
         }
         if tabBar!.onCall || !onContactPage! {
             videoCallButton.isEnabled = false
@@ -86,23 +87,15 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.masksToBounds = true
         getUserInformation()
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
-        
         sendMessageButton.backgroundColor = .clear
-       
+        
     }
     
     @objc func startMessage() {
         if fromChat! {
             navigationController?.popViewController(animated: false)
         } else {
-//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-//            vc.id = contact?._id
-//            vc.name = contact?.name
-//            vc.username = contact?.username
-//            vc.avatar = contact?.avatarURL
-//            navigationController?.pushViewController(vc, animated: true)
             mainRouter?.showChatViewControllerFromContactProfile(name: contact?.name, username:  contact?.username, avatarURL: contact?.avatarURL, id: (contact?._id)!)
-            
         }
     }
     
@@ -121,23 +114,55 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-    @objc func removeFromContacts() {
-        viewModel?.removeContact(id: id!, completion: { (error) in
-            if error != nil {
+    @objc func addToContact() {
+        addToContactButton.isEnabled = false
+        if isAdd! {
+            viewModel!.addContact(id: contact!._id!) { (error) in
                 DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    self.addToContactButton.isEnabled = true
                 }
-            } else {
-                self.onContactPage = false
-                DispatchQueue.main.async {
-                    self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
-                    self.addToContactButton.addTarget(self, action: #selector(self.addToContact), for: .touchUpInside)
-                    self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
-                        self.delegate?.removeContact()
-                    })
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
+                            if error != nil {
+                                print(error as Any)
+                            } else {
+                                self.isAdd = !self.isAdd!
+                                self.delegate?.addNewContact(contact: self.contact!)
+                                self.onContactPage = true
+                                self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+                                self.videoCallButton.isEnabled = true
+                            }
+                        })
+                    }
                 }
             }
-        })
+        } else {
+            viewModel?.removeContact(id: id!, completion: { (error) in
+                DispatchQueue.main.async {
+                    self.addToContactButton.isEnabled = true
+                }
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.onContactPage = false
+                    DispatchQueue.main.async {
+                        self.isAdd = !self.isAdd!
+                        self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+                        self.videoCallButton.isEnabled = false
+                        self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
+                            self.delegate?.removeContact()
+                        })
+                    }
+                }
+            })
+        }
     }
     
     @IBAction func startVideoCall(_ sender: Any) {
@@ -167,30 +192,7 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-    @objc func addToContact() {
-        viewModel!.addContact(id: contact!._id!) { (error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                }
-                
-            } else {
-                DispatchQueue.main.async {
-                    self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
-                        if error != nil {
-                            print(error as Any)
-                        } else {
-                             self.delegate?.addNewContact(contact: self.contact!)
-                            self.onContactPage = true
-                            self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
-                            self.addToContactButton.addTarget(self, action: #selector(self.removeFromContacts), for: .touchUpInside)
-                        }
-                    })
-                }
-            }
-        }
-    }
-    
+   
     func stringToDate(date:String?) -> String? {
         if date == nil {
             return nil
@@ -217,33 +219,21 @@ class ContactProfileViewController: UIViewController {
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = contact?.name
-            if SharedConfigs.shared.mode == "dark" {
-                nameLabel.textColor = .white
-            } else {
-                nameLabel.textColor = .black
-            }
+            nameLabel.textColor = UIColor(named: "color")
         }
         if contact?.lastname == nil {
             lastnameLabel.text = "lastname".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = contact?.lastname
-            if SharedConfigs.shared.mode == "dark" {
-                lastnameLabel.textColor = .white
-            } else {
-                lastnameLabel.textColor = .black
-            }
+            lastnameLabel.textColor = UIColor(named: "color")
         }
         if contact?.email == nil {
             emailLabel.text = "email".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = contact?.email
-            if SharedConfigs.shared.mode == "dark" {
-                emailLabel.textColor = .white
-            } else {
-                emailLabel.textColor = .black
-            }
+            emailLabel.textColor = UIColor(named: "color")
         }
         
         if contact?.phoneNumber == nil {
@@ -251,11 +241,7 @@ class ContactProfileViewController: UIViewController {
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = contact?.phoneNumber
-            if SharedConfigs.shared.mode == "dark" {
-                phoneLabel.textColor = .white
-            } else {
-                phoneLabel.textColor = .black
-            }
+            phoneLabel.textColor = UIColor(named: "color")
         }
         
         if contact?.birthday == nil {
@@ -263,11 +249,7 @@ class ContactProfileViewController: UIViewController {
             birthDateLabel.textColor = .lightGray
         } else {
             birthDateLabel.text = stringToDate(date: contact?.birthday) 
-            if SharedConfigs.shared.mode == "dark" {
-                birthDateLabel.textColor = .white
-            } else {
-                birthDateLabel.textColor = .black
-            }
+            birthDateLabel.textColor = UIColor(named: "color")
         }
         
         if contact?.gender == nil {
@@ -275,23 +257,7 @@ class ContactProfileViewController: UIViewController {
             genderLabel.textColor = .lightGray
         } else {
             genderLabel.text = contact?.gender
-            if SharedConfigs.shared.mode == "dark" {
-                genderLabel.textColor = .white
-            } else {
-                genderLabel.textColor = .black
-            }
-        }
-        
-        if contact?.address == nil {
-            addressLabel.text = "address".localized()
-            addressLabel.textColor = .lightGray
-        } else {
-            addressLabel.text = contact?.address
-            if SharedConfigs.shared.mode == "dark" {
-                addressLabel.textColor = .white
-            } else {
-                addressLabel.textColor = .black
-            }
+            genderLabel.textColor = UIColor(named: "color")
         }
         
         if contact?.username == nil {
@@ -299,14 +265,17 @@ class ContactProfileViewController: UIViewController {
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = contact?.username
-            if SharedConfigs.shared.mode == "dark" {
-                usernameLabel.textColor = .white
-            } else {
-                usernameLabel.textColor = .black
-            }
+            usernameLabel.textColor = UIColor(named: "color")
         }
+        if contact?.info == nil {
+            infoLabel.text = "info_not_set".localized()
+            infoLabel.textColor = .lightGray
+        } else {
+            infoLabel.text = contact?.info
+            infoLabel.textColor = UIColor(named: "color")
+        }
+        
         genderTextLabel.text = "gender:".localized()
-        addressTextLabel.text = "address:".localized()
         phoneTextLabel.text = "phone:".localized()
         emailTextLabel.text = "email:".localized()
         nameTextLabel.text = "name:".localized()

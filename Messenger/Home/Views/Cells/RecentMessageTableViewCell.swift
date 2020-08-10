@@ -76,10 +76,10 @@ class RecentMessageTableViewCell: UITableViewCell {
         if chat.message != nil {
             timeLabel.text = stringToDate(date: chat.message!.createdAt ?? "" )
         }
-        if chat.id == chat.message?.sender?.id {
-            lastMessageLabel.text = chat.message?.text
+        if chat.id == chat.message?.senderId {
+            lastMessageLabel.text = chat.message?.text ?? "Call"
         } else {
-            lastMessageLabel.text = "You: " + (chat.message?.text ?? "dfghfkjg")
+            lastMessageLabel.text = "You: " + (chat.message?.text ?? "Call")
         }
     }
     

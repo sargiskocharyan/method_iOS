@@ -19,9 +19,9 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var nameCustomView: CustomTextField!
     @IBOutlet weak var createAccountButton: UIButton!
     @IBOutlet weak var header: HeaderShapeView!
-    @IBOutlet weak var universityTextField: UITextField!
     @IBOutlet var storyboardView: UIView!
     @IBOutlet weak var headerTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var genderCustomView: CustomTextField!
     
     //MARK: Properties
     var headerShapeView = HeaderShapeView()
@@ -31,32 +31,24 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     let bottomView = BottomShapeView()
     var bottomWidth = CGFloat()
     var bottomHeight = CGFloat()
-    var isMore = false
     let dropDown = DropDown()
     let moreOrLessImageView = UIImageView()
     var universities: [University] = []
     var constant: CGFloat = 0
     let button = UIButton()
     var authRouter: AuthRouter?
+    var name: String?
+    var lastname: String?
+    var gender: String?
+    var username: String?
+    var signedUser = SharedConfigs.shared.signedUser
+    var isMoreGender = false
+    var isChangingUsername = false
+    var isChangingGender = false
     
     //MARK: @IBActions
     @IBAction func createAccountAction(_ sender: UIButton) {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityTextField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityTextField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityTextField.text!
-                }?._id
-        }
-        viewModel!.updateUser(name: nameCustomView.textField.text!, lastname: lastnameCustomView.textField.text!, username: usernameCustomView.textField.text!, university: id!) { (user, error) in
+        viewModel!.updateUser(name: name, lastname: lastname, username: username, gender: gender) { (user, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -124,7 +116,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         header.backgroundColor = .clear
         stackViewTopConstraint.constant = self.view.frame.height * 0.3
-        universityTextField.underlinedUniversityTextField()
         self.navigationController?.isNavigationBarHidden = true
         createAccountButton.isEnabled = false
         constant = stackViewTopConstraint.constant
@@ -135,15 +126,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         lastnameCustomView.textField.delegate = self
         usernameCustomView.textField.delegate = self
         addDropDown()
-        getUniversities()
         skipButton.setTitle("skip".localized(), for: .normal)
         createAccountButton.setTitle("create_account".localized(), for: .normal)
-        universityTextField.placeholder = "select_university".localized()
         self.hideKeyboardWhenTappedAround()
         setObservers()
-        createAccountButton.isEnabled = false
-        createAccountButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
-        createAccountButton.titleLabel?.textColor = UIColor.lightGray
+        disableUpdateInfoButton()
         nameCustomView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameCustomView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameCustomView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
@@ -161,73 +148,153 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     //MARK: Helper methodes
-    func checkFields() {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityTextField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityTextField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityTextField.text!
-                }?._id
+  
+    func checkGender(_ signedUser: UserModel?) -> Bool? {
+        if signedUser?.gender?.lowercased() != genderCustomView.textField.text?.lowercased() {
+            if genderCustomView.textField.text == "" {
+                gender = nil
+                return nil
+            } else {
+                gender = genderCustomView.textField.text!.lowercased()
+                return true
+            }
         }
-        if (nameCustomView.textField.text?.isValidNameOrLastname())! && (lastnameCustomView.textField.text?.isValidNameOrLastname())! && (usernameCustomView.textField.text?.isValidUsername())! && id != nil {
-            createAccountButton.backgroundColor = .clear
-            createAccountButton.titleLabel?.textColor = .white
-            createAccountButton.isEnabled = true
+        if isChangingGender {
+            gender = genderCustomView.textField.text!.lowercased()
+            return true
         } else {
-            createAccountButton.isEnabled = false
-            createAccountButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
-            createAccountButton.titleLabel?.textColor = UIColor.lightGray
+            gender = nil
+            return nil
+        }
+    }
+    
+    func checkName(_ signedUser: UserModel?) -> Bool? {
+        if signedUser?.name != nameCustomView.textField.text {
+            if (nameCustomView.textField.text?.isValidNameOrLastname())! || nameCustomView.textField.text == "" {
+                if (signedUser?.name == nil && nameCustomView.textField.text == "") {
+                    name = nil
+                    return nil
+                } else {
+                    name = nameCustomView.textField.text!
+                    return true
+                }
+            } else {
+                name = nil
+                return false
+            }
+        }
+        name = nil
+        return nil
+    }
+    
+    func checkUsername(_ signedUser: UserModel?, completion: @escaping (Bool?)->()) {
+        if signedUser?.username != usernameCustomView.textField.text {
+            if (usernameCustomView.textField.text?.isValidUsername())! || usernameCustomView.textField.text == "" {
+                if (usernameCustomView.textField.text == "") {
+                    self.usernameCustomView.errorLabel.text = ""
+                    username = nil
+                    completion(nil)
+                    return
+                } else {
+                    if isChangingUsername {
+                        self.usernameCustomView.errorLabel.text = ""
+                        self.usernameCustomView.borderColor = .red
+                        viewModel?.checkUsername(username: usernameCustomView.textField.text!, completion: { (responseObject, error) in
+                            if responseObject != nil && responseObject?.usernameExists == false {
+                                DispatchQueue.main.async {
+                                    self.username = self.usernameCustomView.textField.text!
+                                    self.usernameCustomView.errorLabel.text = "correct_username".localized()
+                                    self.usernameCustomView.errorLabel.textColor = .blue
+                                    completion(true)
+                                }
+                            } else if responseObject != nil && responseObject?.usernameExists == true {
+                                DispatchQueue.main.async {
+                                    self.usernameCustomView.errorLabel.text = "this_username_is_taken".localized()
+                                    self.username = nil
+                                    self.usernameCustomView.errorLabel.textColor = .red
+                                    completion(false)
+                                }
+                            }
+                        })
+                    }
+                }
+            } else {
+                self.usernameCustomView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                self.usernameCustomView.errorLabel.textColor = .red
+                username = nil
+                completion(false)
+                return
+            }
+        }
+        if username == nil {
+            completion(false)
+            return
+        } else {
+            completion(true)
+            return
+        }
+    }
+    
+    
+    func checkLastname(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.lastname != lastnameCustomView.textField.text {
+            if (lastnameCustomView.textField.text?.isValidNameOrLastname())! || lastnameCustomView.textField.text == "" {
+                if (signedUser?.lastname == nil && lastnameCustomView.textField.text == "") {
+                    lastname = nil
+                    return nil
+                } else {
+                    lastname = lastnameCustomView.textField.text!
+                    return true
+                }
+            } else {
+                lastname = nil
+                return false
+            }
+        }
+        lastname = nil
+        return nil
+    }
+    
+    func disableUpdateInfoButton() {
+        createAccountButton.isEnabled = false
+        createAccountButton.titleLabel?.textColor = UIColor.white
+        createAccountButton.backgroundColor = UIColor.lightGray
+    }
+    
+    func enableUpdateInfoButton() {
+        createAccountButton.backgroundColor = .clear
+        createAccountButton.titleLabel?.textColor = .white
+        createAccountButton.isEnabled = true
+    }
+    
+    func checkFields() {
+        checkUsername(signedUser) { (isVsyoLav) in
+            if isVsyoLav != false && self.checkGender(self.signedUser) != false && self.checkName(self.signedUser) != false && self.checkLastname(self.signedUser) != false {
+                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil {
+                    self.enableUpdateInfoButton()
+                } else {
+                    self.disableUpdateInfoButton()
+                }
+            }
+            else {
+                self.disableUpdateInfoButton()
+            }
         }
     }
     
     @objc func nameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func usernameTextFieldAction() {
+        isChangingUsername = true
         checkFields()
     }
     
     @objc func lastnameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
-    }
-    
-    func getUniversities() {
-        viewModel!.getUniversities { (responseObject, error) in
-            if(error != nil) {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                }
-            } else if responseObject != nil {
-                self.universities = responseObject!
-                switch SharedConfigs.shared.appLang {
-                case AppLangKeys.Arm:
-                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.name
-                    })
-                case AppLangKeys.Rus:
-                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameRU
-                    })
-                case AppLangKeys.Eng:
-                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                default:
-                    self.dropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                }
-            }
-        }
     }
     
     func raiseStackView(_ keyboardFrame: CGRect?, _ isKeyboardShowing: Bool, _ customView: UIView) {
@@ -270,54 +337,62 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         topHeight =  view.frame.height * 0.3
     }
     
-    func addImage() {
-        universityTextField.addSubview(moreOrLessImageView)
-        moreOrLessImageView.image = UIImage(named: "more")
-        moreOrLessImageView.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 20).isActive = true
-        moreOrLessImageView.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
-        moreOrLessImageView.heightAnchor.constraint(equalToConstant: 10).isActive = true
-        moreOrLessImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        moreOrLessImageView.isUserInteractionEnabled = true
-        moreOrLessImageView.anchor(top: universityTextField.topAnchor, paddingTop: 20, bottom: universityTextField.bottomAnchor, paddingBottom: 15, left: nil, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: 25, height: 10)
+   func addImage(textField: UITextField, imageView: UIImageView) {
+        textField.addSubview(imageView)
+        imageView.image = UIImage(named: "more")
+        imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
+        imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        imageView.isUserInteractionEnabled = true
+        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 25, height: 22)
     }
     
     func addButton() {
         button.addTarget(self, action: #selector(imageTapped), for: .touchUpInside)
-        self.universityTextField.addSubview(button)
-        button.topAnchor.constraint(equalTo: universityTextField.topAnchor, constant: 0).isActive = true
-        button.rightAnchor.constraint(equalTo: universityTextField.rightAnchor, constant: 0).isActive = true
-        button.leftAnchor.constraint(equalTo: universityTextField.leftAnchor, constant: 0).isActive = true
-        button.heightAnchor.constraint(equalToConstant: universityTextField.frame.height).isActive = true
-        button.widthAnchor.constraint(equalToConstant: universityTextField.frame.width).isActive = true
-        button.anchor(top: universityTextField.topAnchor, paddingTop: 0, bottom: universityTextField.bottomAnchor, paddingBottom: 0, left: universityTextField.leftAnchor, paddingLeft: 0, right: universityTextField.rightAnchor, paddingRight: 0, width: universityTextField.frame.width, height: universityTextField.frame.height)
+        self.genderCustomView.textField.addSubview(button)
+        button.topAnchor.constraint(equalTo: genderCustomView.textField.topAnchor, constant: 0).isActive = true
+        button.rightAnchor.constraint(equalTo: genderCustomView.textField.rightAnchor, constant: 0).isActive = true
+        button.leftAnchor.constraint(equalTo: genderCustomView.textField.leftAnchor, constant: 0).isActive = true
+        button.heightAnchor.constraint(equalToConstant: genderCustomView.textField.frame.height).isActive = true
+        button.widthAnchor.constraint(equalToConstant: genderCustomView.textField.frame.width).isActive = true
+        button.anchor(top: genderCustomView.textField.topAnchor, paddingTop: 0, bottom: genderCustomView.textField.bottomAnchor, paddingBottom: 0, left: genderCustomView.textField.leftAnchor, paddingLeft: 0, right: genderCustomView.textField.rightAnchor, paddingRight: 0, width: genderCustomView.textField.frame.width, height: genderCustomView.textField.frame.height)
     }
     
     func addDropDown() {
         addButton()
-        addImage()
+        addImage(textField: genderCustomView.textField, imageView: moreOrLessImageView)
         dropDown.anchorView = button
         dropDown.direction = .any
-        dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + universityTextField.frame.height + 5 - 25))
+        dropDown.dataSource = ["Male", "Female"]
+        dropDown.bottomOffset = CGPoint(x: 0, y:((dropDown.anchorView?.plainView.bounds.height)! + genderCustomView.textField.frame.height + 30))
         dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.universityTextField.text = item
+            self.genderCustomView.textField.text = item
             self.moreOrLessImageView.image = UIImage(named: "more")
-            self.isMore = false
+            self.isMoreGender = false
+            self.isChangingUsername = false
+            self.isChangingGender = true
+            self.checkFields()
         }
-        dropDown.width = universityTextField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityTextField.frame.height))
-        universityTextField.rightView = paddingView
-        universityTextField.rightViewMode = UITextField.ViewMode.always
+        dropDown.cancelAction = { [unowned self] in
+            self.moreOrLessImageView.image = UIImage(named: "more")
+            self.isMoreGender = false
+        }
+        dropDown.width = genderCustomView.textField.frame.width
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderCustomView.textField.frame.height))
+        genderCustomView.textField.rightView = paddingView
+        genderCustomView.textField.rightViewMode = UITextField.ViewMode.always
     }
     
     @objc func imageTapped() {
         checkFields()
-        if isMore {
-            isMore = false
+        if isMoreGender {
+            isMoreGender = false
             dropDown.hide()
             moreOrLessImageView.image = UIImage(named: "more")
         }
         else { 
-            isMore = true
+            isMoreGender = true
             dropDown.show()
             moreOrLessImageView.image = UIImage(named: "less")
         }
@@ -389,17 +464,18 @@ extension RegisterViewController: CustomTextFieldDelegate {
                 lastnameCustomView.errorLabel.text = lastnameCustomView.successMessage
             }
         }
-        if placeholder == "username".localized() {
-            if !usernameCustomView.textField.text!.isValidUsername() {
-                usernameCustomView.errorLabel.text = usernameCustomView.errorMessage
-                usernameCustomView.errorLabel.textColor = .red
-                usernameCustomView.border.backgroundColor = .red
-            } else {
-                usernameCustomView.border.backgroundColor = .blue
-                usernameCustomView.errorLabel.textColor = .blue
-                usernameCustomView.errorLabel.text = usernameCustomView.successMessage
-            }
-        }
+//        if placeholder == "username".localized() {
+//            if !usernameCustomView.textField.text!.isValidUsername() {
+//                usernameCustomView.errorLabel.text = usernameCustomView.errorMessage
+//                usernameCustomView.errorLabel.textColor = .red
+//                usernameCustomView.border.backgroundColor = .red
+//            } else {
+//
+//                usernameCustomView.border.backgroundColor = .blue
+//                usernameCustomView.errorLabel.textColor = .blue
+//                usernameCustomView.errorLabel.text = usernameCustomView.successMessage
+//            }
+//        }
         
     }
 }

@@ -156,7 +156,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rsc-6J-tuT" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="975" y="163"/>
+            <point key="canvasLocation" x="980" y="126"/>
         </scene>
         <!--Confirm Code View Controller-->
         <scene sceneID="nDY-5U-ACp">
@@ -284,25 +284,17 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="whC-qy-Jf9">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="847"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="772.5"/>
                                         <subviews>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="owj-xV-SOP" customClass="HeaderShapeView" customModule="Messenger" customModuleProvider="target">
-                                                <rect key="frame" x="83" y="0.0" width="331" height="254"/>
+                                                <rect key="frame" x="83" y="0.0" width="331" height="231.5"/>
                                                 <variation key="heightClass=regular-widthClass=compact" hidden="NO"/>
                                             </view>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="oxD-c3-uyv">
-                                                <rect key="frame" x="40" y="225.5" width="334" height="355.5"/>
+                                                <rect key="frame" x="40" y="225.5" width="334" height="325.5"/>
                                                 <subviews>
-                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Select university" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cXK-iT-D6f">
-                                                        <rect key="frame" x="0.0" y="0.0" width="334" height="66.5"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="66.329999999999998" id="CFM-L8-QW2"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <textInputTraits key="textInputTraits"/>
-                                                    </textField>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XdX-I4-iHP" customClass="CustomTextField" customModule="Messenger" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="96.5" width="334" height="66.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="334" height="66.5"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="66.329999999999998" id="D99-1c-ryv"/>
                                                         </constraints>
@@ -319,7 +311,7 @@
                                                         </userDefinedRuntimeAttributes>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bng-9H-xaa" customClass="CustomTextField" customModule="Messenger" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="193" width="334" height="66"/>
+                                                        <rect key="frame" x="0.0" y="86.5" width="334" height="66.5"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="66.329999999999998" id="rKt-qi-M1C"/>
                                                         </constraints>
@@ -333,7 +325,7 @@
                                                         </userDefinedRuntimeAttributes>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YZX-DF-fA2" customClass="CustomTextField" customModule="Messenger" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="289" width="334" height="66.5"/>
+                                                        <rect key="frame" x="0.0" y="173" width="334" height="66"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="66.329999999999998" id="jjd-BT-UUn"/>
                                                         </constraints>
@@ -346,12 +338,27 @@
                                                             </userDefinedRuntimeAttribute>
                                                         </userDefinedRuntimeAttributes>
                                                     </view>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CvY-Gi-CN8" customClass="CustomTextField" customModule="Messenger" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="259" width="334" height="66.5"/>
+                                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="66.329999999999998" id="Q0g-dU-x9e"/>
+                                                        </constraints>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="select_gender"/>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="Gender"/>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="Gender"/>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                                <color key="value" red="0.50532567500000003" green="0.36849257349999998" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </view>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemIndigoColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <variation key="heightClass=regular-widthClass=compact" spacing="30"/>
+                                                <variation key="heightClass=regular-widthClass=compact" spacing="20"/>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Um2-NN-8OI">
-                                                <rect key="frame" x="40" y="726" width="334" height="30"/>
+                                                <rect key="frame" x="40" y="656" width="334" height="30"/>
                                                 <state key="normal" title="Skip">
                                                     <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
@@ -360,7 +367,7 @@
                                                 </connections>
                                             </button>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jVU-r9-Pg4" customClass="GradientView" customModule="Messenger" customModuleProvider="target">
-                                                <rect key="frame" x="40" y="661" width="334" height="35"/>
+                                                <rect key="frame" x="40" y="591" width="334" height="35"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YiC-XP-7wF">
                                                         <rect key="frame" x="0.0" y="0.0" width="334" height="35"/>
@@ -399,7 +406,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fOa-BL-hsF" customClass="BottomShapeView" customModule="Messenger" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="796" width="248.5" height="51"/>
+                                                <rect key="frame" x="0.0" y="726" width="248.5" height="46.5"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                 <variation key="heightClass=regular-widthClass=compact" hidden="NO"/>
                                             </view>
@@ -439,7 +446,7 @@
                                                 <variation key="heightClass=regular-widthClass=compact" constant="225.66666666666663"/>
                                             </constraint>
                                             <constraint firstItem="jVU-r9-Pg4" firstAttribute="top" secondItem="oxD-c3-uyv" secondAttribute="bottom" constant="30" id="si1-01-8os">
-                                                <variation key="heightClass=regular-widthClass=compact" constant="80"/>
+                                                <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                                             </constraint>
                                         </constraints>
                                     </view>
@@ -469,6 +476,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="createAccountButton" destination="YiC-XP-7wF" id="2kb-9p-GZM"/>
+                        <outlet property="genderCustomView" destination="CvY-Gi-CN8" id="h7D-53-ZJJ"/>
                         <outlet property="header" destination="owj-xV-SOP" id="LMq-4e-aRf"/>
                         <outlet property="headerTopConstraint" destination="vvV-D9-HuF" id="qke-Y5-HXe"/>
                         <outlet property="lastnameCustomView" destination="Bng-9H-xaa" id="FGF-fp-24e"/>
@@ -476,7 +484,6 @@
                         <outlet property="skipButton" destination="Um2-NN-8OI" id="FWC-jt-1g0"/>
                         <outlet property="stackViewTopConstraint" destination="p0B-OZ-m96" id="Ve9-ZX-fpg"/>
                         <outlet property="storyboardView" destination="8ah-6V-yLG" id="WU1-00-Hfh"/>
-                        <outlet property="universityTextField" destination="cXK-iT-D6f" id="aZT-FC-XAH"/>
                         <outlet property="usernameCustomView" destination="YZX-DF-fA2" id="eB8-V0-paH"/>
                         <outlet property="viewOnScroll" destination="whC-qy-Jf9" id="uwl-vO-WDX"/>
                     </connections>
@@ -550,7 +557,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuU-9O-nT4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3825" y="144"/>
+            <point key="canvasLocation" x="3649" y="126"/>
         </scene>
     </scenes>
 </document>

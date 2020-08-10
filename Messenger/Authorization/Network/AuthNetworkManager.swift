@@ -126,8 +126,8 @@ class AuthorizationNetworkManager: NetworkManager {
         }
     }
     
-    func updateUser(name: String, lastname: String, username: String, token: String, university: String, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        router.request(.updateUser(name: name, lastname: lastname, username: username, university: university, token: token)) { data, response, error in
+    func updateUser(name: String?, lastname: String?, username: String?, gender: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        router.request(.updateUser(name: name, lastname: lastname, username: username, gender: gender)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)

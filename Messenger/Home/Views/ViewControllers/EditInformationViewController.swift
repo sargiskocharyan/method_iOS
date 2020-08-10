@@ -21,7 +21,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var genderView: CustomTextField!
-    @IBOutlet weak var universityView: CustomTextField!
     @IBOutlet weak var phoneCustomView: CustomTextField!
     @IBOutlet weak var infoTextView: UITextView!
     @IBOutlet weak var emailView: CustomTextField!
@@ -54,6 +53,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var info: String?
     var checkInfo: Bool?
     var mainRouter: MainRouter?
+    var isChangingUsername = false
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -62,11 +62,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         configureInfoTextView()
         constant = stackViewTopConstraint.constant
         setDelegates()
-        addUniversityDropDown()
-        getUniversities()
         addGenderDropDown()
         setLabelTexts()
-        setUniversityName()
         self.hideKeyboardWhenTappedAround()
         setObservers()
         setTopLabels()
@@ -160,21 +157,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
     }
     
-    func checkUniverity(_ id: String?, _ signedUser: UserModel?) -> Bool? {
-        if id != nil && signedUser?.university?._id != id {
-            universityId = id!
-            return true
-        } else if signedUser?.university?._id == nil && id != nil {
-            universityId = id!
-            return true
-        }
-        universityId = nil
-        return nil
-    }
-    
     func checkGender(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.gender?.lowercased() != genderView.textField.text?.lowercased() {
-            if signedUser?.gender == nil && genderView.textField.text == "" {
+            if genderView.textField.text == "" {
                 gender = nil
                 return nil
             } else {
@@ -204,9 +189,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
         if emailView.textField.text != "" {
             emailView.topLabel.text = "email".localized()
-        }
-        if universityView.textField.text != "" {
-            universityView.topLabel.text = "university".localized()
         }
         if genderView.textField.text != "" {
             genderView.topLabel.text = "gender".localized()
@@ -276,18 +258,56 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         return nil
     }
     
-    func checkUsername(_ signedUser: UserModel?) -> Bool? {
-        if signedUser?.username != usernameView.textField.text {
+    func checkUsername(_ signedUser: UserModel?, completion: @escaping (Bool?)->()) {
+        if signedUser?.username?.lowercased() != usernameView.textField.text?.lowercased() {
             if (usernameView.textField.text?.isValidUsername())! {
-                username = usernameView.textField.text!
-                return true
+                if (usernameView.textField.text == "") {
+                    self.usernameView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                    self.usernameView.errorLabel.textColor = .red
+                    username = nil
+                    completion(false)
+                    return
+                } else {
+                    if isChangingUsername {
+                        self.usernameView.errorLabel.text = ""
+                        self.usernameView.borderColor = .red
+                        viewModel?.checkUsername(username: usernameView.textField.text!, completion: { (responseObject, error) in
+                            if responseObject != nil && responseObject?.usernameExists == false {
+                                DispatchQueue.main.async {
+                                    self.username = self.usernameView.textField.text!
+                                    self.usernameView.errorLabel.text = "correct_username".localized()
+                                    self.usernameView.errorLabel.textColor = .blue
+                                    completion(true)
+                                }
+                            } else if responseObject != nil && responseObject?.usernameExists == true {
+                                DispatchQueue.main.async {
+                                    self.usernameView.errorLabel.text = "this_username_is_taken".localized()
+                                    self.username = nil
+                                    self.usernameView.errorLabel.textColor = .red
+                                    completion(false)
+                                }
+                            }
+                        })
+                    }
+                }
             } else {
+                self.usernameView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
+                self.usernameView.errorLabel.textColor = .red
                 username = nil
-                return false
+                completion(false)
+                return
             }
+        } else {
+            completion(nil)
+            return
         }
-        username = nil
-        return nil
+        if username == nil {
+            completion(false)
+            return
+        } else {
+            completion(true)
+            return
+        }
     }
     
     func checkPhoneNumber(_ signedUser: UserModel?) -> Bool? {
@@ -335,51 +355,41 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     func checkFields() {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityView.textField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityView.textField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityView.textField.text!
-                }?._id
-        }
-        
-        
-        if checkUniverity(id, signedUser) != false && (checkGender(signedUser) != false) &&  checkBirthdate(signedUser) != false &&   checkName(signedUser) != false && checkEmail(signedUser) != false && checkUsername(signedUser) != false && checkLastname(signedUser) != false && checkPhoneNumber(signedUser) != false && checkInfo != false {
-            if name != nil || lastname != nil || username != nil || gender != nil || birthDate != nil || phoneNumber != nil || universityId != nil || info != nil {
-                enableUpdateInfoButton()
+        checkUsername(signedUser) { (isAllWell) in
+            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkEmail(self.signedUser) != false  && self.checkLastname(self.signedUser) != false && self.checkPhoneNumber(self.signedUser) != false && self.checkInfo != false {
+                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.phoneNumber != nil || self.info != nil || self.email != nil {
+                    self.enableUpdateInfoButton()
+                } else {
+                    self.disableUpdateInfoButton()
+                }
             } else {
-                disableUpdateInfoButton()
+                self.disableUpdateInfoButton()
             }
-        } else {
-            disableUpdateInfoButton()
         }
     }
     
     @objc func nameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func usernameTextFieldAction() {
+        isChangingUsername = true
         checkFields()
     }
     
     @objc func lastnameTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func birthDateTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
     @objc func emailTextFieldAction() {
+        isChangingUsername = false
         checkFields()
     }
     
@@ -427,11 +437,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 } else {
                     DispatchQueue.main.async {
                         UserDataController().logOutUser()
-//                        let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .auth)
-//                        let nav = UINavigationController(rootViewController: vc)
-//                        let window: UIWindow? = UIApplication.shared.windows[0]
-//                        window?.rootViewController = nav
-//                        window?.makeKeyAndVisible()
                         AuthRouter().assemblyModule()
                     }
                 }
@@ -567,32 +572,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    @IBAction func universityTextFieldAction(_ sender: Any) {
-        var id: String?
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            id = self.universities.first { (university) -> Bool in
-                university.name == self.universityView.textField.text!
-                }?._id
-        case AppLangKeys.Rus:
-            id = self.universities.first { (university) -> Bool in
-                university.nameRU == self.universityView.textField.text!
-                }?._id
-        default:
-            id = self.universities.first { (university) -> Bool in
-                university.nameEN == self.universityView.textField.text!
-                }?._id
-        }
-        if id != nil {
-            updateInformationButton.isEnabled = true
-            updateInformationButton.backgroundColor = .clear
-            updateInformationButton.titleLabel?.textColor = .white
-        } else {
-            updateInformationButton.isEnabled = false
-            updateInformationButton.titleLabel?.textColor = UIColor.lightGray
-        }
-    }
-    
     func stringToDate(date:String?) -> String? {
         if date == nil {
             return nil
@@ -614,7 +593,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email, university: universityId) { (user, error) in
+        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -634,49 +613,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    func setUniversityName() {
-        switch SharedConfigs.shared.appLang {
-        case AppLangKeys.Arm:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.name
-        case AppLangKeys.Rus:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameRU
-        case AppLangKeys.Eng:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
-        default:
-            universityView.textField.text = SharedConfigs.shared.signedUser?.university?.nameEN
-        }
-    }
-    
-    func getUniversities() {
-        viewModel!.getUniversities { (responseObject, error) in
-            if(error != nil) {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                }
-            } else if responseObject != nil {
-                self.universities = responseObject!
-                switch SharedConfigs.shared.appLang {
-                case AppLangKeys.Arm:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.name
-                    })
-                case AppLangKeys.Rus:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameRU
-                    })
-                case AppLangKeys.Eng:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                default:
-                    self.universityDropDown.dataSource = self.universities.map({ (university) -> String in
-                        university.nameEN
-                    })
-                }
-            }
-        }
-    }
-    
     @objc func imageTapped() {
         checkFields()
         if isMoreUniversity {
@@ -691,50 +627,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    func addUniversityDropDown() {
-        addButtonOnUniversityTextField(button: universityButton, textField: universityView.textField)
-        addImage(textField: universityView.textField, imageView: universityMoreOrLessImageView)
-        universityDropDown.anchorView = universityButton
-        universityDropDown.direction = .any
-        universityDropDown.bottomOffset = CGPoint(x: 0, y:((universityDropDown.anchorView?.plainView.bounds.height)! + universityView.textField.frame.height + 30))
-        universityDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.universityView.textField.text = item
-            self.universityMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreUniversity = false
-            var id: String?
-            switch SharedConfigs.shared.appLang {
-            case AppLangKeys.Arm:
-                id = self.universities.first { (university) -> Bool in
-                    university.name == self.universityView.textField.text!
-                    }?._id
-            case AppLangKeys.Rus:
-                id = self.universities.first { (university) -> Bool in
-                    university.nameRU == self.universityView.textField.text!
-                    }?._id
-            default:
-                id = self.universities.first { (university) -> Bool in
-                    university.nameEN == self.universityView.textField.text!
-                    }?._id
-            }
-            if id != nil {
-                self.updateInformationButton.isEnabled = true
-                self.updateInformationButton.backgroundColor = .clear
-                self.updateInformationButton.titleLabel?.textColor = .white
-            } else {
-                self.updateInformationButton.isEnabled = false
-                self.updateInformationButton.titleLabel?.textColor = UIColor.lightGray
-            }
-        }
-        universityDropDown.width = universityView.textField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
-        universityView.textField.rightView = paddingView
-        universityView.textField.rightViewMode = UITextField.ViewMode.always
-        universityDropDown.cancelAction = { [unowned self] in
-            self.universityMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreUniversity = false
-        }
-    }
-    
     func addGenderDropDown() {
         addButtonOnGenderTextField(button: genderButton, textField: genderView.textField)
         addImage(textField: genderView.textField, imageView: genderMoreOrLessImageView)
@@ -746,14 +638,11 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             self.genderView.textField.text = item
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
             self.isMoreGender = false
-            if item.lowercased() != SharedConfigs.shared.signedUser?.gender?.lowercased() {
-                self.updateInformationButton.isEnabled = true
-                self.updateInformationButton.backgroundColor = .clear
-                self.updateInformationButton.titleLabel?.textColor = .white
-            }
+            self.isChangingUsername = false
+            self.checkFields()
         }
         genderDropDown.width = genderView.textField.frame.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.universityView.textField.frame.height))
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderView.textField.frame.height))
         genderView.textField.rightView = paddingView
         genderView.textField.rightViewMode = UITextField.ViewMode.always
         genderDropDown.cancelAction = { [unowned self] in
@@ -799,17 +688,6 @@ extension EditInformationViewController: CustomTextFieldDelegate {
                 lastnameView.border.backgroundColor = .blue
                 lastnameView.errorLabel.textColor = .blue
                 lastnameView.errorLabel.text = lastnameView.successMessage
-            }
-        }
-        if placeholder == "username".localized() {
-            if !usernameView.textField.text!.isValidUsername() {
-                usernameView.errorLabel.text = usernameView.errorMessage
-                usernameView.errorLabel.textColor = .red
-                usernameView.border.backgroundColor = .red
-            } else {
-                usernameView.border.backgroundColor = .blue
-                usernameView.errorLabel.textColor = .blue
-                usernameView.errorLabel.text = usernameView.successMessage
             }
         }
         if placeholder == "number".localized() {

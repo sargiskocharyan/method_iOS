@@ -15,11 +15,6 @@ class CustomCell: DropDownCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        if SharedConfigs.shared.mode == "dark" {
-            optionLabel.textColor = UIColor.white
-        } else {
-            optionLabel.textColor = UIColor.black
-        }
     }
     
 }

@@ -53,6 +53,7 @@ class MainTabBarController: UITabBarController {
         handleCall()
         handleAnswer()
         handleCallAccepted()
+        handleCallSessionEnded()
         handleOffer()
         getCanditantes()
         handleCallEnd()
@@ -84,6 +85,20 @@ class MainTabBarController: UITabBarController {
     func handleCallEnd() {
         socketTaskManager.handleCallEnd { (roomName) in
             self.webRTCClient?.peerConnection?.close()
+        }
+    }
+    
+    func handleCallSessionEnded() {
+        socketTaskManager.handleCallSessionEnded { (roomname) in
+            print(roomname)
+//            if self.roomName == roomname {
+                
+//            }
+            for call in self.callManager.calls {
+                    self.callManager.end(call: call)
+                }
+                self.callManager.removeAllCalls()
+//            }
         }
     }
     
@@ -199,30 +214,30 @@ class MainTabBarController: UITabBarController {
     }
     
     func getNewMessage() {
-        socketTaskManager.getChatMessage { (message) in
+        socketTaskManager.getChatMessage { (message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
             if chatsVC.isLoaded {
-                chatsVC.getnewMessage(message: message)
+                chatsVC.getnewMessage(message: message, name, lastname, username)
             } 
             switch self.selectedIndex {
             case 0:
                  let callNc = self.viewControllers![0] as! UINavigationController
                  if callNc.viewControllers.count <= 2 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
+                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message, name, lastname, username)
                  } else {
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
-                        chatVC.getnewMessage(message: message)
+                        chatVC.getnewMessage(message: message, name, lastname, username)
                     }
                  }
                 break
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message)
+                    self.selectedViewController?.scheduleNotification(center: Self.center, message: message, name, lastname, username)
                 } else if profileNC.viewControllers.count == 4 {
                     let chatVC = profileNC.viewControllers[3] as! ChatViewController
-                    chatVC.getnewMessage(message: message)
+                    chatVC.getnewMessage(message: message, name, lastname, username)
                 }
             default:
                break
@@ -236,15 +251,6 @@ class MainTabBarController: UITabBarController {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
              alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
-//                let vc = BeforeLoginViewController.instantiate(fromAppStoryboard: .auth)
-//                vc.modalPresentationStyle = .fullScreen
-//                let nav = UINavigationController(rootViewController: vc)
-//                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-//                    let sceneDelegate = windowScene.delegate as? SceneDelegate
-//                    else {
-//                        return
-//                }
-//                sceneDelegate.window?.rootViewController = nav
                 AuthRouter().assemblyModule()
             }))
              self.present(alert, animated: true)
@@ -282,19 +288,6 @@ extension MainTabBarController: UNUserNotificationCenterDelegate {
       func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
           completionHandler([.alert, .badge, .sound])
       }
-}
-
-
-
-extension MainTabBarController: VideoViewControllerProtocol {
-    func handleClose() {
-////        onCall = false
-//        callsVC?.onCall = false
-//        self.webRTCClient = nil
-////        vc?.webRTCClient = nil
-//        id = nil
-//        //vc?.roomName = nil
-    }
 }
 
 extension MainTabBarController: WebRTCClientDelegate {
@@ -368,7 +361,6 @@ extension  MainTabBarController: SignalClientDelegate {
 }
 
 extension MainTabBarController: CallListViewDelegate {
-    
     func handleClickOnSamePerson() {
         mainRouter?.showVideoViewController()
     }
@@ -385,7 +377,7 @@ extension MainTabBarController: CallListViewDelegate {
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        videoVC?.startCall("calling".localized())
+        videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
     }
 }

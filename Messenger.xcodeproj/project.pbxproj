@@ -95,6 +95,8 @@
 		CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */; };
 		CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
 		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
+		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
+		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
@@ -205,6 +207,8 @@
 		CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewModel.swift; sourceTree = "<group>"; };
 		CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTaskManager.swift; sourceTree = "<group>"; };
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
+		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -250,6 +254,8 @@
 				CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */,
 				CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */,
 				CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */,
+				CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */,
+				CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -787,6 +793,7 @@
 				CD3542642498E830003D274B /* UILabelPadding.swift in Sources */,
 				CDD9C670247BC4AE0048A9A1 /* URLParameterEncoding.swift in Sources */,
 				CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */,
+				CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */,
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
@@ -834,6 +841,7 @@
 				CDBE8E08247681690049F971 /* HeaderShapeView.swift in Sources */,
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
+				CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
 				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CDB42DBA24B34487005EAA51 /* PhoneValidator.swift in Sources */,

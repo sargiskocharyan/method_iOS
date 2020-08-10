@@ -39,14 +39,12 @@ class ContactsViewController: UIViewController {
         tableView.delegate = self
         tabbar = tabBarController as? MainTabBarController
         tableView.dataSource = self
-        setNavigationItems()
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
         } else {
             tableView.addSubview(refreshControl)
         }
         refreshControl.addTarget(self, action: #selector(refreshWeatherData(_:)), for: .valueChanged)
-        
     }
     
     @objc private func refreshWeatherData(_ sender: Any) {
@@ -58,6 +56,7 @@ class ContactsViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
          getContacts()
+        setNavigationItems()
         contactsMiniInformation = viewModel!.contacts
         tableView.reloadData()
     }
@@ -76,12 +75,14 @@ class ContactsViewController: UIViewController {
     
     //MARK: Helper methods
     func setNavigationItems() {
-        if onContactPage {
-            self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-            self.navigationItem.title = "contacts".localized()
-        } else {
-            self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(backToContacts))
-            self.navigationItem.title = "found_users".localized()
+        if contactsMode == .fromProfile || contactsMode == .fromRecentMessages {
+            if onContactPage {
+                self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+                self.navigationItem.title = "contacts".localized()
+            } else {
+                self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(backToContacts))
+                self.navigationItem.title = "found_users".localized()
+            }
         }
     }
     
@@ -172,7 +173,7 @@ class ContactsViewController: UIViewController {
         DispatchQueue.main.async {
             let noResultView = UIView(frame: self.view.frame)
             noResultView.tag = 25
-            noResultView.backgroundColor = .white
+            noResultView.backgroundColor = UIColor(named: "imputColor")
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
             label.text = str
@@ -189,6 +190,8 @@ class ContactsViewController: UIViewController {
             resultView?.removeFromSuperview()
         }
     }
+    
+    
     
     func getContacts() {
         if !isLoaded {
@@ -230,13 +233,6 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if self.contactsMode == .fromProfile {
-//            let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
-//            vc.delegate = self
-//            vc.id = contactsMiniInformation[indexPath.row]._id
-//            vc.contact = contactsMiniInformation[indexPath.row]
-//            vc.onContactPage = onContactPage
-//            vc.fromChat = false
-//            self.navigationController?.pushViewController(vc, animated: true)
             mainRouter?.showContactProfileViewControllerFromContacts(id: contactsMiniInformation[indexPath.row]._id!, contact: contactsMiniInformation[indexPath.row], onContactPage: onContactPage)
         } else if self.contactsMode == .fromCallList {
             let tabBar = tabBarController as! MainTabBarController
@@ -249,12 +245,6 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
                 tabBar.handleClickOnSamePerson()
             }
         } else {
-//            let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-//            vc.name = contactsMiniInformation[indexPath.row].name
-//            vc.username = contactsMiniInformation[indexPath.row].username
-//            vc.avatar = contactsMiniInformation[indexPath.row].avatarURL
-//            vc.id = contactsMiniInformation[indexPath.row]._id
-//            self.navigationController?.pushViewController(vc, animated: false)
             mainRouter?.showChatViewControllerFromContacts(name: contactsMiniInformation[indexPath.row].name, username: contactsMiniInformation[indexPath.row].username, avatarURL: contactsMiniInformation[indexPath.row].avatarURL, id: contactsMiniInformation[indexPath.row]._id!)
         }
         
@@ -268,7 +258,9 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         removeView()
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier, for: indexPath) as! ContactTableViewCell
-        cell.configure(contact: contactsMiniInformation[indexPath.row])
+        if contactsMiniInformation.count > indexPath.row {
+            cell.configure(contact: contactsMiniInformation[indexPath.row])
+        }
         return cell
     }
     

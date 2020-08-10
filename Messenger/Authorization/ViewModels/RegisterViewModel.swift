@@ -11,10 +11,9 @@ import Foundation
 class RegisterViewModel {
     let networkManager = AuthorizationNetworkManager()
     
-    func updateUser(name: String, lastname: String, username: String, university: String, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        let token = SharedConfigs.shared.signedUser?.token
-        networkManager.updateUser(name: name, lastname: lastname, username: username, token: token!, university: university) {(user, error) in
-          completion(user, error)
+    func updateUser(name: String?, lastname: String?, username: String?, gender: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        networkManager.updateUser(name: name, lastname: lastname, username: username, gender: gender) { (user, error) in
+            completion(user, error)
         }
     }
     

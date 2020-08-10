@@ -33,6 +33,7 @@ class ImageCache {
         if let avatar = cache.object(forKey: id as AnyObject) {
             if avatar.url == url {
                 completion(avatar.image)
+                return
             } else {
                 self.removeForKey(id: id)
                 guard let imageURL = URL(string: url) else {
@@ -41,9 +42,11 @@ class ImageCache {
                 self.downloadImage(from: imageURL) { (image) in
                     if image == nil {
                         completion(UIImage(named: "noPhoto")!)
+                        return
                     } else {
                         self.setImage(image: image!, url: url, id: id)
                         completion(image!)
+                        return
                     }
                 }
             }
@@ -54,9 +57,11 @@ class ImageCache {
             downloadImage(from: imageURL) { (image) in
                 if image == nil {
                     completion(UIImage(named: "noPhoto")!)
+                    return
                 } else {
                     self.setImage(image: image!, url: url, id: id)
                     completion(image!)
+                    return
                 }
             }
         }
