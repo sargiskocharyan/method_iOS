@@ -54,10 +54,8 @@ class RecentMessagesViewModel {
         }
     }
     
-    func deleteItem(index: Int) {
+    func deleteItem(index: Int, completion: @escaping (NetworkResponse?)->()) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
-        
-        // Configure Fetch Request
         fetchRequest.includesPropertyValues = false
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return
@@ -68,10 +66,11 @@ class RecentMessagesViewModel {
             privateCalls.remove(at: privateCalls.count - index - 1)
             calls.remove(at: index)
             try managedContext.save()
-            
+            completion(nil)
+            return
         } catch {
-            // Error Handling
-            // ...
+            completion(NetworkResponse.failed)
+            return
         }
     }
     
@@ -93,7 +92,7 @@ class RecentMessagesViewModel {
     
     
     func save(newCall: CallHistory, completion: @escaping ()->()) {
-        let appDelegate = AppDelegate.shared as AppDelegate
+        let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
         let call = NSManagedObject(entity: entity, insertInto: managedContext)
@@ -114,29 +113,7 @@ class RecentMessagesViewModel {
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
-//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
-//        fetchRequest.predicate = NSPredicate(format: "id == %@", newCall.id as CVarArg)
-//                do {
-//                    let fetchResults = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
-//                    for fetchedResult in fetchResults {
-//                        if fetchedResult.value(forKey: "image") as? String != newCall.imageURL {
-//
-//                            fetchedResult.setValue(newCall.imageURL, forKey: "image")
-//                            try managedContext.save()
-//                        }
-//                    }
-//                } catch let error {
-//                    print(error.localizedDescription)
-//                }
         print(calls)
-//        var newCalls: [FetchedCall] = []
-//        for var call in calls {
-//            if call.id == newCall.id && call.imageURL != newCall.imageURL {
-//                call.imageURL = newCall.imageURL
-//            }
-//            newCalls.append(call)
-//        }
-//        calls = newCalls
         completion()
        return
     }

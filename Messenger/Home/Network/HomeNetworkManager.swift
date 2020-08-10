@@ -348,6 +348,24 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func removeCall(id: String, completion: @escaping (NetworkResponse?)->()) {
+           router.request(.removeCall(id: id)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       completion(nil)
+                   case .failure( _):
+                       completion(NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
     func onlineUsers(arrayOfId: [String],  completion: @escaping (OnlineUsers?, NetworkResponse?)->()) {
         router.request(.onlineUsers(arrayOfId: arrayOfId)) { data, response, error in
             if error != nil {

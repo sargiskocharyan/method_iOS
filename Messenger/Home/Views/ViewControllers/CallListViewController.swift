@@ -132,9 +132,9 @@ class CallListViewController: UIViewController {
     
     func handleCall(id: String, user: User) {
         self.id = id
-        if viewModel!.calls.count >= 15 {
-            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-        }
+//        if viewModel!.calls.count >= 15 {
+//            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+//        }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()   
         }
@@ -307,14 +307,23 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         self.sort()
         tableView.beginUpdates()
-        viewModel!.deleteItem(index: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
+        tabbar?.viewModel?.removeCall(id: viewModel?.calls[indexPath.row]._id ?? "", completion: { (error) in
+            if error != nil {
+                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+            } else {
+                DispatchQueue.main.async {
+                    self.viewModel!.deleteItem(index: indexPath.row, completion: { (error)   in
+                            tableView.deleteRows(at: [indexPath], with: .automatic)
+                        if self.viewModel!.calls.count == 0 {
+                                   self.addNoCallView()
+                               } else {
+                                   self.view.viewWithTag(20)?.removeFromSuperview()
+                               }
+                    })
+                }
+            }
+        })
         tableView.endUpdates()
-        if viewModel!.calls.count == 0 {
-            self.addNoCallView()
-        } else {
-            self.view.viewWithTag(20)?.removeFromSuperview()
-        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -322,9 +331,9 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func saveCall(startDate: Date?) {
-        if viewModel!.calls.count >= 15 {
-            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-        }
+//        if viewModel!.calls.count >= 15 {
+//            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+//        }
         if startDate == nil {
             activeCall?.callDuration = 0
         } else {
