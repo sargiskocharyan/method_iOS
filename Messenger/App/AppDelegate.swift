@@ -14,9 +14,15 @@ import CoreData
 import UserNotifications
 import PushKit
 
+protocol AppDelegateD : class {
+    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ())
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
+    let nc = NotificationCenter.default
+    weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     
@@ -55,14 +61,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("payload: ", payload.dictionaryPayload)
-//        displayIncomingCall(id: "", uuid: UUID(), handle: "mi ban", roomName: "fcgfh") { (error) in
-//            print(error as Any)
-//            //completion()
-//        }
-        providerDelegate.reportIncomingCall(id: "", uuid: UUID(), handle: "dsf", roomName: "fsdf") { (error) in
-            completion()
-        }
-        
+        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, completionHandler: { name in
+            self.displayIncomingCall(
+            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: name, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
+                completion()
+            }
+        })
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {

@@ -57,6 +57,7 @@ class MainTabBarController: UITabBarController {
         handleOffer()
         getCanditantes()
         handleCallEnd()
+        AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
@@ -108,38 +109,45 @@ class MainTabBarController: UITabBarController {
     
     
     
-    func startCall(_ id: String, _ roomname: String) {
+    func startCall(_ id: String, _ roomname: String, completionHandler: @escaping (_ name: String) -> ()) {
         self.id = id
         self.roomName = roomname
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
-        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-            if (error != nil) {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                }
+        for i in 0..<contactsViewModel!.contacts.count {
+            if contactsViewModel?.contacts[i]._id == id {
+                self.callsVC?.handleCall(id: id, user: contactsViewModel!.contacts[i])
+                completionHandler(contactsViewModel?.contacts[i].name ?? contactsViewModel?.contacts[i].username ?? "unknown user")
                 return
-            } else if user != nil {
-                let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now()) {
-                    AppDelegate.shared.displayIncomingCall(
-                    id: id, uuid: UUID(), handle: user?.name ?? (user?.username)!, hasVideo: true, roomName: roomname) { _ in
-                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                    }
-                }
-                DispatchQueue.main.async {
-                    self.callsVC?.handleCall(id: id, user: user!)
-                }
             }
         }
+//        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
+//            if (error != nil) {
+//                DispatchQueue.main.async {
+//                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+//                }
+//                completionHandler("")
+//                return
+//            } else if user != nil {
+//                DispatchQueue.main.async {
+//
+//                    completionHandler(user?.name ?? user?.username ?? "dsf")
+//                    return
+//                }
+//            }
+//        }
     }
     
     func handleCall() {
         SocketTaskManager.shared.handleCall { (id, roomname) in
             if !self.onCall {
-                self.startCall(id, roomname)
+                self.startCall(id, roomname) { name in
+                    DispatchQueue.main.async {
+                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in  }
+                    }
+                }
             }
         }
     }
@@ -238,13 +246,22 @@ class MainTabBarController: UITabBarController {
             switch self.selectedIndex {
             case 0:
                 let callNc = self.viewControllers![0] as! UINavigationController
-                if callNc.viewControllers.count <= 2 {
-                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                if callNc.viewControllers.count == 1 {
+                    if callHistory == nil {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                }
+                else if callNc.viewControllers.count == 2 {
+                    if callHistory == nil && message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    } else if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else {
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
                         chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    } else if let videoVC = callNc.viewControllers[2] as? VideoViewController {
+                        videoVC.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                  }
                 break
@@ -255,8 +272,15 @@ class MainTabBarController: UITabBarController {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else if profileNC.viewControllers.count == 4 {
-                    let chatVC = profileNC.viewControllers[3] as! ChatViewController
-                    chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    let chatVC = profileNC.viewControllers[3] as? ChatViewController
+                    if chatVC != nil {
+                        chatVC!.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    } else {
+                        let videoVC = profileNC.viewControllers[3] as? VideoViewController
+                        if videoVC != nil {
+                            videoVC!.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    }
                 }
             default:
                break
@@ -402,4 +426,14 @@ extension MainTabBarController: CallListViewDelegate {
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
     }
+}
+
+extension MainTabBarController: AppDelegateD {
+    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ()) {
+        self.startCall(id, roomName) { name in
+            completionHandler(name)
+        }
+    }
+    
+    
 }

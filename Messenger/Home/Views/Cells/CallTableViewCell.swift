@@ -69,7 +69,7 @@ class CallTableViewCell: UITableViewCell {
         let userCalendar = Calendar.current
         let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
         if call.callStartTime != nil && call.callEndTime != nil {
-            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: call.callEndTime!)!, to: stringToDate(date: call.callStartTime!)! )
+            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: call.callStartTime!)! , to: stringToDate(date: call.callEndTime!)! )
             let hourSeconds = timeDifference.hour ?? 0 * 3600
             let minuteSeconds = timeDifference.minute ?? 0 * 60
             let seconds = hourSeconds + minuteSeconds + (timeDifference.second ?? 0)
@@ -77,7 +77,11 @@ class CallTableViewCell: UITableViewCell {
             self.timeLabel.text = stringToDate(date: call.callStartTime!)?.dateToString()
         } else {
             self.timeLabel.text = stringToDate(date: call.callSuggestTime!)?.dateToString()
-            callDurationLabel.text = ""
+            if call.caller == SharedConfigs.shared.signedUser?.id {
+                callDurationLabel.text = "Not answered"
+            } else {
+                callDurationLabel.text = "Missed"
+            }
         }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
             DispatchQueue.main.async {
@@ -87,11 +91,15 @@ class CallTableViewCell: UITableViewCell {
         
         if call.caller == SharedConfigs.shared.signedUser?.id {
             self.callIcon.image = UIImage.init(systemName: "arrow.up.right.video.fill")
+            self.callIcon.tintColor = UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)
         } else {
             if call.status == CallStatus.missed.rawValue {
+                self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
                 self.callIcon.tintColor = .red
+            } else {
+                self.callIcon.tintColor = UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)
+                self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
             }
-            self.callIcon.image = UIImage.init(systemName: "arrow.down.left.video.fill")
         }
     }
 }
