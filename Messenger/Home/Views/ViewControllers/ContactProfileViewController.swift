@@ -225,21 +225,21 @@ class ContactProfileViewController: UIViewController {
     
     func configureView() {
         if contact?.name == nil {
-            nameLabel.text = "name".localized()
+            nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = contact?.name
             nameLabel.textColor = UIColor(named: "color")
         }
         if contact?.lastname == nil {
-            lastnameLabel.text = "lastname".localized()
+            lastnameLabel.text = "not_defined".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = contact?.lastname
             lastnameLabel.textColor = UIColor(named: "color")
         }
         if contact?.email == nil {
-            emailLabel.text = "email".localized()
+            emailLabel.text = "not_defined".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = contact?.email
@@ -247,7 +247,7 @@ class ContactProfileViewController: UIViewController {
         }
         
         if contact?.phoneNumber == nil {
-            phoneLabel.text = "phone".localized()
+            phoneLabel.text = "not_defined".localized()
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = contact?.phoneNumber
@@ -255,7 +255,7 @@ class ContactProfileViewController: UIViewController {
         }
         
         if contact?.birthday == nil {
-            birthDateLabel.text = "birth_date".localized()
+            birthDateLabel.text = "not_defined".localized()
             birthDateLabel.textColor = .lightGray
         } else {
             birthDateLabel.text = stringToDate(date: contact?.birthday) 
@@ -263,7 +263,7 @@ class ContactProfileViewController: UIViewController {
         }
         
         if contact?.gender == nil {
-            genderLabel.text = "gender".localized()
+            genderLabel.text = "not_defined".localized()
             genderLabel.textColor = .lightGray
         } else {
             genderLabel.text = contact?.gender
@@ -271,7 +271,7 @@ class ContactProfileViewController: UIViewController {
         }
         
         if contact?.username == nil {
-            usernameLabel.text = "username".localized()
+            usernameLabel.text = "not_defined".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = contact?.username

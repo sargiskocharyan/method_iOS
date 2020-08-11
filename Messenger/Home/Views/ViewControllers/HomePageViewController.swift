@@ -263,12 +263,38 @@ class MainTabBarController: UITabBarController {
                     } else if let videoVC = callNc.viewControllers[2] as? VideoViewController {
                         videoVC.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
-                 }
+                }
+                break
+            case 1:
+                let recentNc = self.viewControllers![1] as! UINavigationController
+                if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
+                    if recentNc.viewControllers.count == 2  {
+                        let chatVC = recentNc.viewControllers[1] as? ChatViewController
+                        if chatVC == nil {
+                            self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    } else {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else if callHistory == nil && recentNc.viewControllers.count == 2 && message.senderId != SharedConfigs.shared.signedUser?.id {
+                    let contactsVC = recentNc.viewControllers[1] as? ContactsViewController
+                    if contactsVC != nil {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else if recentNc.viewControllers.count > 2 {
+                    if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {
+                        if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
+                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    }
+                }
                 break
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
-                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                    if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else if profileNC.viewControllers.count == 4 {

@@ -127,7 +127,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         usernameCustomView.textField.delegate = self
         addDropDown()
         skipButton.setTitle("skip".localized(), for: .normal)
-        createAccountButton.setTitle("create_account".localized(), for: .normal)
+        createAccountButton.setTitle("continue".localized(), for: .normal)
         self.hideKeyboardWhenTappedAround()
         setObservers()
         disableUpdateInfoButton()
@@ -283,6 +283,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func nameTextFieldAction() {
+        nameCustomView.errorLabel.isHidden = (nameCustomView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -293,6 +294,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func lastnameTextFieldAction() {
+        lastnameCustomView.errorLabel.isHidden = (lastnameCustomView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }

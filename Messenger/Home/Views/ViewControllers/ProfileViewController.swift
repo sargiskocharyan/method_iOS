@@ -376,35 +376,35 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func checkInformation() {
         let user = SharedConfigs.shared.signedUser
         if user?.name == nil {
-            nameLabel.text = "name".localized()
+            nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
             nameLabel.textColor = UIColor(named: "color")
         }
         if user?.lastname == nil {
-            lastnameLabel.text = "lastname".localized()
+            lastnameLabel.text = "not_defined".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
              lastnameLabel.textColor = UIColor(named: "color")
         }
         if user?.email == nil {
-            emailLabel.text = "email".localized()
+            emailLabel.text = "not_defined".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
             emailLabel.textColor = UIColor(named: "color")
         }
         if user?.phoneNumber == nil {
-            phoneLabel.text = "number".localized()
+            phoneLabel.text = "not_defined".localized()
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = user?.phoneNumber
             phoneLabel.textColor = UIColor(named: "color")
         }
         if user?.username == nil {
-            usernameLabel.text = "username".localized()
+            usernameLabel.text = "not_defined".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username

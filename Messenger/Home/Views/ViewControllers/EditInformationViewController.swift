@@ -22,8 +22,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var genderView: CustomTextField!
     @IBOutlet weak var phoneCustomView: CustomTextField!
-    @IBOutlet weak var infoTextView: UITextView!
     @IBOutlet weak var emailView: CustomTextField!
+    @IBOutlet weak var infoView: CustomTextField!
     
     //MARK: Properties
     var viewModel: RegisterViewModel?
@@ -51,7 +51,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var phoneNumber: String?
     var universityId: String?
     var info: String?
-    var checkInfo: Bool?
     var mainRouter: MainRouter?
     var isChangingUsername = false
     
@@ -59,7 +58,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     override func viewDidLoad() {
         super.viewDidLoad()
         addGestureOnBirthdayView()
-        configureInfoTextView()
         constant = stackViewTopConstraint.constant
         setDelegates()
         addGenderDropDown()
@@ -70,6 +68,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         disableUpdateInfoButton()
         addTargets()
         hideDataSwitch.isOn = SharedConfigs.shared.isHidden
+        phoneCustomView.textField.keyboardType = .numberPad
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -110,7 +109,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         lastnameView.delagate = self
         genderView.delagate = self
         usernameView.delagate = self
-        infoTextView.delegate = self
+        infoView.delagate = self
         phoneCustomView.delagate = self
         birdthdateView.delagate = self
         emailView.delagate = self
@@ -120,6 +119,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         nameView.textField.addTarget(self, action: #selector(nameTextFieldAction), for: .editingChanged)
         usernameView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
+        infoView.textField.addTarget(self, action: #selector(infoTextFieldAction), for: .editingChanged)
         phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
         birdthdateView.textField.addTarget(self, action: #selector(birthDateTextFieldAction), for: .editingChanged)
         emailView.textField.addTarget(self, action: #selector(emailTextFieldAction), for: .editingChanged)
@@ -129,12 +129,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         updateInformationButton.isEnabled = false
         updateInformationButton.titleLabel?.textColor = UIColor.white
         updateInformationButton.backgroundColor = UIColor.lightGray
-    }
-    
-    func configureInfoTextView() {
-        infoTextView.layer.borderColor = UIColor.lightGray.cgColor
-        infoTextView.layer.borderWidth = 1.0
-        infoTextView.layer.masksToBounds = true
     }
     
     func addGestureOnBirthdayView() {
@@ -149,7 +143,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         lastnameView.textField.text = SharedConfigs.shared.signedUser?.lastname
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
         genderView.textField.text = SharedConfigs.shared.signedUser?.gender
-        infoTextView.text = signedUser?.info
+        infoView.textField.text = signedUser?.info
         emailView.textField.text = SharedConfigs.shared.signedUser?.email
         phoneCustomView.textField.text = SharedConfigs.shared.signedUser?.phoneNumber
         genderView.textField.text = signedUser?.gender
@@ -193,23 +187,29 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         if genderView.textField.text != "" {
             genderView.topLabel.text = "gender".localized()
         }
+        if infoView.textField.text != "" {
+            infoView.topLabel.text = "info".localized()
+        }
     }
     
-    func textViewDidChange(_ textView: UITextView) {
-        if signedUser?.info != infoTextView.text {
-            if (signedUser?.info == nil && infoTextView.text == "") {
-                checkInfo = nil
-                info = nil
-            } else {
-                checkInfo = true
-                info = infoTextView.text
-            }
-        } else {
-            info = nil
-            checkInfo = nil
-        }
-        checkFields()
-    }
+   func checkInfo(_ signedUser: UserModel?) -> Bool? {
+         if  signedUser?.info != infoView.textField.text {
+             if (infoView.textField.text == "") {
+                 if (signedUser?.info == nil && infoView.textField.text == "") {
+                     info = nil
+                     return nil
+                 } else {
+                     info = infoView.textField.text!
+                     return true
+                 }
+             } else {
+                 info = infoView.textField.text
+                 return true
+             }
+         }
+         info = nil
+         return nil
+     }
     
     func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
         if  stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) != birdthdateView.textField.text {
@@ -356,8 +356,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkFields() {
         checkUsername(signedUser) { (isAllWell) in
-            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkEmail(self.signedUser) != false  && self.checkLastname(self.signedUser) != false && self.checkPhoneNumber(self.signedUser) != false && self.checkInfo != false {
-                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.phoneNumber != nil || self.info != nil || self.email != nil {
+            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkEmail(self.signedUser) != false  && self.checkLastname(self.signedUser) != false && self.checkPhoneNumber(self.signedUser) != false && self.checkInfo(self.signedUser) != false {
+                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.phoneNumber != nil || self.info != nil || self.email != nil || self.info != nil {
                     self.enableUpdateInfoButton()
                 } else {
                     self.disableUpdateInfoButton()
@@ -369,6 +369,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func nameTextFieldAction() {
+        nameView.errorLabel.isHidden = (nameView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -379,6 +380,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func lastnameTextFieldAction() {
+         lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -389,6 +391,11 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func emailTextFieldAction() {
+        isChangingUsername = false
+        checkFields()
+    }
+    
+    @objc func infoTextFieldAction() {
         isChangingUsername = false
         checkFields()
     }
@@ -482,6 +489,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func handleBirthDateViewTap(_ sender: UITapGestureRecognizer? = nil) {
+        view.endEditing(true)
         datePicker.backgroundColor = .white
         datePicker.datePickerMode = .date
         let viewUnderDatePicker = UIView()
@@ -521,9 +529,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
         imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.isUserInteractionEnabled = true
-        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 25, height: 20)
+        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 20, height: 20)
     }
     
     func addButtonOnUniversityTextField(button: UIButton, textField: UITextField) {

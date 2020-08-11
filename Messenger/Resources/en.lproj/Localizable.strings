@@ -70,7 +70,7 @@
 "delete" = "Delete";
 "cancel" = "Cancel";
 "attention" = "Attention";
-"info" = "Info";
+"info" = "Bio";
 "address:" = "Address:";
 "gender:" = "Gender:";
 "username:" = "Username:";
@@ -104,4 +104,4 @@
 "cancelled_call"  = "Cancelled call";
 "incoming_call"  = "Incoming call";
 "outgoing_call"  = "Outgoing call";
-
+"hide_personal_data" = "Hide personal data";

@@ -47,6 +47,8 @@ struct AppLangKeys {
 }
 
 struct Keys {
+    static let PUSH_DEVICE_TOKEN = "device_token"
+    static let VOIP_DEVICE_TOKEN = "voip_device_token"
     static let TOKEN_KEYCHAIN_ID_KEY = "token"
     static let APP_Language = "appLanguage"
 }

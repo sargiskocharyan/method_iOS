@@ -348,6 +348,8 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        count = tabbar!.contactsViewModel!.contacts.count
+        otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
         let call = viewModel!.calls[indexPath.row]
         activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: SharedConfigs.shared.signedUser!.id)
         activeCall?.time = Date()

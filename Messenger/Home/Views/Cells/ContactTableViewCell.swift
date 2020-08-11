@@ -35,26 +35,26 @@ class ContactTableViewCell: UITableViewCell {
                 self.contactImageView.image = image
             }
         }
-        if contact.name == nil {
-            nameLabel.textColor = .darkGray
-            nameLabel.text = "name".localized()
-        } else {
+        if contact.name != nil && contact.lastname != nil {
             nameLabel.textColor = UIColor(named: "color")
             nameLabel.text = contact.name
-        }
-        if contact.lastname == nil {
-            lastnameLabel.textColor = .darkGray
-            lastnameLabel.text = "lastname".localized()
-        } else {
             lastnameLabel.textColor = UIColor(named: "color")
             lastnameLabel.text = contact.lastname
-        }
-        if contact.username == nil {
-            usernameLabel.textColor = .darkGray
-            usernameLabel.text = "username".localized()
+        } else if contact.name != nil && contact.lastname == nil {
+            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.text = contact.name
+        } else if contact.lastname != nil && contact.name == nil {
+            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.text = contact.lastname
         } else {
-            usernameLabel.textColor = UIColor(named: "color")
+            nameLabel.text = ""
+            lastnameLabel.text = ""
+        }
+        if contact.username != nil {
             usernameLabel.text = contact.username
+            usernameLabel.textColor = UIColor(named: "color")
+        } else {
+             usernameLabel.text = "Method's user"
         }
     }
 }
