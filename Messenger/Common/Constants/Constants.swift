@@ -37,6 +37,11 @@ struct AUTHUrls {
     static let CheckUsername     = "/usernameExists"
     static let GetCallHistory    = "/callhistory"
     static let RemoveCall        = "/call"
+    static let ChangeEmail       = "/updatemail"
+    static let VerifyEmail       = "/verifyemail"
+    static let ChangePhone       = "/updatephonenumber"
+    static let VerifyPhone       = "/verifyphonenumber"
+    static let RegisterDevice    = "/registerdevice"
 }
 
 struct AppLangKeys {
@@ -51,4 +56,5 @@ struct Keys {
     static let VOIP_DEVICE_TOKEN = "voip_device_token"
     static let TOKEN_KEYCHAIN_ID_KEY = "token"
     static let APP_Language = "appLanguage"
+    static let IS_REGISTERED = "isRegistered"
 }

@@ -44,6 +44,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var headerEmailLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    
     //MARK: Properties
     var dropDown = DropDown()
     var viewModel: ProfileViewModel?
@@ -63,7 +64,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         setBorder(view: languageView)
         setBorder(view: darkModeView)
         setBorder(view: logoutView)
-        checkInformation()
         checkVersion()
         setImage()
         configureImageView()
@@ -83,6 +83,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Helper methods
     @IBAction func editButton(_ sender: Any) {
         mainRouter?.showEditViewController()
+    }
+    
+    @IBAction func changePhoneAction(_ sender: Any) {
+        mainRouter?.showChangeEmailViewController(changingSubject: .phone)
     }
     
     func setImage() {
@@ -124,6 +128,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else if SharedConfigs.shared.appLang == AppLangKeys.Arm {
             flagImageView.image = UIImage(named: "Armenian")
         }
+    }
+    
+    @IBAction func changeEmailAction(_ sender: Any) {
+        mainRouter?.showChangeEmailViewController(changingSubject: .email)
     }
     
     @IBAction func selectMode(_ sender: UISwitch) {
@@ -266,7 +274,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 return
             } else {
                 let signedUser = SharedConfigs.shared.signedUser
-                let user = UserModel(name: signedUser?.name, lastname: signedUser?.lastname, username: signedUser?.username, email: signedUser?.email, university: signedUser?.university, token: signedUser?.token, id: signedUser!.id, avatarURL: nil)
+                let user = UserModel(name: signedUser?.name, lastname: signedUser?.lastname, username: signedUser?.username, email: signedUser?.email, token: signedUser?.token, id: signedUser!.id, avatarURL: nil)
                 UserDataController().populateUserProfile(model: user)
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
@@ -314,12 +322,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
-        viewModel!.logout { (error) in
-                DispatchQueue.main.async {
-                    self.deleteAllRecords()
-                    UserDataController().logOutUser()
-                    AuthRouter().assemblyModule()
-                }
+        viewModel!.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+            UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
+            DispatchQueue.main.async {
+                self.deleteAllRecords()
+                UserDataController().logOutUser()
+                AuthRouter().assemblyModule()
+            }
             self.socketTaskManager.disconnect()
         }
     }
@@ -432,4 +441,14 @@ extension ProfileViewController: UNUserNotificationCenterDelegate {
       func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
           completionHandler([.alert, .badge, .sound])
       }
+}
+
+extension ProfileViewController: ChangeEmailViewControllerDelegate {
+    func setEmail(email: String) {
+        emailLabel.text = email
+    }
+    
+    func setPhone(phone: String) {
+        phoneLabel.text = phone
+    }
 }

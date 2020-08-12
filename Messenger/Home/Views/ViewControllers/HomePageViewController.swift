@@ -40,6 +40,7 @@ class MainTabBarController: UITabBarController {
     var startDate: Date?
     var mainRouter: MainRouter?
     var isFirstConnect: Bool?
+    var timer: Timer?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -145,7 +146,7 @@ class MainTabBarController: UITabBarController {
             if !self.onCall {
                 self.startCall(id, roomname) { name in
                     DispatchQueue.main.async {
-                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in  }
+                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
                     }
                 }
             }
@@ -339,7 +340,8 @@ class MainTabBarController: UITabBarController {
                 let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
                 let timeDifference = userCalendar.dateComponents(requestedComponent, from: Date(), to: (SharedConfigs.shared.signedUser?.tokenExpire)!)
                 if timeDifference.day! <= 1 {
-                    self.profileViewModel.logout { (error) in
+                    self.profileViewModel.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+                        UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
                         self.sessionExpires()
                     }
                 }
@@ -445,12 +447,14 @@ extension MainTabBarController: CallListViewDelegate {
         }
         callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
-        
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+            self.videoVC?.endCall()
+        })
     }
 }
 

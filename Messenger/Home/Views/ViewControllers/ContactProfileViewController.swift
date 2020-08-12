@@ -19,6 +19,7 @@ protocol ContactProfileViewControllerDelegate: class {
 class ContactProfileViewController: UIViewController {
     
     @IBOutlet weak var videoCallButton: UIButton!
+    @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var addToContactButton: UIButton!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var infoLabel: UILabel!
@@ -40,7 +41,9 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var birthDateLabel: UILabel!
     @IBOutlet weak var emailTextLabel: UILabel!
     @IBOutlet weak var sendMessageButton: UIButton!
+    @IBOutlet weak var removeFromContactsButton: UIButton!
     
+    var addContact: UIButton?
     var contact: User?
     var id: String?
     var viewModel: ContactsViewModel?
@@ -52,20 +55,18 @@ class ContactProfileViewController: UIViewController {
     var callListViewController: CallListViewController?
     var fromChat: Bool?
     var mainRouter: MainRouter?
-    var isAdd: Bool?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
         addToContactButton.addTarget(self, action: #selector(addToContact), for: .touchUpInside)
-
+        removeFromContactsButton.setTitle("remove_from_account".localized(), for: .normal)
         if onContactPage! {
-            isAdd = false
-            addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
+            self.view.viewWithTag(45)?.removeFromSuperview()
         } else {
-            isAdd = true
-            addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
+            addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
+            removeFromContactsButton.isHidden = true
         }
         if tabBar!.onCall || !onContactPage! {
             videoCallButton.isEnabled = false
@@ -76,6 +77,7 @@ class ContactProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addContact = addToContactButton
         tabBar = tabBarController as? MainTabBarController
         nc = tabBar?.viewControllers?[0] as? UINavigationController
         callListViewController = nc?.viewControllers[0] as? CallListViewController
@@ -85,10 +87,32 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.borderColor = UIColor.lightGray.cgColor
         infoView.layer.borderWidth = 1.0
         infoView.layer.masksToBounds = true
+        addToContactButton.tag = 45
         getUserInformation()
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
         sendMessageButton.backgroundColor = .clear
         
+    }
+    
+    @IBAction func removeFromContactsAction(_ sender: Any) {
+        viewModel?.removeContact(id: id!, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                self.onContactPage = false
+                DispatchQueue.main.async {
+                    self.stackView.addArrangedSubview(self.addContact!)
+                    self.stackView.reloadInputViews()
+                    self.videoCallButton.isEnabled = false
+                    self.removeFromContactsButton.isHidden = true
+                    self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
+                        self.delegate?.removeContact()
+                    })
+                }
+            }
+        })
     }
     
     @objc func startMessage() {
@@ -115,12 +139,7 @@ class ContactProfileViewController: UIViewController {
     }
     
     @objc func addToContact() {
-        addToContactButton.isEnabled = false
-        if isAdd! {
             viewModel!.addContact(id: contact!._id!) { (error) in
-                DispatchQueue.main.async {
-                    self.addToContactButton.isEnabled = true
-                }
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -131,45 +150,22 @@ class ContactProfileViewController: UIViewController {
                             if error != nil {
                                 print(error as Any)
                             } else {
-                                self.isAdd = !self.isAdd!
+                                self.view.viewWithTag(45)?.removeFromSuperview()
                                 self.delegate?.addNewContact(contact: self.contact!)
                                 self.onContactPage = true
-                                self.addToContactButton.setImage(UIImage(systemName: "person.badge.minus.fill"), for: .normal)
                                 self.videoCallButton.isEnabled = true
+                                self.removeFromContactsButton.isHidden = false
                             }
                         })
                     }
                 }
             }
-        } else {
-            viewModel?.removeContact(id: id!, completion: { (error) in
-                DispatchQueue.main.async {
-                    self.addToContactButton.isEnabled = true
-                }
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    }
-                } else {
-                    self.onContactPage = false
-                    DispatchQueue.main.async {
-                        self.isAdd = !self.isAdd!
-                        self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.fill.badge.plus"), for: .normal)
-                        self.videoCallButton.isEnabled = false
-                        self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
-                            self.delegate?.removeContact()
-                        })
-                    }
-                }
-            })
-        }
     }
     
     @IBAction func startVideoCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!)
-            
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabBar.handleClickOnSamePerson()

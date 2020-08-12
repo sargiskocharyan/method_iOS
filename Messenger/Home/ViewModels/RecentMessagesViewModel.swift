@@ -113,7 +113,6 @@ class RecentMessagesViewModel {
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
-        print(calls)
         completion()
        return
     }

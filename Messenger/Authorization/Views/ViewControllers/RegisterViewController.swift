@@ -55,7 +55,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
-                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
                     UserDataController().populateUserProfile(model: userModel)
                     self.authRouter?.showCongratulationsViewController()
                 }

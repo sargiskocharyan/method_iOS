@@ -21,8 +21,8 @@ class EditInformationViewModel {
            }
        }
     
-    func editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        HomeNetworkManager().editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email) { (user, error) in
+    func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        HomeNetworkManager().editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate) { (user, error) in
             completion(user, error)
         }
     }

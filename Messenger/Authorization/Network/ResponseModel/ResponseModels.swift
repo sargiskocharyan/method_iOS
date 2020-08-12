@@ -14,12 +14,21 @@ struct LoginResponse: Codable {
     var user: UserModel
 }
 
+struct ChangeEmailResponse: Codable {
+    var user: UserModel
+}
+
 struct CheckUsername: Codable {
     let usernameExists: Bool
 }
 
 struct MailExistsResponse: Codable {
     var mailExist: Bool
+    var code: String
+}
+
+struct PhoneExistsResponse: Codable {
+    var phonenumberExists: Bool
     var code: String
 }
 

@@ -21,8 +21,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var genderView: CustomTextField!
-    @IBOutlet weak var phoneCustomView: CustomTextField!
-    @IBOutlet weak var emailView: CustomTextField!
     @IBOutlet weak var infoView: CustomTextField!
     
     //MARK: Properties
@@ -32,7 +30,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     let universityDropDown = DropDown()
     let editInformatioViewModel = EditInformationViewModel()
     let genderDropDown = DropDown()
-    let universityMoreOrLessImageView = UIImageView()
     let genderMoreOrLessImageView = UIImageView()
     var universities: [University] = []
     var constant: CGFloat = 0
@@ -47,8 +44,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var name: String?
     var lastname: String?
     var username: String?
-    var email: String?
-    var phoneNumber: String?
     var universityId: String?
     var info: String?
     var mainRouter: MainRouter?
@@ -68,13 +63,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         disableUpdateInfoButton()
         addTargets()
         hideDataSwitch.isOn = SharedConfigs.shared.isHidden
-        phoneCustomView.textField.keyboardType = .numberPad
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        universityDropDown.hide()
         genderDropDown.hide()
-        universityMoreOrLessImageView.image = UIImage(named: "more")
         genderMoreOrLessImageView.image = UIImage(named: "more")
         if size.width > size.height {
             constant = 50
@@ -84,16 +76,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     override func viewDidLayoutSubviews() {
-        universityDropDown.width = universityButton.frame.width
         genderDropDown.width = genderView.textField.frame.width
         nameView.handleRotate()
         lastnameView.handleRotate()
         usernameView.handleRotate()
-        if universityDropDown.isHidden {
-            isMoreUniversity = false
-        } else {
-            isMoreUniversity = true
-        }
     }
     
     //MARK: Helper methods
@@ -110,9 +96,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         genderView.delagate = self
         usernameView.delagate = self
         infoView.delagate = self
-        phoneCustomView.delagate = self
         birdthdateView.delagate = self
-        emailView.delagate = self
     }
     
     func addTargets() {
@@ -120,9 +104,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         usernameView.textField.addTarget(self, action: #selector(usernameTextFieldAction), for: .editingChanged)
         lastnameView.textField.addTarget(self, action: #selector(lastnameTextFieldAction), for: .editingChanged)
         infoView.textField.addTarget(self, action: #selector(infoTextFieldAction), for: .editingChanged)
-        phoneCustomView.textField.addTarget(self, action: #selector(phoneTextFieldAction), for: .editingChanged)
         birdthdateView.textField.addTarget(self, action: #selector(birthDateTextFieldAction), for: .editingChanged)
-        emailView.textField.addTarget(self, action: #selector(emailTextFieldAction), for: .editingChanged)
     }
     
     func disableUpdateInfoButton() {
@@ -144,8 +126,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
         genderView.textField.text = SharedConfigs.shared.signedUser?.gender
         infoView.textField.text = signedUser?.info
-        emailView.textField.text = SharedConfigs.shared.signedUser?.email
-        phoneCustomView.textField.text = SharedConfigs.shared.signedUser?.phoneNumber
         genderView.textField.text = signedUser?.gender
         birdthdateView.textField.text = stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) ?? ""
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
@@ -177,12 +157,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
         if birdthdateView.textField.text != "" {
             birdthdateView.topLabel.text = "birthdate".localized()
-        }
-        if phoneCustomView.textField.text != "" {
-            phoneCustomView.topLabel.text = "number".localized()
-        }
-        if emailView.textField.text != "" {
-            emailView.topLabel.text = "email".localized()
         }
         if genderView.textField.text != "" {
             genderView.topLabel.text = "gender".localized()
@@ -222,20 +196,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             }
         }
         birthDate = nil
-        return nil
-    }
-    
-    func checkEmail(_ signedUser: UserModel?) -> Bool? {
-        if  signedUser?.email != emailView.textField.text {
-            if (emailView.textField.text?.isValidEmail())! {
-                email = emailView.textField.text!
-                return true
-            } else {
-                email = nil
-                return false
-            }
-        }
-        email = nil
         return nil
     }
     
@@ -310,25 +270,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-    func checkPhoneNumber(_ signedUser: UserModel?) -> Bool? {
-        if  signedUser?.phoneNumber != phoneCustomView.textField.text {
-            if (phoneCustomView.textField.text?.isValidNumber())! || phoneCustomView.textField.text == "" {
-                if (signedUser?.phoneNumber == nil && phoneCustomView.textField.text == "") {
-                    phoneNumber = nil
-                    return nil
-                } else {
-                    phoneNumber = phoneCustomView.textField.text!
-                    return true
-                }
-            } else {
-                phoneNumber = nil
-                return false
-            }
-        }
-        phoneNumber = nil
-        return nil
-    }
-    
     func checkLastname(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.lastname != lastnameView.textField.text {
             if (lastnameView.textField.text?.isValidNameOrLastname())! || lastnameView.textField.text == "" {
@@ -356,8 +297,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkFields() {
         checkUsername(signedUser) { (isAllWell) in
-            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkEmail(self.signedUser) != false  && self.checkLastname(self.signedUser) != false && self.checkPhoneNumber(self.signedUser) != false && self.checkInfo(self.signedUser) != false {
-                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.phoneNumber != nil || self.info != nil || self.email != nil || self.info != nil {
+            if isAllWell != false && (self.checkGender(self.signedUser) != false) &&  self.checkBirthdate(self.signedUser) != false &&  self.checkName(self.signedUser) != false && self.checkLastname(self.signedUser) != false && self.checkInfo(self.signedUser) != false {
+                if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil || self.birthDate != nil || self.info != nil || self.info != nil {
                     self.enableUpdateInfoButton()
                 } else {
                     self.disableUpdateInfoButton()
@@ -534,10 +475,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 20, height: 20)
     }
     
-    func addButtonOnUniversityTextField(button: UIButton, textField: UITextField) {
-        button.addTarget(self, action: #selector(imageTapped), for: .touchUpInside)
-        addConstraintsOnButton(button: button, textField: textField)
-    }
+  
     
     func addButtonOnGenderTextField(button: UIButton, textField: UITextField) {
         button.addTarget(self, action: #selector(tappedGenderTextField), for: .touchUpInside)
@@ -601,14 +539,14 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email) { (user, error) in
+        editInformatioViewModel.editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
-                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthDate, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
                     UserDataController().populateUserProfile(model: userModel)
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -620,20 +558,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             }
         }
     }
-    
-    @objc func imageTapped() {
-        checkFields()
-        if isMoreUniversity {
-            isMoreUniversity = false
-            universityDropDown.hide()
-            universityMoreOrLessImageView.image = UIImage(named: "more")
-        }
-        else {
-            isMoreUniversity = true
-            universityDropDown.show()
-            universityMoreOrLessImageView.image = UIImage(named: "less")
-        }
-    }
+
     
     func addGenderDropDown() {
         addButtonOnGenderTextField(button: genderButton, textField: genderView.textField)
@@ -696,29 +621,6 @@ extension EditInformationViewController: CustomTextFieldDelegate {
                 lastnameView.border.backgroundColor = .blue
                 lastnameView.errorLabel.textColor = .blue
                 lastnameView.errorLabel.text = lastnameView.successMessage
-            }
-        }
-        if placeholder == "number".localized() {
-            if !phoneCustomView.textField.text!.isValidNumber() {
-                phoneCustomView.errorLabel.text = phoneCustomView.errorMessage
-                phoneCustomView.errorLabel.textColor = .red
-                phoneCustomView.border.backgroundColor = .red
-            } else {
-                phoneCustomView.border.backgroundColor = .blue
-                phoneCustomView.errorLabel.textColor = .blue
-                phoneCustomView.errorLabel.text = phoneCustomView.successMessage
-            }
-        }
-        
-        if placeholder == "email".localized() {
-            if !emailView.textField.text!.isValidEmail() {
-                emailView.errorLabel.text = emailView.errorMessage
-                emailView.errorLabel.textColor = .red
-                emailView.border.backgroundColor = .red
-            } else {
-                emailView.border.backgroundColor = .blue
-                emailView.errorLabel.textColor = .blue
-                emailView.errorLabel.text = emailView.successMessage
             }
         }
     }

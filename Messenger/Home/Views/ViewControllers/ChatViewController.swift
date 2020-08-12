@@ -105,11 +105,11 @@ class ChatViewController: UIViewController {
         if name != nil {
             self.title = name
         } else if username != nil {
-               self.title = username
-           } else {
+            self.title = username
+        } else {
             self.title = "dynamics_user".localized()
         }
-       }
+    }
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -127,7 +127,7 @@ class ChatViewController: UIViewController {
             }, completion: { (completed) in
                 if isKeyboardShowing {
                     if self.allMessages.count > 0 {
-                        let indexPath = IndexPath(item: self.allMessages.count - 2, section: 0)
+                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
                         print(indexPath.row)
                         print(self.allMessages.count)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -205,7 +205,7 @@ class ChatViewController: UIViewController {
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
         sendButton.isUserInteractionEnabled = true
         sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
-        25)
+            25)
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
@@ -273,13 +273,13 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-       if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-           return "\((seconds % 3600) % 60) sec."
-       } else if seconds / 3600 == 0 {
-           return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-       }
-       return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-       }
+        if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+            return "\((seconds % 3600) % 60) sec."
+        } else if seconds / 3600 == 0 {
+            return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+        }
+        return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
     
     func stringToDate(date:String) -> String {
         let formatter = DateFormatter()
@@ -302,20 +302,20 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         if !tabbar!.onCall {
             tabbar!.handleCallClick(id: id!, name: name ?? username ?? "")
             tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
-               } else {
+        } else {
             tabbar!.handleClickOnSamePerson()
-               }
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages[indexPath.row].type == "text" {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
-            cell.messageLabel.text = allMessages[indexPath.row].text
-            cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
-            cell.messageLabel.textColor = .white
-            cell.messageLabel.sizeToFit()
-            return cell
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
+                cell.messageLabel.text = allMessages[indexPath.row].text
+                cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
+                cell.messageLabel.textColor = .white
+                cell.messageLabel.sizeToFit()
+                return cell
             } else if allMessages[indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
                 let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))

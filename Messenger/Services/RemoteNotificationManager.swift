@@ -7,17 +7,57 @@
 //
 
 import Foundation
+import UserNotifications
+import UIKit.UIApplication
+
 
 class RemoteNotificationManager {
-//    func sendDeviceToken(deviceToken: String?) {
-//        
-//    }
-//    
-//    func checkTokenExists() -> Bool {
-//        return UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String != nil 
-//    }
-//    
-//    func checkVoipTokenExists() -> Bool {
-//        
-//    }
+    
+    static func registerDeviceToken(pushDevicetoken: String, voipDeviceToken: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().registerDevice(token: pushDevicetoken, voipToken: voipDeviceToken) { (error) in
+            if error == nil {
+                UserDefaults.standard.set(true, forKey: Keys.IS_REGISTERED)
+                UserDefaults.standard.set(pushDevicetoken, forKey: Keys.PUSH_DEVICE_TOKEN)
+                UserDefaults.standard.set(voipDeviceToken, forKey: Keys.VOIP_DEVICE_TOKEN)
+                SharedConfigs.shared.isRegistered = true
+                SharedConfigs.shared.deviceToken = pushDevicetoken
+                SharedConfigs.shared.voIPToken = voipDeviceToken
+            }
+            completion(error)
+        }
+    }
+    
+    static func checkForRegisteredDeviceToken() -> Bool {
+        return SharedConfigs.shared.isRegistered ?? false
+    }
+    
+    static func didReceivePushDeviceToken(token: Data) -> String {
+        let tokenParts = token.map { data -> String in
+            return String(format: "%02.2hhx", data)
+        }
+        let token = tokenParts.joined()
+        print("Device Token: \(token)")
+        return token
+    }
+    
+    static func didReceiveVoiDeviceToken(token: Data) -> String {
+        let tokenParts = token.map { data -> String in
+            return String(format: "%02.2hhx", data)
+        }
+        let token = tokenParts.joined()
+        print("Our Token: \(token)")
+        return token
+    }
+    
+    static func requestPermissions() {
+        UNUserNotificationCenter.current().delegate = AppDelegate.shared
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            print("Permission granted: \(granted)")
+            guard granted else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
 }
