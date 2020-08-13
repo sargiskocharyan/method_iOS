@@ -29,11 +29,11 @@ class VideoViewController: UIViewController {
     @IBAction func speakerOnAndOff(_ sender: UIButton) {
         if isSpeakerOn {
             isSpeakerOn = false
-            sender.setImage(UIImage(systemName: "speaker.slash.fill"), for: .normal)
+            sender.setImage(UIImage(named: "speakerOff"), for: .normal)
             webRTCClient?.speakerOn()
         } else {
             isSpeakerOn = true
-            sender.setImage(UIImage(systemName: "speaker.fill"), for: .normal)
+            sender.setImage(UIImage(named: "speakerOn"), for: .normal)
             webRTCClient?.speakerOff()
         }
     }

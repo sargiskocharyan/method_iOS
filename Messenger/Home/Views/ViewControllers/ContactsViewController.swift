@@ -18,7 +18,7 @@ class ContactsViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    //@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
     var findedUsers: [User] = []
@@ -31,6 +31,7 @@ class ContactsViewController: UIViewController {
     var tabbar: MainTabBarController?
     var contactsMode: ContactsMode?
     static let cellIdentifier = "cell"
+    var spinner = UIActivityIndicatorView(style: .medium)
     var mainRouter: MainRouter?
     
     //MARK: Lifecycles
@@ -45,17 +46,29 @@ class ContactsViewController: UIViewController {
             tableView.addSubview(refreshControl)
         }
         refreshControl.addTarget(self, action: #selector(refreshWeatherData(_:)), for: .valueChanged)
+        tableView.tableFooterView = UIView()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        view.addSubview(spinner)
+        
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
     }
     
-    @objc private func refreshWeatherData(_ sender: Any) {
-        getContacts()
+    @objc private func refreshWeatherData(_ sender: UIRefreshControl) {
+        if onContactPage {
+          getContacts()
+        } else {
+            sender.endRefreshing()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-         getContacts()
+        getContacts()
         setNavigationItems()
         contactsMiniInformation = viewModel!.contacts
         tableView.reloadData()
@@ -116,7 +129,7 @@ class ContactsViewController: UIViewController {
                             self.tableView.reloadData()
                             self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                             self.navigationItem.title = "found_users".localized()
-                            self.activityIndicator.stopAnimating()
+                            self.spinner.stopAnimating()
                             self.setView("there_is_no_result".localized())
                         }
                         return
@@ -142,7 +155,7 @@ class ContactsViewController: UIViewController {
                         self.tableView.reloadData()
                         self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                         self.navigationItem.title = "found_users".localized()
-                        self.activityIndicator.stopAnimating()
+                        self.spinner.stopAnimating()
                     }
                 }
             }
@@ -152,7 +165,7 @@ class ContactsViewController: UIViewController {
                 self.tableView.reloadData()
                 self.navigationItem.rightBarButtonItem = .init(title: "reset".localized(), style: .plain, target: self, action: #selector(self.backToContacts))
                 self.navigationItem.title = "found_users".localized()
-                self.activityIndicator.stopAnimating()
+                self.spinner.stopAnimating()
                 self.setView("there_is_no_result".localized())
             }
         }
@@ -195,7 +208,7 @@ class ContactsViewController: UIViewController {
     
     func getContacts() {
         if !isLoaded {
-            activityIndicator.startAnimating()
+            spinner.startAnimating()
         }
             self.isLoaded = true
             if viewModel!.contacts.count == 0 {
@@ -208,7 +221,7 @@ class ContactsViewController: UIViewController {
             }
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
-            self.activityIndicator.stopAnimating()
+            self.spinner.stopAnimating()
         }
     }
 }
@@ -227,7 +240,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
             self.tableView.reloadData()
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
             self.navigationItem.title = "contacts".localized()
-            self.activityIndicator.stopAnimating()
+            self.spinner.stopAnimating()
         }
     }
 

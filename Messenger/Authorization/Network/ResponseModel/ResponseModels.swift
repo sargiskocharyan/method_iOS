@@ -38,6 +38,7 @@ struct ErrorResponse: Codable {
 
 struct CallHistory: Codable {
     var type: String?
+    var receiver: String?
     var status: String?
     var participants: [String?]?
     var callSuggestTime: String?

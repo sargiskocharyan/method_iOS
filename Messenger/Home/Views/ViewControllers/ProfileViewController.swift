@@ -15,6 +15,10 @@ protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
 }
 
+protocol ProfileViewDelegate: class {
+    func changeMode()
+}
+
 class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
@@ -54,6 +58,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     static let nameOfDropdownCell = "CustomCell"
     weak var delegate: ProfileViewControllerDelegate?
     var mainRouter: MainRouter?
+    weak var profileDelegate: ProfileViewDelegate?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -135,6 +140,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @IBAction func selectMode(_ sender: UISwitch) {
+        profileDelegate?.changeMode()
         if sender.isOn {
             UIApplication.shared.windows.forEach { window in
                 window.overrideUserInterfaceStyle = .dark

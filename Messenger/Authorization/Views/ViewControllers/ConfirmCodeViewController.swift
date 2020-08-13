@@ -151,9 +151,23 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire))
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
-                    DispatchQueue.main.async {
-                        MainRouter().assemblyModule()
-                        self.activityIndicator.stopAnimating()
+//                    DispatchQueue.main.async {
+//                        MainRouter().assemblyModule()
+//                        self.activityIndicator.stopAnimating()
+//                    }
+                    
+                    self.registerDevice { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                                self.activityIndicator.stopAnimating()
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                MainRouter().assemblyModule()
+                                self.activityIndicator.stopAnimating()
+                            }
+                        }
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -174,9 +188,18 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
-                    DispatchQueue.main.async {
-                        self.authRouter?.showRegisterViewController()
-                        self.activityIndicator.stopAnimating()
+                    self.registerDevice { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                                self.activityIndicator.stopAnimating()
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.authRouter?.showRegisterViewController()
+                                self.activityIndicator.stopAnimating()
+                            }
+                        }
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -185,6 +208,12 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 }
             }
+        }
+    }
+    
+    func registerDevice(completion: @escaping (NetworkResponse?)->()) {
+        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
+            completion(error)
         }
     }
     

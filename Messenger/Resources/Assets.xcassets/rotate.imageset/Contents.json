@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icons8-switch-camera-100.png",
+      "filename" : "icons8-switch-camera-100-2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-switch-camera-100-2@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-switch-camera-100-2@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

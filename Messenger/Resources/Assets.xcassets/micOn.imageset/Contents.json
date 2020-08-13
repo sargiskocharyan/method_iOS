@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icons8-microphone-90.png",
+      "filename" : "micr.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "micr@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "micr@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

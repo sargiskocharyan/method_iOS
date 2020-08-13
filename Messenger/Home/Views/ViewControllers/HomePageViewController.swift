@@ -110,20 +110,16 @@ class MainTabBarController: UITabBarController {
     
     
     
-    func startCall(_ id: String, _ roomname: String, completionHandler: @escaping (_ name: String) -> ()) {
+    func startCall(_ id: String, _ roomname: String, _ name: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
-        for i in 0..<contactsViewModel!.contacts.count {
-            if contactsViewModel?.contacts[i]._id == id {
-                self.callsVC?.handleCall(id: id, user: contactsViewModel!.contacts[i])
-                completionHandler(contactsViewModel?.contacts[i].name ?? contactsViewModel?.contacts[i].username ?? "unknown user")
-                return
-            }
-        }
+        self.callsVC?.handleCall(id: id)
+        completionHandler()
+        return
 //        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
 //            if (error != nil) {
 //                DispatchQueue.main.async {
@@ -142,9 +138,9 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
-        SocketTaskManager.shared.handleCall { (id, roomname) in
+        SocketTaskManager.shared.handleCall { (id, roomname, name) in
             if !self.onCall {
-                self.startCall(id, roomname) { name in
+                self.startCall(id, roomname, name) {
                     DispatchQueue.main.async {
                         AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
                     }
@@ -459,9 +455,9 @@ extension MainTabBarController: CallListViewDelegate {
 }
 
 extension MainTabBarController: AppDelegateD {
-    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ()) {
-        self.startCall(id, roomName) { name in
-            completionHandler(name)
+    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ()) {
+        self.startCall(id, roomName, name) {
+            completionHandler()
         }
     }
     

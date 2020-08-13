@@ -15,7 +15,7 @@ import UserNotifications
 import PushKit
 
 protocol AppDelegateD : class {
-    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ())
+    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ())
 }
 
 @UIApplicationMain
@@ -44,8 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if let managedObjectContext = appDelegate.managedObjectContext {
             return managedObjectContext
-        }
-        else {
+        } else {
             return nil
         }
     }()
@@ -56,9 +55,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("payload: ", payload.dictionaryPayload)
-        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, completionHandler: { name in
+        print(payload.dictionaryPayload["username"] as! String)
+        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
             self.displayIncomingCall(
-            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: name, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
+            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 completion()
             }
         })
@@ -118,9 +118,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             SharedConfigs.shared.voIPToken = UserDefaults.standard.object(forKey: Keys.VOIP_DEVICE_TOKEN) as? String
         } else {
             SharedConfigs.shared.deviceToken = RemoteNotificationManager.didReceivePushDeviceToken(token: deviceToken)
-            RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
-                if error != nil {
-                    print(error as Any)
+            if SharedConfigs.shared.signedUser != nil && SharedConfigs.shared.signedUser?.token != nil {
+                RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
+                    if error != nil {
+                        print(error as Any)
+                    }
                 }
             }
         }

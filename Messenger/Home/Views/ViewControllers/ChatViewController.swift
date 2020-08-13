@@ -79,6 +79,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
+       
     }
     
     
@@ -126,10 +127,8 @@ class ChatViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
                 if isKeyboardShowing {
-                    if self.allMessages.count > 0 {
+                    if self.allMessages.count > 1 {
                         let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
-                        print(indexPath.row)
-                        print(self.allMessages.count)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
                 }

@@ -18,10 +18,6 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="N4E-si-Bsa">
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" id="Fyr-bW-mxl">
-                                    <rect key="frame" x="0.0" y="136" width="414" height="178"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </activityIndicatorView>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="80" id="djA-bQ-eP3" customClass="ContactTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="80"/>
@@ -92,7 +88,6 @@
                         <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="0.0"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="Fyr-bW-mxl" id="rsc-u0-Fnx"/>
                         <outlet property="tableView" destination="N4E-si-Bsa" id="zcy-0m-PAu"/>
                     </connections>
                 </viewController>
@@ -116,65 +111,67 @@
                                     <constraint firstAttribute="height" constant="128" id="VSb-JI-TzK"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kLS-NX-gxz">
-                                <rect key="frame" x="187" y="782" width="40" height="40"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="100" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HCe-NN-paS">
+                                <rect key="frame" x="100" y="742" width="214" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JJv-Dm-66Y">
+                                        <rect key="frame" x="0.0" y="0.0" width="34" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="34" id="25e-dX-VVa"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" image="rotate"/>
+                                        <connections>
+                                            <action selector="switchCamera:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="bVg-RD-mia"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x8e-4K-ikv">
+                                        <rect key="frame" x="94" y="0.0" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="31k-a4-SWH"/>
+                                        </constraints>
+                                        <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <state key="normal" image="speakerOn"/>
+                                        <connections>
+                                            <action selector="speakerOnAndOff:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="QRK-FG-8db"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nyA-md-f8u">
+                                        <rect key="frame" x="184" y="0.0" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="mMT-Dr-7T2"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" image="micOn"/>
+                                        <connections>
+                                            <action selector="speakerOnOff:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="nAJ-so-bgH"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="40" id="PH8-Kp-Ykj"/>
-                                    <constraint firstAttribute="height" constant="40" id="VhU-2W-o8Y"/>
+                                    <constraint firstAttribute="height" constant="30" id="tUS-lo-CwG"/>
+                                </constraints>
+                                <variation key="heightClass=regular-widthClass=compact" spacing="60"/>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kLS-NX-gxz">
+                                <rect key="frame" x="187" y="802" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="5jQ-4d-aNf"/>
+                                    <constraint firstAttribute="height" constant="40" id="Q9d-EK-57L"/>
                                 </constraints>
                                 <state key="normal" image="endCall"/>
                                 <connections>
                                     <action selector="endCallButton:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="daQ-zi-Sh7"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JJv-Dm-66Y">
-                                <rect key="frame" x="72" y="784.66666666666663" width="35" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="c8x-Pf-f5L"/>
-                                    <constraint firstAttribute="width" constant="35" id="hjr-S5-zeb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                <state key="normal" image="rotate"/>
-                                <connections>
-                                    <action selector="switchCamera:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="bVg-RD-mia"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nyA-md-f8u">
-                                <rect key="frame" x="307" y="784.66666666666663" width="35" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="35" id="CVn-aa-6eb"/>
-                                    <constraint firstAttribute="height" constant="35" id="rOr-so-Fwb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                <state key="normal" image="micOn"/>
-                                <connections>
-                                    <action selector="speakerOnOff:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="nAJ-so-bgH"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x8e-4K-ikv">
-                                <rect key="frame" x="182" y="707" width="50" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="IB6-ec-w2l"/>
-                                    <constraint firstAttribute="width" constant="50" id="bex-eW-KZw"/>
-                                </constraints>
-                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" image="speaker.slash.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="speakerOnAndOff:" destination="LxJ-sX-FLD" eventType="touchUpInside" id="QRK-FG-8db"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="kLS-NX-gxz" firstAttribute="top" secondItem="x8e-4K-ikv" secondAttribute="bottom" constant="25" id="KdM-5c-HhW"/>
+                            <constraint firstItem="xGJ-da-agX" firstAttribute="bottom" secondItem="kLS-NX-gxz" secondAttribute="bottom" constant="20" id="M6e-3E-Jhv"/>
                             <constraint firstItem="aRg-AX-a1e" firstAttribute="top" secondItem="xGJ-da-agX" secondAttribute="top" constant="50" id="OaS-zm-R9L"/>
-                            <constraint firstItem="xGJ-da-agX" firstAttribute="bottom" secondItem="kLS-NX-gxz" secondAttribute="bottom" constant="40" id="Yl9-TW-1mM"/>
-                            <constraint firstItem="x8e-4K-ikv" firstAttribute="centerX" secondItem="QtG-fd-yRl" secondAttribute="centerX" id="bmk-uv-Pux"/>
-                            <constraint firstItem="nyA-md-f8u" firstAttribute="leading" secondItem="kLS-NX-gxz" secondAttribute="trailing" constant="80" id="gVR-Xm-dvT"/>
-                            <constraint firstItem="JJv-Dm-66Y" firstAttribute="centerY" secondItem="kLS-NX-gxz" secondAttribute="centerY" id="igU-ve-az1"/>
-                            <constraint firstItem="kLS-NX-gxz" firstAttribute="centerX" secondItem="QtG-fd-yRl" secondAttribute="centerX" id="o4N-KJ-cvg"/>
-                            <constraint firstItem="kLS-NX-gxz" firstAttribute="leading" secondItem="JJv-Dm-66Y" secondAttribute="trailing" constant="80" id="pcN-io-wQ4"/>
-                            <constraint firstItem="nyA-md-f8u" firstAttribute="centerY" secondItem="kLS-NX-gxz" secondAttribute="centerY" id="vEY-Cz-Fq0"/>
+                            <constraint firstItem="kLS-NX-gxz" firstAttribute="centerX" secondItem="HCe-NN-paS" secondAttribute="centerX" id="Tjt-aA-Rl5"/>
+                            <constraint firstItem="HCe-NN-paS" firstAttribute="centerX" secondItem="QtG-fd-yRl" secondAttribute="centerX" id="XEK-gf-ANA"/>
+                            <constraint firstItem="kLS-NX-gxz" firstAttribute="top" secondItem="HCe-NN-paS" secondAttribute="bottom" constant="30" id="vua-l4-7MX"/>
                             <constraint firstItem="xGJ-da-agX" firstAttribute="trailing" secondItem="aRg-AX-a1e" secondAttribute="trailing" constant="20" id="vwT-dG-v9U"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xGJ-da-agX"/>
@@ -366,10 +363,6 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="RsO-NI-58G">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" id="oDJ-6Z-09G">
-                                    <rect key="frame" x="0.0" y="140" width="414" height="93"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </activityIndicatorView>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="messageCell" rowHeight="84" id="LDA-Y5-XhS" customClass="RecentMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="84"/>
@@ -439,7 +432,6 @@
                     <tabBarItem key="tabBarItem" title="" image="chatIcon" selectedImage="chatIcon" id="uqu-Vn-ajS"/>
                     <navigationItem key="navigationItem" id="73x-qw-Xko"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="oDJ-6Z-09G" id="cu5-K6-Xhk"/>
                         <outlet property="tableView" destination="RsO-NI-58G" id="DcI-De-TiN"/>
                     </connections>
                 </viewController>
@@ -555,7 +547,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wjL-3N-gFa">
-                                                            <rect key="frame" x="10" y="9.9999999999999982" width="43.666666666666664" height="20.333333333333329"/>
+                                                            <rect key="frame" x="10" y="10.000000000000002" width="43.333333333333336" height="20.666666666666671"/>
                                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -619,13 +611,13 @@
                                                             <state key="normal" image="video.fill" catalog="system"/>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Cf-0P-J4D">
-                                                            <rect key="frame" x="38" y="45" width="37.333333333333343" height="20"/>
+                                                            <rect key="frame" x="38" y="45" width="37.666666666666657" height="20"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oxM-aa-39l">
-                                                            <rect key="frame" x="10" y="9.9999999999999982" width="43.666666666666664" height="20.333333333333329"/>
+                                                            <rect key="frame" x="10" y="10.000000000000002" width="43.666666666666664" height="20.666666666666671"/>
                                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -820,7 +812,7 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A3X-85-XFx">
-                                <rect key="frame" x="94.333333333333329" y="322.33333333333331" width="35.333333333333329" height="17"/>
+                                <rect key="frame" x="94.333333333333314" y="322.33333333333331" width="35.333333333333329" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -2048,8 +2040,8 @@
         <image name="person.badge.plus.fill" width="128" height="116"/>
         <image name="phone" catalog="system" width="128" height="115"/>
         <image name="phone.fill" catalog="system" width="128" height="114"/>
-        <image name="rotate" width="100" height="100"/>
-        <image name="speaker.slash.fill" catalog="system" width="128" height="124"/>
+        <image name="rotate" width="88" height="68"/>
+        <image name="speakerOn" width="90" height="80"/>
         <image name="user" width="30" height="30"/>
         <image name="video.fill" catalog="system" width="128" height="82"/>
     </resources>

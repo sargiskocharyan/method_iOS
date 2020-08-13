@@ -98,3 +98,4 @@
 "info_not_set" = "Տեղեկությունները սահմանված չեն";
 "the_username_must_contain_at_least_4_letters" = "Օգտագործողի անունը պետք է պարունակի առնվազն 4 տառ";
 "this_username_is_taken" = "Այս օգտվողի անունը վերցված է";
+"you" = "You: ";

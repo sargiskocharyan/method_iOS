@@ -73,11 +73,12 @@ class SocketTaskManager {
         }
     }
     
-    func handleCall(completionHandler: @escaping (_ id: String, _ roomname: String) -> Void) {
-            socket.on("call") { (dataArray, socketAck) in
-                completionHandler(dataArray[0] as! String, dataArray[1] as! String)
-            }
+    func handleCall(completionHandler: @escaping (_ id: String, _ roomname: String, _ name: String) -> Void) {
+        socket.on("call") { (dataArray, socketAck) in
+            let dictionary = dataArray[0] as! Dictionary<String, String?>
+            completionHandler(dictionary["caller"]!!, dictionary["roomName"]!!, dictionary["username"]!!)
         }
+    }
     
     func handleCallSessionEnded(completionHandler: @escaping (_ roomName: String) -> Void) {
         socket.on("callSessionEnded") { (dataArray, socketAck) in
@@ -159,7 +160,7 @@ class SocketTaskManager {
             let data = dataArray[0] as! NSDictionary
             if let call = data["call"] as? NSDictionary {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
-                let callHistory = CallHistory(type: call["type"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
+                let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
                 let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
             completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)

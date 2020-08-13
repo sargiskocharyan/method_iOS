@@ -65,10 +65,9 @@ class ContactProfileViewController: UIViewController {
         if onContactPage! {
             self.view.viewWithTag(45)?.removeFromSuperview()
         } else {
-            addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
             removeFromContactsButton.isHidden = true
         }
-        if tabBar!.onCall || !onContactPage! {
+        if tabBar!.onCall {
             videoCallButton.isEnabled = false
         } else {
             videoCallButton.isEnabled = true
@@ -77,6 +76,7 @@ class ContactProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
         addContact = addToContactButton
         tabBar = tabBarController as? MainTabBarController
         nc = tabBar?.viewControllers?[0] as? UINavigationController
@@ -105,7 +105,6 @@ class ContactProfileViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.stackView.addArrangedSubview(self.addContact!)
                     self.stackView.reloadInputViews()
-                    self.videoCallButton.isEnabled = false
                     self.removeFromContactsButton.isHidden = true
                     self.viewModel?.removeContactFromCoreData(id: self.id!, completion: { (error) in
                         self.delegate?.removeContact()
@@ -153,7 +152,6 @@ class ContactProfileViewController: UIViewController {
                                 self.view.viewWithTag(45)?.removeFromSuperview()
                                 self.delegate?.addNewContact(contact: self.contact!)
                                 self.onContactPage = true
-                                self.videoCallButton.isEnabled = true
                                 self.removeFromContactsButton.isHidden = false
                             }
                         })

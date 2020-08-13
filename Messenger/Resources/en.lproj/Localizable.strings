@@ -105,3 +105,4 @@
 "incoming_call"  = "Incoming call";
 "outgoing_call"  = "Outgoing call";
 "hide_personal_data" = "Hide personal data";
+"you" = "You: ";
