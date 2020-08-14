@@ -46,7 +46,6 @@ class RecentMessagesViewModel {
         for call in calls {
             save(newCall: call) {
                 count += 1
-                print("pahec")
                 if count == calls.count {
                     completion(calls, nil)
                     return

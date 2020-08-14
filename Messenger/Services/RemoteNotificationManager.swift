@@ -19,9 +19,11 @@ class RemoteNotificationManager {
                 UserDefaults.standard.set(true, forKey: Keys.IS_REGISTERED)
                 UserDefaults.standard.set(pushDevicetoken, forKey: Keys.PUSH_DEVICE_TOKEN)
                 UserDefaults.standard.set(voipDeviceToken, forKey: Keys.VOIP_DEVICE_TOKEN)
+                UserDefaults.standard.set(UIDevice.current.identifierForVendor!.uuidString, forKey: "deviceUUID")
                 SharedConfigs.shared.isRegistered = true
                 SharedConfigs.shared.deviceToken = pushDevicetoken
                 SharedConfigs.shared.voIPToken = voipDeviceToken
+                SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor!.uuidString
             }
             completion(error)
         }

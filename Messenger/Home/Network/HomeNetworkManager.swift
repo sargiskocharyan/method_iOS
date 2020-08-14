@@ -320,6 +320,24 @@ class HomeNetworkManager: NetworkManager {
            }
        }
     
+    func readCalls(id: String, completion: @escaping (NetworkResponse?)->()) {
+              router.request(.readCalls(id: id)) { data, response, error in
+                  if error != nil {
+                      print(error!.rawValue)
+                      completion(error)
+                  }
+                  if let response = response as? HTTPURLResponse {
+                      let result = self.handleNetworkResponse(response)
+                      switch result {
+                      case .success:
+                          completion(nil)
+                      case .failure( _):
+                          completion(NetworkResponse.failed)
+                      }
+                  }
+              }
+          }
+    
     func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
         router.request(.editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate)) { data, response, error in
             if error != nil {

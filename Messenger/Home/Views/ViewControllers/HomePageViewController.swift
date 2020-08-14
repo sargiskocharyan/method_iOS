@@ -43,18 +43,21 @@ class MainTabBarController: UITabBarController {
     var timer: Timer?
     
     //MARK: Lifecycle
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-        socketTaskManager.connect()
+//        socketTaskManager.connect()
         callManager = AppDelegate.shared.callManager
         handleCall()
         handleAnswer()
         handleCallAccepted()
         handleCallSessionEnded()
+        print(UIDevice.current.identifierForVendor?.uuidString)
         handleOffer()
         getCanditantes()
         handleCallEnd()
@@ -71,7 +74,6 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
-//        NotificationCenter.default.addObserver(self, selector: #selector(reactToNotification(_:)), name: Notification.Name(rawValue: "kNotification"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,14 +81,15 @@ class MainTabBarController: UITabBarController {
         getNewMessage()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
+    
     //MARK: Helper methods
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
     }
-    
-//    @objc func reactToNotification(_ sender: Notification) {
-//        startCall(sender.userInfo!["id"] as! String, sender.userInfo!["roomname"] as! String)
-//    }
     
     func handleCallEnd() {
         socketTaskManager.handleCallEnd { (roomName) in
@@ -138,6 +141,9 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
+        if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected  {
+            SocketTaskManager.shared.connect()
+        }
         SocketTaskManager.shared.handleCall { (id, roomname, name) in
             if !self.onCall {
                 self.startCall(id, roomname, name) {

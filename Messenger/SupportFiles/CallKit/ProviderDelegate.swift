@@ -62,10 +62,12 @@ extension ProviderDelegate: CXProviderDelegate {
     }
     
     configureAudioSession()
-//    provider.configuration.
     call.answer()
 
     action.fulfill()
+    if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected  {
+        SocketTaskManager.shared.connect()
+    }
     SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
     
   }
@@ -87,6 +89,9 @@ extension ProviderDelegate: CXProviderDelegate {
     action.fulfill()
    
     callManager.remove(call: call)
+    if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected  {
+               SocketTaskManager.shared.connect()
+           }
     SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
     self.webrtcClient?.peerConnection?.close()
     

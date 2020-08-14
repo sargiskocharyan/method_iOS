@@ -116,6 +116,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             SharedConfigs.shared.isRegistered = true
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
             SharedConfigs.shared.voIPToken = UserDefaults.standard.object(forKey: Keys.VOIP_DEVICE_TOKEN) as? String
+            SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor!.uuidString
+//            if UserDefaults.standard.object(forKey: "deviceUUID") as! String != UIDevice.current.identifierForVendor?.uuidString {
+//                SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor?.uuidString
+//            }
         } else {
             SharedConfigs.shared.deviceToken = RemoteNotificationManager.didReceivePushDeviceToken(token: deviceToken)
             if SharedConfigs.shared.signedUser != nil && SharedConfigs.shared.signedUser?.token != nil {
@@ -132,5 +136,21 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // 1. Print out error if PNs registration not successful
         print("Failed to register for remote notifications with error: \(error)")
     }
+    
+//    func applicationDidEnterBackground(_ application: UIApplication) {
+//        
+//    }
+//    
+//    func applicationWillEnterForeground(_ application: UIApplication) {
+//        
+//    }
+//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        guard let aps = userInfo["aps"] as? [String: AnyObject] else {
+//          completionHandler(.failed)
+//          return
+//        }
+//        print(aps)
+//        completionHandler(.newData)
+//    }
 }
 

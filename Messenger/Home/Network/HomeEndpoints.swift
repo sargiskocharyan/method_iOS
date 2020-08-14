@@ -32,6 +32,7 @@ public enum HomeApi {
     case changePhone(phone: String)
     case verifyPhone(number: String, code: String)
     case registerDevice(token: String, voipToken: String)
+    case readCalls(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -87,6 +88,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.VerifyPhone
         case .registerDevice(_,_):
             return AUTHUrls.RegisterDevice
+        case .readCalls(_):
+            return AUTHUrls.ReadCalls
         }
     }
     
@@ -136,6 +139,8 @@ extension HomeApi: EndPointType {
         case .verifyPhone(_,_):
             return .post
         case .registerDevice(_,_):
+            return .post
+        case .readCalls(_):
             return .post
         }
     }
@@ -237,6 +242,10 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .registerDevice(token: let token, voipToken: let voipToken):
             let parameters:Parameters = ["deviceUUID": UIDevice.current.identifierForVendor?.uuidString, "token": token, "voIPToken": voipToken, "platform": "ios"]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .readCalls(id: let id):
+            let parameters:Parameters = ["callId": id]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
