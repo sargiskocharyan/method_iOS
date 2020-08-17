@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     var tabbar: MainTabBarController?
-    
+    var badge: Int?
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -51,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }()
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token))
         SharedConfigs.shared.voIPToken = RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token)
     }
     
@@ -118,12 +119,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
             SharedConfigs.shared.voIPToken = UserDefaults.standard.object(forKey: Keys.VOIP_DEVICE_TOKEN) as? String
             SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor!.uuidString
-//            if UserDefaults.standard.object(forKey: "deviceUUID") as! String != UIDevice.current.identifierForVendor?.uuidString {
-//                SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor?.uuidString
-//            }
         } else {
-            SharedConfigs.shared.deviceToken = RemoteNotificationManager.didReceivePushDeviceToken(token: deviceToken)
-            if SharedConfigs.shared.signedUser != nil && SharedConfigs.shared.signedUser?.token != nil {
+            SharedConfigs.shared.deviceToken = RemoteNotificationManager.getDeviceToken(tokenData: deviceToken)
+            if SharedConfigs.shared.signedUser != nil {
                 RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
                     if error != nil {
                         print(error as Any)
@@ -145,13 +143,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //    func applicationWillEnterForeground(_ application: UIApplication) {
 //        
 //    }
-//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-//        guard let aps = userInfo["aps"] as? [String: AnyObject] else {
-//          completionHandler(.failed)
-//          return
-//        }
-//        print(aps)
-//        completionHandler(.newData)
-//    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard let aps = userInfo["aps"] as? [String: AnyObject] else {
+          completionHandler(.failed)
+          return
+        }
+        print(userInfo)
+        if userInfo["type"] as? String == "missedCallHistory" {
+            badge = aps["badge"] as? Int
+        }
+        completionHandler(.newData)
+    }
 }
 

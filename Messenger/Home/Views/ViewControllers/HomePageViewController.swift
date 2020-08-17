@@ -49,7 +49,11 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-//        if socketTaskManager.socket.status != .connected {
+        if let tabItems = self.tabBar.items {
+            let tabItem = tabItems[1]
+            tabItem.badgeValue = AppDelegate.shared.badge != nil ? "\(AppDelegate.shared.badge!)" : nil
+        }
+        if socketTaskManager.socket.status != .connected {
         socketTaskManager.connect(completionHandler: {
             self.handleCall()
             self.handleAnswer()
@@ -59,6 +63,7 @@ class MainTabBarController: UITabBarController {
             self.getCanditantes()
             self.handleCallEnd()
         })
+        }
         callManager = AppDelegate.shared.callManager
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
@@ -224,13 +229,14 @@ func getCanditantes() {
             self.videoVC?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
                 self.mainRouter?.showVideoViewController()
+                self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+                })
+                self.webRTCClient?.answer { (localSdp) in
+                    self.hasLocalSdp = true
+                    self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
+                }
             }
-            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
-            })
-            self.webRTCClient?.answer { (localSdp) in
-                self.hasLocalSdp = true
-                self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
-            }
+           
         }
     }
     
@@ -393,6 +399,7 @@ extension MainTabBarController: WebRTCClientDelegate {
             startDate = Date()
         }
         else if state == .closed || state == .failed {
+            isFirstConnect = nil
             if state == .failed {
                 socketTaskManager.leaveRoom(roomName: roomName!)
             }
@@ -404,7 +411,6 @@ extension MainTabBarController: WebRTCClientDelegate {
             id = nil
             videoVC?.closeAll()
             DispatchQueue.main.async {
-//                self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }

@@ -33,8 +33,8 @@ class RemoteNotificationManager {
         return SharedConfigs.shared.isRegistered ?? false
     }
     
-    static func didReceivePushDeviceToken(token: Data) -> String {
-        let tokenParts = token.map { data -> String in
+    static func getDeviceToken(tokenData: Data) -> String {
+        let tokenParts = tokenData.map { data -> String in
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()

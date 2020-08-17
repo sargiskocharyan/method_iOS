@@ -82,12 +82,7 @@ class RecentMessagesViewController: UIViewController {
                 return chat.id
             }
             self.viewModel!.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        self.spinner.stopAnimating()
-                    }
-                } else if onlineUsers != nil {
+                if onlineUsers != nil {
                     for i in 0..<self.chats.count {
                         if onlineUsers!.usersOnline.contains(self.chats[i].id) {
                             self.chats[i].online = true

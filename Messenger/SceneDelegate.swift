@@ -43,8 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected {
             SocketTaskManager.shared.connect {
                 let vc = self.window?.rootViewController as? MainTabBarController
-                print("22222----------------------------------------")
-                print(AppDelegate.shared.callManager)
+                print(AppDelegate.shared.callManager) 
                 vc?.callManager = AppDelegate.shared.callManager
                 vc?.handleCall()
                 vc?.handleAnswer()

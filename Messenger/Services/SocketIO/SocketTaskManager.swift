@@ -30,6 +30,7 @@ class SocketTaskManager {
     
     func connect(completionHandler: @escaping () -> ()) {
         manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
+        if socket.status != .connecting || socket.status != .connected {//socket.status.active
         socket.connect()
         socket.on(clientEvent: .connect) {data, ack in
             print("socket connected")
@@ -37,6 +38,9 @@ class SocketTaskManager {
         }
         socket.on(clientEvent: .error) {data, ack in
             print("error")
+            completionHandler()
+        }
+        } else {
             completionHandler()
         }
     }
