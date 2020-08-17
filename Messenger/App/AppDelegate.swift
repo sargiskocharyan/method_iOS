@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
+    var tabbar: MainTabBarController?
     
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate

@@ -7,21 +7,6 @@
 //
 
 import UIKit
-//fileprivate let defaultSignalingServerUrl = URL(string: "wss://192.168.0.105:8080")!
-//
-//// We use Google's public stun servers. For production apps you should deploy your own stun/turn servers.
-//fileprivate let defaultIceServers = ["stun:stun.l.google.com:19302",
-//                                     "stun:stun1.l.google.com:19302",
-//                                     "stun:stun2.l.google.com:19302",
-//                                     "stun:stun3.l.google.com:19302",
-//                                     "stun:stun4.l.google.com:19302"]
-//
-//struct Config {
-//    let signalingServerUrl: URL
-//    let webRTCIceServers: [String]
-//    
-//    static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
-//}
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -55,9 +40,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-      if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected {
-                 SocketTaskManager.shared.connect()
-             }
+        if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected {
+            SocketTaskManager.shared.connect {
+                let vc = self.window?.rootViewController as? MainTabBarController
+                print("22222----------------------------------------")
+                print(AppDelegate.shared.callManager)
+                vc?.callManager = AppDelegate.shared.callManager
+                vc?.handleCall()
+                vc?.handleAnswer()
+                vc?.handleCallAccepted()
+                vc?.handleCallSessionEnded()
+                vc?.handleOffer()
+                vc?.getCanditantes()
+                vc?.handleCallEnd()
+                print("connected")
+            }
+        }
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {

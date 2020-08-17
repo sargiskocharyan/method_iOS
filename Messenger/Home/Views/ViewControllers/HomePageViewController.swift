@@ -43,24 +43,23 @@ class MainTabBarController: UITabBarController {
     var timer: Timer?
     
     //MARK: Lifecycle
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-//        socketTaskManager.connect()
+//        if socketTaskManager.socket.status != .connected {
+        socketTaskManager.connect(completionHandler: {
+            self.handleCall()
+            self.handleAnswer()
+            self.handleCallAccepted()
+            self.handleCallSessionEnded()
+            self.handleOffer()
+            self.getCanditantes()
+            self.handleCallEnd()
+        })
         callManager = AppDelegate.shared.callManager
-        handleCall()
-        handleAnswer()
-        handleCallAccepted()
-        handleCallSessionEnded()
-        print(UIDevice.current.identifierForVendor?.uuidString)
-        handleOffer()
-        getCanditantes()
-        handleCallEnd()
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
@@ -141,9 +140,6 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
-        if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected  {
-            SocketTaskManager.shared.connect()
-        }
         SocketTaskManager.shared.handleCall { (id, roomname, name) in
             if !self.onCall {
                 self.startCall(id, roomname, name) {
@@ -154,14 +150,14 @@ class MainTabBarController: UITabBarController {
             }
         }
     }
-    
-    func getCanditantes() {
-        socketTaskManager.getCanditantes { (data) in
-        }
+
+func getCanditantes() {
+    socketTaskManager.getCanditantes { (data) in
     }
+}
     
     func handleCallAccepted() {
-        socketTaskManager.handleCallAccepted { (callAccepted, roomName) in
+         SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
@@ -219,6 +215,8 @@ class MainTabBarController: UITabBarController {
 
     
     func handleOffer() {
+        print("1111111-----------------------------11111111")
+        print(socketTaskManager.socket.status)
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true

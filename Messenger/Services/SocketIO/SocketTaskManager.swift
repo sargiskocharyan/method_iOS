@@ -28,14 +28,16 @@ class SocketTaskManager {
     private init () { }
     
     
-    func connect() {
+    func connect(completionHandler: @escaping () -> ()) {
         manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
         socket.connect()
         socket.on(clientEvent: .connect) {data, ack in
             print("socket connected")
+            completionHandler()
         }
         socket.on(clientEvent: .error) {data, ack in
             print("error")
+            completionHandler()
         }
     }
     
@@ -145,6 +147,7 @@ class SocketTaskManager {
     
     func disconnect() {
         socket.disconnect()
+        leaveRoom(roomName: "")
     }
     
     
