@@ -30,7 +30,6 @@ class ChatViewController: UIViewController {
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
-    var socketTaskManager: SocketTaskManager!
     let center = UNUserNotificationCenter.current()
     var name: String?
     var username: String?
@@ -71,7 +70,6 @@ class ChatViewController: UIViewController {
         addConstraints()
         setupInputComponents()
         setObservers()
-        socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
         self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
@@ -97,8 +95,7 @@ class ChatViewController: UIViewController {
     
     @objc func sendMessage() {
         if inputTextField.text != "" {
-            print(socketTaskManager.manager.status)
-            socketTaskManager.send(message: inputTextField.text!, id: id!)
+            SocketTaskManager.shared.send(message: inputTextField.text!, id: id!)
         }
     }
     

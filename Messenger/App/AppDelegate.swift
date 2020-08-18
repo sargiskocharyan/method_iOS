@@ -58,12 +58,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("payload: ", payload.dictionaryPayload)
         print(payload.dictionaryPayload["username"] as! String)
-        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
-            self.displayIncomingCall(
-            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
-                completion()
-            }
-        })
+        
+            self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
+                self.displayIncomingCall(
+                id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
+                    completion()
+                }
+            })
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
@@ -151,8 +152,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print(userInfo)
         if userInfo["type"] as? String == "missedCallHistory" {
             badge = aps["badge"] as? Int
+            if let tabItems = self.tabbar?.tabBar.items {
+                let tabItem = tabItems[0]
+                tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
+                print(badge)
+            }
+            
         }
         completionHandler(.newData)
     }
 }
 
+extension AppDelegate: Subscriber {
+    func didHandleConnectionEvent() {
+        
+    }
+}

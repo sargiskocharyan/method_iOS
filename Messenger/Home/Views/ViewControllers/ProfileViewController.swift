@@ -52,7 +52,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Properties
     var dropDown = DropDown()
     var viewModel: ProfileViewModel?
-    let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
     var imagePicker = UIImagePickerController()
     static let nameOfDropdownCell = "CustomCell"
@@ -335,7 +334,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 UserDataController().logOutUser()
                 AuthRouter().assemblyModule()
             }
-            self.socketTaskManager.disconnect()
+            SocketTaskManager.shared.disconnect()
         }
     }
     

@@ -24,7 +24,6 @@ class MainRouter {
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
-       
         let router = MainRouter()
         vc.mainRouter = router
         vc.viewModel = HomePageViewModel()
@@ -32,6 +31,8 @@ class MainRouter {
         vc.recentMessagesViewModel = RecentMessagesViewModel()
         router.mainTabBarController = vc
         AppDelegate.shared.providerDelegate.tabbar = vc
+        AppDelegate.shared.tabbar = vc
+        SocketTaskManager.shared.tabbar = vc
         let videoVC = VideoViewController.instantiate(fromAppStoryboard: .main)
         videoVC.webRTCClient = router.mainTabBarController!.webRTCClient
         router.videoViewController = videoVC

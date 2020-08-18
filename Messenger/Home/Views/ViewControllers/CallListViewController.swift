@@ -60,23 +60,23 @@ class CallListViewController: UIViewController {
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber = 0
+            if let tabItems = self.tabbar?.tabBar.items {
+                let tabItem = tabItems[0]
+                tabItem.badgeValue = nil
+            }
+        }
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
         self.sort()
         if AppDelegate.shared.badge != nil {
             if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
+                AppDelegate.shared.badge = 0
                 tabbar?.viewModel?.checkCallAsSeen(callId: viewModel!.calls[0]._id!, completion: { (error) in
-                    if error == nil {
-                        AppDelegate.shared.badge = 0
-                        DispatchQueue.main.async {
-                            if let tabItems = self.tabbar?.tabBar.items {
-                                let tabItem = tabItems[0]
-                                tabItem.badgeValue = "\(0)"
-                            }
-                        }
-                        
-                    } else {
+                    if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                         }
@@ -98,14 +98,15 @@ class CallListViewController: UIViewController {
         if networkCheck.currentStatus == .satisfied {
             getCallHistory {
                 if AppDelegate.shared.badge != nil {
-                    if self.badge! > 0 && self.viewModel!.calls.count > 0 {
+                    if AppDelegate.shared.badge! > 0 && self.viewModel!.calls.count > 0 {
                         self.tabbar?.viewModel?.checkCallAsSeen(callId: self.viewModel!.calls[0]._id!, completion: { (error) in
                             if error == nil {
                                 AppDelegate.shared.badge = 0
                                 DispatchQueue.main.async {
+                                    UIApplication.shared.applicationIconBadgeNumber = 0
                                     if let tabItems = self.tabbar?.tabBar.items {
                                         let tabItem = tabItems[0]
-                                        tabItem.badgeValue = "\(0)"
+                                        tabItem.badgeValue = nil
                                     }
                                 }
                                 
