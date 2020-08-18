@@ -18,7 +18,6 @@ class RecentMessagesViewController: UIViewController {
     var chats: [Chat] = []
     var isLoaded: Bool = false
     var viewModel: RecentMessagesViewModel?
-    let socketTaskManager = SocketTaskManager.shared
     var isLoadedMessages = false
     let refreshControl = UIRefreshControl()
     var timer: Timer?

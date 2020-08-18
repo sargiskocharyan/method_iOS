@@ -66,20 +66,8 @@ extension ProviderDelegate: CXProviderDelegate {
         call.answer()
         
         action.fulfill()
-        if SocketTaskManager.shared.socket.status != .connected  {
-            SocketTaskManager.shared.connect {
-                self.tabbar?.handleOffer()
-                self.tabbar?.handleCallEnd()
-                self.tabbar?.handleCallSessionEnded()
-                self.tabbar?.handleCall()
-                self.tabbar?.handleAnswer()
-                self.tabbar?.handleCallAccepted()
-                self.tabbar?.getCanditantes()
-                SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
-                print("Connected")
-            }
-        } else {
-             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
+        SocketTaskManager.shared.connect {
+            SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
         }
     }
     
@@ -100,22 +88,11 @@ extension ProviderDelegate: CXProviderDelegate {
         action.fulfill()
         
         callManager.remove(call: call)
-        if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected  {
-            SocketTaskManager.shared.connect(completionHandler: {
-                self.tabbar?.handleOffer()
-                self.tabbar?.handleCallEnd()
-                self.tabbar?.handleCallSessionEnded()
-                self.tabbar?.handleCall()
-                self.tabbar?.handleAnswer()
-                self.tabbar?.handleCallAccepted()
-                self.tabbar?.getCanditantes()
-                SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
-                self.webrtcClient?.peerConnection?.close()
-            })
-        } else {
+        SocketTaskManager.shared.connect {
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
             self.webrtcClient?.peerConnection?.close()
         }
+        
     }
     
     func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {

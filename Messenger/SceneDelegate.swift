@@ -40,20 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        if SocketTaskManager.shared.socket.status == .notConnected || SocketTaskManager.shared.socket.status == .disconnected {
-            SocketTaskManager.shared.connect {
-                let vc = self.window?.rootViewController as? MainTabBarController
-                print(AppDelegate.shared.callManager) 
-                vc?.callManager = AppDelegate.shared.callManager
-                vc?.handleCall()
-                vc?.handleAnswer()
-                vc?.handleCallAccepted()
-                vc?.handleCallSessionEnded()
-                vc?.handleOffer()
-                vc?.getCanditantes()
-                vc?.handleCallEnd()
-                print("connected")
-            }
+        SocketTaskManager.shared.connect {
+            print("scene page connect")
         }
     }
     
@@ -89,3 +77,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
 }
 
+extension SceneDelegate: Subscriber {
+    func didHandleConnectionEvent() {
+    }
+}

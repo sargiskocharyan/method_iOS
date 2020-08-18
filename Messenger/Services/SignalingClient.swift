@@ -23,11 +23,10 @@ final class SignalingClient {
     
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
-    private let socketTaskManager = SocketTaskManager.shared
     weak var delegate: SignalClientDelegate?
     
     init() {
-        self.socketTaskManager.delegate = self
+        SocketTaskManager.shared.delegate = self
     }
 
 //    func connect() {
@@ -41,13 +40,13 @@ final class SignalingClient {
             "type": "offer",
             "sdp": "\(rtcSdp.sdp)"
         ]
-        self.socketTaskManager.offer(roomName: roomName, payload: json)
+         SocketTaskManager.shared.offer(roomName: roomName, payload: json)
     }
     
     func send(candidate rtcIceCandidate: RTCIceCandidate, roomName: String) {
         print(rtcIceCandidate)
         let json: Dictionary<String, Any> = ["candidate": rtcIceCandidate.sdp, "sdpMid": rtcIceCandidate.sdpMid as Any, "sdpMLineIndex": rtcIceCandidate.sdpMLineIndex]
-        self.socketTaskManager.send(data: json, roomName: roomName)
+         SocketTaskManager.shared.send(data: json, roomName: roomName)
     }
     
     func sendAnswer(roomName: String, sdp: RTCSessionDescription) {

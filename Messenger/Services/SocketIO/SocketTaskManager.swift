@@ -15,10 +15,26 @@ protocol SocketIODelegate: class {
     func receiveCandidate(remoteCandidate: RTCIceCandidate)
 }
 
+protocol Subscriber {
+    func didHandleConnectionEvent()
+}
+
+enum Status {
+    case connected
+    case connecting
+    case notConnected
+    case disconnected
+}
+
 class SocketTaskManager {
-    
+    var tabbar: MainTabBarController?
+    private var completions: [()->()] = []
     static let shared = SocketTaskManager()
     weak var delegate: SocketIODelegate?
+    private var lock: NSLock = NSLock()
+    private var subscribers: [Subscriber] = []
+    private var status: SocketIOStatus = .notConnected
+    let queue = DispatchQueue(label: "queue", qos: .default, attributes: [], autoreleaseFrequency: .inherit, target: nil)
     var socket: SocketIOClient {
         return manager.defaultSocket
     }
@@ -27,21 +43,49 @@ class SocketTaskManager {
     
     private init () { }
     
+    private func changeSocketStatus(status: SocketIOStatus) {
+        lock.lock()
+        self.status = status
+        lock.unlock()
+    }
+    
     
     func connect(completionHandler: @escaping () -> ()) {
-        manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
-        if socket.status != .connecting || socket.status != .connected {//socket.status.active
-        socket.connect()
-        socket.on(clientEvent: .connect) {data, ack in
-            print("socket connected")
-            completionHandler()
+        if socket.status == .notConnected {
+            manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
         }
-        socket.on(clientEvent: .error) {data, ack in
-            print("error")
-            completionHandler()
-        }
+        if status == .connected {
+            queue.sync {
+                completions.append(completionHandler)
+            }
+            for completion in completions {
+                completion()
+            }
+            completions.removeAll()
+        } else if status == .connecting {
+            queue.sync {
+                completions.append(completionHandler)
+            }
         } else {
-            completionHandler()
+            queue.sync {
+                completions.append(completionHandler)
+            }
+            socket.connect()
+            changeSocketStatus(status: .connecting)
+            socket.on(clientEvent: .connect) { (dataArray, ack) in
+                self.tabbar?.handleCallAccepted()
+                self.changeSocketStatus(status: .connected)
+                self.tabbar?.handleCall()
+                self.tabbar?.handleAnswer()
+                self.tabbar?.handleCallSessionEnded()
+                self.tabbar?.handleOffer()
+                self.tabbar?.getCanditantes()
+                self.tabbar?.handleCallEnd()
+                for compleion in self.completions {
+                    compleion()
+                }
+                self.completions.removeAll()
+            }
         }
     }
     
@@ -152,6 +196,7 @@ class SocketTaskManager {
     func disconnect() {
         socket.disconnect()
         leaveRoom(roomName: "")
+        changeSocketStatus(status: .disconnected)
     }
     
     

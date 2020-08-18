@@ -19,7 +19,6 @@ class MainTabBarController: UITabBarController {
     var viewModel: HomePageViewModel?
     var contactsViewModel: ContactsViewModel?
     var recentMessagesViewModel: RecentMessagesViewModel?
-    let socketTaskManager = SocketTaskManager.shared
     static let center = UNUserNotificationCenter.current()
     private let config = Config.default
     var webRTCClient: WebRTCClient?
@@ -49,21 +48,11 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-        if let tabItems = self.tabBar.items {
-            let tabItem = tabItems[1]
-            tabItem.badgeValue = AppDelegate.shared.badge != nil ? "\(AppDelegate.shared.badge!)" : nil
-        }
-        if socketTaskManager.socket.status != .connected {
-        socketTaskManager.connect(completionHandler: {
-            self.handleCall()
-            self.handleAnswer()
-            self.handleCallAccepted()
-            self.handleCallSessionEnded()
-            self.handleOffer()
-            self.getCanditantes()
-            self.handleCallEnd()
+        
+         SocketTaskManager.shared.connect(completionHandler: {
+            print("home page connect")
         })
-        }
+        
         callManager = AppDelegate.shared.callManager
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
@@ -96,13 +85,13 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCallEnd() {
-        socketTaskManager.handleCallEnd { (roomName) in
+        SocketTaskManager.shared.handleCallEnd { (roomName) in
             self.webRTCClient?.peerConnection?.close()
         }
     }
     
     func handleCallSessionEnded() {
-        socketTaskManager.handleCallSessionEnded { (roomname) in
+        SocketTaskManager.shared.handleCallSessionEnded { (roomname) in
             print(roomname)
 //            if self.roomName == roomname {
                 
@@ -157,7 +146,7 @@ class MainTabBarController: UITabBarController {
     }
 
 func getCanditantes() {
-    socketTaskManager.getCanditantes { (data) in
+    SocketTaskManager.shared.getCanditantes { (data) in
     }
 }
     
@@ -178,7 +167,7 @@ func getCanditantes() {
     }
     
     func handleAnswer() {
-        socketTaskManager.handleAnswer { (data) in
+        SocketTaskManager.shared.handleAnswer { (data) in
             self.videoVC?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription as Any)
@@ -221,7 +210,7 @@ func getCanditantes() {
     
     func handleOffer() {
         print("1111111-----------------------------11111111")
-        print(socketTaskManager.socket.status)
+        print(SocketTaskManager.shared.socket.status)
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
@@ -241,7 +230,7 @@ func getCanditantes() {
     }
     
     func getNewMessage() {
-        socketTaskManager.getChatMessage { (callHistory, message, name, lastname, username) in
+        SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
             if chatsVC.isLoaded {
@@ -322,7 +311,7 @@ func getCanditantes() {
     }
     
     func sessionExpires() {
-        self.socketTaskManager.disconnect()
+        SocketTaskManager.shared.disconnect()
         UserDataController().logOutUser()
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
@@ -391,9 +380,9 @@ extension MainTabBarController: WebRTCClientDelegate {
         else if state == .connected {
             if isFirstConnect == nil {
                 isFirstConnect = true
-                socketTaskManager.callStarted(roomname: roomName!)
+                SocketTaskManager.shared.callStarted(roomname: roomName!)
             } else {
-                socketTaskManager.callReconnected(roomname: roomName!)
+                SocketTaskManager.shared.callReconnected(roomname: roomName!)
             }
             videoVC?.handleAnswer()
             startDate = Date()
@@ -401,7 +390,7 @@ extension MainTabBarController: WebRTCClientDelegate {
         else if state == .closed || state == .failed {
             isFirstConnect = nil
             if state == .failed {
-                socketTaskManager.leaveRoom(roomName: roomName!)
+                SocketTaskManager.shared.leaveRoom(roomName: roomName!)
             }
             videoVC?.handleAnswer()
             onCall = false
@@ -472,4 +461,10 @@ extension MainTabBarController: AppDelegateD {
     }
     
     
+}
+
+extension MainTabBarController: Subscriber {
+    func didHandleConnectionEvent() {
+        
+    }
 }

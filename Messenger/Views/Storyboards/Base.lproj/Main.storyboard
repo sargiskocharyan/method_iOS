@@ -1012,7 +1012,9 @@
                                                             <constraint firstAttribute="height" constant="40" id="in8-WC-KvN"/>
                                                         </constraints>
                                                         <color key="tintColor" red="0.5013250709" green="0.37268495559999998" blue="0.98328763249999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <state key="normal" title="Button" image="pencil.circle.fill" catalog="system"/>
+                                                        <state key="normal" title="Button" image="pencil" catalog="system">
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20" scale="default" weight="bold"/>
+                                                        </state>
                                                         <connections>
                                                             <action selector="editButton:" destination="SSR-lC-C00" eventType="touchUpInside" id="dP9-Q5-IQN"/>
                                                         </connections>
@@ -1048,7 +1050,9 @@
                                                             <constraint firstAttribute="width" constant="50" id="JkK-iS-83E"/>
                                                         </constraints>
                                                         <color key="tintColor" red="0.50532567500000003" green="0.36849257349999998" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <state key="normal" image="pencil" catalog="system"/>
+                                                        <state key="normal" image="pencil" catalog="system">
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20" scale="default" weight="bold"/>
+                                                        </state>
                                                         <connections>
                                                             <action selector="changePhoneAction:" destination="SSR-lC-C00" eventType="touchUpInside" id="jVW-Qu-4es"/>
                                                         </connections>
@@ -2038,7 +2042,6 @@
         <image name="no" width="128" height="128"/>
         <image name="noPhoto" width="2200" height="2200"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
-        <image name="pencil.circle.fill" catalog="system" width="128" height="121"/>
         <image name="person.badge.plus.fill" width="128" height="116"/>
         <image name="phone" catalog="system" width="128" height="115"/>
         <image name="phone.fill" catalog="system" width="128" height="114"/>

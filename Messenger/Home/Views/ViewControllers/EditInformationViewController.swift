@@ -35,7 +35,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     var constant: CGFloat = 0
     let universityButton = UIButton()
     let genderButton = UIButton()
-    let socketTaskManager = SocketTaskManager.shared
     let signedUser = SharedConfigs.shared.signedUser
     let datePicker = UIDatePicker()
     var didSomethingChanges: Bool = false
@@ -388,7 +387,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                         AuthRouter().assemblyModule()
                     }
                 }
-                self.socketTaskManager.disconnect()
+                SocketTaskManager.shared.disconnect()
             }
         }))
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
@@ -410,7 +409,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                          AuthRouter().assemblyModule()
                     }
                 }
-                self.socketTaskManager.disconnect()
+                SocketTaskManager.shared.disconnect()
             }
         }))
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
