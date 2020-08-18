@@ -88,8 +88,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func logout(completion: @escaping (NetworkResponse?)->()) {
-        router.request(.logout) { data, response, error in
+    func logout(deviceUUID: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.logout(deviceUUID: deviceUUID)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(error)
@@ -302,8 +302,44 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func editInformation(name: String?, lastname: String?, username: String?, phoneNumber: String?, info: String?, gender: String?, birthDate: String?, email: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
-        router.request(.editInformation(name: name, lastname: lastname, username: username, phoneNumber: phoneNumber, info: info, gender: gender, birthDate: birthDate, email: email)) { data, response, error in
+    func registerDevice(token: String, voipToken: String, completion: @escaping (NetworkResponse?)->()) {
+           router.request(.registerDevice(token: token, voipToken: voipToken)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       completion(nil)
+                   case .failure( _):
+                       completion(NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
+    func readCalls(id: String, completion: @escaping (NetworkResponse?)->()) {
+              router.request(.readCalls(id: id)) { data, response, error in
+                  if error != nil {
+                      print(error!.rawValue)
+                      completion(error)
+                  }
+                  if let response = response as? HTTPURLResponse {
+                      let result = self.handleNetworkResponse(response)
+                      switch result {
+                      case .success:
+                          completion(nil)
+                      case .failure( _):
+                          completion(NetworkResponse.failed)
+                      }
+                  }
+              }
+          }
+    
+    func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
+        router.request(.editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -434,6 +470,118 @@ class HomeNetworkManager: NetworkManager {
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure(_):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func changeEmail(email: String, completion: @escaping (MailExistsResponse?, NetworkResponse?)->()) {
+        router.request(.changeEmail(email: email)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(MailExistsResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func changePhone(phone: String, completion: @escaping (PhoneExistsResponse?, NetworkResponse?)->()) {
+        router.request(.changePhone(phone: phone)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(PhoneExistsResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func verifyEmail(email: String, code: String, completion: @escaping (ChangeEmailResponse?, NetworkResponse?)->()) {
+        router.request(.verifyEmail(email: email, code: code)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(ChangeEmailResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func verifyPhone(phone: String, code: String, completion: @escaping (ChangeEmailResponse?, NetworkResponse?)->()) {
+        router.request(.verifyPhone(number: phone, code: code)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(ChangeEmailResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
                     completion(nil, NetworkResponse.failed)
                 }
             }

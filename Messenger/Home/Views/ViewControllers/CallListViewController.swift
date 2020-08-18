@@ -11,6 +11,7 @@ import CallKit
 import AVFoundation
 import WebRTC
 import CoreData
+import Network
 
 let defaultSignalingServerUrl = URL(string: Environment.socketUrl)! //TODO !!!! move to constants
 let defaultIceServers = ["stun:stun.l.google.com:19302",
@@ -33,6 +34,8 @@ protocol CallListViewDelegate: class  {
 
 class CallListViewController: UIViewController {
     
+    
+    
     //MARK: Properties
     private let config = Config.default
     private var roomName: String?
@@ -47,6 +50,8 @@ class CallListViewController: UIViewController {
     var otherContactsCount = 0
     static let callCellIdentifier = "callCell"
     var mainRouter: MainRouter?
+    var networkCheck = NetworkCheck.sharedInstance()
+    var badge: Int?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -57,8 +62,28 @@ class CallListViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        
+        navigationItem.title = "calls".localized()
         self.sort()
+        if AppDelegate.shared.badge != nil {
+            if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
+                tabbar?.viewModel?.checkCallAsSeen(callId: viewModel!.calls[0]._id!, completion: { (error) in
+                    if error == nil {
+                        AppDelegate.shared.badge = 0
+                        DispatchQueue.main.async {
+                            if let tabItems = self.tabbar?.tabBar.items {
+                                let tabItem = tabItems[0]
+                                tabItem.badgeValue = "\(0)"
+                            }
+                        }
+                        
+                    } else {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                        }
+                    }
+                })
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -67,10 +92,38 @@ class CallListViewController: UIViewController {
         MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-//        getHistory()
-        getCallHistory()
+        let vc = tabbar!.viewControllers![2] as! UINavigationController
+        let profileVC = vc.viewControllers[0] as! ProfileViewController
+        profileVC.delegate = self
+        if networkCheck.currentStatus == .satisfied {
+            getCallHistory {
+                if AppDelegate.shared.badge != nil {
+                    if self.badge! > 0 && self.viewModel!.calls.count > 0 {
+                        self.tabbar?.viewModel?.checkCallAsSeen(callId: self.viewModel!.calls[0]._id!, completion: { (error) in
+                            if error == nil {
+                                AppDelegate.shared.badge = 0
+                                DispatchQueue.main.async {
+                                    if let tabItems = self.tabbar?.tabBar.items {
+                                        let tabItem = tabItems[0]
+                                        tabItem.badgeValue = "\(0)"
+                                    }
+                                }
+                                
+                            } else {
+                                DispatchQueue.main.async {
+                                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        } else {
+            getCallHistoryFromDB()
+        }
+        networkCheck.addObserver(observer: self)
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        navigationItem.title = "calls".localized()
+        
     }
     
     //MARK: Helper methods
@@ -96,7 +149,7 @@ class CallListViewController: UIViewController {
         if parsedDate == nil {
             return nil
         } else {
-           return parsedDate
+            return parsedDate
         }
     }
     
@@ -116,6 +169,7 @@ class CallListViewController: UIViewController {
         }
     }
     
+    
     func addNoCallView() {
         let label = UILabel()
         label.text = "you_have_no_calls".localized()
@@ -130,39 +184,41 @@ class CallListViewController: UIViewController {
         label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
-    func handleCall(id: String, user: User) {
+    func handleCall(id: String) {
         self.id = id
-//        if viewModel!.calls.count >= 15 {
-//            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-//        }
+        //        if viewModel!.calls.count >= 15 {
+        //            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+        //        }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()   
         }
     }
     
-    func getCallHistory() {
-        viewModel?.getHistory(completion: { (callsFromDB) in
-            if callsFromDB.count == 0 {
-                self.tabbar?.viewModel?.getCallHistory(completion: { (calls, error) in
-                    if error != nil {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                    } else if calls != nil {
-                        DispatchQueue.main.async {
-                            self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
-                                if calls != nil {
-                                    self.calls = calls!
-                                    self.sort()
-                                    self.tableView.reloadData()
-                                }
-                            })
+    func getCallHistory(completion: @escaping (()->())) {
+        self.tabbar?.viewModel?.getCallHistory(completion: { (calls, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if calls != nil {
+                DispatchQueue.main.async {
+                    self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
+                        if calls != nil {
+                            self.viewModel!.calls = calls!
+                            self.sort()
+                            self.tableView.reloadData()
+                            completion()
                         }
-                    }
-                })
-            } else {
-                self.calls = callsFromDB
-                self.sort()
-                self.tableView.reloadData()
+                    })
+                }
             }
+        })
+    }
+    
+    func getCallHistoryFromDB() {
+        viewModel?.getHistory(completion: { (callsFromDB) in
+            self.sort()
+            self.tableView.reloadData()
         })
     }
     
@@ -187,20 +243,20 @@ class CallListViewController: UIViewController {
             self.sort()
             self.tableView.reloadData()
         })
-//        if viewModel!.calls.count >= 15 {
-//                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-//               }
-//        if callHistory.callStartTime == nil || callHistory.callEndTime == nil {
-//            activeCall?.callDuration = 0
-//        } else {
-//            let userCalendar = Calendar.current
-//            let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
-//            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: callHistory.callStartTime!)!, to: stringToDate(date: callHistory.callEndTime!)!)
-//            let hourToSeconds = timeDifference.hour! * 3600
-//            let minuteToSeconds = timeDifference.minute! * 60
-//            let seconds = timeDifference.second!
-//            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
-//        }
+        //        if viewModel!.calls.count >= 15 {
+        //                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+        //               }
+        //        if callHistory.callStartTime == nil || callHistory.callEndTime == nil {
+        //            activeCall?.callDuration = 0
+        //        } else {
+        //            let userCalendar = Calendar.current
+        //            let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
+        //            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: callHistory.callStartTime!)!, to: stringToDate(date: callHistory.callEndTime!)!)
+        //            let hourToSeconds = timeDifference.hour! * 3600
+        //            let minuteToSeconds = timeDifference.minute! * 60
+        //            let seconds = timeDifference.second!
+        //            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
+        //        }
     }
     
     func stringToDate(date: Date) -> String {
@@ -235,7 +291,7 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 }
 
 extension CallListViewController: CallTableViewDelegate {
-   
+    
     func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String) {
         var status: CallStatus?
         if callStatus == "ongoing" {
@@ -277,7 +333,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.callCellIdentifier, for: indexPath) as! CallTableViewCell
-        cell.calleId = viewModel!.calls[indexPath.row].participants![0] == SharedConfigs.shared.signedUser?.id ? viewModel!.calls[indexPath.row].participants![1] : viewModel!.calls[indexPath.row].participants![0]
+        cell.calleId = viewModel!.calls[indexPath.row].caller == SharedConfigs.shared.signedUser?.id ? viewModel!.calls[indexPath.row].receiver : viewModel!.calls[indexPath.row].caller
         var existsInContactList = false
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
@@ -313,12 +369,12 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             } else {
                 DispatchQueue.main.async {
                     self.viewModel!.deleteItem(index: indexPath.row, completion: { (error)   in
-                            tableView.deleteRows(at: [indexPath], with: .automatic)
+                        tableView.deleteRows(at: [indexPath], with: .automatic)
                         if self.viewModel!.calls.count == 0 {
-                                   self.addNoCallView()
-                               } else {
-                                   self.view.viewWithTag(20)?.removeFromSuperview()
-                               }
+                            self.addNoCallView()
+                        } else {
+                            self.view.viewWithTag(20)?.removeFromSuperview()
+                        }
                     })
                 }
             }
@@ -331,9 +387,9 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func saveCall(startDate: Date?) {
-//        if viewModel!.calls.count >= 15 {
-//            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-//        }
+        //        if viewModel!.calls.count >= 15 {
+        //            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
+        //        }
         if startDate == nil {
             activeCall?.callDuration = 0
         } else {
@@ -354,27 +410,26 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: SharedConfigs.shared.signedUser!.id)
         activeCall?.time = Date()
         activeCall?.isHandleCall = false
-        let calleeId = call.participants![0] == SharedConfigs.shared.signedUser?.id ? call.participants![1] : call.participants![0]
+        let calleeId = call.caller == SharedConfigs.shared.signedUser?.id ? call.receiver : call.caller
         if onCall == false  {
-            var isThereContact = false
-            for i in 0..<count {
-                if tabbar?.contactsViewModel!.contacts[i]._id == calleeId  {
-                    isThereContact = true
-                    self.delegate?.handleCallClick(id: (call.participants![0] == SharedConfigs.shared.signedUser?.id ? call.participants![1] : call.participants![0])!, name: (tabbar!.contactsViewModel!.contacts[i].name ?? tabbar!.contactsViewModel!.contacts[i].username!))
-                    break
-                }
-            }
-            if !isThereContact {
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "", message: "this_user_is_not_in_your_contacts".localized(), preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ok".localized(), style: .cancel, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                }
-            }
+            self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text ?? "")
+            
         } else if onCall && id != nil {
             if id == calleeId {
                 self.delegate?.handleClickOnSamePerson()
             }
         }
+    }
+}
+
+extension CallListViewController: NetworkCheckObserver {
+    func statusDidChange(status: NWPath.Status) {
+        print("status did change \(status)")
+    }
+}
+
+extension CallListViewController: ProfileViewControllerDelegate {
+    func changeLanguage(key: String) {
+        self.tableView.reloadData()
     }
 }

@@ -20,15 +20,18 @@ class MainRouter {
     weak var contactProfileViewController: ContactProfileViewController?
     weak var callDetailViewController: CallDetailViewController?
     weak var videoViewController: VideoViewController?
+    weak var changeEmailViewController: ChangeEmailViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
+       
         let router = MainRouter()
         vc.mainRouter = router
         vc.viewModel = HomePageViewModel()
         vc.contactsViewModel = ContactsViewModel()
         vc.recentMessagesViewModel = RecentMessagesViewModel()
         router.mainTabBarController = vc
+        AppDelegate.shared.providerDelegate.tabbar = vc
         let videoVC = VideoViewController.instantiate(fromAppStoryboard: .main)
         videoVC.webRTCClient = router.mainTabBarController!.webRTCClient
         router.videoViewController = videoVC
@@ -186,6 +189,16 @@ class MainRouter {
         vc.contactsMode = .fromCallList
         self.contactsViewController = vc
         callListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showChangeEmailViewController(changingSubject: ChangingSubject) {
+        let vc = ChangeEmailViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = profileViewController?.mainRouter
+        vc.viewModel = ChangeEmailViewModel()
+        vc.delegate = profileViewController
+        vc.changingSubject = changingSubject
+        self.changeEmailViewController = vc
+        profileViewController?.navigationController?.present(vc, animated: true, completion: nil)
     }
     
 }

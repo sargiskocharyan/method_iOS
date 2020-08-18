@@ -41,8 +41,11 @@ class RecentMessageTableViewCell: UITableViewCell {
         let onlineView = UIView()
         self.addSubview(onlineView)
         userImageView.backgroundColor = .clear
-        onlineView.backgroundColor = .green
+        onlineView.backgroundColor = UIColor(red: 125/255, green: 204/255, blue: 1/255, alpha: 1)
         onlineView.contentMode = . scaleAspectFill
+        onlineView.layer.masksToBounds = true
+        onlineView.layer.borderWidth = 2
+        onlineView.layer.borderColor = UIColor(named: "imputColor")?.cgColor
         onlineView.layer.cornerRadius = 9
         onlineView.clipsToBounds = true
         onlineView.tag = 50
@@ -79,7 +82,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         if chat.id == chat.message?.senderId {
             lastMessageLabel.text = chat.message?.text ?? "Call"
         } else {
-            lastMessageLabel.text = "You: " + (chat.message?.text ?? "Call")
+            lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "Call")
         }
     }
     

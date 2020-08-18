@@ -16,6 +16,12 @@ class HomePageViewModel {
         }
     }
     
+    func checkCallAsSeen(callId: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().readCalls(id: callId) { (error) in
+            completion(error)
+        }
+    }
+    
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         HomeNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)

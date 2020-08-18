@@ -12,7 +12,6 @@ class RecentMessagesViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: Properties
     static let cellID = "messageCell"
@@ -24,6 +23,7 @@ class RecentMessagesViewController: UIViewController {
     let refreshControl = UIRefreshControl()
     var timer: Timer?
     var mainRouter: MainRouter?
+    var spinner = UIActivityIndicatorView(style: .medium)
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -33,6 +33,7 @@ class RecentMessagesViewController: UIViewController {
         let nc = (self.tabBarController?.viewControllers?[2]) as? UINavigationController
         let vc = nc?.viewControllers[0] as! ProfileViewController
         vc.delegate = self
+        vc.profileDelegate = self
         getChats()
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
@@ -42,6 +43,13 @@ class RecentMessagesViewController: UIViewController {
             tableView.addSubview(refreshControl)
         }
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        tableView.tableFooterView = UIView()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        view.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -54,7 +62,6 @@ class RecentMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
         navigationController?.navigationBar.isHidden = false
-        
     }
     
     override func viewWillLayoutSubviews() {
@@ -75,12 +82,7 @@ class RecentMessagesViewController: UIViewController {
                 return chat.id
             }
             self.viewModel!.onlineUsers(arrayOfId: ids) { (onlineUsers, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        self.activityIndicator.stopAnimating()
-                    }
-                } else if onlineUsers != nil {
+                if onlineUsers != nil {
                     for i in 0..<self.chats.count {
                         if onlineUsers!.usersOnline.contains(self.chats[i].id) {
                             self.chats[i].online = true
@@ -91,7 +93,7 @@ class RecentMessagesViewController: UIViewController {
                     self.sort()
                     DispatchQueue.main.async {
                         self.removeView()
-                        self.activityIndicator.stopAnimating()
+                        self.spinner.stopAnimating()
                         self.tableView.reloadData()
                     }
                 }
@@ -166,7 +168,7 @@ class RecentMessagesViewController: UIViewController {
         self.isLoaded = true
         if isLoadedMessages == false {
             DispatchQueue.main.async {
-                self.activityIndicator.startAnimating()
+                self.spinner.startAnimating()
             }
         }
         
@@ -174,7 +176,7 @@ class RecentMessagesViewController: UIViewController {
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    self.activityIndicator.stopAnimating()
+                    self.spinner.stopAnimating()
                 }
             }
             else {
@@ -183,7 +185,7 @@ class RecentMessagesViewController: UIViewController {
                     if messages?.count == 0 {
                         self.setView("you_have_no_messages".localized())
                         DispatchQueue.main.async {
-                            self.activityIndicator.stopAnimating()
+                            self.spinner.stopAnimating()
                         }
                     } else {
                         self.chats = messages!.filter({ (chat) -> Bool in
@@ -192,7 +194,7 @@ class RecentMessagesViewController: UIViewController {
                         self.sort()
                         DispatchQueue.main.async {
                             self.removeView()
-                            self.activityIndicator.stopAnimating()
+                            self.spinner.stopAnimating()
                             self.tableView.reloadData()
                         }
                     }
@@ -215,7 +217,7 @@ class RecentMessagesViewController: UIViewController {
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    self.activityIndicator.stopAnimating()
+                    self.spinner.stopAnimating()
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
@@ -278,5 +280,11 @@ extension RecentMessagesViewController: UITableViewDelegate, UITableViewDataSour
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
+    }
+}
+
+extension RecentMessagesViewController: ProfileViewDelegate {
+    func changeMode() {
+        tableView?.reloadData()
     }
 }

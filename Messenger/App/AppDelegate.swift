@@ -15,7 +15,7 @@ import UserNotifications
 import PushKit
 
 protocol AppDelegateD : class {
-    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ())
+    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ())
 }
 
 @UIApplicationMain
@@ -25,7 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
-    
+    var tabbar: MainTabBarController?
+    var badge: Int?
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -44,26 +45,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if let managedObjectContext = appDelegate.managedObjectContext {
             return managedObjectContext
-        }
-        else {
+        } else {
             return nil
         }
     }()
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
-        let tokenParts = pushCredentials.token.map { data -> String in
-            return String(format: "%02.2hhx", data)
-        }
-        let token = tokenParts.joined()
-        // 2. Print device token to use for PNs payloads
-        print("Our Token: \(token)")
+        print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token))
+        SharedConfigs.shared.voIPToken = RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token)
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("payload: ", payload.dictionaryPayload)
-        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, completionHandler: { name in
+        print(payload.dictionaryPayload["username"] as! String)
+        delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
             self.displayIncomingCall(
-            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: name, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
+            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 completion()
             }
         })
@@ -113,32 +110,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func registerForPushNotifications() {
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            print("Permission granted: \(granted)")
-            // 1. Check if permission granted
-            guard granted else { return }
-            // 2. Attempt registration for remote notifications on the main thread
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        }
+        RemoteNotificationManager.requestPermissions()
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // 1. Convert device token to string
-        let tokenParts = deviceToken.map { data -> String in
-            return String(format: "%02.2hhx", data)
+        if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
+            SharedConfigs.shared.isRegistered = true
+            SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
+            SharedConfigs.shared.voIPToken = UserDefaults.standard.object(forKey: Keys.VOIP_DEVICE_TOKEN) as? String
+            SharedConfigs.shared.deviceUUID = UIDevice.current.identifierForVendor!.uuidString
+        } else {
+            SharedConfigs.shared.deviceToken = RemoteNotificationManager.getDeviceToken(tokenData: deviceToken)
+            if SharedConfigs.shared.signedUser != nil {
+                RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
+                    if error != nil {
+                        print(error as Any)
+                    }
+                }
+            }
         }
-        let token = tokenParts.joined()
-        // 2. Print device token to use for PNs payloads
-        print("Device Token: \(token)")
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         // 1. Print out error if PNs registration not successful
         print("Failed to register for remote notifications with error: \(error)")
+    }
+    
+//    func applicationDidEnterBackground(_ application: UIApplication) {
+//        
+//    }
+//    
+//    func applicationWillEnterForeground(_ application: UIApplication) {
+//        
+//    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard let aps = userInfo["aps"] as? [String: AnyObject] else {
+          completionHandler(.failed)
+          return
+        }
+        print(userInfo)
+        if userInfo["type"] as? String == "missedCallHistory" {
+            badge = aps["badge"] as? Int
+        }
+        completionHandler(.newData)
     }
 }
 

@@ -14,6 +14,10 @@ struct LoginResponse: Codable {
     var user: UserModel
 }
 
+struct ChangeEmailResponse: Codable {
+    var user: UserModel
+}
+
 struct CheckUsername: Codable {
     let usernameExists: Bool
 }
@@ -23,12 +27,18 @@ struct MailExistsResponse: Codable {
     var code: String
 }
 
+struct PhoneExistsResponse: Codable {
+    var phonenumberExists: Bool
+    var code: String
+}
+
 struct ErrorResponse: Codable {
     var Error: String?
 }
 
 struct CallHistory: Codable {
     var type: String?
+    var receiver: String?
     var status: String?
     var participants: [String?]?
     var callSuggestTime: String?

@@ -40,6 +40,7 @@ class MainTabBarController: UITabBarController {
     var startDate: Date?
     var mainRouter: MainRouter?
     var isFirstConnect: Bool?
+    var timer: Timer?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -48,15 +49,22 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-        socketTaskManager.connect()
+        if let tabItems = self.tabBar.items {
+            let tabItem = tabItems[1]
+            tabItem.badgeValue = AppDelegate.shared.badge != nil ? "\(AppDelegate.shared.badge!)" : nil
+        }
+        if socketTaskManager.socket.status != .connected {
+        socketTaskManager.connect(completionHandler: {
+            self.handleCall()
+            self.handleAnswer()
+            self.handleCallAccepted()
+            self.handleCallSessionEnded()
+            self.handleOffer()
+            self.getCanditantes()
+            self.handleCallEnd()
+        })
+        }
         callManager = AppDelegate.shared.callManager
-        handleCall()
-        handleAnswer()
-        handleCallAccepted()
-        handleCallSessionEnded()
-        handleOffer()
-        getCanditantes()
-        handleCallEnd()
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
@@ -70,7 +78,6 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
-//        NotificationCenter.default.addObserver(self, selector: #selector(reactToNotification(_:)), name: Notification.Name(rawValue: "kNotification"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -78,14 +85,15 @@ class MainTabBarController: UITabBarController {
         getNewMessage()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
+    
     //MARK: Helper methods
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
     }
-    
-//    @objc func reactToNotification(_ sender: Notification) {
-//        startCall(sender.userInfo!["id"] as! String, sender.userInfo!["roomname"] as! String)
-//    }
     
     func handleCallEnd() {
         socketTaskManager.handleCallEnd { (roomName) in
@@ -109,20 +117,16 @@ class MainTabBarController: UITabBarController {
     
     
     
-    func startCall(_ id: String, _ roomname: String, completionHandler: @escaping (_ name: String) -> ()) {
+    func startCall(_ id: String, _ roomname: String, _ name: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
-        for i in 0..<contactsViewModel!.contacts.count {
-            if contactsViewModel?.contacts[i]._id == id {
-                self.callsVC?.handleCall(id: id, user: contactsViewModel!.contacts[i])
-                completionHandler(contactsViewModel?.contacts[i].name ?? contactsViewModel?.contacts[i].username ?? "unknown user")
-                return
-            }
-        }
+        self.callsVC?.handleCall(id: id)
+        completionHandler()
+        return
 //        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
 //            if (error != nil) {
 //                DispatchQueue.main.async {
@@ -141,24 +145,24 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
-        SocketTaskManager.shared.handleCall { (id, roomname) in
+        SocketTaskManager.shared.handleCall { (id, roomname, name) in
             if !self.onCall {
-                self.startCall(id, roomname) { name in
+                self.startCall(id, roomname, name) {
                     DispatchQueue.main.async {
-                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in  }
+                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
                     }
                 }
             }
         }
     }
-    
-    func getCanditantes() {
-        socketTaskManager.getCanditantes { (data) in
-        }
+
+func getCanditantes() {
+    socketTaskManager.getCanditantes { (data) in
     }
+}
     
     func handleCallAccepted() {
-        socketTaskManager.handleCallAccepted { (callAccepted, roomName) in
+         SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
@@ -216,6 +220,8 @@ class MainTabBarController: UITabBarController {
 
     
     func handleOffer() {
+        print("1111111-----------------------------11111111")
+        print(socketTaskManager.socket.status)
         SocketTaskManager.shared.handleOffer { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
@@ -223,13 +229,14 @@ class MainTabBarController: UITabBarController {
             self.videoVC?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
                 self.mainRouter?.showVideoViewController()
+                self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+                })
+                self.webRTCClient?.answer { (localSdp) in
+                    self.hasLocalSdp = true
+                    self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
+                }
             }
-            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
-            })
-            self.webRTCClient?.answer { (localSdp) in
-                self.hasLocalSdp = true
-                self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
-            }
+           
         }
     }
     
@@ -339,7 +346,8 @@ class MainTabBarController: UITabBarController {
                 let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
                 let timeDifference = userCalendar.dateComponents(requestedComponent, from: Date(), to: (SharedConfigs.shared.signedUser?.tokenExpire)!)
                 if timeDifference.day! <= 1 {
-                    self.profileViewModel.logout { (error) in
+                    self.profileViewModel.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+                        UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
                         self.sessionExpires()
                     }
                 }
@@ -391,6 +399,7 @@ extension MainTabBarController: WebRTCClientDelegate {
             startDate = Date()
         }
         else if state == .closed || state == .failed {
+            isFirstConnect = nil
             if state == .failed {
                 socketTaskManager.leaveRoom(roomName: roomName!)
             }
@@ -402,7 +411,6 @@ extension MainTabBarController: WebRTCClientDelegate {
             id = nil
             videoVC?.closeAll()
             DispatchQueue.main.async {
-//                self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }
@@ -445,19 +453,21 @@ extension MainTabBarController: CallListViewDelegate {
         }
         callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
-        
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+            self.videoVC?.endCall()
+        })
     }
 }
 
 extension MainTabBarController: AppDelegateD {
-    func startCallD(id: String, roomName: String, completionHandler: @escaping (_ nameD: String) -> ()) {
-        self.startCall(id, roomName) { name in
-            completionHandler(name)
+    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ()) {
+        self.startCall(id, roomName, name) {
+            completionHandler()
         }
     }
     

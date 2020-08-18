@@ -36,6 +36,9 @@
 		CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
 		CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */; };
 		CD3C9AEE24CFFDCF009AD586 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C9AED24CFFDCF009AD586 /* Contacts.swift */; };
+		CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */; };
+		CD3E4C4024E3DC4A0041A70C /* ChangeEmailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3E4C3F24E3DC4A0041A70C /* ChangeEmailViewModel.swift */; };
+		CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3E4C4124E415F50041A70C /* AppDelegateViewModel.swift */; };
 		CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */; };
 		CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */; };
 		CD3F12D524BC28C900040D8E /* Call.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D424BC28C900040D8E /* Call.swift */; };
@@ -59,6 +62,7 @@
 		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */; };
+		CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA04E2924E522070055A412 /* NetworkChecker.swift */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
@@ -189,6 +193,9 @@
 		CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesViewModel.swift; sourceTree = "<group>"; };
 		CD3C9AED24CFFDCF009AD586 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
+		CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewController.swift; sourceTree = "<group>"; };
+		CD3E4C3F24E3DC4A0041A70C /* ChangeEmailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModel.swift; sourceTree = "<group>"; };
+		CD3E4C4124E415F50041A70C /* AppDelegateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateViewModel.swift; sourceTree = "<group>"; };
 		CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallTableViewCell.swift; sourceTree = "<group>"; };
 		CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
 		CD3F12D424BC28C900040D8E /* Call.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Call.swift; sourceTree = "<group>"; };
@@ -212,6 +219,7 @@
 		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNotificationManager.swift; sourceTree = "<group>"; };
+		CDA04E2924E522070055A412 /* NetworkChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkChecker.swift; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
@@ -381,6 +389,7 @@
 				CDD864A624BDA47700E33E07 /* VideoViewController.swift */,
 				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */,
+				CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -412,6 +421,7 @@
 				CD3F12E724BC558B00040D8E /* SignalingClient.swift */,
 				CD3F12E224BC558B00040D8E /* SocketIO */,
 				CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */,
+				CDA04E2924E522070055A412 /* NetworkChecker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -454,6 +464,8 @@
 				CD35E26D2497AC90003C53AB /* RecentMessagesViewModel.swift */,
 				CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */,
 				CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */,
+				CD3E4C3F24E3DC4A0041A70C /* ChangeEmailViewModel.swift */,
+				CD3E4C4124E415F50041A70C /* AppDelegateViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -966,6 +978,7 @@
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
 				CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */,
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
+				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
 				CDD9C67F247BC88C0048A9A1 /* ResponseModels.swift in Sources */,
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
 				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
@@ -1023,8 +1036,10 @@
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
 				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
+				CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
+				CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */,
 				CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */,
 				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
@@ -1033,6 +1048,7 @@
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
+				CD3E4C4024E3DC4A0041A70C /* ChangeEmailViewModel.swift in Sources */,
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,
 				CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */,
 				CDD9C677247BC4AE0048A9A1 /* EndPointType.swift in Sources */,
