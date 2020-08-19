@@ -43,7 +43,7 @@ class SocketTaskManager {
     
     private init () { }
     
-    private func changeSocketStatus(status: SocketIOStatus) {
+    func changeSocketStatus(status: SocketIOStatus) {
         lock.lock()
         self.status = status
         lock.unlock()
@@ -51,8 +51,9 @@ class SocketTaskManager {
     
     
     func connect(completionHandler: @escaping () -> ()) {
-        if socket.status == .notConnected {
-            manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
+        if status == .disconnected {
+            print(SharedConfigs.shared.signedUser?.token as Any)
+            manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
         }
         if status == .connected {
             queue.sync {
@@ -67,20 +68,27 @@ class SocketTaskManager {
                 completions.append(completionHandler)
             }
         } else {
+           
             queue.sync {
                 completions.append(completionHandler)
             }
             socket.connect()
+
             changeSocketStatus(status: .connecting)
+            
             socket.on(clientEvent: .connect) { (dataArray, ack) in
-                self.tabbar?.handleCallAccepted()
-                self.changeSocketStatus(status: .connected)
-                self.tabbar?.handleCall()
-                self.tabbar?.handleAnswer()
-                self.tabbar?.handleCallSessionEnded()
-                self.tabbar?.handleOffer()
-                self.tabbar?.getCanditantes()
-                self.tabbar?.handleCallEnd()
+                 self.changeSocketStatus(status: .connected)
+                print(self.socket.handlers)
+                print()
+                if self.socket.handlers.count <= 2 {
+                    self.tabbar?.handleCallAccepted()
+                    self.tabbar?.handleCall()
+                    self.tabbar?.handleAnswer()
+                    self.tabbar?.handleCallSessionEnded()
+                    self.tabbar?.handleOffer()
+                    self.tabbar?.getCanditantes()
+                    self.tabbar?.handleCallEnd()
+                }
                 for compleion in self.completions {
                     compleion()
                 }
@@ -194,8 +202,10 @@ class SocketTaskManager {
     }
     
     func disconnect() {
+//        self.socket.removeAllHandlers()
         socket.disconnect()
         leaveRoom(roomName: "")
+        
         changeSocketStatus(status: .disconnected)
     }
     

@@ -61,14 +61,13 @@ extension ProviderDelegate: CXProviderDelegate {
             action.fail()
             return
         }
-        
         configureAudioSession()
         call.answer()
         
         action.fulfill()
-        SocketTaskManager.shared.connect {
+//        SocketTaskManager.shared.connect {
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
-        }
+//        }
     }
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
@@ -88,10 +87,10 @@ extension ProviderDelegate: CXProviderDelegate {
         action.fulfill()
         
         callManager.remove(call: call)
-        SocketTaskManager.shared.connect {
+//        SocketTaskManager.shared.connect {
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
             self.webrtcClient?.peerConnection?.close()
-        }
+//        }
         
     }
     
