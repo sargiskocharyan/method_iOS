@@ -56,7 +56,11 @@ class MainRouter {
     
     func showVideoViewController() {
         let selectedNC = self.mainTabBarController!.selectedViewController as? UINavigationController
+        if selectedNC?.viewControllers.last as? VideoViewController == nil {
         selectedNC?.pushViewController(self.mainTabBarController!.videoVC!, animated: false)
+        } else {
+            return
+        }
     }
     
     func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String) {

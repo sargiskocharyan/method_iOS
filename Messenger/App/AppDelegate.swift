@@ -62,7 +62,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
                 self.displayIncomingCall(
                 id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
-                    completion()
+                    SocketTaskManager.shared.connect {
+                        completion()
+                    }
                 }
             })
     }
@@ -115,6 +117,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: deviceToken))
         if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
             SharedConfigs.shared.isRegistered = true
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
@@ -152,14 +155,26 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print(userInfo)
         if userInfo["type"] as? String == "missedCallHistory" {
             badge = aps["badge"] as? Int
-            if let tabItems = self.tabbar?.tabBar.items {
-                let tabItem = tabItems[0]
-                tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
-                print(badge)
+            if tabbar?.selectedIndex == 0 {
+                let nc = tabbar!.viewControllers![0] as! UINavigationController
+                if nc.viewControllers.count > 1 {
+                    if let tabItems = self.tabbar?.tabBar.items {
+                        let tabItem = tabItems[0]
+                        tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
+                        print(badge as Any)
+                    }
+                } else {
+                    (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                }
+            } else {
+                if let tabItems = self.tabbar?.tabBar.items {
+                    let tabItem = tabItems[0]
+                    tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
+                    print(badge as Any)
+                }
             }
-            
+            completionHandler(.newData)
         }
-        completionHandler(.newData)
     }
 }
 

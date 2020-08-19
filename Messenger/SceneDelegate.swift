@@ -40,9 +40,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        SocketTaskManager.shared.connect {
-            print("scene page connect")
+        if SharedConfigs.shared.signedUser != nil {
+            SocketTaskManager.shared.connect {
+                print("scene page connect")
+            }
         }
+        
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
