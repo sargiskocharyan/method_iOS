@@ -72,6 +72,7 @@ class CallListViewController: UIViewController {
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
         self.sort()
+       // AppDelegate.shared.badge = SharedConfigs.shared.callBadge
         if AppDelegate.shared.badge != nil {
             if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
                 AppDelegate.shared.badge = 0
@@ -243,6 +244,7 @@ class CallListViewController: UIViewController {
         viewModel?.save(newCall: callHistory, completion: {
             self.sort()
             self.tableView.reloadData()
+//            self.viewWillAppear(false)
         })
         //        if viewModel!.calls.count >= 15 {
         //                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)

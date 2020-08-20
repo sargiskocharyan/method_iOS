@@ -85,13 +85,13 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCallEnd() {
-        SocketTaskManager.shared.handleCallEnd { (roomName) in
+        SocketTaskManager.shared.addCallEndListener { (roomName) in
             self.webRTCClient?.peerConnection?.close()
         }
     }
     
     func handleCallSessionEnded() {
-        SocketTaskManager.shared.handleCallSessionEnded { (roomname) in
+        SocketTaskManager.shared.addCallSessionEndedListener { (roomname) in
             print(roomname)
 //            if self.roomName == roomname {
                 
@@ -134,7 +134,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
-        SocketTaskManager.shared.handleCall { (id, roomname, name) in
+        SocketTaskManager.shared.addCallListener { (id, roomname, name) in
             if !self.onCall {
                 self.startCall(id, roomname, name) {
                     DispatchQueue.main.async {
@@ -145,13 +145,13 @@ class MainTabBarController: UITabBarController {
         }
     }
 
-func getCanditantes() {
-    SocketTaskManager.shared.getCanditantes { (data) in
+func getCandidates() {
+    SocketTaskManager.shared.addCandidatesListener { (data) in
     }
 }
     
     func handleCallAccepted() {
-         SocketTaskManager.shared.handleCallAccepted { (callAccepted, roomName) in
+         SocketTaskManager.shared.addCallAcceptedLister { (callAccepted, roomName) in
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
@@ -167,7 +167,7 @@ func getCanditantes() {
     }
     
     func handleAnswer() {
-        SocketTaskManager.shared.handleAnswer { (data) in
+        SocketTaskManager.shared.addAnswerListener { (data) in
             self.videoVC?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription as Any)
@@ -210,8 +210,8 @@ func getCanditantes() {
     
     func handleOffer() {
         print("1111111-----------------------------11111111")
-        print(SocketTaskManager.shared.socket.status)
-        SocketTaskManager.shared.handleOffer { (roomName, offer) in
+        print(SocketTaskManager.shared.socket!.status)
+        SocketTaskManager.shared.addOfferListener { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
             self.roomName = roomName
@@ -447,7 +447,7 @@ extension MainTabBarController: CallListViewDelegate {
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
             self.videoVC?.endCall()
         })
     }
