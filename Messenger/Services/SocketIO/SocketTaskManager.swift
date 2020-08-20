@@ -35,11 +35,11 @@ class SocketTaskManager {
     private var subscribers: [Subscriber] = []
     private var status: SocketIOStatus = .notConnected
     let queue = DispatchQueue(label: "queue", qos: .default, attributes: [], autoreleaseFrequency: .inherit, target: nil)
-    var socket: SocketIOClient {
-        return manager.defaultSocket
+    var socket: SocketIOClient? {
+        return manager?.defaultSocket
     }
     
-    var manager: SocketManager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": KeyChain.load(key: "token")?.toString() ?? ""]), .forceNew(true), .compress])
+    var manager: SocketManager?
     
     private init () { }
     
@@ -49,9 +49,8 @@ class SocketTaskManager {
         lock.unlock()
     }
     
-    
     func connect(completionHandler: @escaping () -> ()) {
-        if status == .disconnected {
+        if status == .disconnected || status == .notConnected {
             print(SharedConfigs.shared.signedUser?.token as Any)
             manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
         }
@@ -72,22 +71,22 @@ class SocketTaskManager {
             queue.sync {
                 completions.append(completionHandler)
             }
-            socket.connect()
-
+            socket!.connect()
             changeSocketStatus(status: .connecting)
-            
-            socket.on(clientEvent: .connect) { (dataArray, ack) in
-                 self.changeSocketStatus(status: .connected)
-                print(self.socket.handlers)
+            socket!.on(clientEvent: .connect) { (dataArray, ack) in
+                self.manager?.reconnects = true
+                self.changeSocketStatus(status: .connected)
+                print(self.socket!.handlers)
                 print()
-                if self.socket.handlers.count <= 2 {
+                if self.socket!.handlers.count <= 2 {
                     self.tabbar?.handleCallAccepted()
                     self.tabbar?.handleCall()
                     self.tabbar?.handleAnswer()
                     self.tabbar?.handleCallSessionEnded()
                     self.tabbar?.handleOffer()
-                    self.tabbar?.getCanditantes()
+                    self.tabbar?.getCandidates()
                     self.tabbar?.handleCallEnd()
+                    self.tabbar?.getNewMessage()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -98,54 +97,54 @@ class SocketTaskManager {
     }
     
     func emit() {
-        socket.emit("join") {
+        socket!.emit("join") {
             print("join")
         }
     }
     
     func leaveRoom(roomName: String) {
-        self.socket.emit("leaveRoom", roomName)
+        self.socket!.emit("leaveRoom", roomName)
     }
     
     func send(data: Dictionary<String, Any>, roomName: String) {
-        self.socket.emit("candidates", roomName, data)
+        self.socket!.emit("candidates", roomName, data)
     }
     
     func call(id: String, completionHandler: @escaping (_ roomname: String) -> ()) {
-        socket.emitWithAck("call", id).timingOut(after: 0.0) { (dataArray) in
+        socket!.emitWithAck("call", id).timingOut(after: 0.0) { (dataArray) in
             completionHandler(dataArray[0] as! String)
         }
     }
     
     func callStarted(roomname: String) {
-        self.socket.emit("callStarted", roomname)
+        self.socket!.emit("callStarted", roomname)
     }
     
     func callReconnected(roomname: String) {
-        self.socket.emit("reconnectCallRoom", roomname)
+        self.socket!.emit("reconnectCallRoom", roomname)
     }
     
     func callAccepted(id: String, isAccepted: Bool) {
-        socket.emit("callAccepted", id, isAccepted) {
+        socket!.emit("callAccepted", id, isAccepted) {
             print("callAccepted")
         }
     }
     
-    func handleCall(completionHandler: @escaping (_ id: String, _ roomname: String, _ name: String) -> Void) {
-        socket.on("call") { (dataArray, socketAck) in
+    func addCallListener(completionHandler: @escaping (_ id: String, _ roomname: String, _ name: String) -> Void) {
+        socket!.on("call") { (dataArray, socketAck) in
             let dictionary = dataArray[0] as! Dictionary<String, String?>
             completionHandler(dictionary["caller"]!!, dictionary["roomName"]!!, dictionary["username"]!!)
         }
     }
     
-    func handleCallSessionEnded(completionHandler: @escaping (_ roomName: String) -> Void) {
-        socket.on("callSessionEnded") { (dataArray, socketAck) in
+    func addCallSessionEndedListener(completionHandler: @escaping (_ roomName: String) -> Void) {
+        socket!.on("callSessionEnded") { (dataArray, socketAck) in
             completionHandler(dataArray[0] as! String)
         }
     }
-    
-    func handleOffer(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
-        socket.on("offer") { (dataArray, socketAck) in
+  
+    func addOfferListener(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
+        socket!.on("offer") { (dataArray, socketAck) in
             let dic = dataArray[1] as! Dictionary<String, String>
             self.delegate?.receiveData(sdp: dic["sdp"] ?? "")
             completionHandler(dataArray[0] as! String, dataArray[1] as! Dictionary<String, String>)
@@ -153,34 +152,23 @@ class SocketTaskManager {
     }
     
     func answer(roomName: String, answer: Dictionary<String, String>) {
-        socket.emit("answer", roomName, answer) {
+        socket!.emit("answer", roomName, answer) {
             print("answered")
         }
     }
-    
-    func handleCallAccepted(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
-        socket.on("callAccepted") { (dataArray, socketAck) in
+
+    func addCallAcceptedLister(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
+        socket!.on("callAccepted") { (dataArray, socketAck) in
             completionHandler(Bool(exactly: dataArray[0] as! NSNumber) ?? false, dataArray[1] as! String)
         }
     }
     
-//    private func readMessage(completionHandler: @escaping (_ message: Message) -> Void) {
-//        socket.on("receive") { (dataArray, socketAck) in
-//            let data = dataArray[0] as! NSDictionary
-//            if let call = data["call"] as? NSDictionary {
-//                let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
-//                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-//            completionHandler(message)
-//            }
-//        }
-//    }
-    
     func offer(roomName: String, payload: Dictionary<String, String>) {
-        socket.emit("offer", roomName, payload)
+        socket!.emit("offer", roomName, payload)
     }
     
-    func handleAnswer(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
-            socket.on("answer") { (dataArray, socketAck) in
+    func addAnswerListener(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
+            socket!.on("answer") { (dataArray, socketAck) in
                 
                 let data = dataArray[0] as! Dictionary<String, String>
                 self.delegate?.receiveData(sdp: data["sdp"] ?? "")
@@ -188,8 +176,8 @@ class SocketTaskManager {
             }
         }
     
-    func getCanditantes(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
-               socket.on("candidates") { (dataArray, socketAck) in
+    func addCandidatesListener(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
+               socket!.on("candidates") { (dataArray, socketAck) in
                 let data = dataArray[0] as! Dictionary<String, Any>
                 let json: Dictionary = ["candidate": data["candidate"] ?? "", "sdpMid": data["sdpMid"] ?? "", "sdpMLineIndex": data["sdpMLineIndex"] ?? ""] as [String : Any]
                 self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as? String))
@@ -198,27 +186,27 @@ class SocketTaskManager {
            }
     
     func send(message: String, id: String) {
-        socket.emit("sendMessage", message, id) 
+        socket!.emit("sendMessage", message, id)
     }
     
     func disconnect() {
-//        self.socket.removeAllHandlers()
-        socket.disconnect()
+//        self.socket!.removeAllHandlers()
+        socket!.disconnect()
         leaveRoom(roomName: "")
-        
+        manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }
     
     
     
-    func handleCallEnd(completionHandler: @escaping (_ roomName: String) -> Void) {
-           socket.on("callEnded") { (dataArray, socketAck) -> Void in
+    func addCallEndListener(completionHandler: @escaping (_ roomName: String) -> Void) {
+           socket!.on("callEnded") { (dataArray, socketAck) -> Void in
                completionHandler(dataArray[0] as! String)
            }
        }
     
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
-        socket.on("message") { (dataArray, socketAck) -> Void in
+        socket!.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
             if let call = data["call"] as? NSDictionary {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)

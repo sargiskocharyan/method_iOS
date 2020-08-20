@@ -59,22 +59,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         print("payload: ", payload.dictionaryPayload)
         print(payload.dictionaryPayload["username"] as! String)
         
-            self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
-                self.displayIncomingCall(
-                id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
-                    SocketTaskManager.shared.connect {
-                        completion()
-                    }
+        self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
+            self.displayIncomingCall(
+            id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
+                SocketTaskManager.shared.connect {
+                    completion()
                 }
-            })
+            }
+        })
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        UserDefaults.standard.set(badge, forKey: "badge")
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("pushRegistry:didInvalidatePushTokenForType:")
     }
-      
+    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        badge = UserDefaults.standard.value(forKey: "badge") as? Int
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
@@ -96,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
+    
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
@@ -106,7 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     
     func displayIncomingCall(id: String, uuid: UUID, handle: String, hasVideo: Bool = false, roomName: String, completion: ((Error?) -> Void)?) {
-      providerDelegate.reportIncomingCall( id: id, uuid: uuid, handle: handle, hasVideo: hasVideo, roomName: roomName, completion: completion)
+        providerDelegate.reportIncomingCall( id: id, uuid: uuid, handle: handle, hasVideo: hasVideo, roomName: roomName, completion: completion)
     }
     
 }
@@ -115,7 +120,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func registerForPushNotifications() {
         RemoteNotificationManager.requestPermissions()
     }
-
+    
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: deviceToken))
         if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
@@ -134,26 +139,28 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         }
     }
-
+    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         // 1. Print out error if PNs registration not successful
         print("Failed to register for remote notifications with error: \(error)")
     }
     
-//    func applicationDidEnterBackground(_ application: UIApplication) {
-//        
-//    }
-//    
-//    func applicationWillEnterForeground(_ application: UIApplication) {
-//        
-//    }
+    //    func applicationDidEnterBackground(_ application: UIApplication) {
+    //
+    //    }
+    //
+    //    func applicationWillEnterForeground(_ application: UIApplication) {
+    //
+    //    }
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
-          completionHandler(.failed)
-          return
+            completionHandler(.failed)
+            return
         }
+        
         print(userInfo)
         if userInfo["type"] as? String == "missedCallHistory" {
+//            var newCall = userInfo
             badge = aps["badge"] as? Int
             if tabbar?.selectedIndex == 0 {
                 let nc = tabbar!.viewControllers![0] as! UINavigationController
@@ -164,7 +171,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         print(badge as Any)
                     }
                 } else {
-                    (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                    if  application.applicationState.rawValue == 0 {
+                        (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                    }
                 }
             } else {
                 if let tabItems = self.tabbar?.tabBar.items {

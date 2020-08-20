@@ -45,8 +45,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 print("scene page connect")
             }
         }
-        
+        let tabbar = window?.rootViewController as? MainTabBarController
+        if tabbar?.selectedIndex == 0 {
+            let nc = tabbar!.viewControllers![0] as! UINavigationController
+            if (nc.viewControllers.last as? CallListViewController) != nil {
+                (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+            }
+        }
     }
+    
+    
     
     func sceneDidEnterBackground(_ scene: UIScene) {
         SocketTaskManager.shared.disconnect()
