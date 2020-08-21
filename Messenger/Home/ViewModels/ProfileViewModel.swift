@@ -9,8 +9,8 @@
 import UIKit
 
 class ProfileViewModel {
-    func logout(completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().logout() { (error) in
+    func logout(deviceUUID: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().logout(deviceUUID: deviceUUID) { (error) in
             completion(error)
         }
     }

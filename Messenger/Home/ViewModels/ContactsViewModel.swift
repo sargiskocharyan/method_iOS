@@ -44,27 +44,8 @@ class ContactsViewModel {
         }
     }
     
-//
-//    func saveContacts(contacts: [User]) {
-//
-//        let appDelegate = AppDelegate.shared as AppDelegate
-//        let managedContext = appDelegate.persistentContainer.viewContext
-//        let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
-//
-//        let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
-//        let mContacts = Contacts(contacts: contacts)
-//        cmsg.setValue(mContacts, forKeyPath: "contacts")
-//        do {
-//            try managedContext.save()
-//            print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
-//
-//        } catch let error as NSError {
-//            print("Could not save. \(error), \(error.userInfo)")
-//        }
-//    }
-    
     func retrieveData(completion: @escaping ([User]?)->()) {
-           let appDelegate = AppDelegate.shared as AppDelegate
+           let appDelegate = AppDelegate.shared
            let managedContext = appDelegate.persistentContainer.viewContext
            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ContactsEntity")
            do {
@@ -84,7 +65,7 @@ class ContactsViewModel {
        }
     
     func retrieveOtherContactData(completion: @escaping ([User]?)->()) {
-              let appDelegate = AppDelegate.shared as AppDelegate
+              let appDelegate = AppDelegate.shared
               let managedContext = appDelegate.persistentContainer.viewContext
               let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OtherContactEntity")
               do {
@@ -104,7 +85,7 @@ class ContactsViewModel {
           }
     
     func addContactToCoreData(newContact: User, completion: @escaping (NSError?)->()) {
-        let appDelegate = AppDelegate.shared as AppDelegate
+        let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
         let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
@@ -121,7 +102,7 @@ class ContactsViewModel {
     }
     
     func removeContactFromCoreData(id: String, completion: @escaping (NSError?)->()) {
-        let appDelegate = AppDelegate.shared as AppDelegate
+        let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
         let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)

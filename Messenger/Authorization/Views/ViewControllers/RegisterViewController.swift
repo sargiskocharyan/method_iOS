@@ -55,7 +55,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                 }
             } else if user != nil {
                 DispatchQueue.main.async {
-                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, university: user!.university, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    let userModel: UserModel = UserModel(name: user!.name, lastname: user!.lastname, username: user!.username, email: user!.email, token: SharedConfigs.shared.signedUser?.token ?? "", id: user!.id, avatarURL: user?.avatarURL, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
                     UserDataController().populateUserProfile(model: userModel)
                     self.authRouter?.showCongratulationsViewController()
                 }
@@ -127,7 +127,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         usernameCustomView.textField.delegate = self
         addDropDown()
         skipButton.setTitle("skip".localized(), for: .normal)
-        createAccountButton.setTitle("create_account".localized(), for: .normal)
+        createAccountButton.setTitle("continue".localized(), for: .normal)
         self.hideKeyboardWhenTappedAround()
         setObservers()
         disableUpdateInfoButton()
@@ -283,6 +283,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func nameTextFieldAction() {
+        nameCustomView.errorLabel.isHidden = (nameCustomView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -293,6 +294,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func lastnameTextFieldAction() {
+        lastnameCustomView.errorLabel.isHidden = (lastnameCustomView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }

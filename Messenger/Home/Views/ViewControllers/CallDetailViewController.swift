@@ -80,15 +80,9 @@ class CallDetailViewController: UIViewController {
                 isThereContacts = true
             }
         }
-        if isThereContacts {
-            videoCallButton.isEnabled = true
-            audioCallButton.isEnabled = true
-        } else {
-            videoCallButton.isEnabled = false
-            audioCallButton.isEnabled = false
-        }
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
+        aboutCallView.backgroundColor = UIColor(named: "imputColor")
     }
     
     override func viewDidLoad() {

@@ -15,6 +15,10 @@ protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
 }
 
+protocol ProfileViewDelegate: class {
+    func changeMode()
+}
+
 class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
@@ -44,15 +48,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var headerEmailLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    
     //MARK: Properties
     var dropDown = DropDown()
     var viewModel: ProfileViewModel?
-    let socketTaskManager = SocketTaskManager.shared
     let center = UNUserNotificationCenter.current()
     var imagePicker = UIImagePickerController()
     static let nameOfDropdownCell = "CustomCell"
     weak var delegate: ProfileViewControllerDelegate?
     var mainRouter: MainRouter?
+    weak var profileDelegate: ProfileViewDelegate?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -63,7 +68,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         setBorder(view: languageView)
         setBorder(view: darkModeView)
         setBorder(view: logoutView)
-        checkInformation()
         checkVersion()
         setImage()
         configureImageView()
@@ -83,6 +87,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Helper methods
     @IBAction func editButton(_ sender: Any) {
         mainRouter?.showEditViewController()
+    }
+    
+    @IBAction func changePhoneAction(_ sender: Any) {
+        mainRouter?.showChangeEmailViewController(changingSubject: .phone)
     }
     
     func setImage() {
@@ -126,7 +134,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    @IBAction func changeEmailAction(_ sender: Any) {
+        mainRouter?.showChangeEmailViewController(changingSubject: .email)
+    }
+    
     @IBAction func selectMode(_ sender: UISwitch) {
+        profileDelegate?.changeMode()
         if sender.isOn {
             UIApplication.shared.windows.forEach { window in
                 window.overrideUserInterfaceStyle = .dark
@@ -266,7 +279,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 return
             } else {
                 let signedUser = SharedConfigs.shared.signedUser
-                let user = UserModel(name: signedUser?.name, lastname: signedUser?.lastname, username: signedUser?.username, email: signedUser?.email, university: signedUser?.university, token: signedUser?.token, id: signedUser!.id, avatarURL: nil)
+                let user = UserModel(name: signedUser?.name, lastname: signedUser?.lastname, username: signedUser?.username, email: signedUser?.email, token: signedUser?.token, id: signedUser!.id, avatarURL: nil)
                 UserDataController().populateUserProfile(model: user)
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
@@ -314,13 +327,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
-        viewModel!.logout { (error) in
-                DispatchQueue.main.async {
-                    self.deleteAllRecords()
-                    UserDataController().logOutUser()
-                    AuthRouter().assemblyModule()
-                }
-            self.socketTaskManager.disconnect()
+        viewModel!.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+            UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
+            DispatchQueue.main.async {
+                self.deleteAllRecords()
+                UserDataController().logOutUser()
+                AuthRouter().assemblyModule()
+            }
+            SocketTaskManager.shared.disconnect()
         }
     }
     
@@ -376,35 +390,35 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func checkInformation() {
         let user = SharedConfigs.shared.signedUser
         if user?.name == nil {
-            nameLabel.text = "name".localized()
+            nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
             nameLabel.textColor = UIColor(named: "color")
         }
         if user?.lastname == nil {
-            lastnameLabel.text = "lastname".localized()
+            lastnameLabel.text = "not_defined".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
              lastnameLabel.textColor = UIColor(named: "color")
         }
         if user?.email == nil {
-            emailLabel.text = "email".localized()
+            emailLabel.text = "not_defined".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
             emailLabel.textColor = UIColor(named: "color")
         }
         if user?.phoneNumber == nil {
-            phoneLabel.text = "number".localized()
+            phoneLabel.text = "not_defined".localized()
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = user?.phoneNumber
             phoneLabel.textColor = UIColor(named: "color")
         }
         if user?.username == nil {
-            usernameLabel.text = "username".localized()
+            usernameLabel.text = "not_defined".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
@@ -432,4 +446,14 @@ extension ProfileViewController: UNUserNotificationCenterDelegate {
       func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
           completionHandler([.alert, .badge, .sound])
       }
+}
+
+extension ProfileViewController: ChangeEmailViewControllerDelegate {
+    func setEmail(email: String) {
+        emailLabel.text = email
+    }
+    
+    func setPhone(phone: String) {
+        phoneLabel.text = phone
+    }
 }

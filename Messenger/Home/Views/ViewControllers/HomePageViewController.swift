@@ -12,14 +12,13 @@ import UserNotifications
 import AVFoundation
 import WebRTC
 import CoreData
+
 class MainTabBarController: UITabBarController {
-    
     
     //MARK: Properties
     var viewModel: HomePageViewModel?
     var contactsViewModel: ContactsViewModel?
     var recentMessagesViewModel: RecentMessagesViewModel?
-    let socketTaskManager = SocketTaskManager.shared
     static let center = UNUserNotificationCenter.current()
     private let config = Config.default
     var webRTCClient: WebRTCClient?
@@ -40,6 +39,7 @@ class MainTabBarController: UITabBarController {
     var startDate: Date?
     var mainRouter: MainRouter?
     var isFirstConnect: Bool?
+    var timer: Timer?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -48,15 +48,13 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-        socketTaskManager.connect()
+        
+         SocketTaskManager.shared.connect(completionHandler: {
+            print("home page connect")
+        })
+        
         callManager = AppDelegate.shared.callManager
-        handleCall()
-        handleAnswer()
-        handleCallAccepted()
-        handleCallSessionEnded()
-        handleOffer()
-        getCanditantes()
-        handleCallEnd()
+        AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
@@ -69,12 +67,16 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getNewMessage()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
     }
     
     //MARK: Helper methods
@@ -83,13 +85,13 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCallEnd() {
-        socketTaskManager.handleCallEnd { (roomName) in
+        SocketTaskManager.shared.addCallEndListener { (roomName) in
             self.webRTCClient?.peerConnection?.close()
         }
     }
     
     func handleCallSessionEnded() {
-        socketTaskManager.handleCallSessionEnded { (roomname) in
+        SocketTaskManager.shared.addCallSessionEndedListener { (roomname) in
             print(roomname)
 //            if self.roomName == roomname {
                 
@@ -102,45 +104,54 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    
+    
+    func startCall(_ id: String, _ roomname: String, _ name: String, completionHandler: @escaping () -> ()) {
+        self.id = id
+        self.roomName = roomname
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient?.delegate = self
+        AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
+        self.videoVC?.webRTCClient = self.webRTCClient
+        self.callsVC?.handleCall(id: id)
+        completionHandler()
+        return
+//        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
+//            if (error != nil) {
+//                DispatchQueue.main.async {
+//                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+//                }
+//                completionHandler("")
+//                return
+//            } else if user != nil {
+//                DispatchQueue.main.async {
+//
+//                    completionHandler(user?.name ?? user?.username ?? "dsf")
+//                    return
+//                }
+//            }
+//        }
+    }
+    
     func handleCall() {
-        SocketTaskManager.shared.handleCall { (id) in
+        SocketTaskManager.shared.addCallListener { (id, roomname, name) in
             if !self.onCall {
-                self.id = id
-                self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-                self.webRTCClient?.delegate = self
-                AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
-                self.videoVC?.webRTCClient = self.webRTCClient
-                self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-                    if (error != nil) {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        }
-                        return
-                    } else if user != nil {
-                        let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                        DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            AppDelegate.shared.displayIncomingCall(
-                                id: id, uuid: UUID(), handle: user?.name ?? (user?.username)!, hasVideo: true, roomName: self.roomName ?? "") { _ in
-                                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                            }
-                        }
-                        DispatchQueue.main.async {
-                            self.callsVC?.handleCall(id: id, user: user!)
-                        }
+                self.startCall(id, roomname, name) {
+                    DispatchQueue.main.async {
+                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
                     }
                 }
             }
         }
     }
-    
-    func getCanditantes() {
-        socketTaskManager.getCanditantes { (data) in
-            
-        }
+
+func getCandidates() {
+    SocketTaskManager.shared.addCandidatesListener { (data) in
     }
+}
     
     func handleCallAccepted() {
-        socketTaskManager.handleCallAccepted { (callAccepted, roomName) in
+         SocketTaskManager.shared.addCallAcceptedLister { (callAccepted, roomName) in
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
@@ -156,7 +167,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleAnswer() {
-        socketTaskManager.handleAnswer { (data) in
+        SocketTaskManager.shared.addAnswerListener { (data) in
             self.videoVC?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
                 print(error?.localizedDescription as Any)
@@ -198,51 +209,100 @@ class MainTabBarController: UITabBarController {
 
     
     func handleOffer() {
-        SocketTaskManager.shared.handleOffer { (roomName, offer) in
+        print("1111111-----------------------------11111111")
+        print(SocketTaskManager.shared.socket!.status)
+        SocketTaskManager.shared.addOfferListener { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
                 self.mainRouter?.showVideoViewController()
+                self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
+                })
+                self.webRTCClient?.answer { (localSdp) in
+                    self.hasLocalSdp = true
+                    self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
+                }
             }
-            self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
-            })
-            self.webRTCClient?.answer { (localSdp) in
-                self.hasLocalSdp = true
-                self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
-            }
+           
         }
     }
     
     func getNewMessage() {
-        socketTaskManager.getChatMessage { (callHistory, message, name, lastname, username) in
+        SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
-            if callHistory != nil {
+            if callHistory != nil  {
                 self.callsVC?.showEndedCall(callHistory!)
             }
             switch self.selectedIndex {
             case 0:
-                 let callNc = self.viewControllers![0] as! UINavigationController
-                 if callNc.viewControllers.count <= 2 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
-                 } else {
+                let callNc = self.viewControllers![0] as! UINavigationController
+                if callNc.viewControllers.count == 1 {
+                    if callHistory == nil {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                }
+                else if callNc.viewControllers.count == 2 {
+                    if callHistory == nil && message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    } else if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else {
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
                         chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    } else if let videoVC = callNc.viewControllers[2] as? VideoViewController {
+                        videoVC.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
-                 }
+                }
+                break
+            case 1:
+                let recentNc = self.viewControllers![1] as! UINavigationController
+                if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
+                    if recentNc.viewControllers.count == 2  {
+                        let chatVC = recentNc.viewControllers[1] as? ChatViewController
+                        if chatVC == nil {
+                            self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    } else {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else if callHistory == nil && recentNc.viewControllers.count == 2 && message.senderId != SharedConfigs.shared.signedUser?.id {
+                    let contactsVC = recentNc.viewControllers[1] as? ContactsViewController
+                    if contactsVC != nil {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else if recentNc.viewControllers.count > 2 {
+                    if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {
+                        if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
+                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    }
+                }
                 break
             case 2:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
-                    self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                    }
                 } else if profileNC.viewControllers.count == 4 {
-                    let chatVC = profileNC.viewControllers[3] as! ChatViewController
-                    chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    let chatVC = profileNC.viewControllers[3] as? ChatViewController
+                    if chatVC != nil {
+                        chatVC!.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    } else {
+                        let videoVC = profileNC.viewControllers[3] as? VideoViewController
+                        if videoVC != nil {
+                            videoVC!.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
+                    }
                 }
             default:
                break
@@ -251,7 +311,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func sessionExpires() {
-        self.socketTaskManager.disconnect()
+        SocketTaskManager.shared.disconnect()
         UserDataController().logOutUser()
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
@@ -275,7 +335,8 @@ class MainTabBarController: UITabBarController {
                 let requestedComponent: Set<Calendar.Component> = [ .month, .day, .hour, .minute, .second]
                 let timeDifference = userCalendar.dateComponents(requestedComponent, from: Date(), to: (SharedConfigs.shared.signedUser?.tokenExpire)!)
                 if timeDifference.day! <= 1 {
-                    self.profileViewModel.logout { (error) in
+                    self.profileViewModel.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+                        UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
                         self.sessionExpires()
                     }
                 }
@@ -319,16 +380,17 @@ extension MainTabBarController: WebRTCClientDelegate {
         else if state == .connected {
             if isFirstConnect == nil {
                 isFirstConnect = true
-                socketTaskManager.callStarted(roomname: roomName!)
+                SocketTaskManager.shared.callStarted(roomname: roomName!)
             } else {
-                socketTaskManager.callReconnected(roomname: roomName!)
+                SocketTaskManager.shared.callReconnected(roomname: roomName!)
             }
             videoVC?.handleAnswer()
             startDate = Date()
         }
         else if state == .closed || state == .failed {
+            isFirstConnect = nil
             if state == .failed {
-                socketTaskManager.leaveRoom(roomName: roomName!)
+                SocketTaskManager.shared.leaveRoom(roomName: roomName!)
             }
             videoVC?.handleAnswer()
             onCall = false
@@ -338,7 +400,6 @@ extension MainTabBarController: WebRTCClientDelegate {
             id = nil
             videoVC?.closeAll()
             DispatchQueue.main.async {
-//                self.callsVC?.saveCall(startDate: self.startDate)
                 self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
                 self.startDate = nil
             }
@@ -381,11 +442,29 @@ extension MainTabBarController: CallListViewDelegate {
         }
         callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
-        
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
+//        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
+//            self.videoVC?.endCall()
+//        })
+    }
+}
+
+extension MainTabBarController: AppDelegateD {
+    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ()) {
+        self.startCall(id, roomName, name) {
+            completionHandler()
+        }
+    }
+    
+    
+}
+
+extension MainTabBarController: Subscriber {
+    func didHandleConnectionEvent() {
+        
     }
 }

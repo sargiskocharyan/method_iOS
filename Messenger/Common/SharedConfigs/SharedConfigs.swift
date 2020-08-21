@@ -12,6 +12,10 @@ class SharedConfigs {
     
     static var shared: SharedConfigs = SharedConfigs()
     var signedUser: UserModel?
+    var deviceToken: String?
+    var voIPToken: String?
+    var isRegistered: Bool?
+    var deviceUUID: String?
     
     private init () {
        let _ = appLang

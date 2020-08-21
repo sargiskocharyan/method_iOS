@@ -7,21 +7,6 @@
 //
 
 import UIKit
-//fileprivate let defaultSignalingServerUrl = URL(string: "wss://192.168.0.105:8080")!
-//
-//// We use Google's public stun servers. For production apps you should deploy your own stun/turn servers.
-//fileprivate let defaultIceServers = ["stun:stun.l.google.com:19302",
-//                                     "stun:stun1.l.google.com:19302",
-//                                     "stun:stun2.l.google.com:19302",
-//                                     "stun:stun3.l.google.com:19302",
-//                                     "stun:stun4.l.google.com:19302"]
-//
-//struct Config {
-//    let signalingServerUrl: URL
-//    let webRTCIceServers: [String]
-//    
-//    static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
-//}
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -46,6 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+         
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
@@ -54,14 +40,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+        if SharedConfigs.shared.signedUser != nil {
+            SocketTaskManager.shared.connect {
+                print("scene page connect")
+            }
+        }
+        let tabbar = window?.rootViewController as? MainTabBarController
+        if tabbar?.selectedIndex == 0 {
+            let nc = tabbar!.viewControllers![0] as! UINavigationController
+            if (nc.viewControllers.last as? CallListViewController) != nil {
+                (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+            }
+        }
     }
     
+    
+    
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+        SocketTaskManager.shared.disconnect()
     }
     
     
@@ -92,3 +88,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
 }
 
+extension SceneDelegate: Subscriber {
+    func didHandleConnectionEvent() {
+    }
+}

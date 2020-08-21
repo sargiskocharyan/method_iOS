@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "845943651568aa14f6750584d63a9565--mens-haircuts-hairstyles.jpg",
+      "filename" : "icons8-no-audio-100.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-no-audio-100@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-no-audio-100@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

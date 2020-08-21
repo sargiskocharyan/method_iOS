@@ -24,12 +24,11 @@ struct UserModel: Codable, PropertyReflectable {
     static func == (lhs: UserModel, rhs: UserModel) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     var name: String?
     var lastname: String?
     var username: String?
     var email: String?
-    var university: University?
     var token: String?
     var id: String
     var avatarURL: String?
@@ -47,7 +46,6 @@ struct UserModel: Codable, PropertyReflectable {
         case lastname
         case username
         case email
-        case university
         case token
         case id = "_id"
         case avatarURL

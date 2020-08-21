@@ -14,6 +14,7 @@ class VideoViewController: UIViewController {
     var webRTCClient: WebRTCClient?
     var cameraPosition = AVCaptureDevice.Position.front
     var isMicrophoneOn = true
+    var isSpeakerOn = false
     @IBOutlet weak var ourView: UIView!
     let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
@@ -22,6 +23,21 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func endCallButton(_ sender: Any) {
+        endCall()
+    }
+    
+    @IBAction func speakerOnAndOff(_ sender: UIButton) {
+        if isSpeakerOn {
+            isSpeakerOn = false
+            sender.setImage(UIImage(named: "speakerOn"), for: .normal)
+            webRTCClient?.speakerOn()
+        } else {
+            isSpeakerOn = true
+            sender.setImage(UIImage(named: "speakerOff"), for: .normal)
+            webRTCClient?.speakerOff()
+        }
+    }
+    func endCall() {
         for call in callManager.calls {
             callManager.end(call: call)
         }
@@ -45,6 +61,7 @@ class VideoViewController: UIViewController {
         let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
         localRenderer.videoContentMode = .scaleAspectFill
         remoteRenderer.videoContentMode = .scaleAspectFill
+        ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
         #else
         let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
         let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)

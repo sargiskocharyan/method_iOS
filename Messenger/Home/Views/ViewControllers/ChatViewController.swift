@@ -15,7 +15,7 @@ enum CallStatus: String {
     case cancelled = "cancelled"
     case incoming  = "incoming_call"
     case outgoing  = "outgoing_call"
-    case ongoing   = "onging"
+    case ongoing   = "ongoing"
 }
 
 class ChatViewController: UIViewController {
@@ -30,7 +30,6 @@ class ChatViewController: UIViewController {
     var id: String?
     var allMessages: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
-    var socketTaskManager: SocketTaskManager!
     let center = UNUserNotificationCenter.current()
     var name: String?
     var username: String?
@@ -71,7 +70,6 @@ class ChatViewController: UIViewController {
         addConstraints()
         setupInputComponents()
         setObservers()
-        socketTaskManager = SocketTaskManager.shared
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
         self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
@@ -79,6 +77,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
+       
     }
     
     
@@ -96,8 +95,7 @@ class ChatViewController: UIViewController {
     
     @objc func sendMessage() {
         if inputTextField.text != "" {
-            print(socketTaskManager.manager.status)
-            socketTaskManager.send(message: inputTextField.text!, id: id!)
+            SocketTaskManager.shared.send(message: inputTextField.text!, id: id!)
         }
     }
     
@@ -105,11 +103,11 @@ class ChatViewController: UIViewController {
         if name != nil {
             self.title = name
         } else if username != nil {
-               self.title = username
-           } else {
+            self.title = username
+        } else {
             self.title = "dynamics_user".localized()
         }
-       }
+    }
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -126,10 +124,8 @@ class ChatViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
                 if isKeyboardShowing {
-                    if self.allMessages.count > 0 {
-                        let indexPath = IndexPath(item: self.allMessages.count - 2, section: 0)
-                        print(indexPath.row)
-                        print(self.allMessages.count)
+                    if self.allMessages.count > 1 {
+                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
                 }
@@ -162,7 +158,13 @@ class ChatViewController: UIViewController {
             }
         } else {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
-                self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
+                if (callHistory != nil && callHistory?.status == CallStatus.missed.rawValue) {
+                    if callHistory?.caller != SharedConfigs.shared.signedUser?.id {
+                        self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
+                    }
+                } else if callHistory == nil {
+                    self.scheduleNotification(center: MainTabBarController.center, callHistory, message: message, name, lastname, username)
+                }
             }
         }
     }
@@ -189,7 +191,7 @@ class ChatViewController: UIViewController {
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
+        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 10).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
@@ -199,7 +201,7 @@ class ChatViewController: UIViewController {
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
         sendButton.isUserInteractionEnabled = true
         sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
-        25)
+            25)
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
@@ -267,13 +269,13 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-       if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-           return "\((seconds % 3600) % 60) sec."
-       } else if seconds / 3600 == 0 {
-           return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-       }
-       return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-       }
+        if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+            return "\((seconds % 3600) % 60) sec."
+        } else if seconds / 3600 == 0 {
+            return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+        }
+        return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
     
     func stringToDate(date:String) -> String {
         let formatter = DateFormatter()
@@ -296,20 +298,20 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         if !tabbar!.onCall {
             tabbar!.handleCallClick(id: id!, name: name ?? username ?? "")
             tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
-               } else {
+        } else {
             tabbar!.handleClickOnSamePerson()
-               }
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages[indexPath.row].type == "text" {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
-            cell.messageLabel.text = allMessages[indexPath.row].text
-            cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
-            cell.messageLabel.textColor = .white
-            cell.messageLabel.sizeToFit()
-            return cell
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
+                cell.messageLabel.text = allMessages[indexPath.row].text
+                cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
+                cell.messageLabel.textColor = .white
+                cell.messageLabel.sizeToFit()
+                return cell
             } else if allMessages[indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
                 let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))

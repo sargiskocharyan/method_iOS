@@ -16,6 +16,12 @@ class HomePageViewModel {
         }
     }
     
+    func checkCallAsSeen(callId: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().readCalls(id: callId) { (error) in
+            completion(error)
+        }
+    }
+    
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         HomeNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
@@ -28,8 +34,14 @@ class HomePageViewModel {
            }
        }
     
+    func removeCall(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().removeCall(id: id) { (error) in
+            completion(error)
+        }
+    }
+    
     func saveContacts(contacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
-        let appDelegate = AppDelegate.shared as AppDelegate
+        let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
         let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
@@ -47,7 +59,7 @@ class HomePageViewModel {
     }
     
     func saveOtherContacts(otherContacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
-           let appDelegate = AppDelegate.shared as AppDelegate
+           let appDelegate = AppDelegate.shared
            let managedContext = appDelegate.persistentContainer.viewContext
            let entity = NSEntityDescription.entity(forEntityName: "OtherContactEntity", in: managedContext)!
            let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
