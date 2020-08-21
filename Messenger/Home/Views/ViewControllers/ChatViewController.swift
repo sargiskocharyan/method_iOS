@@ -15,7 +15,7 @@ enum CallStatus: String {
     case cancelled = "cancelled"
     case incoming  = "incoming_call"
     case outgoing  = "outgoing_call"
-    case ongoing   = "onging"
+    case ongoing   = "ongoing"
 }
 
 class ChatViewController: UIViewController {

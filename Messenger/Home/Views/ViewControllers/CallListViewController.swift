@@ -60,7 +60,6 @@ class CallListViewController: UIViewController {
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
             if let tabItems = self.tabbar?.tabBar.items {
@@ -71,12 +70,14 @@ class CallListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
-        self.sort()
-       // AppDelegate.shared.badge = SharedConfigs.shared.callBadge
+//        self.sort()
         if AppDelegate.shared.badge != nil {
             if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
                 AppDelegate.shared.badge = 0
-                tabbar?.viewModel?.checkCallAsSeen(callId: viewModel!.calls[0]._id!, completion: { (error) in
+                let missed = viewModel?.calls.filter({ (call) -> Bool in
+                    return call.status == CallStatus.missed.rawValue
+                })
+                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -219,7 +220,7 @@ class CallListViewController: UIViewController {
     
     func getCallHistoryFromDB() {
         viewModel?.getHistory(completion: { (callsFromDB) in
-            self.sort()
+//            self.sort()
             self.tableView.reloadData()
         })
     }
@@ -241,11 +242,36 @@ class CallListViewController: UIViewController {
     }
     
     func showEndedCall(_ callHistory: CallHistory) {
-        viewModel?.save(newCall: callHistory, completion: {
-            self.sort()
-            self.tableView.reloadData()
-//            self.viewWillAppear(false)
-        })
+        print(viewModel?.calls.count)
+                viewModel?.save(newCall: callHistory, completion: {
+                    //            cell.delegate = self
+                    //            if self.viewModel?.calls[0].callSuggestTime != self.viewModel?.calls[1].callSuggestTime {
+                    //                print(self.viewModel?.calls.count)
+                    self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    
+                    //            }
+                    
+                })
+            }
+    
+        //            else {
+//                self.tableView.beginUpdates()
+//                self.viewModel!.deleteItem(index: 1, completion: { (error)   in
+//                    self.tableView.deleteRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+//                })
+//                (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).call = callHistory
+                
+//                (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).configureCell(contact: (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).contact!, call: callHistory)
+                
+                //                self.tableView.endUpdates()
+//            }
+//            if self.tabbar?.selectedIndex == 0 {
+//                let nc = self.tabbar!.viewControllers![0] as! UINavigationController
+//                if nc.viewControllers.count == 1 {
+//                    self.viewWillAppear(false)
+//                }
+//            }
+//        })
         //        if viewModel!.calls.count >= 15 {
         //                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)
         //               }
@@ -260,7 +286,6 @@ class CallListViewController: UIViewController {
         //            let seconds = timeDifference.second!
         //            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
         //        }
-    }
     
     func stringToDate(date: Date) -> String {
         let parsedDate = date
@@ -317,18 +342,18 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel!.calls.count
     }
     
-    func getUser(_ cell: CallTableViewCell, _ indexPath: IndexPath) {
+    func getUser(_ cell: CallTableViewCell, _ indexPath: Int) {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath.row])
+                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath])
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)
                     self.tabbar?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
                         self.tabbar?.contactsViewModel!.otherContacts = users!
                     })
-                    cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath.row])
+                    cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath])
                 }
             }
         }
@@ -356,7 +381,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             if existsInContactList == false {
-                getUser(cell, indexPath)
+                getUser(cell, indexPath.row)
             }
         }
         cell.delegate = self

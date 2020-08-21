@@ -157,10 +157,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.failed)
             return
         }
-        
         print(userInfo)
         if userInfo["type"] as? String == "missedCallHistory" {
-//            var newCall = userInfo
             badge = aps["badge"] as? Int
             if tabbar?.selectedIndex == 0 {
                 let nc = tabbar!.viewControllers![0] as! UINavigationController

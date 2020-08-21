@@ -71,7 +71,7 @@ class MainTabBarController: UITabBarController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getNewMessage()
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -447,9 +447,9 @@ extension MainTabBarController: CallListViewDelegate {
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
-            self.videoVC?.endCall()
-        })
+//        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
+//            self.videoVC?.endCall()
+//        })
     }
 }
 
