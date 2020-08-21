@@ -1387,7 +1387,9 @@
                                                                     <constraint firstAttribute="height" constant="50" id="fdS-T7-Qnv"/>
                                                                 </constraints>
                                                                 <color key="tintColor" red="0.49803921568627452" green="0.37647058823529411" blue="0.96470588235294119" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <state key="normal" image="message.fill" catalog="system"/>
+                                                                <state key="normal" image="message.fill" catalog="system">
+                                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="22"/>
+                                                                </state>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6w5-gj-oH5">
                                                                 <rect key="frame" x="65" y="0.0" width="50" height="50"/>
@@ -1396,7 +1398,9 @@
                                                                     <constraint firstAttribute="width" constant="50" id="xwS-3Q-892"/>
                                                                 </constraints>
                                                                 <color key="tintColor" red="0.49803921569999998" green="0.37647058820000001" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <state key="normal" image="video.fill" catalog="system"/>
+                                                                <state key="normal" image="video.fill" catalog="system">
+                                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="22"/>
+                                                                </state>
                                                                 <connections>
                                                                     <action selector="startVideoCall:" destination="YOH-td-ZuE" eventType="touchUpInside" id="gCz-ed-BTf"/>
                                                                 </connections>
@@ -1410,6 +1414,7 @@
                                                                 <color key="tintColor" red="0.5013250709" green="0.37268495559999998" blue="0.98328763249999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <state key="normal" image="person.badge.plus.fill">
                                                                     <color key="titleColor" red="0.49803921569999998" green="0.37647058820000001" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="22"/>
                                                                 </state>
                                                             </button>
                                                         </subviews>

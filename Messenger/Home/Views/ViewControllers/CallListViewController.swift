@@ -250,7 +250,6 @@ class CallListViewController: UIViewController {
                     self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                     
                     //            }
-                    
                 })
             }
     

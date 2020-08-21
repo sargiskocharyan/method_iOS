@@ -43,6 +43,7 @@ class ContactTableViewCell: UITableViewCell {
         } else if contact.name != nil && contact.lastname == nil {
             nameLabel.textColor = UIColor(named: "color")
             nameLabel.text = contact.name
+            lastnameLabel.text = ""
         } else if contact.lastname != nil && contact.name == nil {
             nameLabel.textColor = UIColor(named: "color")
             nameLabel.text = contact.lastname
