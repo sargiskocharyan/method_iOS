@@ -10,10 +10,10 @@ import Foundation
 
 
 
-public class Participants: NSObject, NSCoding {
+public class Participants: NSObject, NSCoding, NSSecureCoding {
     
     public var participants: [String] = []
-    
+    public static var supportsSecureCoding = true
     enum Key:String {
         case participants = "participants"
     }

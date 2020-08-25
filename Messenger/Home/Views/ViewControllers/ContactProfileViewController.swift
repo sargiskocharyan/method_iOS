@@ -163,7 +163,7 @@ class ContactProfileViewController: UIViewController {
     @IBAction func startVideoCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
-            tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!)
+            tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!, mode: .videoCall)
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabBar.handleClickOnSamePerson()

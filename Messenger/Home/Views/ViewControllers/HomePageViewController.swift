@@ -40,6 +40,7 @@ class MainTabBarController: UITabBarController {
     var mainRouter: MainRouter?
     var isFirstConnect: Bool?
     var timer: Timer?
+    var mode: VideoVCMode?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -69,16 +70,6 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-    }
-    
     //MARK: Helper methods
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
@@ -106,7 +97,7 @@ class MainTabBarController: UITabBarController {
     
     
     
-    func startCall(_ id: String, _ roomname: String, _ name: String, completionHandler: @escaping () -> ()) {
+    func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
@@ -134,9 +125,10 @@ class MainTabBarController: UITabBarController {
     }
     
     func handleCall() {
-        SocketTaskManager.shared.addCallListener { (id, roomname, name) in
+        SocketTaskManager.shared.addCallListener { (id, roomname, name, type) in
             if !self.onCall {
-                self.startCall(id, roomname, name) {
+                self.startCall(id, roomname, name, type) {
+                    self.mode = type == "video" ? VideoVCMode.videoCall : VideoVCMode.audioCall
                     DispatchQueue.main.async {
                         AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
                     }
@@ -200,10 +192,10 @@ func getCandidates() {
     
     func retrieveCoreDataObjects() {
         contactsViewModel!.retrieveData { (contacts) in
-            print("Data retrieved!!!")
+//            print("Data retrieved!!!")
         }
         contactsViewModel!.retrieveOtherContactData { (contacts) in
-            print("Other data retrieved!!!")
+//            print("Other data retrieved!!!")
         }
     }
 
@@ -217,7 +209,7 @@ func getCandidates() {
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             DispatchQueue.main.async {
-                self.mainRouter?.showVideoViewController()
+                self.mainRouter?.showVideoViewController(mode: self.mode!)
                 self.webRTCClient?.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: offer["sdp"]!), completion: { (error) in
                 })
                 self.webRTCClient?.answer { (localSdp) in
@@ -322,6 +314,14 @@ func getCandidates() {
         }
     }
     
+    func checkOurInfo() {
+        recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
+            if error == nil {
+                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil))
+            }
+        })
+    }
+    
     func verifyToken() {
         viewModel!.verifyToken(token: (SharedConfigs.shared.signedUser?.token)!) { (responseObject, error) in
             if (error != nil) {
@@ -339,6 +339,8 @@ func getCandidates() {
                         UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
                         self.sessionExpires()
                     }
+                } else {
+                    self.checkOurInfo()
                 }
             }
         }
@@ -379,13 +381,18 @@ extension MainTabBarController: WebRTCClientDelegate {
         }
         else if state == .connected {
             if isFirstConnect == nil {
-                isFirstConnect = true
                 SocketTaskManager.shared.callStarted(roomname: roomName!)
             } else {
                 SocketTaskManager.shared.callReconnected(roomname: roomName!)
             }
             videoVC?.handleAnswer()
+            if isFirstConnect == nil {
+                isFirstConnect = true
+                DispatchQueue.main.async {
+                    self.videoVC?.startCall("connecting".localized())
+                }
             startDate = Date()
+        }
         }
         else if state == .closed || state == .failed {
             isFirstConnect = nil
@@ -431,12 +438,12 @@ extension  MainTabBarController: SignalClientDelegate {
 
 extension MainTabBarController: CallListViewDelegate {
     func handleClickOnSamePerson() {
-        mainRouter?.showVideoViewController()
+        mainRouter?.showVideoViewController(mode: .audioCall)
     }
     
-    func handleCallClick(id: String, name: String) {
+    func handleCallClick(id: String, name: String, mode: VideoVCMode) {
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
-        SocketTaskManager.shared.call(id: id) { (roomname) in
+        SocketTaskManager.shared.call(id: id, type: mode.rawValue) { (roomname) in
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)
         }
@@ -446,7 +453,7 @@ extension MainTabBarController: CallListViewDelegate {
         self.onCall = true
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
-        mainRouter?.showVideoViewController()
+        mainRouter?.showVideoViewController(mode: mode)
 //        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
 //            self.videoVC?.endCall()
 //        })
@@ -454,8 +461,8 @@ extension MainTabBarController: CallListViewDelegate {
 }
 
 extension MainTabBarController: AppDelegateD {
-    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ()) {
-        self.startCall(id, roomName, name) {
+    func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ()) {
+        self.startCall(id, roomName, name, type) {
             completionHandler()
         }
     }

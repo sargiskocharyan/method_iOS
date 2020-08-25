@@ -54,9 +54,10 @@ class MainRouter {
         window?.makeKeyAndVisible()
     }
     
-    func showVideoViewController() {
+    func showVideoViewController(mode: VideoVCMode) {
         let selectedNC = self.mainTabBarController!.selectedViewController as? UINavigationController
         if selectedNC?.viewControllers.last as? VideoViewController == nil {
+            self.mainTabBarController?.videoVC?.videoVCMode = mode
         selectedNC?.pushViewController(self.mainTabBarController!.videoVC!, animated: false)
         } else {
             return

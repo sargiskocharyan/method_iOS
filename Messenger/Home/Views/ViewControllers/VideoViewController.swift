@@ -9,17 +9,56 @@
 import UIKit
 import WebRTC
 
+enum VideoVCMode: String {
+    case audioCall = "audio"
+    case videoCall = "video"
+}
+
 class VideoViewController: UIViewController {
     var roomName: String?
     var webRTCClient: WebRTCClient?
     var cameraPosition = AVCaptureDevice.Position.front
     var isMicrophoneOn = true
-    var isSpeakerOn = false
+    var isSpeakerOn = true
+    var localRenderer: RTCMTLVideoView?
+    var isCameraOff = true
+    var remoteRenderer: RTCMTLVideoView?
+    var videoVCMode: VideoVCMode?
     @IBOutlet weak var ourView: UIView!
+    @IBOutlet weak var cameraOffButton: UIButton!
     let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    @IBAction func cameraOffOrOnAction(_ sender: UIButton) {
+        if videoVCMode == .videoCall {
+            if isCameraOff {
+                webRTCClient?.stopCaptureLocalVideo(renderer: localRenderer!, completion: {
+                    DispatchQueue.main.async {
+                        self.localRenderer?.removeFromSuperview()
+                        self.ourView.backgroundColor = .clear
+                    }
+                    print("sax arav")
+                    self.isCameraOff = false
+                })
+            } else {
+                //            webRTCClient?.localVideoTrack = webRTCClient?.createVideoTrack()
+                //            webRTCClient?.stream?.addVideoTrack(webRTCClient!.localVideoTrack!)
+                //            webRTCClient?.peerConnection?.add((webRTCClient?.localVideoTrack)!, streamIds: ["stream"])
+                embedView(localRenderer!, into: self.ourView)
+                webRTCClient?.localVideoTrack?.isEnabled = true
+                //            webRTCClient?.peerConnection?.add(webRTCClient!.stream!)
+                
+                webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
+                isCameraOff = true
+            }
+        } else {
+            videoVCMode = .videoCall
+            self.viewWillAppear(false)
+//            ourView.removeFromSuperview()
+        }
     }
     
     @IBAction func endCallButton(_ sender: Any) {
@@ -27,12 +66,12 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func speakerOnAndOff(_ sender: UIButton) {
-        if isSpeakerOn {
-            isSpeakerOn = false
+        if !isSpeakerOn {
+            isSpeakerOn = true
             sender.setImage(UIImage(named: "speakerOn"), for: .normal)
             webRTCClient?.speakerOn()
-        } else {
-            isSpeakerOn = true
+        } else if isSpeakerOn {
+            isSpeakerOn = false
             sender.setImage(UIImage(named: "speakerOff"), for: .normal)
             webRTCClient?.speakerOff()
         }
@@ -56,52 +95,52 @@ class VideoViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
-        #if arch(arm64)
-        let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-        localRenderer.videoContentMode = .scaleAspectFill
-        remoteRenderer.videoContentMode = .scaleAspectFill
-        ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
-        #else
-        let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-        #endif
-        remoteRenderer.tag = 10
-        localRenderer.tag = 11
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
-        self.webRTCClient?.renderRemoteVideo(to: remoteRenderer)
-        if let localVideoView = self.ourView {
-            self.embedView(localRenderer, into: localVideoView)
+        if videoVCMode == .videoCall {
+            #if arch(arm64)
+            localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+            remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+            localRenderer!.videoContentMode = .scaleAspectFill
+            remoteRenderer!.videoContentMode = .scaleAspectFill
+            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            #else
+            let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+            let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
+            #endif
+            remoteRenderer!.tag = 10
+            localRenderer!.tag = 11
+            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
+            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer!)
+            if let localVideoView = self.ourView {
+                self.embedView(localRenderer!, into: localVideoView)
+            }
+            self.embedView(remoteRenderer!, into: self.view)
+            self.view.sendSubviewToBack(remoteRenderer!)
+        } else {
+            ourView.backgroundColor = .clear
         }
-        self.embedView(remoteRenderer, into: self.view)
-        self.view.sendSubviewToBack(remoteRenderer)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(named: "videoColor")
+        webRTCClient?.speakerOff()
+        webRTCClient?.webRTCCDelegate = self
     }
     
     @IBAction func switchCamera(_ sender: Any) {
-        #if arch(arm64)
-        let localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        localRenderer.videoContentMode = .scaleAspectFill
-        #else
-        let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-        #endif
-        localRenderer.tag = 11
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
-        
+        localRenderer!.tag = 11
         if cameraPosition == .front {
+            ourView.transform = CGAffineTransform(scaleX: 1, y: 1);
             cameraPosition = .back
         } else {
+            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
             cameraPosition = .front
         }
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer, cameraPosition: cameraPosition)
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
         if let localVideoView = self.ourView {
             self.view.viewWithTag(11)?.removeFromSuperview()
-                   self.embedView(localRenderer, into: localVideoView)
-               }
+            self.embedView(localRenderer!, into: localVideoView)
+        }
     }
     
     @IBAction func speakerOnOff(_ sender: UIButton) {
@@ -161,3 +200,9 @@ class VideoViewController: UIViewController {
     }
 }
 
+extension VideoViewController: WebRTCDelegate {
+    func removeView() {
+        self.handleAnswer()
+    }
+    
+}

@@ -106,7 +106,7 @@ class CallDetailViewController: UIViewController {
     @IBAction func startVideoCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
-            tabBar.handleCallClick(id: id!, name: name!)
+            tabBar.handleCallClick(id: id!, name: name!, mode: .videoCall)
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabBar.handleClickOnSamePerson()
@@ -114,8 +114,15 @@ class CallDetailViewController: UIViewController {
     }
     
     @IBAction func startAudioCall(_ sender: Any) {
-        
+        let tabBar = tabBarController as! MainTabBarController
+        if !tabBar.onCall {
+            tabBar.handleCallClick(id: id!, name: name!, mode: .audioCall)
+            callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+        } else {
+            tabBar.handleClickOnSamePerson()
+        }
     }
+    
     @IBAction func sendMessageButton(_ sender: Any) {
         mainRouter?.showChatViewControllerFromCallDetail(name: name, username: name, avatarURL: avatarURL, id: id!)
     }

@@ -52,7 +52,7 @@ class SocketTaskManager {
     func connect(completionHandler: @escaping () -> ()) {
         if status == .disconnected || status == .notConnected {
             print(SharedConfigs.shared.signedUser?.token as Any)
-            manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(true), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
+            manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(false), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
         }
         if status == .connected {
             queue.sync {
@@ -110,12 +110,12 @@ class SocketTaskManager {
         self.socket!.emit("candidates", roomName, data)
     }
     
-    func call(id: String, completionHandler: @escaping (_ roomname: String) -> ()) {
-        socket!.emitWithAck("call", id).timingOut(after: 0.0) { (dataArray) in
+    func call(id: String, type: String, completionHandler: @escaping (_ roomname: String) -> ()) {
+        socket!.emitWithAck("call", id, type).timingOut(after: 0.0) { (dataArray) in
             completionHandler(dataArray[0] as! String)
         }
     }
-    
+
     func callStarted(roomname: String) {
         self.socket!.emit("callStarted", roomname)
     }
@@ -130,10 +130,10 @@ class SocketTaskManager {
         }
     }
     
-    func addCallListener(completionHandler: @escaping (_ id: String, _ roomname: String, _ name: String) -> Void) {
+    func addCallListener(completionHandler: @escaping (_ id: String, _ roomname: String, _ name: String, _ type: String) -> Void) {
         socket!.on("call") { (dataArray, socketAck) in
             let dictionary = dataArray[0] as! Dictionary<String, String?>
-            completionHandler(dictionary["caller"]!!, dictionary["roomName"]!!, dictionary["username"]!!)
+            completionHandler(dictionary["caller"]!!, dictionary["roomName"]!!, dictionary["username"]!!, dictionary["type"]!!)
         }
     }
     

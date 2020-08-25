@@ -15,7 +15,7 @@ import UserNotifications
 import PushKit
 
 protocol AppDelegateD : class {
-    func startCallD(id: String, roomName: String, name: String, completionHandler: @escaping () -> ())
+    func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
 
 @UIApplicationMain
@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         print("payload: ", payload.dictionaryPayload)
         print(payload.dictionaryPayload["username"] as! String)
         
-        self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, completionHandler: {
+        self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, type: payload.dictionaryPayload["type"] as! String, completionHandler: {
             self.displayIncomingCall(
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 SocketTaskManager.shared.connect {
@@ -169,7 +169,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         print(badge as Any)
                     }
                 } else {
-                    if  application.applicationState.rawValue == 0 {
+                    if application.applicationState.rawValue == 0 {
                         (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
                     }
                 }

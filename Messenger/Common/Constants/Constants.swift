@@ -9,8 +9,8 @@
 import Foundation
 
 struct Environment {
-    static let baseURL = "https://messenger-dynamic.herokuapp.com" //"https://192.168.0.105:3000"
-    static let socketUrl = "wss://messenger-dynamic.herokuapp.com"
+    static let baseURL = "https://192.168.0.105:3000" //"https://192.168.0.105:3000"
+    static let socketUrl = "wss://192.168.0.105:3000"
 }
 
 struct AUTHUrls {

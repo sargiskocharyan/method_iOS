@@ -28,7 +28,7 @@ struct Config {
 }
 
 protocol CallListViewDelegate: class  {
-    func handleCallClick(id: String, name: String)
+    func handleCallClick(id: String, name: String, mode: VideoVCMode)
     func handleClickOnSamePerson()
 }
 
@@ -55,11 +55,12 @@ class CallListViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var activity: UIActivityIndicatorView!
+//    @IBOutlet weak var activity: UIActivityIndicatorView!
     
     //MARK: LifecyclesF
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
             if let tabItems = self.tabbar?.tabBar.items {
@@ -70,20 +71,21 @@ class CallListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
-//        self.sort()
-        if AppDelegate.shared.badge != nil {
-            if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
-                AppDelegate.shared.badge = 0
-                let missed = viewModel?.calls.filter({ (call) -> Bool in
-                    return call.status == CallStatus.missed.rawValue
-                })
-                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+        if UIApplication.shared.applicationState.rawValue == 0 {
+            if AppDelegate.shared.badge != nil {
+                if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
+                    AppDelegate.shared.badge = 0
+                    let missed = viewModel?.calls.filter({ (call) -> Bool in
+                        return call.status == CallStatus.missed.rawValue
+                    })
+                    tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
     }
@@ -99,6 +101,7 @@ class CallListViewController: UIViewController {
         profileVC.delegate = self
         if networkCheck.currentStatus == .satisfied {
             getCallHistory {
+                if UIApplication.shared.applicationState.rawValue == 0 {
                 if AppDelegate.shared.badge != nil {
                     if AppDelegate.shared.badge! > 0 && self.viewModel!.calls.count > 0 {
                         self.tabbar?.viewModel?.checkCallAsSeen(callId: self.viewModel!.calls[0]._id!, completion: { (error) in
@@ -120,6 +123,7 @@ class CallListViewController: UIViewController {
                         })
                     }
                 }
+                }
             }
         } else {
             getCallHistoryFromDB()
@@ -135,9 +139,9 @@ class CallListViewController: UIViewController {
     }
     
     func getHistory() {
-        activity.startAnimating()
+//        activity.startAnimating()
         viewModel!.getHistory { (calls) in
-            self.activity.stopAnimating()
+//            self.activity.stopAnimating()
             self.viewModel!.calls = calls
             if self.viewModel!.calls.count == 0 {
                 self.addNoCallView()
@@ -184,6 +188,7 @@ class CallListViewController: UIViewController {
         label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        
         label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
@@ -242,50 +247,11 @@ class CallListViewController: UIViewController {
     }
     
     func showEndedCall(_ callHistory: CallHistory) {
-        print(viewModel?.calls.count)
-                viewModel?.save(newCall: callHistory, completion: {
-                    //            cell.delegate = self
-                    //            if self.viewModel?.calls[0].callSuggestTime != self.viewModel?.calls[1].callSuggestTime {
-                    //                print(self.viewModel?.calls.count)
-                    self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                    
-                    //            }
-                })
-            }
-    
-        //            else {
-//                self.tableView.beginUpdates()
-//                self.viewModel!.deleteItem(index: 1, completion: { (error)   in
-//                    self.tableView.deleteRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
-//                })
-//                (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).call = callHistory
-                
-//                (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).configureCell(contact: (self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CallTableViewCell).contact!, call: callHistory)
-                
-                //                self.tableView.endUpdates()
-//            }
-//            if self.tabbar?.selectedIndex == 0 {
-//                let nc = self.tabbar!.viewControllers![0] as! UINavigationController
-//                if nc.viewControllers.count == 1 {
-//                    self.viewWillAppear(false)
-//                }
-//            }
-//        })
-        //        if viewModel!.calls.count >= 15 {
-        //                   viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-        //               }
-        //        if callHistory.callStartTime == nil || callHistory.callEndTime == nil {
-        //            activeCall?.callDuration = 0
-        //        } else {
-        //            let userCalendar = Calendar.current
-        //            let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
-        //            let timeDifference = userCalendar.dateComponents(requestedComponent, from: stringToDate(date: callHistory.callStartTime!)!, to: stringToDate(date: callHistory.callEndTime!)!)
-        //            let hourToSeconds = timeDifference.hour! * 3600
-        //            let minuteToSeconds = timeDifference.minute! * 60
-        //            let seconds = timeDifference.second!
-        //            activeCall?.callDuration = hourToSeconds + minuteToSeconds + seconds
-        //        }
-    
+        viewModel?.save(newCall: callHistory, completion: {
+            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+        })
+    }
+
     func stringToDate(date: Date) -> String {
         let parsedDate = date
         let calendar = Calendar.current
@@ -439,7 +405,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         activeCall?.isHandleCall = false
         let calleeId = call.caller == SharedConfigs.shared.signedUser?.id ? call.receiver : call.caller
         if onCall == false  {
-            self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text ?? "")
+            self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text ?? "", mode: .videoCall)
             
         } else if onCall && id != nil {
             if id == calleeId {
