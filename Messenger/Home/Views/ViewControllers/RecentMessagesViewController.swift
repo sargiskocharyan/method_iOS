@@ -179,15 +179,15 @@ class RecentMessagesViewController: UIViewController {
                 }
             }
             else {
-                if (messages != nil) {
+                if (messages?.array != nil) {
                     self.isLoadedMessages = true
-                    if messages?.count == 0 {
+                    if messages?.array?.count == 0 {
                         self.setView("you_have_no_messages".localized())
                         DispatchQueue.main.async {
                             self.spinner.stopAnimating()
                         }
                     } else {
-                        self.chats = messages!.filter({ (chat) -> Bool in
+                        self.chats = messages!.array!.filter({ (chat) -> Bool in
                             return chat.message != nil
                         })
                         self.sort()
@@ -224,12 +224,12 @@ class RecentMessagesViewController: UIViewController {
                     let visibleViewController = self.navigationController?.visibleViewController
                     if visibleViewController is ChatViewController {
                         let chatViewController = visibleViewController as! ChatViewController
-                        chatViewController.getnewMessage( callHistory: callHistory, message: message, name, lastname, username)
+                        chatViewController.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     }
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -237,7 +237,7 @@ class RecentMessagesViewController: UIViewController {
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()

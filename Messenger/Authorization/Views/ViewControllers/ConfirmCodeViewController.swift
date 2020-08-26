@@ -212,7 +212,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     }
     
     func registerDevice(completion: @escaping (NetworkResponse?)->()) {
-        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken!, voipDeviceToken: SharedConfigs.shared.voIPToken!) { (error) in
+        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken ?? "", voipDeviceToken: SharedConfigs.shared.voIPToken ?? "") { (error) in
             completion(error)
         }
     }

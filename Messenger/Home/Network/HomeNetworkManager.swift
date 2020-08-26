@@ -106,7 +106,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
+    func getChats(completion: @escaping (Chats?, NetworkResponse?)->()) {
         router.request(.getChats) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -121,7 +121,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Chat].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(Chats.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -134,7 +134,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChatMessages(id: String,  completion: @escaping ([Message]?, NetworkResponse?)->()) {
+    func getChatMessages(id: String,  completion: @escaping (Messages?, NetworkResponse?)->()) {
         router.request(.getChatMessages(id: id)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -149,7 +149,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Message].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(Messages.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)

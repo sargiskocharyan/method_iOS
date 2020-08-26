@@ -103,8 +103,8 @@ class VideoViewController: UIViewController {
             remoteRenderer!.videoContentMode = .scaleAspectFill
             ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
             #else
-            let localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-            let remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
+            localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+            remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
             #endif
             remoteRenderer!.tag = 10
             localRenderer!.tag = 11

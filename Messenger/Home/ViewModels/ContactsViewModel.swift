@@ -32,7 +32,7 @@ class ContactsViewModel {
     }
   }
     
-    func getMessages(id: String, completion: @escaping ([Message]?, NetworkResponse?)->()) {
+    func getMessages(id: String, completion: @escaping (Messages?, NetworkResponse?)->()) {
         HomeNetworkManager().getChatMessages(id: id) { (messages, error) in
             completion(messages, error)
         }

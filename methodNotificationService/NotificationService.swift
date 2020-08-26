@@ -24,6 +24,11 @@ class NotificationService: UNNotificationServiceExtension {
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         if let bestAttemptContent = bestAttemptContent {
             if let aps = bestAttemptContent.userInfo["aps"] as? [String: Any]{
+//                SocketTaskManager.shared.connect {
+//                    SocketTaskManager.shared.messageReceived(chatId: bestAttemptContent.userInfo["chatId"] as! String, messageId: bestAttemptContent.userInfo["messageId"] as! String) {
+//                        SocketTaskManager.shared.disconnect()
+//                    }
+//                }
                 if let alert = aps["alert"] as? [String: String]{
                     bestAttemptContent.title = alert["title"]!
                 }

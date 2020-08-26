@@ -25,6 +25,11 @@ struct MessageCall: Codable {
     var duration: Float?
 }
 
+struct Messages: Codable {
+    var array: [Message]?
+    let statuses: [MessageStatus]?
+}
+
 struct Message: Codable {
     var call: MessageCall?
     var type: String?
@@ -49,6 +54,19 @@ struct Chat: Codable {
     var message: Message?
     var recipientAvatarURL: String?
     var online: Bool?
+    let statuses: [MessageStatus]?
+}
+
+struct Chats :Codable {
+    let array: [Chat]?
+    let badge: Int
+}
+
+struct MessageStatus: Codable {
+    let receivedMessageDate: String?
+    let readMessageDate: String?
+    let _id: String?
+    let userId: String?
 }
 
 struct UserById: Codable {

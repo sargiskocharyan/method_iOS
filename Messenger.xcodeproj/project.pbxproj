@@ -104,6 +104,8 @@
 		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
 		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
 		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
+		CDF2F88E24F6BCD50071D850 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
+		CDF2F88F24F6BCD60071D850 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
@@ -1061,6 +1063,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1ACA84324E42C1E00EE8578 /* NotificationService.swift in Sources */,
+				CDF2F88E24F6BCD50071D850 /* SocketTaskManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1069,6 +1072,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1ACA85724E48A5900EE8578 /* NotificationViewController.swift in Sources */,
+				CDF2F88F24F6BCD60071D850 /* SocketTaskManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

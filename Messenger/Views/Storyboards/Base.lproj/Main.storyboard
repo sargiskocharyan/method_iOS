@@ -494,24 +494,34 @@
                                             <outlet property="userImageView" destination="5fE-iB-8C2" id="Hvp-22-JLQ"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendMessageCell" rowHeight="52" id="ENa-zs-JHJ" customClass="SendMessageTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="82" width="414" height="52"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendMessageCell" rowHeight="63" id="ENa-zs-JHJ" customClass="SendMessageTableViewCell" customModule="method" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="82" width="414" height="63"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ENa-zs-JHJ" id="Ing-gv-lGW">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="52"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labelkjkkk" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1Z-Ym-IUC" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="321.66666666666669" y="10" width="72.333333333333314" height="42"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelkjkkkSoc" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1Z-Ym-IUC" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
+                                                    <rect key="frame" x="295.33333333333331" y="10" width="98.666666666666686" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hY6-wp-Ddo">
+                                                    <rect key="frame" x="365" y="36" width="29" height="14"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="14" id="vvm-1w-Bds"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                                    <color key="textColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="b1Z-Ym-IUC" firstAttribute="width" relation="lessThanOrEqual" secondItem="Ing-gv-lGW" secondAttribute="width" multiplier="0.61" id="8Lz-Uq-ANw"/>
-                                                <constraint firstAttribute="bottom" secondItem="b1Z-Ym-IUC" secondAttribute="bottom" id="ECG-nW-dCr"/>
+                                                <constraint firstItem="hY6-wp-Ddo" firstAttribute="trailing" secondItem="b1Z-Ym-IUC" secondAttribute="trailing" id="HTP-cM-Whb"/>
                                                 <constraint firstItem="b1Z-Ym-IUC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ing-gv-lGW" secondAttribute="leading" constant="20" id="d1H-T4-N0a"/>
+                                                <constraint firstItem="hY6-wp-Ddo" firstAttribute="top" secondItem="b1Z-Ym-IUC" secondAttribute="bottom" constant="8" id="eSG-0N-e4a"/>
                                                 <constraint firstAttribute="trailing" secondItem="b1Z-Ym-IUC" secondAttribute="trailing" constant="20" id="gIk-Xo-L4G"/>
                                                 <constraint firstItem="b1Z-Ym-IUC" firstAttribute="top" secondItem="Ing-gv-lGW" secondAttribute="top" constant="10" id="yf4-hl-Gyt"/>
                                             </constraints>
@@ -519,10 +529,11 @@
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="messageLabel" destination="b1Z-Ym-IUC" id="uW9-1N-HbJ"/>
+                                            <outlet property="readMessage" destination="hY6-wp-Ddo" id="EQX-QW-OhZ"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendCallCell" rowHeight="89" id="WkN-RD-dVt" userLabel="sendCallCell" customClass="SendCallTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="134" width="414" height="89"/>
+                                        <rect key="frame" x="0.0" y="145" width="414" height="89"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WkN-RD-dVt" id="waC-6E-4FP">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="89"/>
@@ -591,7 +602,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveCallCell" rowHeight="85" id="aSE-Mr-Nwb" userLabel="receiveCallCell" customClass="RecieveCallTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="223" width="414" height="85"/>
+                                        <rect key="frame" x="0.0" y="234" width="414" height="85"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aSE-Mr-Nwb" id="Gdd-VL-e1h">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="85"/>
@@ -672,8 +683,8 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="HnE-B9-FLi">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="HnE-B9-FLi">
+                                <rect key="frame" x="0.0" y="379" width="414" height="483"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>

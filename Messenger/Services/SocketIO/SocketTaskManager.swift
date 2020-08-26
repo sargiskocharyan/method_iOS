@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SocketIO
+import SocketIO 
 import WebRTC
 
 protocol SocketIODelegate: class {
@@ -75,9 +75,9 @@ class SocketTaskManager {
             changeSocketStatus(status: .connecting)
             socket!.on(clientEvent: .connect) { (dataArray, ack) in
                 self.manager?.reconnects = true
+
                 self.changeSocketStatus(status: .connected)
                 print(self.socket!.handlers)
-                print()
                 if self.socket!.handlers.count <= 2 {
                     self.tabbar?.handleCallAccepted()
                     self.tabbar?.handleCall()
@@ -87,6 +87,7 @@ class SocketTaskManager {
                     self.tabbar?.getCandidates()
                     self.tabbar?.handleCallEnd()
                     self.tabbar?.getNewMessage()
+                    
                 }
                 for compleion in self.completions {
                     compleion()
@@ -101,6 +102,42 @@ class SocketTaskManager {
             print("join")
         }
     }
+    
+    func messageReceived(chatId: String, messageId: String, completionHandler: @escaping () -> ()) {
+        socket?.emit("messageReceived", chatId, messageId) {
+            print("message Received")
+            completionHandler()
+        }
+    }
+    
+    func messageRead(chatId: String, messageId: String) {
+           socket?.emit("messageRead", chatId, messageId) {
+               print("message Read")
+           }
+       }
+    
+    func messageTyping(chatId: String) {
+        socket?.emit("messageTyping", chatId)
+    }
+    
+    func addMessageReceivedListener(completionHandler: @escaping (_ createdAt: String, _ userId: String) -> ()) {
+        socket?.on("messageReceived") {dataArray, socketAck in
+            completionHandler(dataArray[0] as! String, dataArray[1] as! String)
+        }
+    }
+    
+    func addMessageReadListener(completionHandler: @escaping (_ createdAt: String, _ userId: String) -> ()) {
+        socket?.on("messageRead") {dataArray, socketAck in
+            completionHandler(dataArray[0] as! String, dataArray[1] as! String)
+        }
+    }
+    
+    func addMessageTypingListener(completionHandler: @escaping (_ userId: String) -> ()) {
+        socket?.on("messageTyping") {dataArray, socketAck in
+            print(dataArray)
+        }
+    }
+    
     
     func leaveRoom(roomName: String) {
         self.socket!.emit("leaveRoom", roomName)
@@ -196,9 +233,7 @@ class SocketTaskManager {
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }
-    
-    
-    
+        
     func addCallEndListener(completionHandler: @escaping (_ roomName: String) -> Void) {
            socket!.on("callEnded") { (dataArray, socketAck) -> Void in
                completionHandler(dataArray[0] as! String)
@@ -208,6 +243,12 @@ class SocketTaskManager {
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
+            let chatId = data["reciever"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["reciever"] as? String
+            if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
+                self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
+                    print("messageReceived")
+                }
+            }
             if let call = data["call"] as? NSDictionary {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)

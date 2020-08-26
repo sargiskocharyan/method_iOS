@@ -93,7 +93,7 @@ class RecentMessagesViewModel {
         }
     }
     
-    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
+    func getChats(completion: @escaping (Chats?, NetworkResponse?)->()) {
         HomeNetworkManager().getChats() { (chats, error) in
             completion(chats, error)
         }

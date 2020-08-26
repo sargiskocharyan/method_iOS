@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     let callManager = CallManager()
     var tabbar: MainTabBarController?
     var badge: Int?
+    var isFromPush: Bool?
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -79,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        print(launchOptions)
         badge = UserDefaults.standard.value(forKey: "badge") as? Int
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
@@ -158,6 +160,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         print(userInfo)
+        if userInfo["type"] as? String == "message" {
+            SocketTaskManager.shared.connect {
+                print(userInfo["chatId"] as! String)
+                SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
+                    self.isFromPush = true
+                    SocketTaskManager.shared.disconnect()
+                    completionHandler(.newData)
+                }
+            }
+        }
+       
         if userInfo["type"] as? String == "missedCallHistory" {
             badge = aps["badge"] as? Int
             if tabbar?.selectedIndex == 0 {
