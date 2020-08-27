@@ -70,6 +70,14 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     //MARK: Helper methods
     private func buildSignalingClient() -> SignalingClient {
         return SignalingClient()
@@ -142,7 +150,30 @@ func getCandidates() {
     }
 }
     
-  
+  func handleReadMessage()  {
+        SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
+            let recentNC = self.viewControllers![1] as! UINavigationController
+            let chatVC = recentNC.viewControllers[1] as! ChatViewController
+            chatVC.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
+        }
+    }
+    
+    func handleReceiveMessage()  {
+        SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
+            let recentNC = self.viewControllers![1] as! UINavigationController
+            let chatVC = recentNC.viewControllers[1] as! ChatViewController
+            chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
+        }
+    }
+    
+    func handleMessageTyping()  {
+        SocketTaskManager.shared.addMessageTypingListener { (userId) in
+            let recentNC = self.viewControllers![1] as! UINavigationController
+            let chatVC = recentNC.viewControllers[1] as! ChatViewController
+            chatVC.handleMessageTypingFromTabbar(userId: userId)
+            print(userId)
+        }
+    }
     
     func handleCallAccepted() {
          SocketTaskManager.shared.addCallAcceptedLister { (callAccepted, roomName) in

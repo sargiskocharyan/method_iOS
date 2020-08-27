@@ -90,6 +90,8 @@ class CallListViewController: UIViewController {
         }
     }
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
@@ -132,6 +134,11 @@ class CallListViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     
     //MARK: Helper methods
     @objc func addButtonTapped() {

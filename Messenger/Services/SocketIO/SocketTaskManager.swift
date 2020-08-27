@@ -87,7 +87,9 @@ class SocketTaskManager {
                     self.tabbar?.getCandidates()
                     self.tabbar?.handleCallEnd()
                     self.tabbar?.getNewMessage()
-                    
+                    self.tabbar?.handleReadMessage()
+                    self.tabbar?.handleReceiveMessage()
+                    self.tabbar?.handleMessageTyping()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -134,7 +136,7 @@ class SocketTaskManager {
     
     func addMessageTypingListener(completionHandler: @escaping (_ userId: String) -> ()) {
         socket?.on("messageTyping") {dataArray, socketAck in
-            print(dataArray)
+            completionHandler(dataArray[0] as! String)
         }
     }
     

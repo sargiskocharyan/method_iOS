@@ -27,7 +27,7 @@ struct MessageCall: Codable {
 
 struct Messages: Codable {
     var array: [Message]?
-    let statuses: [MessageStatus]?
+    var statuses: [MessageStatus]?
 }
 
 struct Message: Codable {
@@ -63,8 +63,8 @@ struct Chats :Codable {
 }
 
 struct MessageStatus: Codable {
-    let receivedMessageDate: String?
-    let readMessageDate: String?
+    var receivedMessageDate: String?
+    var readMessageDate: String?
     let _id: String?
     let userId: String?
 }
