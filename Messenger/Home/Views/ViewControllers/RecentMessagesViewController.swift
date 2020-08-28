@@ -33,7 +33,7 @@ class RecentMessagesViewController: UIViewController {
         let vc = nc?.viewControllers[0] as! ProfileViewController
         vc.delegate = self
         vc.profileDelegate = self
-        getChats()
+        getChats(isFromHome: false)
         self.navigationController?.navigationBar.topItem?.title = "chats".localized()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         if #available(iOS 10.0, *) {
@@ -72,7 +72,7 @@ class RecentMessagesViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func refreshData() {
-        getChats()
+        getChats(isFromHome: false)
     }
     
     @objc func getOnlineUsers() {
@@ -163,15 +163,18 @@ class RecentMessagesViewController: UIViewController {
         return ("\(hour):\(minutes)")
     }
     
-    func getChats() {
+    func getChats(isFromHome: Bool) {
         self.isLoaded = true
         if isLoadedMessages == false {
             DispatchQueue.main.async {
                 self.spinner.startAnimating()
             }
         }
-        
+        if !isLoadedMessages {
         viewModel!.getChats { (messages, error) in
+            var oldModel = SharedConfigs.shared.signedUser
+            oldModel?.unreadMessagesCount = messages?.badge
+            UserDataController().populateUserProfile(model: oldModel!)
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -191,10 +194,12 @@ class RecentMessagesViewController: UIViewController {
                             return chat.message != nil
                         })
                         self.sort()
+                        if !isFromHome {
                         DispatchQueue.main.async {
                             self.removeView()
                             self.spinner.stopAnimating()
                             self.tableView.reloadData()
+                        }
                         }
                     }
                 }
@@ -202,6 +207,7 @@ class RecentMessagesViewController: UIViewController {
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
             }
+        }
         }
     }
     

@@ -144,18 +144,19 @@ class ContactProfileViewController: UIViewController {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
-                    DispatchQueue.main.async {
-                        self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
-                            if error != nil {
-                                print(error as Any)
-                            } else {
-                                self.view.viewWithTag(45)?.removeFromSuperview()
-                                self.delegate?.addNewContact(contact: self.contact!)
-                                self.onContactPage = true
-                                self.removeFromContactsButton.isHidden = false
-                            }
-                        })
-                    }
+//                    DispatchQueue.main.async {
+//                        self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
+//                            if error != nil {
+//                                print(error as Any)
+//                            } else {
+//                                self.view.viewWithTag(45)?.removeFromSuperview()
+//                                self.delegate?.addNewContact(contact: self.contact!)
+//                                self.onContactPage = true
+//                                self.removeFromContactsButton.isHidden = false
+//                            }
+//                        })
+//                    }
+                    print("fsyo narmalny")
                 }
             }
     }

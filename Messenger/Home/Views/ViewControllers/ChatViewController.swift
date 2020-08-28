@@ -359,6 +359,9 @@ class ChatViewController: UIViewController {
                         let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
                         if date.compare(readMessageDate!).rawValue == 1 {
                             SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
+                            if let _ = SharedConfigs.shared.signedUser?.unreadMessagesCount {
+                                SharedConfigs.shared.signedUser?.unreadMessagesCount! -= 1
+                            }
                             break
                         }
                     }

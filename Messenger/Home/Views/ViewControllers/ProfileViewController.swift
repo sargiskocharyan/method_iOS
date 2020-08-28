@@ -239,7 +239,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
         closeButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 20).isActive = true
-        let topConstraint = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .top, multiplier: 1, constant: 20)
         closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: 20).isActive = true
         closeButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
@@ -395,7 +394,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func checkInformation() {
         let user = SharedConfigs.shared.signedUser
         
-        notificationCountLabel.text = "\(user?.missedCallHistory?.count)" ?? "0"
+        notificationCountLabel.text = "\(((user?.missedCallHistory?.count ?? 0) + (user?.unreadMessagesCount ?? 0)))"
         if user?.name == nil {
             nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray

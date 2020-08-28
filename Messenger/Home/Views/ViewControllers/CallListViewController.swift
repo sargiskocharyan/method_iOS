@@ -102,7 +102,6 @@ class CallListViewController: UIViewController {
         profileVC.delegate = self
         if networkCheck.currentStatus == .satisfied {
             getCallHistory {
-                if UIApplication.shared.applicationState.rawValue == 0 {
                 if AppDelegate.shared.badge != nil {
                     if AppDelegate.shared.badge! > 0 && self.viewModel!.calls.count > 0 {
                         self.tabbar?.viewModel?.checkCallAsSeen(callId: self.viewModel!.calls[0]._id!, completion: { (error) in
@@ -122,7 +121,6 @@ class CallListViewController: UIViewController {
                                 }
                             }
                         })
-                    }
                 }
                 }
             }

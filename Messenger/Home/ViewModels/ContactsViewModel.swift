@@ -20,6 +20,12 @@ class ContactsViewModel {
         }
     }
     
+    func confirmRequest(id: String, confirm: Bool, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().confirmRequest(id: id, confirm: confirm) { (error) in
+            completion(error)
+        }
+    }
+    
     func findUsers(term: String, completion: @escaping (Users?, NetworkResponse?)->()) {
         HomeNetworkManager().findUsers(term: term) { (responseObject, error) in
             completion(responseObject, error)

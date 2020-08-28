@@ -41,7 +41,8 @@ class MainTabBarController: UITabBarController {
     var isFirstConnect: Bool?
     var timer: Timer?
     var mode: VideoVCMode?
-    
+    var nc = NotificationCenter.default
+        
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,11 +50,9 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
-        
-         SocketTaskManager.shared.connect(completionHandler: {
+        SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
-        
         callManager = AppDelegate.shared.callManager
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
@@ -61,6 +60,7 @@ class MainTabBarController: UITabBarController {
         callsVC!.delegate = self
         self.signalClient = self.buildSignalingClient()
         self.signalClient?.delegate = self
+        
         Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -143,6 +143,30 @@ class MainTabBarController: UITabBarController {
                 }
             }
         }
+    }
+    
+    func handleNewContactRequest() {
+        SocketTaskManager.shared.addNewContactRequestListener { (userId) in
+            print("new request sent")
+        }
+    }
+    
+    func handleNewContact() {
+        SocketTaskManager.shared.addNewContactListener { (userId) in
+            print("new contact added")
+        }
+    }
+    
+    func handleContactRequestRejected() {
+        SocketTaskManager.shared.addContactRequestRejectedListener { (userId) in
+            print("new request rejected")
+        }
+    }
+    
+    func handleContactRemoved() {
+        SocketTaskManager.shared.addContactRemovedListener(completionHandler: { (userId) in
+            print("mez jnjin, e pah, iranq giden...")
+        })
     }
 
 func getCandidates() {
@@ -380,6 +404,12 @@ func getCandidates() {
                     }
                 } else {
                     self.checkOurInfo()
+                    DispatchQueue.main.async {
+                         let recentNC = self.viewControllers![1] as! UINavigationController
+                        let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
+                        recentVC.getChats(isFromHome: true)
+                    }
+                    
                 }
             }
         }

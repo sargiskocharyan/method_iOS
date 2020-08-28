@@ -21,16 +21,21 @@ protocol AppDelegateD : class {
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
-    let nc = NotificationCenter.default
+//    let nc = NotificationCenter.default
     weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     var tabbar: MainTabBarController?
     var badge: Int?
     var window: UIWindow?
+    let name = Notification.Name("didReceiveData")
     
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
+    }
+    
+    @objc func handleNotification() {
+        print("bcfgvjfgyvyugrvyugruvgrg-----")
     }
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -53,7 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
         badge = UserDefaults.standard.value(forKey: "badge") as? Int
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
@@ -61,9 +66,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         registerForPushNotifications()
         self.voipRegistration()
         UNUserNotificationCenter.current().delegate = self
-        
-        setInitialStoryboard()
-
+        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any]
+        if remoteNotif != nil {
+            let aps = remoteNotif!["aps"] as? [String:AnyObject]
+            NSLog("\n Custom: \(String(describing: aps))")
+            UserDataController().loadUserInfo()
+            SocketTaskManager.shared.connect {
+                print(remoteNotif!["chatId"] as! String)
+                SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
+                    SocketTaskManager.shared.disconnect()
+                }
+            }
+        }
+        else {
+            NSLog("//////////////////////////Normal launch")
+            setInitialStoryboard()
+        }
         return true
     }
     
@@ -87,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        UserDefaults.standard.set(badge, forKey: "badge")
+         UserDefaults.standard.set(badge, forKey: "badge")
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
@@ -137,6 +155,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         print(launchOptions)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification) , name: name, object: nil)
         print(UIApplication.shared.applicationState.rawValue)
         return false
     }

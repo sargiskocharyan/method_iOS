@@ -88,6 +88,25 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    
+    func confirmRequest(id: String, confirm: Bool, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.confirmRequest(id: id, confirm: confirm)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     func logout(deviceUUID: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.logout(deviceUUID: deviceUUID)) { data, response, error in
             if error != nil {

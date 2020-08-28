@@ -43,6 +43,7 @@ struct AUTHUrls {
     static let VerifyPhone       = "/verifyphonenumber"
     static let RegisterDevice    = "/registerdevice"
     static let ReadCalls         = "/readcallhistory"
+    static let confirmRequest    = "/confirmContactRequest"
 }
 
 struct AppLangKeys {

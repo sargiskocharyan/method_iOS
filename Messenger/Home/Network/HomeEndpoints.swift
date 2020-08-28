@@ -33,6 +33,7 @@ public enum HomeApi {
     case verifyPhone(number: String, code: String)
     case registerDevice(token: String, voipToken: String)
     case readCalls(id: String)
+    case confirmRequest(id: String, confirm: Bool)
 }
 
 extension HomeApi: EndPointType {
@@ -90,6 +91,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.RegisterDevice
         case .readCalls(_):
             return AUTHUrls.ReadCalls
+        case .confirmRequest(_, _):
+            return AUTHUrls.confirmRequest
         }
     }
     
@@ -141,6 +144,8 @@ extension HomeApi: EndPointType {
         case .registerDevice(_,_):
             return .post
         case .readCalls(_):
+            return .post
+        case .confirmRequest(_, _):
             return .post
         }
     }
@@ -247,6 +252,10 @@ extension HomeApi: EndPointType {
         case .readCalls(id: let id):
             let parameters:Parameters = ["callId": id]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .confirmRequest(id: let id, confirm: let confirm):
+            let parameters:Parameters = ["userId": id, "confirm" : confirm]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

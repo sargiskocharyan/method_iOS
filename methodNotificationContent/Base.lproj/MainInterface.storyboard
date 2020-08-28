@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,39 +22,58 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yfh-FT-rtY">
-                                <rect key="frame" x="0.0" y="80" width="320" height="320"/>
+                                <rect key="frame" x="0.0" y="80" width="320" height="270"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="EOo-Ef-3IO">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="87"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="32"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bmX-w8-K19">
-                                        <rect key="frame" x="0.0" y="92" width="320" height="228"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="bmX-w8-K19" secondAttribute="height" multiplier="80:57" id="Z9X-Mh-k1B"/>
-                                        </constraints>
+                                        <rect key="frame" x="80" y="37" width="160" height="160"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tr3-1e-m7G">
-                                        <rect key="frame" x="240" y="240" width="70" height="70"/>
+                                        <rect key="frame" x="230" y="217" width="70" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="70" id="1vz-dD-KsI"/>
-                                            <constraint firstAttribute="height" constant="70" id="5Fa-FX-4D7"/>
+                                            <constraint firstAttribute="height" constant="40" id="5Fa-FX-4D7"/>
                                         </constraints>
-                                        <state key="normal" title="dsfsfsdf" image="Armenian"/>
+                                        <state key="normal" title="Confirm">
+                                            <color key="titleColor" name="Color"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="confirmRequestAction:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="SNb-HS-NsU"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fup-JT-pJP">
+                                        <rect key="frame" x="20" y="217" width="70" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="69s-Ng-ggM"/>
+                                            <constraint firstAttribute="width" constant="70" id="zLq-88-WIs"/>
+                                        </constraints>
+                                        <state key="normal" title="Reject">
+                                            <color key="titleColor" name="Color"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="rejectRequestAction:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="tqw-gh-hxk"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="2eX-bn-4RF"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="3na-FG-cnT"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="6sL-HV-aoD"/>
-                                    <constraint firstAttribute="bottom" secondItem="Tr3-1e-m7G" secondAttribute="bottom" constant="10" id="Dii-5E-qVQ"/>
-                                    <constraint firstAttribute="trailing" secondItem="bmX-w8-K19" secondAttribute="trailing" id="MHE-yt-1sf"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="7VP-12-O90"/>
                                     <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" id="OZn-KM-JMw"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="height" secondItem="yfh-FT-rtY" secondAttribute="height" multiplier="0.5" constant="25" id="Or2-vd-m95"/>
+                                    <constraint firstAttribute="bottom" secondItem="Tr3-1e-m7G" secondAttribute="bottom" constant="13" id="Qit-aL-nsI"/>
+                                    <constraint firstItem="Tr3-1e-m7G" firstAttribute="top" secondItem="bmX-w8-K19" secondAttribute="bottom" constant="20" id="VGz-FE-FjD"/>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="top" secondItem="yfh-FT-rtY" secondAttribute="top" id="XEc-gt-2lC"/>
-                                    <constraint firstAttribute="bottom" secondItem="bmX-w8-K19" secondAttribute="bottom" id="hTQ-KT-x8z"/>
-                                    <constraint firstAttribute="trailing" secondItem="Tr3-1e-m7G" secondAttribute="trailing" constant="10" id="tsA-S3-3pS"/>
+                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="height" secondItem="yfh-FT-rtY" secondAttribute="height" multiplier="0.1" constant="5" id="YM2-bT-jyc"/>
+                                    <constraint firstItem="Fup-JT-pJP" firstAttribute="top" secondItem="bmX-w8-K19" secondAttribute="bottom" constant="20" id="hf2-UU-KVh"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="centerX" secondItem="yfh-FT-rtY" secondAttribute="centerX" id="j7s-FE-CBG"/>
+                                    <constraint firstAttribute="trailing" secondItem="Tr3-1e-m7G" secondAttribute="trailing" constant="20" id="tsA-S3-3pS"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="width" secondItem="yfh-FT-rtY" secondAttribute="width" multiplier="0.5" id="yNq-3Z-LAw"/>
+                                    <constraint firstItem="Fup-JT-pJP" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" constant="20" id="z7h-8b-cpb"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -63,7 +83,7 @@
                             <constraint firstItem="GcN-lo-r42" firstAttribute="height" secondItem="S3S-Oj-5AN" secondAttribute="height" multiplier="0.2" id="Fez-S5-41A"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="top" secondItem="S3S-Oj-5AN" secondAttribute="top" id="GYT-JO-8Rh"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" id="Gx2-zu-zZz"/>
-                            <constraint firstItem="2BE-c3-nQJ" firstAttribute="bottom" secondItem="yfh-FT-rtY" secondAttribute="bottom" id="JOy-5H-Uf3"/>
+                            <constraint firstItem="2BE-c3-nQJ" firstAttribute="bottom" secondItem="yfh-FT-rtY" secondAttribute="bottom" constant="50" id="JOy-5H-Uf3"/>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="top" secondItem="GcN-lo-r42" secondAttribute="bottom" id="O5v-jQ-449"/>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="leading" secondItem="2BE-c3-nQJ" secondAttribute="leading" id="R5z-8N-sLd"/>
                             <constraint firstAttribute="trailing" secondItem="GcN-lo-r42" secondAttribute="trailing" id="cla-CY-dSv"/>
@@ -85,6 +105,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Armenian" width="128" height="128"/>
+        <namedColor name="Color">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>

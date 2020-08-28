@@ -23,7 +23,14 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any required interface initialization here.
+    }
+    
+    @IBAction func rejectRequestAction(_ sender: UIButton) {
+        NotificationCenter.default.post(name: NSNotification.Name.init("confirm"), object: nil, userInfo: ["confirm": false])
+    }
+    
+    @IBAction func confirmRequestAction(_ sender: UIButton) {
+        NotificationCenter.default.post(name: NSNotification.Name.init("confirm"), object: nil, userInfo: ["confirm": true])
     }
     
     func didReceive(_ notification: UNNotification) {

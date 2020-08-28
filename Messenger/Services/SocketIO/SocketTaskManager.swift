@@ -98,6 +98,10 @@ class SocketTaskManager {
                     self.tabbar?.handleReadMessage()
                     self.tabbar?.handleReceiveMessage()
                     self.tabbar?.handleMessageTyping()
+                    self.tabbar?.handleNewContact()
+                    self.tabbar?.handleNewContactRequest()
+                    self.tabbar?.handleContactRequestRejected()
+                    self.tabbar?.handleContactRemoved()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -224,20 +228,43 @@ class SocketTaskManager {
         }
     
     func addCandidatesListener(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
-               socket!.on("candidates") { (dataArray, socketAck) in
-                let data = dataArray[0] as! Dictionary<String, Any>
-                let json: Dictionary = ["candidate": data["candidate"] ?? "", "sdpMid": data["sdpMid"] ?? "", "sdpMLineIndex": data["sdpMLineIndex"] ?? ""] as [String : Any]
-                self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as? String))
-                completionHandler(json)
-               }
-           }
+        socket!.on("candidates") { (dataArray, socketAck) in
+            let data = dataArray[0] as! Dictionary<String, Any>
+            let json: Dictionary = ["candidate": data["candidate"] ?? "", "sdpMid": data["sdpMid"] ?? "", "sdpMLineIndex": data["sdpMLineIndex"] ?? ""] as [String : Any]
+            self.delegate?.receiveCandidate(remoteCandidate: RTCIceCandidate(sdp: (data["candidate"] as! String), sdpMLineIndex: data["sdpMLineIndex"] as! Int32, sdpMid: data["sdpMid"] as? String))
+            completionHandler(json)
+        }
+    }
+    
+    func addNewContactRequestListener(completionHandler: @escaping (_ userId: String) -> Void) {
+        socket?.on("newContactRequest", callback: { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        })
+    }
+    
+    func addNewContactListener(completionHandler: @escaping (_ userId: String) -> Void) {
+           socket?.on("newContact", callback: { (dataArray, socketAck) in
+               completionHandler(dataArray[0] as! String)
+           })
+       }
+    
+    func addContactRequestRejectedListener(completionHandler: @escaping (_ userId: String) -> Void) {
+        socket?.on("contactRequestRejected", callback: { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        })
+    }
+    
+    func addContactRemovedListener(completionHandler: @escaping (_ userId: String) -> Void) {
+        socket?.on("contactRemoved", callback: { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        })
+    }
     
     func send(message: String, id: String) {
         socket!.emit("sendMessage", message, id)
     }
     
     func disconnect() {
-//        self.socket!.removeAllHandlers()
         socket!.disconnect()
         leaveRoom(roomName: "")
         manager?.reconnects = false
