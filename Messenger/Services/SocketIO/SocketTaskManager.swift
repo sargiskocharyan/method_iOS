@@ -106,6 +106,7 @@ class SocketTaskManager {
     func messageReceived(chatId: String, messageId: String, completionHandler: @escaping () -> ()) {
         socket?.emit("messageReceived", chatId, messageId) {
             print("message Received")
+            
             completionHandler()
         }
     }

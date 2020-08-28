@@ -27,7 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     let callManager = CallManager()
     var tabbar: MainTabBarController?
     var badge: Int?
-    var isFromPush: Bool?
+    var window: UIWindow?
+    
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -50,6 +51,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             return nil
         }
     }()
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        
+        badge = UserDefaults.standard.value(forKey: "badge") as? Int
+        DropDown.startListeningToKeyboard()
+        FirebaseApp.configure()
+        providerDelegate = ProviderDelegate(callManager: callManager)
+        registerForPushNotifications()
+        self.voipRegistration()
+        UNUserNotificationCenter.current().delegate = self
+        
+        setInitialStoryboard()
+
+        return true
+    }
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token))
@@ -78,36 +95,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         print("pushRegistry:didInvalidatePushTokenForType:")
     }
     
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        print(launchOptions)
-        badge = UserDefaults.standard.value(forKey: "badge") as? Int
-        DropDown.startListeningToKeyboard()
-        FirebaseApp.configure()
-        providerDelegate = ProviderDelegate(callManager: callManager)
-        registerForPushNotifications()
-        self.voipRegistration()
-        return true
-    }
-    
     func voipRegistration() {
         let mainQueue = DispatchQueue.main
         let voipRegistry: PKPushRegistry = PKPushRegistry(queue: mainQueue)
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = [PKPushType.voIP]
-    }
-    
-    // MARK: UISceneSession Lifecycle
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-    
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
     
@@ -147,24 +139,36 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print("Failed to register for remote notifications with error: \(error)")
     }
     
-    //    func applicationDidEnterBackground(_ application: UIApplication) {
-    //
-    //    }
-    //
-    //    func applicationWillEnterForeground(_ application: UIApplication) {
-    //
-    //    }
+    func applicationDidEnterBackground(_ application: UIApplication) {
+       SocketTaskManager.shared.disconnect()
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+       if SharedConfigs.shared.signedUser != nil {
+            SocketTaskManager.shared.connect {
+                print("scene page connect")
+            }
+        }
+        
+//        let tabbar = window?.rootViewController as? MainTabBarController
+//        if tabbar?.selectedIndex == 0 {
+//            let nc = tabbar!.viewControllers![0] as! UINavigationController
+//            if (nc.viewControllers.last as? CallListViewController) != nil {
+//                (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+//            }
+//        }
+    }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
             completionHandler(.failed)
             return
         }
-        print(userInfo)
+//        print(userInfo)
         if userInfo["type"] as? String == "message" {
             SocketTaskManager.shared.connect {
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
-                    self.isFromPush = true
                     SocketTaskManager.shared.disconnect()
                     completionHandler(.newData)
                 }
@@ -196,10 +200,66 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.newData)
         }
     }
+    
+    //MARK:- Helper
+    
+    func setInitialStoryboard() {
+        defineMode()
+        defineStartController()
+    }
+    
+    func defineStartController() {
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        UserDataController().loadUserInfo()
+        if SharedConfigs.shared.signedUser == nil {
+            AuthRouter().assemblyModule()
+        } else {
+            MainRouter().assemblyModule()
+        }
+        //self.window?.makeKeyAndVisible()
+    }
+    
+    func defineMode() {
+         if UserDefaults.standard.object(forKey: "mode") as? String == "dark" {
+             UIApplication.shared.windows.forEach { window in
+                 window.overrideUserInterfaceStyle = .dark
+             }
+             SharedConfigs.shared.setMode(selectedMode: "dark")
+         } else {
+             UIApplication.shared.windows.forEach { window in
+                 window.overrideUserInterfaceStyle = .light
+             }
+             SharedConfigs.shared.setMode(selectedMode: "light")
+         }
+     }
+    
+    
+    
+    
 }
 
 extension AppDelegate: Subscriber {
     func didHandleConnectionEvent() {
         
+    }
+}
+
+extension AppDelegate {
+   func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let actionIdentifier = response.actionIdentifier
+
+        switch actionIdentifier {
+        case UNNotificationDismissActionIdentifier: // Notification was dismissed by user
+            // Do something
+            print("disssmiss")
+            completionHandler()
+        case UNNotificationDefaultActionIdentifier: // App was opened from notification
+            // Do something
+            print("app opened from notification")
+            completionHandler()
+        default:
+             print("handler =========")
+            completionHandler()
+        }
     }
 }
