@@ -91,8 +91,13 @@ class ChatViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.endEditing(true)
-        tabBarController?.tabBar.isHidden = true
-        navigationController?.navigationBar.isHidden = false
+        if !(tabBarController?.tabBar.isHidden)! {
+            tabBarController?.tabBar.isHidden = true
+        }
+        if (navigationController?.navigationBar.isHidden)! {
+            navigationController?.navigationBar.isHidden = false
+        }
+        checkAndSendReadEvent()
     }
     
     //MARK: Helper methods
@@ -258,15 +263,12 @@ class ChatViewController: UIViewController {
     
     func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
-//            if message.reciever == self.id {
-//                DispatchQueue.main.async {
-//                    self.inputTextField.text = ""
-//                }
-//            }
             if message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.allMessages?.array!.append(message)
+                if navigationController?.viewControllers.count == 2 {
+                    SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
+                }
             } else {
-               
                 for i in 0..<allMessages!.array!.count {
                     if message.text  == allMessages!.array![i].text {
                          (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "hasav serverin"
@@ -347,6 +349,26 @@ class ChatViewController: UIViewController {
         }
     }
     
+    func checkAndSendReadEvent() {
+        if allMessages != nil && allMessages?.array != nil {
+            if (self.allMessages?.array!.count)! > 0 {
+                let status = self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? self.allMessages?.statuses![0] : self.allMessages?.statuses![1]
+                let readMessageDate = self.stringToDateD(date: (status?.readMessageDate)!)
+                for i in (0...((self.allMessages?.array!.count)! - 1)) {
+                    if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].senderId != SharedConfigs.shared.signedUser?.id {
+                        let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
+                        if date.compare(readMessageDate!).rawValue == 1 {
+                            SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
+                            break
+                        }
+                    }
+                }
+                let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
+            }
+        }
+    }
+    
     func getChatMessages() {
         self.activity.startAnimating()
         viewModel!.getChatMessages(id: id!) { (messages, error) in
@@ -362,20 +384,7 @@ class ChatViewController: UIViewController {
                     self.activity.stopAnimating()
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.tableView.reloadData()
-                    if (self.allMessages?.array!.count)! > 0 {
-                        let status = self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? self.allMessages?.statuses![0] : self.allMessages?.statuses![1]
-                        for i in (0...((self.allMessages?.array!.count)! - 1)) {
-                            if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].senderId != SharedConfigs.shared.signedUser?.id {
-                                let date = self.stringToDate(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)
-                                if date > (status?.readMessageDate)! {
-                                    SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![i]._id!)
-                                    break
-                                }
-                            }
-                        }
-                        let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
-                        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
-                    }
+                    self.checkAndSendReadEvent()
                 }
             }
         }

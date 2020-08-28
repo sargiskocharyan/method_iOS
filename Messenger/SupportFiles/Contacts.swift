@@ -46,8 +46,9 @@ public class User: NSObject,  Codable, NSCoding {
     public var birthday: String?
     public var address: String?
     public var gender: String?
+    public var missedCallHistory: [String]?
     
-    init(name: String?, lastname: String?, university: String?, _id: String, username: String?, avaterURL: String?, email: String?, info: String?, phoneNumber: String?, birthday: String?, address: String?, gender: String?) {
+    init(name: String?, lastname: String?, university: String?, _id: String, username: String?, avaterURL: String?, email: String?, info: String?, phoneNumber: String?, birthday: String?, address: String?, gender: String?, missedCallHistory: [String]?) {
         self.name = name
         self.lastname = lastname
         self.university = university
@@ -60,6 +61,7 @@ public class User: NSObject,  Codable, NSCoding {
         self.birthday = birthday
         self.address = address
         self.gender = gender
+        self.missedCallHistory = missedCallHistory
     }
     
     public override init() {
@@ -94,7 +96,7 @@ public class User: NSObject,  Codable, NSCoding {
         let mBirthday = aDecoder.decodeObject(forKey: "birthday") as? String
         let mAddress = aDecoder.decodeObject(forKey: "address") as? String
         let mGender = aDecoder.decodeObject(forKey: "gender") as? String
-        self.init(name: mName, lastname: mLastname, university: mUniversity, _id: mId!, username: mUsername, avaterURL: mAvatarURL, email: mEmailL, info: mInfo, phoneNumber: mPhoneNumber, birthday: mBirthday, address: mAddress, gender: mGender)
+        self.init(name: mName, lastname: mLastname, university: mUniversity, _id: mId!, username: mUsername, avaterURL: mAvatarURL, email: mEmailL, info: mInfo, phoneNumber: mPhoneNumber, birthday: mBirthday, address: mAddress, gender: mGender, missedCallHistory: nil)
     }
     
 }

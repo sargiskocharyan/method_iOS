@@ -39,6 +39,7 @@ struct UserModel: Codable, PropertyReflectable {
     var tokenExpire: Date?
     var deactivated: Bool?
     var blocked: Bool?
+    var missedCallHistory: [String]?
     
     
     enum CodingKeys: String, CodingKey {
@@ -56,6 +57,7 @@ struct UserModel: Codable, PropertyReflectable {
         case tokenExpire
         case deactivated
         case blocked
+        case missedCallHistory
     }
 }
 

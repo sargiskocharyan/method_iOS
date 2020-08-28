@@ -49,6 +49,14 @@ class SocketTaskManager {
         lock.unlock()
     }
     
+    func customEvent(launchOptions: Dictionary<UIApplication.LaunchOptionsKey, Any>?, completion: @escaping () -> ()) {
+        print(launchOptions)
+        socket?.emit("custom", launchOptions as! SocketData) {
+            completion()
+        }
+        
+    }
+    
     func connect(completionHandler: @escaping () -> ()) {
         if status == .disconnected || status == .notConnected {
             print(SharedConfigs.shared.signedUser?.token as Any)
@@ -139,7 +147,6 @@ class SocketTaskManager {
             completionHandler(dataArray[0] as! String)
         }
     }
-    
     
     func leaveRoom(roomName: String) {
         self.socket!.emit("leaveRoom", roomName)

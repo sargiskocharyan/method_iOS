@@ -91,7 +91,6 @@ class CallListViewController: UIViewController {
     }
     
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
@@ -318,7 +317,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil), call: self.viewModel!.calls[indexPath])
+                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.viewModel!.calls[indexPath])
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)

@@ -34,16 +34,26 @@
                                             <constraint firstAttribute="width" secondItem="bmX-w8-K19" secondAttribute="height" multiplier="80:57" id="Z9X-Mh-k1B"/>
                                         </constraints>
                                     </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tr3-1e-m7G">
+                                        <rect key="frame" x="240" y="240" width="70" height="70"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="70" id="1vz-dD-KsI"/>
+                                            <constraint firstAttribute="height" constant="70" id="5Fa-FX-4D7"/>
+                                        </constraints>
+                                        <state key="normal" title="dsfsfsdf" image="Armenian"/>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="2eX-bn-4RF"/>
                                     <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="3na-FG-cnT"/>
                                     <constraint firstItem="bmX-w8-K19" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="6sL-HV-aoD"/>
+                                    <constraint firstAttribute="bottom" secondItem="Tr3-1e-m7G" secondAttribute="bottom" constant="10" id="Dii-5E-qVQ"/>
                                     <constraint firstAttribute="trailing" secondItem="bmX-w8-K19" secondAttribute="trailing" id="MHE-yt-1sf"/>
                                     <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" id="OZn-KM-JMw"/>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="top" secondItem="yfh-FT-rtY" secondAttribute="top" id="XEc-gt-2lC"/>
                                     <constraint firstAttribute="bottom" secondItem="bmX-w8-K19" secondAttribute="bottom" id="hTQ-KT-x8z"/>
+                                    <constraint firstAttribute="trailing" secondItem="Tr3-1e-m7G" secondAttribute="trailing" constant="10" id="tsA-S3-3pS"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -74,4 +84,7 @@
             <point key="canvasLocation" x="137.68115942028987" y="70.3125"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Armenian" width="128" height="128"/>
+    </resources>
 </document>

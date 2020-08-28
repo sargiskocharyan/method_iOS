@@ -75,7 +75,7 @@ class MainTabBarController: UITabBarController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+            super.viewDidAppear(animated)
     }
     
     //MARK: Helper methods
@@ -169,8 +169,10 @@ func getCandidates() {
     func handleMessageTyping()  {
         SocketTaskManager.shared.addMessageTypingListener { (userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
-            let chatVC = recentNC.viewControllers[1] as! ChatViewController
-            chatVC.handleMessageTypingFromTabbar(userId: userId)
+            if recentNC.viewControllers.count > 1 {
+                let chatVC = recentNC.viewControllers[1] as? ChatViewController
+                chatVC?.handleMessageTypingFromTabbar(userId: userId)
+            }
             print(userId)
         }
     }
@@ -293,6 +295,8 @@ func getCandidates() {
                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
                         if chatVC == nil {
                             self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        } else {
+                            chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                         }
                     } else {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
@@ -305,6 +309,8 @@ func getCandidates() {
                 } else if recentNc.viewControllers.count > 2 {
                     if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
+                        chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {
                         if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
                          self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
@@ -350,7 +356,7 @@ func getCandidates() {
     func checkOurInfo() {
         recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
             if error == nil {
-                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil))
+                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory))
             }
         })
     }
