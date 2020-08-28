@@ -1,5 +1,5 @@
 //
-//  HomePageViewController.swift
+//  MainTabBarController.swift
 //  Messenger
 //
 //  Created by Employee1 on 6/2/20.
@@ -197,7 +197,7 @@ func getCandidates() {
         SocketTaskManager.shared.addAnswerListener { (data) in
             self.videoVC?.handleAnswer()
             self.webRTCClient!.set(remoteSdp: RTCSessionDescription(type: RTCSdpType.offer, sdp: data["sdp"]!), completion: { (error) in
-                print(error?.localizedDescription as Any)
+                //print(error?.localizedDescription as Any)
             })
             self.webRTCClient!.answer { (localSdp) in
                 self.hasLocalSdp = true

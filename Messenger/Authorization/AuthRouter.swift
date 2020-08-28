@@ -21,7 +21,7 @@ class AuthRouter {
         vc.viewModel = BeforeLoginViewModel()
         router.beforeLoginViewController = vc
         let nc = UINavigationController(rootViewController: vc)
-        let window: UIWindow? = UIApplication.shared.windows[0]
+        let window: UIWindow? = AppDelegate.shared.window
         window?.rootViewController = nc
         window?.makeKeyAndVisible()
     }

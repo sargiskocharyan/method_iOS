@@ -721,7 +721,7 @@
         <!--Main Tab Bar Controller-->
         <scene sceneID="N1N-xw-iO5">
             <objects>
-                <tabBarController storyboardIdentifier="MainTabBarController" id="7ih-Il-Sgm" customClass="MainTabBarController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MainTabBarController" modalPresentationStyle="fullScreen" id="7ih-Il-Sgm" customClass="MainTabBarController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="t3n-FB-42z">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>

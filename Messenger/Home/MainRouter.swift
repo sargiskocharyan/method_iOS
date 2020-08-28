@@ -49,7 +49,7 @@ class MainRouter {
         router.profileViewController = (profileNC.viewControllers[0] as! ProfileViewController)
         router.profileViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.profileViewController?.viewModel = ProfileViewModel()
-        let window: UIWindow? = UIApplication.shared.windows[0]
+        let window = AppDelegate.shared.window
         window?.rootViewController = router.mainTabBarController
         window?.makeKeyAndVisible()
     }
