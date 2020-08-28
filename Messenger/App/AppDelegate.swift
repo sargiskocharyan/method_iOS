@@ -134,6 +134,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
     }
     
+  
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        print(launchOptions)
+        print(UIApplication.shared.applicationState.rawValue)
+        return false
+    }
+    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         // 1. Print out error if PNs registration not successful
         print("Failed to register for remote notifications with error: \(error)")

@@ -456,6 +456,13 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8cm-if-vJV">
                                 <rect key="frame" x="0.0" y="44" width="414" height="763"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TgR-84-R0D">
+                                    <rect key="frame" x="0.0" y="347" width="414" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveMessageCell" rowHeight="54" id="oEm-03-m9Q" customClass="RecieveMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="54"/>
@@ -513,7 +520,7 @@
                                                         <constraint firstAttribute="height" constant="14" id="vvm-1w-Bds"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                                                    <color key="textColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -704,6 +711,7 @@
                         <outlet property="activity" destination="HnE-B9-FLi" id="JPh-wf-7tj"/>
                         <outlet property="tableView" destination="8cm-if-vJV" id="HfZ-jT-KWO"/>
                         <outlet property="tableViewBottomConstraint" destination="aZ6-fi-vgg" id="hvQ-aT-mpX"/>
+                        <outlet property="typingLabel" destination="TgR-84-R0D" id="ZQo-L4-XSV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Foi-RC-zhS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
