@@ -54,7 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        
         badge = UserDefaults.standard.value(forKey: "badge") as? Int
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
@@ -249,25 +248,5 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 extension AppDelegate: Subscriber {
     func didHandleConnectionEvent() {
         
-    }
-}
-
-extension AppDelegate {
-   func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let actionIdentifier = response.actionIdentifier
-
-        switch actionIdentifier {
-        case UNNotificationDismissActionIdentifier: // Notification was dismissed by user
-            // Do something
-            print("disssmiss")
-            completionHandler()
-        case UNNotificationDefaultActionIdentifier: // App was opened from notification
-            // Do something
-            print("app opened from notification")
-            completionHandler()
-        default:
-             print("handler =========")
-            completionHandler()
-        }
     }
 }
