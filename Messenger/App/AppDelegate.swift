@@ -154,7 +154,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
   
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        print(launchOptions)
         NotificationCenter.default.addObserver(self, selector: #selector(handleNotification) , name: name, object: nil)
         print(UIApplication.shared.applicationState.rawValue)
         return false

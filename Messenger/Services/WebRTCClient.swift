@@ -40,7 +40,7 @@ final class WebRTCClient: NSObject {
      var localVideoTrack: RTCVideoTrack?
     private var remoteVideoTrack: RTCVideoTrack?
     private var localDataChannel: RTCDataChannel?
-    private var remoteDataChannel: RTCDataChannel?
+//    private var remoteDataChannel: RTCDataChannel?
     private var audioTrackGlobal: RTCAudioTrack?
     var webRTCCDelegate: WebRTCDelegate?
     var stream: RTCMediaStream?
@@ -192,8 +192,8 @@ final class WebRTCClient: NSObject {
         
         // Data
         if let dataChannel = createDataChannel() {
-            dataChannel.delegate = self
             self.localDataChannel = dataChannel
+            self.localDataChannel!.delegate = self
         }
     }
     
@@ -227,7 +227,12 @@ final class WebRTCClient: NSObject {
     // MARK: Data Channels
     private func createDataChannel() -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
-        guard let dataChannel = self.peerConnection?.dataChannel(forLabel: "WebRTCData", configuration: config) else {
+        config.channelId = 1
+        config.isOrdered = true
+        config.isNegotiated = true
+//        config.maxPacketLifeTime = -1
+        print(config.streamId)
+        guard let dataChannel = self.peerConnection?.dataChannel(forLabel: "1", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
         }
@@ -236,7 +241,9 @@ final class WebRTCClient: NSObject {
     
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
-        self.remoteDataChannel?.sendData(buffer)
+        print("\n\nsendData \(self.localDataChannel)")
+        print("\n***\n \(self.localDataChannel!.sendData(buffer))")
+        
     }
 }
 
@@ -282,8 +289,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        debugPrint("peerConnection did open data channel")
-        self.remoteDataChannel = dataChannel
+        debugPrint("peerConnection did open remote data channel")
+        dataChannel.delegate = self
+        self.localDataChannel = dataChannel
+        
     }
 }
 
@@ -319,7 +328,6 @@ extension WebRTCClient {
             guard let self = self else {
                 return
             }
-            
             self.rtcAudioSession.lockForConfiguration()
             do {
                 try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
@@ -340,10 +348,15 @@ extension WebRTCClient {
 
 extension WebRTCClient: RTCDataChannelDelegate {
     func dataChannelDidChangeState(_ dataChannel: RTCDataChannel) {
-        debugPrint("dataChannel did change state: \(dataChannel.readyState)")
+        print("dataChannel did change state: \(dataChannel.readyState)")
     }
     
     func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
         self.delegate?.webRTCClient(self, didReceiveData: buffer.data)
     }
+    
+    func dataChannel(_ dataChannel: RTCDataChannel, didChangeBufferedAmount amount: UInt64) {
+        print("didChangeBufferedAmount")
+    }
+    
 }

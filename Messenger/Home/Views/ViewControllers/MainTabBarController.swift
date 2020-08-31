@@ -46,6 +46,7 @@ class MainTabBarController: UITabBarController {
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        subscribeForChangesObservation()
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
         self.retrieveCoreDataObjects()
@@ -68,6 +69,15 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
+    }
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+           print("changed! \(change), \(object)")
+       }
+    
+    func subscribeForChangesObservation() {
+        let defaults = UserDefaults(suiteName: "group.am.dynamic.method")
+        defaults!.addObserver(self, forKeyPath: "Last", options: [.initial], context: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

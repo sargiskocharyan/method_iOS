@@ -155,6 +155,7 @@
 		2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
+		CD2C163C24FD325A0054114C /* methodNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationService.entitlements; sourceTree = "<group>"; };
 		CD352E352488F71900747E32 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		CD352E372488F72F00747E32 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
 		CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
@@ -766,6 +767,7 @@
 		F1ACA84124E42C1E00EE8578 /* methodNotificationService */ = {
 			isa = PBXGroup;
 			children = (
+				CD2C163C24FD325A0054114C /* methodNotificationService.entitlements */,
 				F1ACA84224E42C1E00EE8578 /* NotificationService.swift */,
 				F1ACA84424E42C1E00EE8578 /* Info.plist */,
 			);
@@ -1315,6 +1317,7 @@
 		F1ACA84924E42C1F00EE8578 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = methodNotificationService/methodNotificationService.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				INFOPLIST_FILE = methodNotificationService/Info.plist;
@@ -1324,7 +1327,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.methodNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.a;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1335,6 +1338,7 @@
 		F1ACA84A24E42C1F00EE8578 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = methodNotificationService/methodNotificationService.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7T5ESUR6XP;
 				INFOPLIST_FILE = methodNotificationService/Info.plist;
@@ -1344,7 +1348,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.methodNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.a;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1365,7 +1369,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.methodNotificationContent;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.b;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1386,7 +1390,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.methodNotificationContent;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.b;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

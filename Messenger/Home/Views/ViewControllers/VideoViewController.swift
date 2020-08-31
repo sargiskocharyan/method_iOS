@@ -66,6 +66,8 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func speakerOnAndOff(_ sender: UIButton) {
+//        let data = Data(base64Encoded: "O yeee", options: .ignoreUnknownCharacters)
+        webRTCClient?.sendData("turn off microphone".data(using: .utf8)!)
         if !isSpeakerOn {
             isSpeakerOn = true
             sender.setImage(UIImage(named: "speakerOn"), for: .normal)
