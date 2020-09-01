@@ -40,6 +40,7 @@ struct Message: Codable {
     let updatedAt: String?
     let owner: String?
     let senderId: String?
+    
 }
 
 struct OnlineUsers: Codable {
@@ -55,6 +56,7 @@ struct Chat: Codable {
     var recipientAvatarURL: String?
     var online: Bool?
     let statuses: [MessageStatus]?
+    var unreadMessageExists: Bool
 }
 
 struct Chats :Codable {

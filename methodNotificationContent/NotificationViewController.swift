@@ -34,8 +34,6 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         defaults!.set(true, forKey: "Last")
         defaults!.synchronize()
     }
-
-   
     
     @IBAction func confirmRequestAction(_ sender: UIButton) {
         NotificationCenter.default.post(name: NSNotification.Name.init("confirm"), object: nil, userInfo: ["confirm": true])

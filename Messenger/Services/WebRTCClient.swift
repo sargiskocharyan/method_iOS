@@ -37,10 +37,10 @@ final class WebRTCClient: NSObject {
     private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
                                    kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]    
     var videoCapturer: RTCVideoCapturer?
-     var localVideoTrack: RTCVideoTrack?
-    private var remoteVideoTrack: RTCVideoTrack?
+    var localVideoTrack: RTCVideoTrack?
+    var remoteVideoTrack: RTCVideoTrack?
     private var localDataChannel: RTCDataChannel?
-//    private var remoteDataChannel: RTCDataChannel?
+    //    private var remoteDataChannel: RTCDataChannel?
     private var audioTrackGlobal: RTCAudioTrack?
     var webRTCCDelegate: WebRTCDelegate?
     var stream: RTCMediaStream?
@@ -211,6 +211,8 @@ final class WebRTCClient: NSObject {
         stream?.removeAudioTrack(audioTrackGlobal!)
     }
     
+    
+    
     func createVideoTrack() -> RTCVideoTrack {
         let videoSource = WebRTCClient.factory.videoSource()
         
@@ -230,7 +232,7 @@ final class WebRTCClient: NSObject {
         config.channelId = 1
         config.isOrdered = true
         config.isNegotiated = true
-//        config.maxPacketLifeTime = -1
+        config.maxPacketLifeTime = 30000
         print(config.streamId)
         guard let dataChannel = self.peerConnection?.dataChannel(forLabel: "1", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")

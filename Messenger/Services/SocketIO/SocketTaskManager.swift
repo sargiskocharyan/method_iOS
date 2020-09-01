@@ -49,14 +49,6 @@ class SocketTaskManager {
         lock.unlock()
     }
     
-    func customEvent(launchOptions: Dictionary<UIApplication.LaunchOptionsKey, Any>?, completion: @escaping () -> ()) {
-        print(launchOptions)
-        socket?.emit("custom", launchOptions as! SocketData) {
-            completion()
-        }
-        
-    }
-    
     func connect(completionHandler: @escaping () -> ()) {
         if status == .disconnected || status == .notConnected {
             print(SharedConfigs.shared.signedUser?.token as Any)
@@ -102,6 +94,7 @@ class SocketTaskManager {
                     self.tabbar?.handleNewContactRequest()
                     self.tabbar?.handleContactRequestRejected()
                     self.tabbar?.handleContactRemoved()
+                    self.addErrorListener()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -264,9 +257,14 @@ class SocketTaskManager {
         socket!.emit("sendMessage", message, id)
     }
     
+    func addErrorListener() {
+        socket?.on(clientEvent: .error, callback: { (dataArray, socketAck) in
+            print(dataArray)
+        })
+    }
+    
     func disconnect() {
         socket!.disconnect()
-        leaveRoom(roomName: "")
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }
@@ -297,6 +295,28 @@ class SocketTaskManager {
             if let text = data["text"] as? String {
                 let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
                 completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
+                for chat in vc.chats {
+                    if chat.id == data["senderId"] as? String {
+                        if !chat.unreadMessageExists {
+                            var oldModel = SharedConfigs.shared.signedUser
+                            oldModel?.unreadMessagesCount! += 1
+                            UserDataController().populateUserProfile(model: oldModel!)
+                            
+                            DispatchQueue.main.async {
+                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                                let profile = nc.viewControllers[0] as! ProfileViewController
+                                profile.changeNotificationNumber()
+                            }
+                            
+                            if let tabItems = self.tabbar?.tabBar.items {
+                                let tabItem = tabItems[1]
+                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                            }
+                            break
+                        }
+                    }
+                }
                 return
             }
         }

@@ -61,6 +61,12 @@ class RecentMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
         navigationController?.navigationBar.isHidden = false
+        let tabbar = self.tabBarController as? MainTabBarController
+        if let tabItems = tabbar?.tabBar.items {
+            let tabItem = tabItems[1]
+            let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
+            tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
+        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -123,6 +129,14 @@ class RecentMessagesViewController: UIViewController {
         }
     }
     
+    func handleRead(id: String) {
+        for i in 0..<chats.count {
+            if chats[i].id == id {
+                chats[i].unreadMessageExists = false
+            }
+        }
+    }
+    
     func setView(_ str: String) {
         DispatchQueue.main.async {
             self.removeView()
@@ -175,6 +189,18 @@ class RecentMessagesViewController: UIViewController {
             var oldModel = SharedConfigs.shared.signedUser
             oldModel?.unreadMessagesCount = messages?.badge
             UserDataController().populateUserProfile(model: oldModel!)
+            DispatchQueue.main.async {
+                let tabbar = self.tabBarController as? MainTabBarController
+                let nc = tabbar!.viewControllers![2] as! UINavigationController
+                let profile = nc.viewControllers[0] as! ProfileViewController
+                profile.changeNotificationNumber()
+                if let tabItems = tabbar?.tabBar.items {
+                    let tabItem = tabItems[1]
+                    let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
+                    tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
+                }
+            }
+           
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -235,7 +261,7 @@ class RecentMessagesViewController: UIViewController {
                 }
                 for i in 0..<self.chats.count {
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil)
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: true)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -243,7 +269,7 @@ class RecentMessagesViewController: UIViewController {
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: true))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()

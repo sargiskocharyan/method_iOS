@@ -71,21 +71,28 @@ class CallListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
-        if UIApplication.shared.applicationState.rawValue == 0 {
-            if AppDelegate.shared.badge != nil {
-                if AppDelegate.shared.badge! > 0 && viewModel!.calls.count > 0 {
-                    AppDelegate.shared.badge = 0
-                    let missed = viewModel?.calls.filter({ (call) -> Bool in
-                        return call.status == CallStatus.missed.rawValue
-                    })
-                    tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
-                        if error != nil {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                            }
+        if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount  {
+            if count > 0 && viewModel!.calls.count > 0 {
+                let missed = viewModel?.calls.filter({ (call) -> Bool in
+                    return call.status == CallStatus.missed.rawValue
+                })
+                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                         }
-                    })
-                }
+                    } else {
+//                        UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
+                        var oldModel = SharedConfigs.shared.signedUser
+                        oldModel?.missedCallHistoryCount = 0
+                        UserDataController().populateUserProfile(model: oldModel!)
+                        DispatchQueue.main.async {
+                            let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                            let profile = nc.viewControllers[0] as! ProfileViewController
+                            profile.changeNotificationNumber()
+                        }
+                    }
+                })
             }
         }
     }
@@ -102,34 +109,39 @@ class CallListViewController: UIViewController {
         profileVC.delegate = self
         if networkCheck.currentStatus == .satisfied {
             getCallHistory {
-                if AppDelegate.shared.badge != nil {
-                    if AppDelegate.shared.badge! > 0 && self.viewModel!.calls.count > 0 {
-                        self.tabbar?.viewModel?.checkCallAsSeen(callId: self.viewModel!.calls[0]._id!, completion: { (error) in
-                            if error == nil {
-                                AppDelegate.shared.badge = 0
-                                DispatchQueue.main.async {
-                                    UIApplication.shared.applicationIconBadgeNumber = 0
-                                    if let tabItems = self.tabbar?.tabBar.items {
-                                        let tabItem = tabItems[0]
-                                        tabItem.badgeValue = nil
-                                    }
-                                }
-                                
-                            } else {
-                                DispatchQueue.main.async {
-                                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                                }
-                            }
-                        })
-                }
-                }
+//                if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount  {
+//                    if count > 0 && self.viewModel!.calls.count > 0 {
+//                        let missed = self.viewModel?.calls.filter({ (call) -> Bool in
+//                            return call.status == CallStatus.missed.rawValue
+//                        })
+//                        if missed!.count > 0 {
+//                            var oldModel = SharedConfigs.shared.signedUser
+//                            oldModel?.missedCallHistoryCount = 0
+//                            UserDataController().populateUserProfile(model: oldModel!)
+//                            self.tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
+//                                if error == nil {
+//                                    DispatchQueue.main.async {
+//                                        UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
+//                                        if let tabItems = self.tabbar?.tabBar.items {
+//                                            let tabItem = tabItems[0]
+//                                            tabItem.badgeValue = nil
+//                                        }
+//                                    }
+//                                } else {
+//                                    DispatchQueue.main.async {
+//                                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                                    }
+//                                }
+//                            })
+//                        }
+//                    }
+//                }
             }
         } else {
             getCallHistoryFromDB()
         }
         networkCheck.addObserver(observer: self)
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {

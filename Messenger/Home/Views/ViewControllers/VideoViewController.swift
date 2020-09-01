@@ -44,20 +44,14 @@ class VideoViewController: UIViewController {
                     self.isCameraOff = false
                 })
             } else {
-                //            webRTCClient?.localVideoTrack = webRTCClient?.createVideoTrack()
-                //            webRTCClient?.stream?.addVideoTrack(webRTCClient!.localVideoTrack!)
-                //            webRTCClient?.peerConnection?.add((webRTCClient?.localVideoTrack)!, streamIds: ["stream"])
                 embedView(localRenderer!, into: self.ourView)
                 webRTCClient?.localVideoTrack?.isEnabled = true
-                //            webRTCClient?.peerConnection?.add(webRTCClient!.stream!)
-                
                 webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
                 isCameraOff = true
             }
         } else {
             videoVCMode = .videoCall
             self.viewWillAppear(false)
-//            ourView.removeFromSuperview()
         }
     }
     
@@ -66,7 +60,6 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func speakerOnAndOff(_ sender: UIButton) {
-//        let data = Data(base64Encoded: "O yeee", options: .ignoreUnknownCharacters)
         webRTCClient?.sendData("turn off microphone".data(using: .utf8)!)
         if !isSpeakerOn {
             isSpeakerOn = true
@@ -98,6 +91,7 @@ class VideoViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         if videoVCMode == .videoCall {
+            webRTCClient?.speakerOn()
             #if arch(arm64)
             localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
             remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
@@ -118,6 +112,7 @@ class VideoViewController: UIViewController {
             self.embedView(remoteRenderer!, into: self.view)
             self.view.sendSubviewToBack(remoteRenderer!)
         } else {
+            webRTCClient?.speakerOff()
             ourView.backgroundColor = .clear
         }
     }
@@ -125,7 +120,7 @@ class VideoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(named: "videoColor")
-        webRTCClient?.speakerOff()
+        
         webRTCClient?.webRTCCDelegate = self
     }
     
@@ -154,6 +149,17 @@ class VideoViewController: UIViewController {
             webRTCClient?.unmuteAudio()
         }
         isMicrophoneOn = !isMicrophoneOn
+    }
+    
+    func turnOffOtherSideCamera() {
+        webRTCClient?.remoteVideoTrack?.isEnabled = false
+        DispatchQueue.main.async {
+            self.remoteRenderer?.backgroundColor = .clear
+        }
+    }
+    
+    func turnOnOtherSideCamera() {
+        webRTCClient?.remoteVideoTrack?.isEnabled = true
     }
     
     func closeAll() {

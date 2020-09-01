@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     var tabbar: MainTabBarController?
-    var badge: Int?
+    //var badge: Int?
     var window: UIWindow?
     let name = Notification.Name("didReceiveData")
     
@@ -59,7 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
-        badge = UserDefaults.standard.value(forKey: "badge") as? Int
+         UserDataController().loadUserInfo()
+    //    badge = SharedConfigs.shared.signedUser.
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
@@ -70,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         if remoteNotif != nil {
             let aps = remoteNotif!["aps"] as? [String:AnyObject]
             NSLog("\n Custom: \(String(describing: aps))")
-            UserDataController().loadUserInfo()
+           
             SocketTaskManager.shared.connect {
                 print(remoteNotif!["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
@@ -102,10 +103,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
                 }
             }
         })
-    }
-    
-    func applicationWillTerminate(_ application: UIApplication) {
-         UserDefaults.standard.set(badge, forKey: "badge")
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
@@ -189,9 +186,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.failed)
             return
         }
-//        print(userInfo)
+        
         if userInfo["type"] as? String == "message" {
             SocketTaskManager.shared.connect {
+                var oldModel = SharedConfigs.shared.signedUser
+                oldModel?.unreadMessagesCount! += 1
+                UserDataController().populateUserProfile(model: oldModel!)
+                if let tabItems = self.tabbar?.tabBar.items {
+                    let tabItem = tabItems[1]
+                    tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                }
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
                     SocketTaskManager.shared.disconnect()
@@ -199,27 +203,33 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
             }
         }
-       
         if userInfo["type"] as? String == "missedCallHistory" {
-            badge = aps["badge"] as? Int
-            if tabbar?.selectedIndex == 0 {
-                let nc = tabbar!.viewControllers![0] as! UINavigationController
-                if nc.viewControllers.count > 1 {
-                    if let tabItems = self.tabbar?.tabBar.items {
-                        let tabItem = tabItems[0]
-                        tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
-                        print(badge as Any)
+            if let badge = aps["badge"] as? Int {
+                var oldModel = SharedConfigs.shared.signedUser
+                oldModel?.missedCallHistoryCount = badge
+                UserDataController().populateUserProfile(model: oldModel!)
+                let nc = tabbar!.viewControllers![2] as! UINavigationController
+                let profile = nc.viewControllers[0] as! ProfileViewController
+                profile.changeNotificationNumber()
+                if tabbar?.selectedIndex == 0 {
+                    let nc = tabbar!.viewControllers![0] as! UINavigationController
+                    if nc.viewControllers.count > 1 {
+                        if let tabItems = self.tabbar?.tabBar.items {
+                            let tabItem = tabItems[0]
+                            tabItem.badgeValue = badge > 0 ? "\(badge)" : nil
+                            print(badge as Any)
+                        }
+                    } else {
+                        if application.applicationState.rawValue == 0 && tabbar?.selectedIndex == 0 && (tabbar?.selectedViewController as! UINavigationController).viewControllers.count == 1 {
+                            (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                        }
                     }
                 } else {
-                    if application.applicationState.rawValue == 0 {
-                        (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                    if let tabItems = self.tabbar?.tabBar.items {
+                        let tabItem = tabItems[0]
+                        tabItem.badgeValue = badge > 0 ? "\(badge)" : nil
+                        print(badge as Any)
                     }
-                }
-            } else {
-                if let tabItems = self.tabbar?.tabBar.items {
-                    let tabItem = tabItems[0]
-                    tabItem.badgeValue = badge != nil && badge! > 0 ? "\(badge!)" : nil
-                    print(badge as Any)
                 }
             }
             completionHandler(.newData)

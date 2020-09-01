@@ -80,7 +80,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-            if (SocketTaskManager.shared.socket?.handlers.count)! < 10 {
+            if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
                 self.handleReadMessage()
                 self.handleMessageTyping()
                 self.handleReceiveMessage()
@@ -355,13 +355,23 @@ class ChatViewController: UIViewController {
                 let status = self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? self.allMessages?.statuses![0] : self.allMessages?.statuses![1]
                 let readMessageDate = self.stringToDateD(date: (status?.readMessageDate)!)
                 for i in (0...((self.allMessages?.array!.count)! - 1)) {
+                    let index = (self.allMessages?.array!.count)! - i - 1
+                    let createdAt = self.allMessages!.array![index].createdAt
                     if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].senderId != SharedConfigs.shared.signedUser?.id {
                         let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
                         if date.compare(readMessageDate!).rawValue == 1 {
                             SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
-                            if let _ = SharedConfigs.shared.signedUser?.unreadMessagesCount {
-                                SharedConfigs.shared.signedUser?.unreadMessagesCount! -= 1
+                            
+                            if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                                self.allMessages?.statuses![0].readMessageDate = createdAt
+                            } else {
+                                self.allMessages?.statuses![1].readMessageDate = createdAt
                             }
+                            let recent = (tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
+                            recent.handleRead(id: self.id!)
+                            var oldModel = SharedConfigs.shared.signedUser
+                            oldModel?.unreadMessagesCount! -= 1
+                            UserDataController().populateUserProfile(model: oldModel!)
                             break
                         }
                     }

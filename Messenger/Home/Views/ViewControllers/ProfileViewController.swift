@@ -391,10 +391,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func checkInformation() {
+    func changeNotificationNumber() {
         let user = SharedConfigs.shared.signedUser
-        
-        notificationCountLabel.text = "\(((user?.missedCallHistory?.count ?? 0) + (user?.unreadMessagesCount ?? 0)))"
+        if notificationCountLabel != nil {
+            notificationCountLabel.text = "\(((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0)))"
+        }
+    }
+    
+    func checkInformation() {
+         let user = SharedConfigs.shared.signedUser
+        changeNotificationNumber()
         if user?.name == nil {
             nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray

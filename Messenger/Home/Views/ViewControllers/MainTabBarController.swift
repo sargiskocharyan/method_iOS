@@ -42,7 +42,7 @@ class MainTabBarController: UITabBarController {
     var timer: Timer?
     var mode: VideoVCMode?
     var nc = NotificationCenter.default
-        
+    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,11 +69,13 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
+        
+        
     }
-
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-           print("changed! \(change), \(object)")
-       }
+        print("changed! \(change), \(object)")
+    }
     
     func subscribeForChangesObservation() {
         let defaults = UserDefaults(suiteName: "group.am.dynamic.method")
@@ -85,7 +87,7 @@ class MainTabBarController: UITabBarController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
+        super.viewDidAppear(animated)
     }
     
     //MARK: Helper methods
@@ -102,14 +104,11 @@ class MainTabBarController: UITabBarController {
     func handleCallSessionEnded() {
         SocketTaskManager.shared.addCallSessionEndedListener { (roomname) in
             print(roomname)
-//            if self.roomName == roomname {
-                
-//            }
             for call in self.callManager.calls {
-                    self.callManager.end(call: call)
-                }
-                self.callManager.removeAllCalls()
-//            }
+                self.callManager.end(call: call)
+            }
+            self.callManager.removeAllCalls()
+            //            }
         }
     }
     
@@ -125,21 +124,21 @@ class MainTabBarController: UITabBarController {
         self.callsVC?.handleCall(id: id)
         completionHandler()
         return
-//        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-//            if (error != nil) {
-//                DispatchQueue.main.async {
-//                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-//                }
-//                completionHandler("")
-//                return
-//            } else if user != nil {
-//                DispatchQueue.main.async {
-//
-//                    completionHandler(user?.name ?? user?.username ?? "dsf")
-//                    return
-//                }
-//            }
-//        }
+        //        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
+        //            if (error != nil) {
+        //                DispatchQueue.main.async {
+        //                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+        //                }
+        //                completionHandler("")
+        //                return
+        //            } else if user != nil {
+        //                DispatchQueue.main.async {
+        //
+        //                    completionHandler(user?.name ?? user?.username ?? "dsf")
+        //                    return
+        //                }
+        //            }
+        //        }
     }
     
     func handleCall() {
@@ -178,13 +177,13 @@ class MainTabBarController: UITabBarController {
             print("mez jnjin, e pah, iranq giden...")
         })
     }
-
-func getCandidates() {
-    SocketTaskManager.shared.addCandidatesListener { (data) in
-    }
-}
     
-  func handleReadMessage()  {
+    func getCandidates() {
+        SocketTaskManager.shared.addCandidatesListener { (data) in
+        }
+    }
+    
+    func handleReadMessage()  {
         SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
             let chatVC = recentNC.viewControllers[1] as! ChatViewController
@@ -212,7 +211,7 @@ func getCandidates() {
     }
     
     func handleCallAccepted() {
-         SocketTaskManager.shared.addCallAcceptedLister { (callAccepted, roomName) in
+        SocketTaskManager.shared.addCallAcceptedLister { (callAccepted, roomName) in
             self.roomName = roomName
             self.videoVC?.handleOffer(roomName: roomName)
             if callAccepted && self.webRTCClient != nil {
@@ -261,13 +260,13 @@ func getCandidates() {
     
     func retrieveCoreDataObjects() {
         contactsViewModel!.retrieveData { (contacts) in
-//            print("Data retrieved!!!")
+            //            print("Data retrieved!!!")
         }
         contactsViewModel!.retrieveOtherContactData { (contacts) in
-//            print("Other data retrieved!!!")
+            //            print("Other data retrieved!!!")
         }
     }
-
+    
     
     func handleOffer() {
         print("1111111-----------------------------11111111")
@@ -286,7 +285,7 @@ func getCandidates() {
                     self.signalClient!.sendAnswer(roomName: roomName, sdp: localSdp)
                 }
             }
-           
+            
         }
     }
     
@@ -343,11 +342,11 @@ func getCandidates() {
                 } else if recentNc.viewControllers.count > 2 {
                     if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
-                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
+                        let chatVC = recentNc.viewControllers[1] as? ChatViewController
                         chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {
                         if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
-                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                            self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                         }
                     }
                 }
@@ -370,7 +369,7 @@ func getCandidates() {
                     }
                 }
             default:
-               break
+                break
             }
         }
     }
@@ -380,17 +379,18 @@ func getCandidates() {
         UserDataController().logOutUser()
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
-             alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
                 AuthRouter().assemblyModule()
             }))
-             self.present(alert, animated: true)
+            self.present(alert, animated: true)
         }
     }
     
-    func checkOurInfo() {
+    func checkOurInfo(completion: @escaping ()->()) {
         recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
             if error == nil {
-                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory))
+                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory, missedCallHistoryCount: user?.missedCallHistory?.count))
+                completion()
             }
         })
     }
@@ -413,12 +413,33 @@ func getCandidates() {
                         self.sessionExpires()
                     }
                 } else {
-                    self.checkOurInfo()
-                    DispatchQueue.main.async {
-                         let recentNC = self.viewControllers![1] as! UINavigationController
-                        let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
-                        recentVC.getChats(isFromHome: true)
-                    }
+                    self.checkOurInfo(completion: {
+                        DispatchQueue.main.async {
+//                            if let tabItems = self.tabBar.items {
+//                                let tabItem = tabItems[0]
+//                                tabItem.badgeValue = SharedConfigs.shared.signedUser?.missedCallHistoryCount != nil && SharedConfigs.shared.signedUser!.missedCallHistoryCount! > 0 ? "\(SharedConfigs.shared.signedUser!.missedCallHistoryCount!)" : nil
+//                            }
+                            let recentNC = self.viewControllers![1] as! UINavigationController
+                            let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
+                            if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
+                            self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], completion: { (error) in
+                                if error == nil {
+                                    var oldModel = SharedConfigs.shared.signedUser
+                                    oldModel?.missedCallHistoryCount = 0
+                                    UserDataController().populateUserProfile(model: oldModel!)
+                                    DispatchQueue.main.async {
+                                        if let tabItems = self.tabBar.items {
+                                            let tabItem = tabItems[0]
+                                            tabItem.badgeValue = nil
+                                        }
+                                    }
+                                }
+                            })
+                            }
+                            recentVC.getChats(isFromHome: true)
+                        }
+                    })
+                    
                     
                 }
             }
@@ -429,24 +450,30 @@ func getCandidates() {
 //MARK: Extension
 extension MainTabBarController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-          completionHandler()
-      }
-      
-      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-          completionHandler([.alert, .badge, .sound])
-      }
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
 }
 
 extension MainTabBarController: WebRTCClientDelegate {
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
-        DispatchQueue.main.async {
-            let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
-            let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+        let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
+        if message == "turn camera off" {
+            videoVC?.turnOffOtherSideCamera()
+        } else if message == "turn camera on" {
+            videoVC?.turnOnOtherSideCamera()
+        } else {
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
-
+    
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
         self.localCandidateCount += 1
         self.signalClient!.send(candidate: candidate, roomName: self.roomName ?? "")
@@ -470,8 +497,8 @@ extension MainTabBarController: WebRTCClientDelegate {
                 DispatchQueue.main.async {
                     self.videoVC?.startCall("connecting".localized())
                 }
-            startDate = Date()
-        }
+                startDate = Date()
+            }
         }
         else if state == .closed || state == .failed {
             isFirstConnect = nil
@@ -533,9 +560,9 @@ extension MainTabBarController: CallListViewDelegate {
         self.callsVC?.onCall = true
         videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController(mode: mode)
-//        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
-//            self.videoVC?.endCall()
-//        })
+        //        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
+        //            self.videoVC?.endCall()
+        //        })
     }
 }
 
