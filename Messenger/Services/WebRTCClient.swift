@@ -243,9 +243,9 @@ final class WebRTCClient: NSObject {
     
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
-        print("\n\nsendData \(self.localDataChannel)")
+//        print("\n\nsendData \(self.localDataChannel)")
         print("\n***\n \(self.localDataChannel!.sendData(buffer))")
-        
+         print("count after sent \(localDataChannel?.bufferedAmount)")
     }
 }
 
@@ -338,6 +338,7 @@ extension WebRTCClient {
             } catch let error {
                 debugPrint("Couldn't force audio to speaker: \(error)")
             }
+//            self.rtcAudioSession.inputNumberOfChannels = 4
             self.rtcAudioSession.unlockForConfiguration()
         }
     }
@@ -358,6 +359,7 @@ extension WebRTCClient: RTCDataChannelDelegate {
     }
     
     func dataChannel(_ dataChannel: RTCDataChannel, didChangeBufferedAmount amount: UInt64) {
+        print("Amount \(amount)")
         print("didChangeBufferedAmount")
     }
     

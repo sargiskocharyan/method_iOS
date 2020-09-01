@@ -189,6 +189,7 @@
                     <connections>
                         <outlet property="cameraOffButton" destination="kVz-P1-WYB" id="A9X-Ct-R92"/>
                         <outlet property="ourView" destination="aRg-AX-a1e" id="wo9-h1-2Gf"/>
+                        <outlet property="speakerOnOffButton" destination="x8e-4K-ikv" id="ab9-8v-abR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JeD-kD-I5A" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

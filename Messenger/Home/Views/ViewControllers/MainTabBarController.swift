@@ -488,6 +488,7 @@ extension MainTabBarController: WebRTCClientDelegate {
         else if state == .connected {
             if isFirstConnect == nil {
                 SocketTaskManager.shared.callStarted(roomname: roomName!)
+                videoVC!.handleCallConnect()
             } else {
                 SocketTaskManager.shared.callReconnected(roomname: roomName!)
             }

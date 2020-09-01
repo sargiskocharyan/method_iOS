@@ -26,6 +26,7 @@ class VideoViewController: UIViewController {
     var videoVCMode: VideoVCMode?
     @IBOutlet weak var ourView: UIView!
     @IBOutlet weak var cameraOffButton: UIButton!
+    @IBOutlet weak var speakerOnOffButton: UIButton!
     let callManager = AppDelegate.shared.callManager
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -91,6 +92,8 @@ class VideoViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         if videoVCMode == .videoCall {
+            isSpeakerOn = true
+            speakerOnOffButton.setImage(UIImage(named: "speakerOn"), for: .normal)
             webRTCClient?.speakerOn()
             #if arch(arm64)
             localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
@@ -112,6 +115,8 @@ class VideoViewController: UIViewController {
             self.embedView(remoteRenderer!, into: self.view)
             self.view.sendSubviewToBack(remoteRenderer!)
         } else {
+            isSpeakerOn = false
+            speakerOnOffButton.setImage(UIImage(named: "speakerOff"), for: .normal)
             webRTCClient?.speakerOff()
             ourView.backgroundColor = .clear
         }
@@ -193,6 +198,16 @@ class VideoViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
             self.view.viewWithTag(6)?.removeFromSuperview()
         })
+    }
+    
+    func handleCallConnect() {
+        if self.videoVCMode == .audioCall {
+            self.webRTCClient?.speakerOff()
+            self.isSpeakerOn = false
+        } else {
+            self.isSpeakerOn = true
+            self.webRTCClient?.speakerOn()
+        }
     }
     
     func handleOffer(roomName: String) {
