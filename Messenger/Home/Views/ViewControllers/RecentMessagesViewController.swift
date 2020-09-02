@@ -22,7 +22,7 @@ class RecentMessagesViewController: UIViewController {
     let refreshControl = UIRefreshControl()
     var timer: Timer?
     var mainRouter: MainRouter?
-    var spinner = UIActivityIndicatorView(style: .medium)
+//    var spinner = UIActivityIndicatorView(style: .medium)
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -43,12 +43,12 @@ class RecentMessagesViewController: UIViewController {
         }
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         tableView.tableFooterView = UIView()
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.startAnimating()
-        view.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
-        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
+//        spinner.translatesAutoresizingMaskIntoConstraints = false
+//        spinner.startAnimating()
+//        view.addSubview(spinner)
+//        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+//        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,7 +59,7 @@ class RecentMessagesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
-        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(getOnlineUsers), userInfo: nil, repeats: true)
         navigationController?.navigationBar.isHidden = false
         let tabbar = self.tabBarController as? MainTabBarController
         if let tabItems = tabbar?.tabBar.items {
@@ -78,6 +78,7 @@ class RecentMessagesViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func refreshData() {
+        isLoadedMessages = false
         getChats(isFromHome: false)
     }
     
@@ -98,7 +99,7 @@ class RecentMessagesViewController: UIViewController {
                     self.sort()
                     DispatchQueue.main.async {
                         self.removeView()
-                        self.spinner.stopAnimating()
+//                        self.spinner.stopAnimating()
                         self.tableView.reloadData()
                     }
                 }
@@ -181,59 +182,59 @@ class RecentMessagesViewController: UIViewController {
         self.isLoaded = true
         if isLoadedMessages == false {
             DispatchQueue.main.async {
-                self.spinner.startAnimating()
+//                self.spinner.startAnimating()
             }
         }
         if !isLoadedMessages {
-        viewModel!.getChats { (messages, error) in
-            var oldModel = SharedConfigs.shared.signedUser
-            oldModel?.unreadMessagesCount = messages?.badge
-            UserDataController().populateUserProfile(model: oldModel!)
-            DispatchQueue.main.async {
-                let tabbar = self.tabBarController as? MainTabBarController
-                let nc = tabbar!.viewControllers![2] as! UINavigationController
-                let profile = nc.viewControllers[0] as! ProfileViewController
-                profile.changeNotificationNumber()
-                if let tabItems = tabbar?.tabBar.items {
-                    let tabItem = tabItems[1]
-                    let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
-                    tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
-                }
-            }
-           
-            if (error != nil) {
+            viewModel!.getChats { (messages, error) in
+                var oldModel = SharedConfigs.shared.signedUser
+                oldModel?.unreadMessagesCount = messages?.badge
+                UserDataController().populateUserProfile(model: oldModel!)
                 DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    self.spinner.stopAnimating()
+                    let tabbar = self.tabBarController as? MainTabBarController
+                    let nc = tabbar!.viewControllers![2] as! UINavigationController
+                    let profile = nc.viewControllers[0] as! ProfileViewController
+                    profile.changeNotificationNumber()
+                    if let tabItems = tabbar?.tabBar.items {
+                        let tabItem = tabItems[1]
+                        let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
+                        tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
+                    }
                 }
-            }
-            else {
-                if (messages?.array != nil) {
-                    self.isLoadedMessages = true
-                    if messages?.array?.count == 0 {
-                        self.setView("you_have_no_messages".localized())
-                        DispatchQueue.main.async {
-                            self.spinner.stopAnimating()
+                if (error != nil) {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+//                        self.spinner.stopAnimating()
+                    }
+                } else {
+                    if (messages?.array != nil) {
+                        self.isLoadedMessages = true
+                        if messages?.array?.count == 0 {
+                            self.setView("you_have_no_messages".localized())
+                            DispatchQueue.main.async {
+//                                self.spinner.stopAnimating()
+                            }
+                        } else {
+                            self.chats = messages!.array!.filter({ (chat) -> Bool in
+                                return chat.message != nil
+                            })
+                            self.sort()
+                            if !isFromHome {
+                                DispatchQueue.main.async {
+                                    self.removeView()
+//                                    self.spinner.stopAnimating()
+                                    self.tableView.reloadData()
+                                }
+                                
+                            }
                         }
-                    } else {
-                        self.chats = messages!.array!.filter({ (chat) -> Bool in
-                            return chat.message != nil
-                        })
-                        self.sort()
-                        if !isFromHome {
                         DispatchQueue.main.async {
-                            self.removeView()
-                            self.spinner.stopAnimating()
-                            self.tableView.reloadData()
-                        }
+                            self.refreshControl.endRefreshing()
                         }
                     }
                 }
+                
             }
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-        }
         }
     }
     
@@ -248,7 +249,7 @@ class RecentMessagesViewController: UIViewController {
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    self.spinner.stopAnimating()
+//                    self.spinner.stopAnimating()
                 }
             } else if user != nil {
                 DispatchQueue.main.async {

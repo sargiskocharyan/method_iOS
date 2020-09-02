@@ -16,6 +16,8 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
            case emptyData
            case invalidImage
        }
+    
+    
 
     @IBOutlet var label: UILabel?
     @IBOutlet weak var bodyLabel: UILabel!
@@ -24,15 +26,16 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         defaults = UserDefaults(suiteName: "group.am.dynamic.method")
+        defaults = UserDefaults(suiteName: "group.am.dynamic.method")
     }
    
     @IBAction func rejectRequestAction(_ sender: UIButton) {
         print("dfjgfg")
        
 //        defaults.addObserver(self, forKeyPath: "Last", options: [.initial], context: nil)
-        defaults!.set(true, forKey: "Last")
-        defaults!.synchronize()
+        
+        defaults!.set(!(defaults?.object(forKey: "Last") as! Bool), forKey: "Last")
+//        defaults!.synchronize()
     }
     
     @IBAction func confirmRequestAction(_ sender: UIButton) {
@@ -49,7 +52,6 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         let bestAttemptContent = (notification.request.content.mutableCopy() as? UNMutableNotificationContent)
         guard let imageURLString =
             bestAttemptContent!.userInfo["imageURL"] as? String else {
-          
           return
         }
         if let url = URL(string: imageURLString) {

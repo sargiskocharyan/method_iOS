@@ -18,7 +18,9 @@ struct FetchedCall {
 }
 class RecentMessagesViewModel {
      var calls: [CallHistory] = []
+    
     private var privateCalls: [NSManagedObject] = []
+  
     func getHistory(completion: @escaping ([CallHistory])->()) {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                     completion([])

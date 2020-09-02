@@ -264,7 +264,7 @@ class SocketTaskManager {
     }
     
     func disconnect() {
-        socket!.disconnect()
+        socket?.disconnect()
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }

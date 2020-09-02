@@ -97,11 +97,10 @@ class CallListViewController: UIViewController {
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
-        MainTabBarController.center.delegate = self
+    //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
         let vc = tabbar!.viewControllers![2] as! UINavigationController

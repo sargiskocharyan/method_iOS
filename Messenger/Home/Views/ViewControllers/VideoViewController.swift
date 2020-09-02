@@ -20,9 +20,9 @@ class VideoViewController: UIViewController {
     var cameraPosition = AVCaptureDevice.Position.front
     var isMicrophoneOn = true
     var isSpeakerOn = true
-    var localRenderer: RTCMTLVideoView?
+    var localRenderer: UIView?
     var isCameraOff = true
-    var remoteRenderer: RTCMTLVideoView?
+    var remoteRenderer: UIView?
     var videoVCMode: VideoVCMode?
     @IBOutlet weak var ourView: UIView!
     @IBOutlet weak var cameraOffButton: UIButton!
@@ -36,7 +36,7 @@ class VideoViewController: UIViewController {
     @IBAction func cameraOffOrOnAction(_ sender: UIButton) {
         if videoVCMode == .videoCall {
             if isCameraOff {
-                webRTCClient?.stopCaptureLocalVideo(renderer: localRenderer!, completion: {
+                webRTCClient?.stopCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, completion: {
                     DispatchQueue.main.async {
                         self.localRenderer?.removeFromSuperview()
                         self.ourView.backgroundColor = .clear
@@ -47,7 +47,7 @@ class VideoViewController: UIViewController {
             } else {
                 embedView(localRenderer!, into: self.ourView)
                 webRTCClient?.localVideoTrack?.isEnabled = true
-                webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
+                webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
                 isCameraOff = true
             }
         } else {
@@ -98,8 +98,8 @@ class VideoViewController: UIViewController {
             #if arch(arm64)
             localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
             remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-            localRenderer!.videoContentMode = .scaleAspectFill
-            remoteRenderer!.videoContentMode = .scaleAspectFill
+            (localRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
+            (remoteRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
             ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
             #else
             localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
@@ -107,8 +107,8 @@ class VideoViewController: UIViewController {
             #endif
             remoteRenderer!.tag = 10
             localRenderer!.tag = 11
-            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
-            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer!)
+            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
+            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer! as! RTCVideoRenderer)
             if let localVideoView = self.ourView {
                 self.embedView(localRenderer!, into: localVideoView)
             }
@@ -138,7 +138,7 @@ class VideoViewController: UIViewController {
             ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
             cameraPosition = .front
         }
-        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer!, cameraPosition: cameraPosition)
+        self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
         if let localVideoView = self.ourView {
             self.view.viewWithTag(11)?.removeFromSuperview()
             self.embedView(localRenderer!, into: localVideoView)

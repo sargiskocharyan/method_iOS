@@ -324,7 +324,6 @@ extension WebRTCClient {
         }
     }
     
-    // Force speaker
     func speakerOn() {
         self.audioQueue.async { [weak self] in
             guard let self = self else {
@@ -338,7 +337,6 @@ extension WebRTCClient {
             } catch let error {
                 debugPrint("Couldn't force audio to speaker: \(error)")
             }
-//            self.rtcAudioSession.inputNumberOfChannels = 4
             self.rtcAudioSession.unlockForConfiguration()
         }
     }

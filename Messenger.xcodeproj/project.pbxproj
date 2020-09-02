@@ -58,6 +58,7 @@
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
+		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
 		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
@@ -113,7 +114,6 @@
 		F1ACA84724E42C1E00EE8578 /* methodNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1ACA85224E48A5900EE8578 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85124E48A5900EE8578 /* UserNotifications.framework */; };
 		F1ACA85424E48A5900EE8578 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85324E48A5900EE8578 /* UserNotificationsUI.framework */; };
-		F1ACA85724E48A5900EE8578 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
 		F1ACA85A24E48A5900EE8578 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1ACA85824E48A5900EE8578 /* MainInterface.storyboard */; };
 		F1ACA85E24E48A5900EE8578 /* methodNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA85024E48A5900EE8578 /* methodNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
@@ -829,8 +829,6 @@
 			dependencies = (
 			);
 			name = methodNotificationService;
-			packageProductDependencies = (
-			);
 			productName = methodNotificationService;
 			productReference = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -1086,7 +1084,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1ACA85724E48A5900EE8578 /* NotificationViewController.swift in Sources */,
+				CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1327,7 +1325,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.a;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1348,7 +1346,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.a;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1369,7 +1367,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.b;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1390,7 +1388,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.b;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

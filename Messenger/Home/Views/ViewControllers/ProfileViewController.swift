@@ -78,7 +78,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         addGestures()
         defineSwithState()
         localizeStrings()
-        MainTabBarController.center.delegate = self
+   //     MainTabBarController.center.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {

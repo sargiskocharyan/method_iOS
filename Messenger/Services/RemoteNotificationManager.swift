@@ -52,14 +52,14 @@ class RemoteNotificationManager {
     }
     
     static func requestPermissions() {
-        UNUserNotificationCenter.current().delegate = AppDelegate.shared
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            print("Permission granted: \(granted)")
-            guard granted else { return }
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        }
+//        UNUserNotificationCenter.current().delegate = AppDelegate.shared
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+//            (granted, error) in
+//            print("Permission granted: \(granted)")
+//            guard granted else { return }
+//            DispatchQueue.main.async {
+//                UIApplication.shared.registerForRemoteNotifications()
+//            }
+//        }
     }
 }
