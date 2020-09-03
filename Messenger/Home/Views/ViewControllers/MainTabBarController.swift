@@ -101,7 +101,6 @@ class MainTabBarController: UITabBarController {
                 self.callManager.end(call: call)
             }
             self.callManager.removeAllCalls()
-            //            }
         }
     }
     
@@ -110,6 +109,7 @@ class MainTabBarController: UITabBarController {
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
+        self.mode = type == "video" ? VideoVCMode.videoCall : VideoVCMode.audioCall
         self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
@@ -179,16 +179,20 @@ class MainTabBarController: UITabBarController {
     func handleReadMessage()  {
         SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
-            let chatVC = recentNC.viewControllers[1] as! ChatViewController
-            chatVC.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
+            if recentNC.viewControllers.count > 1 {
+                let chatVC = recentNC.viewControllers[1] as! ChatViewController
+                chatVC.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
+            }
         }
     }
     
     func handleReceiveMessage()  {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
+            if recentNC.viewControllers.count > 1 {
             let chatVC = recentNC.viewControllers[1] as! ChatViewController
-            chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
+                chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
+            }
         }
     }
     
@@ -301,9 +305,9 @@ class MainTabBarController: UITabBarController {
                     }
                 }
                 else if callNc.viewControllers.count == 2 {
-                    if callHistory == nil && message.senderId != SharedConfigs.shared.signedUser?.id {
+                    if callHistory == nil && message.senderId != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
-                    } else if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
+                    } else if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else {
@@ -319,12 +323,12 @@ class MainTabBarController: UITabBarController {
                 if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
                     if recentNc.viewControllers.count == 2  {
                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
-                        if chatVC == nil {
+                        if chatVC == nil && callHistory?.status == CallStatus.missed.rawValue  {
                             self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                         } else {
                             chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                         }
-                    } else {
+                    } else if callHistory?.status == CallStatus.missed.rawValue  {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else if callHistory == nil && recentNc.viewControllers.count == 2 && message.senderId != SharedConfigs.shared.signedUser?.id {
@@ -334,7 +338,9 @@ class MainTabBarController: UITabBarController {
                     }
                 } else if recentNc.viewControllers.count > 2 {
                     if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
-                        self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        if callHistory?.status == CallStatus.missed.rawValue  {
+                            self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
+                        }
                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
                         chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {

@@ -252,7 +252,7 @@ class ChatViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
                 if isKeyboardShowing {
-                    if (self.allMessages?.array!.count)! > 1 {
+                    if (self.allMessages?.array != nil && (self.allMessages?.array!.count)! > 1) {
                         let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
@@ -371,7 +371,11 @@ class ChatViewController: UIViewController {
                             recent.handleRead(id: self.id!)
                             var oldModel = SharedConfigs.shared.signedUser
                             oldModel?.unreadMessagesCount! -= 1
+//                            UIApplication.shared.applicationIconBadgeNumber -= 1
                             UserDataController().populateUserProfile(model: oldModel!)
+                            let profileNC = tabbar?.viewControllers![2] as! UINavigationController
+                            let profileVC = profileNC.viewControllers[0] as! ProfileViewController
+                            profileVC.changeNotificationNumber()
                             break
                         }
                     }

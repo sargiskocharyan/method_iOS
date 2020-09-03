@@ -30,7 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var window: UIWindow?
     let name = Notification.Name("didReceiveData")
     var defaults: UserDefaults?
-    
+    var isVoIPCallStarted: Bool?
+    let viewModel = AppDelegateViewModel()
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -73,27 +74,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         //NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
          UserDataController().loadUserInfo()
         subscribeForChangesObservation()
-    //    badge = SharedConfigs.shared.signedUser.
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
          UNUserNotificationCenter.current().delegate = self
-        //registerForPushNotifications()
         self.voipRegistration()
-       // UNUserNotificationCenter.current().delegate = self
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any]
         if remoteNotif != nil {
             let aps = remoteNotif!["aps"] as? [String:AnyObject]
             NSLog("\n Custom: \(String(describing: aps))")
-           
-            SocketTaskManager.shared.connect {
-                print(remoteNotif!["chatId"] as! String)
-                SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
-                    SocketTaskManager.shared.disconnect()
-                }
+
+            if remoteNotif!["chatId"] != nil && remoteNotif!["messageId"] != nil {
+                SocketTaskManager.shared.connect {
+                    print(remoteNotif!["chatId"] as! String)
+                    SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
+                        SocketTaskManager.shared.disconnect()
+
+                    }
             }
-        }
-        else {
+            }
+        } else {
             NSLog("//////////////////////////Normal launch")
             setInitialStoryboard()
         }
@@ -101,8 +101,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        //NotificationCenter.default.addObserver(self, selector: #selector(handleNotification) , name: name, object: nil)
-        
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
             print("Permission granted: \(granted)")
@@ -143,11 +141,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("payload: ", payload.dictionaryPayload)
         print(payload.dictionaryPayload["username"] as! String)
-        
         self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, type: payload.dictionaryPayload["type"] as! String, completionHandler: {
             self.displayIncomingCall(
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 SocketTaskManager.shared.connect {
+                    self.isVoIPCallStarted = true
                     completion()
                 }
             }
@@ -180,24 +178,39 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-//        UNUserNotificationCenter.current().delegate = self
+        //        UNUserNotificationCenter.current().delegate = self
+        if notification.request.content.categoryIdentifier == "local" {
+            completionHandler([.alert, .badge, .sound])
+        } else {
+            completionHandler([])
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-
             switch response.actionIdentifier {
-
             case "first":
                 print("first")
-
+                let userinfo = response.notification.request.content.userInfo
+                viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
+                    if error == nil {
+                        self.viewModel.getuserById(id: userinfo["userId"] as! String) { (user, error) in
+                            if error == nil && user != nil {
+                                DispatchQueue.main.async {
+                                    self.tabbar?.contactsViewModel?.addContactToCoreData(newContact: user!, completion: { (error) in
+                                        if error != nil {
+                                            print(error?.localizedDescription)
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
             case "second":
-
                 print("second")
-
             default:
                 print("default")
             }
-
             completionHandler()
 
     }
@@ -227,22 +240,24 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //            }
 //        }
     }
-    /*
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
             completionHandler(.failed)
             return
         }
-        
         if userInfo["type"] as? String == "message" {
             SocketTaskManager.shared.connect {
                 var oldModel = SharedConfigs.shared.signedUser
-                oldModel?.unreadMessagesCount! += 1
+                if oldModel?.unreadMessagesCount != nil {
+                    oldModel?.unreadMessagesCount! += 1
+                }
                 UserDataController().populateUserProfile(model: oldModel!)
                 if let tabItems = self.tabbar?.tabBar.items {
                     let tabItem = tabItems[1]
                     tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
                 }
+                let user = SharedConfigs.shared.signedUser
+                UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
                     SocketTaskManager.shared.disconnect()
@@ -278,10 +293,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         print(badge as Any)
                     }
                 }
+//                let call = CallHistory(type: VideoVCMode.videoCall, receiver: userInfo["receiver"], status: <#T##String?#>, participants: <#T##[String?]?#>, callSuggestTime: <#T##String?#>, _id: <#T##String?#>, createdAt: <#T##String?#>, caller: <#T##String?#>, callEndTime: <#T##String?#>, callStartTime: <#T##String?#>)
             }
             completionHandler(.newData)
         }
-    }*/
+    }
     
     //MARK:- Helper
     

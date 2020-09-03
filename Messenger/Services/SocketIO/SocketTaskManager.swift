@@ -301,6 +301,7 @@ class SocketTaskManager {
                         if !chat.unreadMessageExists {
                             var oldModel = SharedConfigs.shared.signedUser
                             oldModel?.unreadMessagesCount! += 1
+//                            UIApplication.shared.applicationIconBadgeNumber += 1
                             UserDataController().populateUserProfile(model: oldModel!)
                             
                             DispatchQueue.main.async {

@@ -62,7 +62,7 @@ class CallListViewController: UIViewController {
         super.viewWillAppear(animated)
         
         DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber = 0
+//            UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
             if let tabItems = self.tabbar?.tabBar.items {
                 let tabItem = tabItems[0]
                 tabItem.badgeValue = nil
@@ -263,7 +263,13 @@ class CallListViewController: UIViewController {
     
     func showEndedCall(_ callHistory: CallHistory) {
         viewModel?.save(newCall: callHistory, completion: {
+            if self.tableView != nil {
             self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+            if AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
+                           AppDelegate.shared.isVoIPCallStarted = false
+                           SocketTaskManager.shared.disconnect()
+                       }
+            }
         })
     }
 
@@ -326,7 +332,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, university: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.viewModel!.calls[indexPath])
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.viewModel!.calls[indexPath])
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)

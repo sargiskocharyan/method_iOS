@@ -41,7 +41,12 @@ extension UIViewController {
         } else {
             content.title = "New message"
         }
+//        let category = UNNotificationCategory.init(identifier: "categoryIdentifier", actions: [], intentIdentifiers: [], options: [])
+//        content.c
+//        UNUserNotificationCenter.current().setNotificationCategories([category])
+       content.categoryIdentifier = "local"
         content.body = message.text ?? ""
+        
         content.sound = UNNotificationSound.defaultCritical
         let currentDateTime = Date()
         let userCalendar = Calendar.current

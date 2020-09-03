@@ -36,7 +36,6 @@ public class Contacts: NSObject, NSCoding {
 public class User: NSObject,  Codable, NSCoding {
     public var name: String?
     public var lastname: String?
-    public var university: String?
     public var _id: String?
     public var username: String?
     public var avatarURL: String?
@@ -48,10 +47,9 @@ public class User: NSObject,  Codable, NSCoding {
     public var gender: String?
     public var missedCallHistory: [String]?
     
-    init(name: String?, lastname: String?, university: String?, _id: String, username: String?, avaterURL: String?, email: String?, info: String?, phoneNumber: String?, birthday: String?, address: String?, gender: String?, missedCallHistory: [String]?) {
+    init(name: String?, lastname: String?, _id: String, username: String?, avaterURL: String?, email: String?, info: String?, phoneNumber: String?, birthday: String?, address: String?, gender: String?, missedCallHistory: [String]?) {
         self.name = name
         self.lastname = lastname
-        self.university = university
         self._id = _id
         self.username = username
         self.avatarURL = avaterURL
@@ -71,7 +69,6 @@ public class User: NSObject,  Codable, NSCoding {
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(name, forKey: "name")
         aCoder.encode(lastname, forKey: "lastname")
-        aCoder.encode(university, forKey: "university")
         aCoder.encode(_id, forKey: "_id")
         aCoder.encode(username, forKey: "username")
         aCoder.encode(avatarURL, forKey: "avatarURL")
@@ -86,7 +83,6 @@ public class User: NSObject,  Codable, NSCoding {
     public required convenience init?(coder aDecoder: NSCoder) {
         let mName = aDecoder.decodeObject(forKey: "name") as? String
         let mLastname = aDecoder.decodeObject(forKey: "lastname") as? String
-        let mUniversity = aDecoder.decodeObject(forKey: "university") as? String
         let mId = aDecoder.decodeObject(forKey: "_id") as? String
         let mUsername = aDecoder.decodeObject(forKey: "username") as? String
         let mEmailL = aDecoder.decodeObject(forKey: "email") as? String
@@ -96,7 +92,7 @@ public class User: NSObject,  Codable, NSCoding {
         let mBirthday = aDecoder.decodeObject(forKey: "birthday") as? String
         let mAddress = aDecoder.decodeObject(forKey: "address") as? String
         let mGender = aDecoder.decodeObject(forKey: "gender") as? String
-        self.init(name: mName, lastname: mLastname, university: mUniversity, _id: mId!, username: mUsername, avaterURL: mAvatarURL, email: mEmailL, info: mInfo, phoneNumber: mPhoneNumber, birthday: mBirthday, address: mAddress, gender: mGender, missedCallHistory: nil)
+        self.init(name: mName, lastname: mLastname, _id: mId!, username: mUsername, avaterURL: mAvatarURL, email: mEmailL, info: mInfo, phoneNumber: mPhoneNumber, birthday: mBirthday, address: mAddress, gender: mGender, missedCallHistory: nil)
     }
     
 }

@@ -123,11 +123,11 @@ class NotificationService: UNNotificationServiceExtension {
        
         completion(image)
       }
-        let firstAction = UNNotificationAction( identifier: "first", title: "First action", options: [.foreground])
+        let firstAction = UNNotificationAction( identifier: "first", title: "Confirm", options: [])
                
-        let secondAction = UNNotificationAction( identifier: "second", title: "Second action", options: [.foreground])
+        let secondAction = UNNotificationAction( identifier: "second", title: "Reject", options: [])
                
-        let category = UNNotificationCategory( identifier: "new_rich_message", actions: [firstAction, secondAction], intentIdentifiers: [], options: [])
+        let category = UNNotificationCategory( identifier: "contactRequest", actions: [firstAction, secondAction], intentIdentifiers: [], options: [.customDismissAction])
                
         UNUserNotificationCenter.current().setNotificationCategories([category])
         
