@@ -44,6 +44,8 @@ struct AUTHUrls {
     static let RegisterDevice    = "/registerdevice"
     static let ReadCalls         = "/readcallhistory"
     static let confirmRequest    = "/confirmContactRequest"
+    static let DeleteRequest     = "/deleteContactRequest"
+    static let GetRequests       = "/contactRequests"
 }
 
 struct AppLangKeys {

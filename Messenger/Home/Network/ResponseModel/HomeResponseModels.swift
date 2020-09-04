@@ -30,6 +30,14 @@ struct Messages: Codable {
     var statuses: [MessageStatus]?
 }
 
+struct Request: Codable {
+    var _id: String
+    var sender: String
+    var receiver: String
+    var createdAt: String
+    var updatedAt: String
+}
+
 struct Message: Codable {
     var call: MessageCall?
     var type: String?

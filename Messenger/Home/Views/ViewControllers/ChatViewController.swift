@@ -60,7 +60,9 @@ class ChatViewController: UIViewController {
         return button
     }()
     var timer: Timer?
-    
+    var check = false
+    var newArray: [Message]?
+    var test = false
     
     
     //MARK: Lifecycles
@@ -68,7 +70,7 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        getChatMessages()
+        getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
         setupInputComponents()
@@ -371,7 +373,6 @@ class ChatViewController: UIViewController {
                             recent.handleRead(id: self.id!)
                             var oldModel = SharedConfigs.shared.signedUser
                             oldModel?.unreadMessagesCount! -= 1
-//                            UIApplication.shared.applicationIconBadgeNumber -= 1
                             UserDataController().populateUserProfile(model: oldModel!)
                             let profileNC = tabbar?.viewControllers![2] as! UINavigationController
                             let profileVC = profileNC.viewControllers[0] as! ProfileViewController
@@ -386,19 +387,36 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func getChatMessages() {
-        self.activity.startAnimating()
-        viewModel!.getChatMessages(id: id!) { (messages, error) in
+    func getChatMessages(dateUntil: String?) {
+        if self.activity != nil {
+            self.activity.startAnimating()
+        }
+        viewModel!.getChatMessages(id: id!, dateUntil: dateUntil) { (messages, error) in
+            if messages?.array?.count == 0 || messages?.array == nil {
+                self.check = true
+            }
             if error != nil {
                 DispatchQueue.main.async {
+                    if self.activity != nil {
                     self.activity.stopAnimating()
+                    }
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else if messages?.array != nil {
-                self.allMessages = messages!
+                if self.allMessages != nil && self.allMessages!.array != nil {
+                    let array = self.allMessages?.array
+                    self.allMessages?.array = messages?.array
+                    self.allMessages?.array?.append(contentsOf: array!)
+                    self.test = true
+                } else {
+                    self.newArray = messages?.array
+                    self.allMessages = messages
+                }
                 DispatchQueue.main.async {
-                    self.activity.stopAnimating()
+                    if self.activity != nil {
+                        self.activity.stopAnimating()
+                    }
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.tableView.reloadData()
                     self.checkAndSendReadEvent()
@@ -410,6 +428,7 @@ class ChatViewController: UIViewController {
 
 //MARK: Extension
 extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (allMessages?.array?.count ?? 0)
     }
@@ -484,6 +503,11 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
        }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == 3 && self.allMessages?.array![indexPath.row] != nil  {
+            if check == false {
+                self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+            }
+        }
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
@@ -566,6 +590,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 
             }
         }
+        
         return UITableViewCell()
     }
 }

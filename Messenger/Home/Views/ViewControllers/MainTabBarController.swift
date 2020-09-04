@@ -150,12 +150,26 @@ class MainTabBarController: UITabBarController {
     func handleNewContactRequest() {
         SocketTaskManager.shared.addNewContactRequestListener { (userId) in
             print("new request sent")
+            
         }
     }
     
     func handleNewContact() {
         SocketTaskManager.shared.addNewContactListener { (userId) in
             print("new contact added")
+            self.recentMessagesViewModel?.getuserById(id: userId, completion: { (user, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else if user != nil {
+                    DispatchQueue.main.async {
+                        self.contactsViewModel?.addContactToCoreData(newContact: user!, completion: { (error) in
+                            print(error?.localizedDescription as Any)
+                        })
+                    }
+                }
+            })
         }
     }
     
@@ -167,7 +181,14 @@ class MainTabBarController: UITabBarController {
     
     func handleContactRemoved() {
         SocketTaskManager.shared.addContactRemovedListener(completionHandler: { (userId) in
-            print("mez jnjin, e pah, iranq giden...")
+            print("The user delete us from contacts...")
+            self.contactsViewModel?.removeContactFromCoreData(id: userId, completion: { (error) in
+                if error != nil {
+                    print(error?.localizedDescription as Any)
+                } else {
+                    print("removed")
+                }
+            })
         })
     }
     

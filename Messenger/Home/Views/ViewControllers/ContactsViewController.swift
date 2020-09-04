@@ -214,6 +214,7 @@ class ContactsViewController: UIViewController {
                 return
             }
             self.contactsMiniInformation = viewModel!.contacts
+            self.onContactPage = true
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }

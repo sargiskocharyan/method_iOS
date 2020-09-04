@@ -16,6 +16,14 @@ protocol ContactProfileDelegate: class {
 protocol ContactProfileViewControllerDelegate: class {
     func handleVideoCallClick()
 }
+
+enum RequestMode: String {
+    case sent
+    case received
+    case inContacts
+    case nothing
+}
+
 class ContactProfileViewController: UIViewController {
     
     @IBOutlet weak var videoCallButton: UIButton!
@@ -43,6 +51,8 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var removeFromContactsButton: UIButton!
     
+    @IBOutlet weak var rejectButton: UIButton!
+    @IBOutlet weak var confirmButton: UIButton!
     var addContact: UIButton?
     var contact: User?
     var id: String?
@@ -55,6 +65,8 @@ class ContactProfileViewController: UIViewController {
     var callListViewController: CallListViewController?
     var fromChat: Bool?
     var mainRouter: MainRouter?
+    var isRequestSent: RequestMode?
+    var requestsArray: [Request] = []
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -76,7 +88,8 @@ class ContactProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
+        getRequests()
+//        addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
         addContact = addToContactButton
         tabBar = tabBarController as? MainTabBarController
         nc = tabBar?.viewControllers?[0] as? UINavigationController
@@ -91,7 +104,6 @@ class ContactProfileViewController: UIViewController {
         getUserInformation()
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
         sendMessageButton.backgroundColor = .clear
-        
     }
     
     @IBAction func removeFromContactsAction(_ sender: Any) {
@@ -102,7 +114,9 @@ class ContactProfileViewController: UIViewController {
                 }
             } else {
                 self.onContactPage = false
+                self.isRequestSent = .nothing
                 DispatchQueue.main.async {
+                    self.addContact?.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
                     self.stackView.addArrangedSubview(self.addContact!)
                     self.stackView.reloadInputViews()
                     self.removeFromContactsButton.isHidden = true
@@ -137,28 +151,133 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
+    @IBAction func rejectRequestButtonAction(_ sender: UIButton) {
+        if isRequestSent == .received {
+            AppDelegate.shared.viewModel.confirmRequest(id: (contact?._id)!, confirm: false) { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.isRequestSent = .nothing
+                    DispatchQueue.main.async {
+                        self.stackView.addArrangedSubview(self.addContact!)
+                        self.stackView.reloadInputViews()
+                        self.addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
+                        self.rejectButton.isHidden = true
+                        self.confirmButton.isHidden = true
+                    }
+                }
+            }
+        }
+    }
+    
+    @IBAction func confirmRequestButtonAction(_ sender: UIButton) {
+        if isRequestSent == .received {
+            AppDelegate.shared.viewModel.confirmRequest(id: (contact?._id)!, confirm: true) { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.isRequestSent = .inContacts
+                    DispatchQueue.main.async {
+                        self.isRequestSent = .inContacts
+                        self.removeFromContactsButton.isHidden = false
+                        self.view.viewWithTag(45)?.removeFromSuperview()
+                        self.rejectButton.isHidden = true
+                        self.confirmButton.isHidden = true
+                        self.delegate?.addNewContact(contact: self.contact!)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getRequests() {
+        var isOnRequests = false
+        viewModel?.getRequests(completion: { (requests, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+            } else if requests != nil {
+                self.requestsArray = requests!
+//                for viewModelContact in self.viewModel!.contacts {
+                    for request in requests! {
+                        if self.contact!._id == request.receiver {
+                            isOnRequests = true
+                            self.isRequestSent = RequestMode.sent
+                            DispatchQueue.main.async {
+                                self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
+                                self.rejectButton.isHidden = true
+                                self.confirmButton.isHidden = true
+                            }
+                            break
+                        } else if self.contact!._id == request.sender {
+                            isOnRequests = true
+                            self.isRequestSent = RequestMode.received
+                            DispatchQueue.main.async {
+                                self.view.viewWithTag(45)?.removeFromSuperview()
+                                self.rejectButton.isHidden = false
+                                self.confirmButton.isHidden = false
+                            }
+                            break
+                        }
+                    }
+//                }
+                if !isOnRequests {
+                    if !self.onContactPage! {
+                        self.isRequestSent = .nothing
+                        DispatchQueue.main.async {
+                            self.addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
+                        }
+                        
+                    } else {
+                        self.isRequestSent = .inContacts
+                        DispatchQueue.main.async {
+                            self.removeFromContactsButton.isHidden = false
+                            self.view.viewWithTag(45)?.removeFromSuperview()
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.rejectButton.isHidden = true
+                        self.confirmButton.isHidden = true
+                    }
+                }
+            }
+        })
+    }
+    
     @objc func addToContact() {
+        if isRequestSent! == .nothing {
             viewModel!.addContact(id: contact!._id!) { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
-//                    DispatchQueue.main.async {
-//                        self.viewModel?.addContactToCoreData(newContact: self.contact!, completion: { (error) in
-//                            if error != nil {
-//                                print(error as Any)
-//                            } else {
-//                                self.view.viewWithTag(45)?.removeFromSuperview()
-//                                self.delegate?.addNewContact(contact: self.contact!)
-//                                self.onContactPage = true
-//                                self.removeFromContactsButton.isHidden = false
-//                            }
-//                        })
-//                    }
+                    self.isRequestSent = .sent
+                    DispatchQueue.main.async {
+                        self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
+                    }
                     print("fsyo narmalny")
                 }
             }
+        } else if isRequestSent! == .sent {
+            viewModel?.deleteRequest(id: contact!._id!, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.isRequestSent = .nothing
+                    DispatchQueue.main.async {
+                        self.addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
+                    }
+                }
+            })
+        }
     }
     
     @IBAction func startVideoCall(_ sender: Any) {

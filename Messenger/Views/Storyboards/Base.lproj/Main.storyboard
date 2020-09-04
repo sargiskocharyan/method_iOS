@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -458,7 +458,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8cm-if-vJV">
                                 <rect key="frame" x="0.0" y="44" width="414" height="763"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TgR-84-R0D">
+                                <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TgR-84-R0D">
                                     <rect key="frame" x="0.0" y="347" width="414" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1483,7 +1483,7 @@
                                                                     <constraint firstAttribute="height" constant="50" id="ulA-Jg-iG2"/>
                                                                 </constraints>
                                                                 <color key="tintColor" red="0.5013250709" green="0.37268495559999998" blue="0.98328763249999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <state key="normal" image="person.badge.plus.fill">
+                                                                <state key="normal" image="person.crop.circle.badge.xmark">
                                                                     <color key="titleColor" red="0.49803921569999998" green="0.37647058820000001" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="22"/>
                                                                 </state>
@@ -1538,7 +1538,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F64-Vj-3o7">
-                                                <rect key="frame" x="0.0" y="299" width="414" height="319.33333333333326"/>
+                                                <rect key="frame" x="0.0" y="299" width="414" height="384.66666666666674"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username:" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kEf-Vf-LUF">
                                                         <rect key="frame" x="15" y="14.999999999999998" width="165.66666666666666" height="19.333333333333329"/>
@@ -1633,11 +1633,30 @@
                                                             <action selector="removeFromContactsAction:" destination="YOH-td-ZuE" eventType="touchUpInside" id="yOf-GS-WcP"/>
                                                         </connections>
                                                     </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W2J-T1-uTd">
+                                                        <rect key="frame" x="187.66666666666666" y="314.33333333333337" width="39" height="30"/>
+                                                        <state key="normal" title="reject">
+                                                            <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="rejectRequestButtonAction:" destination="YOH-td-ZuE" eventType="touchUpInside" id="ikE-cH-9hY"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t8U-26-mfc">
+                                                        <rect key="frame" x="180.66666666666666" y="354.33333333333337" width="53" height="30"/>
+                                                        <state key="normal" title="confirm">
+                                                            <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="confirmRequestButtonAction:" destination="YOH-td-ZuE" eventType="touchUpInside" id="7Rs-L3-VPF"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="R3L-wA-XfX" firstAttribute="width" secondItem="F64-Vj-3o7" secondAttribute="width" multiplier="0.4" id="0i8-1I-ax3"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nuP-r3-Fch" secondAttribute="trailing" constant="15" id="1Kw-x3-g8V"/>
                                                     <constraint firstItem="u9J-eZ-V0R" firstAttribute="top" secondItem="sKH-W9-pC9" secondAttribute="top" id="7Jf-T8-6vT"/>
+                                                    <constraint firstItem="t8U-26-mfc" firstAttribute="top" secondItem="W2J-T1-uTd" secondAttribute="bottom" constant="10" id="8Ej-Z5-JDS"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="9In-6N-mvl" secondAttribute="trailing" constant="15" id="AO7-Vs-rsb"/>
                                                     <constraint firstItem="R3L-wA-XfX" firstAttribute="top" secondItem="H1B-kL-BFI" secondAttribute="top" id="B1i-xo-ccH"/>
                                                     <constraint firstItem="QRA-dJ-uKp" firstAttribute="centerX" secondItem="F64-Vj-3o7" secondAttribute="centerX" id="Bot-04-loV"/>
@@ -1646,6 +1665,7 @@
                                                     <constraint firstItem="kEf-Vf-LUF" firstAttribute="top" secondItem="nuP-r3-Fch" secondAttribute="top" id="EOu-B1-sC6"/>
                                                     <constraint firstItem="LEV-LD-bWF" firstAttribute="top" secondItem="bvs-ms-lo7" secondAttribute="bottom" constant="15" id="EQ1-r9-NL2"/>
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="F7c-LX-gFK"/>
+                                                    <constraint firstAttribute="bottom" secondItem="t8U-26-mfc" secondAttribute="bottom" constant="0.33333333333325754" id="FUz-xZ-Iaz"/>
                                                     <constraint firstItem="bvs-ms-lo7" firstAttribute="top" secondItem="XeV-La-OOj" secondAttribute="bottom" constant="15" id="FdD-bf-73m"/>
                                                     <constraint firstItem="kBP-c4-A6s" firstAttribute="top" secondItem="LEV-LD-bWF" secondAttribute="bottom" constant="15" id="G1E-BS-LgF"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="6hp-L2-tio" secondAttribute="trailing" constant="15" id="GXN-bm-MN8"/>
@@ -1667,21 +1687,23 @@
                                                     <constraint firstItem="kBP-c4-A6s" firstAttribute="bottom" secondItem="QRA-dJ-uKp" secondAttribute="top" constant="-15" id="bJU-2g-WfV"/>
                                                     <constraint firstItem="LEV-LD-bWF" firstAttribute="leading" secondItem="F64-Vj-3o7" secondAttribute="leading" constant="15" id="c7o-Lg-YZA"/>
                                                     <constraint firstItem="R3L-wA-XfX" firstAttribute="top" secondItem="kEf-Vf-LUF" secondAttribute="bottom" constant="15" id="c8R-0J-OS7"/>
-                                                    <constraint firstAttribute="bottom" secondItem="QRA-dJ-uKp" secondAttribute="bottom" constant="15" id="cJd-Iq-3pM"/>
                                                     <constraint firstItem="Ltr-qM-xqx" firstAttribute="leading" secondItem="LEV-LD-bWF" secondAttribute="trailing" constant="10" id="cmP-kb-zMN"/>
                                                     <constraint firstItem="Ltr-qM-xqx" firstAttribute="bottom" secondItem="LEV-LD-bWF" secondAttribute="bottom" id="cpH-Q6-MzK"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="H1B-kL-BFI" secondAttribute="trailing" constant="15" id="dQK-uc-AXp"/>
+                                                    <constraint firstItem="t8U-26-mfc" firstAttribute="centerX" secondItem="W2J-T1-uTd" secondAttribute="centerX" id="ekT-cq-9ku"/>
                                                     <constraint firstItem="QZT-zY-Tab" firstAttribute="bottom" secondItem="bvs-ms-lo7" secondAttribute="bottom" id="fWZ-3x-fGd"/>
                                                     <constraint firstItem="bvs-ms-lo7" firstAttribute="leading" secondItem="F64-Vj-3o7" secondAttribute="leading" constant="15" id="gfg-XF-hPt"/>
                                                     <constraint firstItem="u9J-eZ-V0R" firstAttribute="width" secondItem="F64-Vj-3o7" secondAttribute="width" multiplier="0.4" id="lQo-ml-FYa"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Ltr-qM-xqx" secondAttribute="trailing" constant="15" id="loh-t6-6CW"/>
                                                     <constraint firstItem="kEf-Vf-LUF" firstAttribute="bottom" secondItem="nuP-r3-Fch" secondAttribute="bottom" id="mve-HO-FPB"/>
+                                                    <constraint firstItem="W2J-T1-uTd" firstAttribute="top" secondItem="QRA-dJ-uKp" secondAttribute="bottom" constant="10" id="onZ-P3-snb"/>
                                                     <constraint firstItem="QZT-zY-Tab" firstAttribute="leading" secondItem="bvs-ms-lo7" secondAttribute="trailing" constant="10" id="p3n-Dr-PAI"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="sKH-W9-pC9" secondAttribute="trailing" constant="15" id="pGO-Be-nF5"/>
                                                     <constraint firstItem="kBP-c4-A6s" firstAttribute="width" secondItem="F64-Vj-3o7" secondAttribute="width" multiplier="0.4" id="pmg-T8-nh5"/>
                                                     <constraint firstItem="R3L-wA-XfX" firstAttribute="bottom" secondItem="H1B-kL-BFI" secondAttribute="bottom" id="qAh-LK-FYT"/>
                                                     <constraint firstItem="nuP-r3-Fch" firstAttribute="leading" secondItem="kEf-Vf-LUF" secondAttribute="trailing" constant="10" id="ss4-bD-8Vj"/>
                                                     <constraint firstItem="u9J-eZ-V0R" firstAttribute="top" secondItem="R3L-wA-XfX" secondAttribute="bottom" constant="15" id="t5I-1M-sNp"/>
+                                                    <constraint firstItem="W2J-T1-uTd" firstAttribute="centerX" secondItem="F64-Vj-3o7" secondAttribute="centerX" id="tbm-BA-VJU"/>
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QZT-zY-Tab" secondAttribute="trailing" constant="15" id="um2-Ok-5HY"/>
                                                     <constraint firstItem="kEf-Vf-LUF" firstAttribute="width" secondItem="F64-Vj-3o7" secondAttribute="width" multiplier="0.4" id="v3F-bQ-Cws"/>
                                                     <constraint firstItem="XeV-La-OOj" firstAttribute="top" secondItem="u9J-eZ-V0R" secondAttribute="bottom" constant="15" id="vzy-ls-hcv"/>
@@ -1729,6 +1751,7 @@
                         <outlet property="addToContactButton" destination="y55-cE-PNW" id="6c5-dj-y4Y"/>
                         <outlet property="birthDateLabel" destination="9In-6N-mvl" id="Po7-9D-jEq"/>
                         <outlet property="birthDateTextLabel" destination="kBP-c4-A6s" id="2EZ-lX-49I"/>
+                        <outlet property="confirmButton" destination="t8U-26-mfc" id="dGE-4S-XbR"/>
                         <outlet property="emailLabel" destination="QZT-zY-Tab" id="y1a-8l-W5l"/>
                         <outlet property="emailTextLabel" destination="bvs-ms-lo7" id="spC-rZ-jXr"/>
                         <outlet property="genderLabel" destination="Ltr-qM-xqx" id="Zz3-Ad-oVD"/>
@@ -1743,6 +1766,7 @@
                         <outlet property="nameTextLabel" destination="R3L-wA-XfX" id="MMC-tp-Hby"/>
                         <outlet property="phoneLabel" destination="6hp-L2-tio" id="liw-0i-5oB"/>
                         <outlet property="phoneTextLabel" destination="XeV-La-OOj" id="7E7-h5-J7y"/>
+                        <outlet property="rejectButton" destination="W2J-T1-uTd" id="qkd-Yy-P1c"/>
                         <outlet property="removeFromContactsButton" destination="QRA-dJ-uKp" id="QZK-u1-77D"/>
                         <outlet property="sendMessageButton" destination="8aJ-Wc-y7z" id="kzv-2G-26g"/>
                         <outlet property="stackView" destination="Pmd-dI-H2W" id="7rv-5X-xff"/>
@@ -2138,7 +2162,7 @@
         <image name="no" width="128" height="128"/>
         <image name="noPhoto" width="2200" height="2200"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
-        <image name="person.badge.plus.fill" width="128" height="116"/>
+        <image name="person.crop.circle.badge.xmark" width="128" height="101"/>
         <image name="phone" catalog="system" width="128" height="115"/>
         <image name="phone.fill" catalog="system" width="128" height="114"/>
         <image name="rotate" width="88" height="68"/>

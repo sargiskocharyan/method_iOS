@@ -77,21 +77,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
         providerDelegate = ProviderDelegate(callManager: callManager)
-         UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().delegate = self
         self.voipRegistration()
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any]
         if remoteNotif != nil {
             let aps = remoteNotif!["aps"] as? [String:AnyObject]
             NSLog("\n Custom: \(String(describing: aps))")
-
+            
             if remoteNotif!["chatId"] != nil && remoteNotif!["messageId"] != nil {
                 SocketTaskManager.shared.connect {
                     print(remoteNotif!["chatId"] as! String)
                     SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
                         SocketTaskManager.shared.disconnect()
-
                     }
-            }
+                }
             }
         } else {
             NSLog("//////////////////////////Normal launch")
@@ -179,7 +178,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         //        UNUserNotificationCenter.current().delegate = self
-        if notification.request.content.categoryIdentifier == "local" {
+        if notification.request.content.categoryIdentifier == "local" || notification.request.content.categoryIdentifier == "contactRequest" {
             completionHandler([.alert, .badge, .sound])
         } else {
             completionHandler([])
@@ -193,21 +192,28 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let userinfo = response.notification.request.content.userInfo
                 viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
                     if error == nil {
-                        self.viewModel.getuserById(id: userinfo["userId"] as! String) { (user, error) in
-                            if error == nil && user != nil {
-                                DispatchQueue.main.async {
-                                    self.tabbar?.contactsViewModel?.addContactToCoreData(newContact: user!, completion: { (error) in
-                                        if error != nil {
-                                            print(error?.localizedDescription)
-                                        }
-                                    })
-                                }
-                            }
-                        }
+//                        self.viewModel.getuserById(id: userinfo["userId"] as! String) { (user, error) in
+//                            if error == nil && user != nil {
+//                                DispatchQueue.main.async {
+//                                    self.tabbar?.contactsViewModel?.addContactToCoreData(newContact: user!, completion: { (error) in
+//                                        if error != nil {
+//                                            print(error?.localizedDescription)
+//                                        }
+//                                    })
+//                                }
+//                            }
+//                        }
+                        print("confirmed")
                     }
                 }
             case "second":
                 print("second")
+                let userinfo = response.notification.request.content.userInfo
+                viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: false) { (error) in
+                    if error == nil {
+                        print("merjec")
+                    }
+                }
             default:
                 print("default")
             }

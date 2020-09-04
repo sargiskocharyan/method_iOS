@@ -32,6 +32,54 @@ class VideoViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+        
+    override func viewWillAppear(_ animated: Bool) {
+           super.viewWillAppear(animated)
+           tabBarController?.tabBar.isHidden = true
+           navigationController?.navigationBar.isHidden = true
+           if videoVCMode == .videoCall {
+               DispatchQueue.main.async {
+                   self.cameraOffButton.setImage(UIImage(named: "cameraOff"), for: .normal)
+               }
+               isSpeakerOn = true
+               speakerOnOffButton.setImage(UIImage(named: "speakerOn"), for: .normal)
+               webRTCClient?.speakerOn()
+               #if arch(arm64)
+               localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+               remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+               (localRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
+               (remoteRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
+               ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+               #else
+               localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
+               remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
+               #endif
+               remoteRenderer!.tag = 10
+               localRenderer!.tag = 11
+               self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
+               self.webRTCClient?.renderRemoteVideo(to: remoteRenderer! as! RTCVideoRenderer)
+               if let localVideoView = self.ourView {
+                   self.embedView(localRenderer!, into: localVideoView)
+               }
+               self.embedView(remoteRenderer!, into: self.view)
+               self.view.sendSubviewToBack(remoteRenderer!)
+           } else {
+               DispatchQueue.main.async {
+                   self.cameraOffButton.setImage(UIImage(named: "cameraOn"), for: .normal)
+               }
+               isSpeakerOn = false
+               speakerOnOffButton.setImage(UIImage(named: "speakerOff"), for: .normal)
+               webRTCClient?.speakerOff()
+               ourView.backgroundColor = .clear
+           }
+       }
+       
+       override func viewDidLoad() {
+           super.viewDidLoad()
+           self.view.backgroundColor = UIColor(named: "videoColor")
+           
+           webRTCClient?.webRTCCDelegate = self
+       }
     
     @IBAction func cameraOffOrOnAction(_ sender: UIButton) {
         if videoVCMode == .videoCall {
@@ -41,7 +89,9 @@ class VideoViewController: UIViewController {
                         self.localRenderer?.removeFromSuperview()
                         self.ourView.backgroundColor = .clear
                     }
-                    print("sax arav")
+                    DispatchQueue.main.async {
+                        sender.setImage(UIImage(named: "cameraOn"), for: .normal)
+                    }
                     self.isCameraOff = false
                 })
             } else {
@@ -49,6 +99,9 @@ class VideoViewController: UIViewController {
                 webRTCClient?.localVideoTrack?.isEnabled = true
                 webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
                 isCameraOff = true
+                DispatchQueue.main.async {
+                    sender.setImage(UIImage(named: "cameraOff"), for: .normal)
+                }
             }
         } else {
             videoVCMode = .videoCall
@@ -87,47 +140,7 @@ class VideoViewController: UIViewController {
         self.navigationController?.popViewController(animated: false)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-        navigationController?.navigationBar.isHidden = true
-        if videoVCMode == .videoCall {
-            isSpeakerOn = true
-            speakerOnOffButton.setImage(UIImage(named: "speakerOn"), for: .normal)
-            webRTCClient?.speakerOn()
-            #if arch(arm64)
-            localRenderer = RTCMTLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-            remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-            (localRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
-            (remoteRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
-            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
-            #else
-            localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
-            remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
-            #endif
-            remoteRenderer!.tag = 10
-            localRenderer!.tag = 11
-            self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)
-            self.webRTCClient?.renderRemoteVideo(to: remoteRenderer! as! RTCVideoRenderer)
-            if let localVideoView = self.ourView {
-                self.embedView(localRenderer!, into: localVideoView)
-            }
-            self.embedView(remoteRenderer!, into: self.view)
-            self.view.sendSubviewToBack(remoteRenderer!)
-        } else {
-            isSpeakerOn = false
-            speakerOnOffButton.setImage(UIImage(named: "speakerOff"), for: .normal)
-            webRTCClient?.speakerOff()
-            ourView.backgroundColor = .clear
-        }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = UIColor(named: "videoColor")
-        
-        webRTCClient?.webRTCCDelegate = self
-    }
+   
     
     @IBAction func switchCamera(_ sender: Any) {
         localRenderer!.tag = 11

@@ -32,14 +32,26 @@ class ContactsViewModel {
     }
   }
     
-    func getMessages(id: String, completion: @escaping (Messages?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChatMessages(id: id) { (messages, error) in
+    func getMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
+        HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)
         }
     }
     
     func removeContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         HomeNetworkManager().removeContact(id: id) { (error) in
+            completion(error)
+        }
+    }
+    
+    func getRequests(completion: @escaping ([Request]?, NetworkResponse?)->())  {
+        HomeNetworkManager().getRequests { (requests, error) in
+            completion(requests, error)
+        }
+    }
+    
+    func deleteRequest(id: String, completion: @escaping (NetworkResponse?) -> ()) {
+        HomeNetworkManager().deleteRequest(id: id) { (error) in
             completion(error)
         }
     }

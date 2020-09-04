@@ -15,7 +15,7 @@ public enum HomeApi {
     case addContact(id: String)
     case logout(deviceUUID: String)
     case getChats
-    case getChatMessages(id: String)
+    case getChatMessages(id: String, dateUntil: String?)
     case getUserById(id: String)
     case getImage(avatar: String)
     case deleteAccount
@@ -34,6 +34,8 @@ public enum HomeApi {
     case registerDevice(token: String, voipToken: String)
     case readCalls(id: String)
     case confirmRequest(id: String, confirm: Bool)
+    case deleteRequest(id: String)
+    case getRequests
 }
 
 extension HomeApi: EndPointType {
@@ -55,7 +57,7 @@ extension HomeApi: EndPointType {
             return AUTHUrls.Logout
         case .getChats:
             return AUTHUrls.GetChats
-        case .getChatMessages(let id):
+        case .getChatMessages(let id,_):
             return  "\(AUTHUrls.GetChatMessages)\(id)"
         case .getUserById(let id):
             return  "\(AUTHUrls.GetUserById)\(id)"
@@ -93,6 +95,10 @@ extension HomeApi: EndPointType {
             return AUTHUrls.ReadCalls
         case .confirmRequest(_, _):
             return AUTHUrls.confirmRequest
+        case .deleteRequest(_):
+            return AUTHUrls.DeleteRequest
+        case .getRequests:
+            return AUTHUrls.GetRequests
         }
     }
     
@@ -109,8 +115,8 @@ extension HomeApi: EndPointType {
             return .post
         case .getChats:
             return .get
-        case .getChatMessages(_):
-            return .get
+        case .getChatMessages(_,_):
+            return .post
         case .getUserById(_):
             return .get
         case .getImage(_):
@@ -147,6 +153,10 @@ extension HomeApi: EndPointType {
             return .post
         case .confirmRequest(_, _):
             return .post
+        case .deleteRequest(_):
+            return .delete
+        case .getRequests:
+            return .get
         }
     }
     
@@ -173,9 +183,13 @@ extension HomeApi: EndPointType {
         case .getChats:
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .getChatMessages(_):
+        case .getChatMessages(_, let dateUntil):
+            var parameters: Parameters? = ["dateUntil" : dateUntil]
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
-            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+            if dateUntil == nil {
+                parameters = nil
+            }
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .getUserById(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
@@ -257,6 +271,13 @@ extension HomeApi: EndPointType {
             let parameters:Parameters = ["userId": id, "confirm" : confirm]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteRequest(id: let id):
+            let parameters:Parameters = ["contactId": id]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getRequests:
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     
