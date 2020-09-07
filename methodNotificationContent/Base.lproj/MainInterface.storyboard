@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,70 +16,39 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="GcN-lo-r42">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yfh-FT-rtY">
-                                <rect key="frame" x="0.0" y="80" width="320" height="270"/>
+                                <rect key="frame" x="0.0" y="40" width="320" height="310"/>
                                 <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="EOo-Ef-3IO">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="32"/>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="EOo-Ef-3IO">
+                                        <rect key="frame" x="8" y="0.0" width="304" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bmX-w8-K19">
-                                        <rect key="frame" x="80" y="37" width="160" height="160"/>
+                                        <rect key="frame" x="32" y="41" width="256" height="269"/>
                                     </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tr3-1e-m7G">
-                                        <rect key="frame" x="230" y="217" width="70" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="70" id="1vz-dD-KsI"/>
-                                            <constraint firstAttribute="height" constant="40" id="5Fa-FX-4D7"/>
-                                        </constraints>
-                                        <state key="normal" title="Confirm">
-                                            <color key="titleColor" name="Color"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="confirmRequestAction:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="SNb-HS-NsU"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fup-JT-pJP">
-                                        <rect key="frame" x="20" y="217" width="70" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="69s-Ng-ggM"/>
-                                            <constraint firstAttribute="width" constant="70" id="zLq-88-WIs"/>
-                                        </constraints>
-                                        <state key="normal" title="Reject">
-                                            <color key="titleColor" name="Color"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="rejectRequestAction:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="tqw-gh-hxk"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
-                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="2eX-bn-4RF"/>
+                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" constant="8" id="2eX-bn-4RF"/>
                                     <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="7VP-12-O90"/>
-                                    <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" id="OZn-KM-JMw"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="height" secondItem="yfh-FT-rtY" secondAttribute="height" multiplier="0.5" constant="25" id="Or2-vd-m95"/>
-                                    <constraint firstAttribute="bottom" secondItem="Tr3-1e-m7G" secondAttribute="bottom" constant="13" id="Qit-aL-nsI"/>
-                                    <constraint firstItem="Tr3-1e-m7G" firstAttribute="top" secondItem="bmX-w8-K19" secondAttribute="bottom" constant="20" id="VGz-FE-FjD"/>
+                                    <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" constant="8" id="OZn-KM-JMw"/>
+                                    <constraint firstAttribute="bottom" secondItem="bmX-w8-K19" secondAttribute="bottom" id="SYq-sC-fgc"/>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="top" secondItem="yfh-FT-rtY" secondAttribute="top" id="XEc-gt-2lC"/>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="height" secondItem="yfh-FT-rtY" secondAttribute="height" multiplier="0.1" constant="5" id="YM2-bT-jyc"/>
-                                    <constraint firstItem="Fup-JT-pJP" firstAttribute="top" secondItem="bmX-w8-K19" secondAttribute="bottom" constant="20" id="hf2-UU-KVh"/>
                                     <constraint firstItem="bmX-w8-K19" firstAttribute="centerX" secondItem="yfh-FT-rtY" secondAttribute="centerX" id="j7s-FE-CBG"/>
-                                    <constraint firstAttribute="trailing" secondItem="Tr3-1e-m7G" secondAttribute="trailing" constant="20" id="tsA-S3-3pS"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="width" secondItem="yfh-FT-rtY" secondAttribute="width" multiplier="0.5" id="yNq-3Z-LAw"/>
-                                    <constraint firstItem="Fup-JT-pJP" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" constant="20" id="z7h-8b-cpb"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="width" secondItem="yfh-FT-rtY" secondAttribute="width" multiplier="0.8" id="yNq-3Z-LAw"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="trailing" secondItem="2BE-c3-nQJ" secondAttribute="trailing" id="Dwl-On-adX"/>
-                            <constraint firstItem="GcN-lo-r42" firstAttribute="height" secondItem="S3S-Oj-5AN" secondAttribute="height" multiplier="0.2" id="Fez-S5-41A"/>
+                            <constraint firstItem="GcN-lo-r42" firstAttribute="height" secondItem="S3S-Oj-5AN" secondAttribute="height" multiplier="0.1" id="Fez-S5-41A"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="top" secondItem="S3S-Oj-5AN" secondAttribute="top" id="GYT-JO-8Rh"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" id="Gx2-zu-zZz"/>
                             <constraint firstItem="2BE-c3-nQJ" firstAttribute="bottom" secondItem="yfh-FT-rtY" secondAttribute="bottom" constant="50" id="JOy-5H-Uf3"/>
@@ -104,9 +72,4 @@
             <point key="canvasLocation" x="137.68115942028987" y="70.3125"/>
         </scene>
     </scenes>
-    <resources>
-        <namedColor name="Color">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-    </resources>
 </document>

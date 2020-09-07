@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var defaults: UserDefaults?
     var isVoIPCallStarted: Bool?
     let viewModel = AppDelegateViewModel()
+    var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -43,6 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         //print("\n\n++++++++changed! \(change), \(object)")
     }
+    
+    
     
     func subscribeForChangesObservation() {
         defaults = UserDefaults(suiteName: "group.am.dynamic.method")
@@ -68,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         }
     }()
     
-    
+
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
@@ -85,10 +88,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             NSLog("\n Custom: \(String(describing: aps))")
             
             if remoteNotif!["chatId"] != nil && remoteNotif!["messageId"] != nil {
+                backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "backgroundTask") {
+                    print("kokoaPods")
+                    self.endBackgroundTask(task: &self.backgroundTask)
+                }
                 SocketTaskManager.shared.connect {
                     print(remoteNotif!["chatId"] as! String)
                     SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
-                        SocketTaskManager.shared.disconnect()
+                        SocketTaskManager.shared.disconnect{
+                            self.endBackgroundTask(task: &self.backgroundTask)
+                        }
                     }
                 }
             }
@@ -97,6 +106,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             setInitialStoryboard()
         }
         return true
+    }
+    
+    func endBackgroundTask(task: inout UIBackgroundTaskIdentifier) {
+        UIApplication.shared.endBackgroundTask(task)
+        task = .invalid
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -181,7 +195,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if notification.request.content.categoryIdentifier == "local" || notification.request.content.categoryIdentifier == "contactRequest" {
             completionHandler([.alert, .badge, .sound])
         } else {
-            completionHandler([])
+             completionHandler([])
         }
     }
     
@@ -192,17 +206,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let userinfo = response.notification.request.content.userInfo
                 viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
                     if error == nil {
-//                        self.viewModel.getuserById(id: userinfo["userId"] as! String) { (user, error) in
-//                            if error == nil && user != nil {
-//                                DispatchQueue.main.async {
-//                                    self.tabbar?.contactsViewModel?.addContactToCoreData(newContact: user!, completion: { (error) in
-//                                        if error != nil {
-//                                            print(error?.localizedDescription)
-//                                        }
-//                                    })
-//                                }
-//                            }
-//                        }
                         print("confirmed")
                     }
                 }
@@ -222,29 +225,22 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        // 1. Print out error if PNs registration not successful
         print("Failed to register for remote notifications with error: \(error)")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-       SocketTaskManager.shared.disconnect()
+        SocketTaskManager.shared.disconnect{}
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-         //UNUserNotificationCenter.current().delegate = self
+        if window?.rootViewController == nil {
+            setInitialStoryboard()
+        }
        if SharedConfigs.shared.signedUser != nil {
             SocketTaskManager.shared.connect {
                 print("scene page connect")
             }
         }
-        
-//        let tabbar = window?.rootViewController as? MainTabBarController
-//        if tabbar?.selectedIndex == 0 {
-//            let nc = tabbar!.viewControllers![0] as! UINavigationController
-//            if (nc.viewControllers.last as? CallListViewController) != nil {
-//                (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
-//            }
-//        }
     }
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
@@ -252,6 +248,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         if userInfo["type"] as? String == "message" {
+            backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "krakadil") {
+                self.endBackgroundTask(task: &self.backgroundTask)
+                }
             SocketTaskManager.shared.connect {
                 var oldModel = SharedConfigs.shared.signedUser
                 if oldModel?.unreadMessagesCount != nil {
@@ -266,8 +265,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
-                    SocketTaskManager.shared.disconnect()
-                    completionHandler(.newData)
+                    
+                    SocketTaskManager.shared.disconnect {
+                        self.endBackgroundTask(task: &self.backgroundTask)
+                        completionHandler(.newData)
+                    }
                 }
             }
         }
@@ -276,9 +278,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 var oldModel = SharedConfigs.shared.signedUser
                 oldModel?.missedCallHistoryCount = badge
                 UserDataController().populateUserProfile(model: oldModel!)
-                let nc = tabbar!.viewControllers![2] as! UINavigationController
-                let profile = nc.viewControllers[0] as! ProfileViewController
-                profile.changeNotificationNumber()
+                let nc = tabbar?.viewControllers?[2] as? UINavigationController
+                let profile = nc?.viewControllers[0] as? ProfileViewController
+                profile?.changeNotificationNumber()
                 if tabbar?.selectedIndex == 0 {
                     let nc = tabbar!.viewControllers![0] as! UINavigationController
                     if nc.viewControllers.count > 1 {
@@ -299,7 +301,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         print(badge as Any)
                     }
                 }
-//                let call = CallHistory(type: VideoVCMode.videoCall, receiver: userInfo["receiver"], status: <#T##String?#>, participants: <#T##[String?]?#>, callSuggestTime: <#T##String?#>, _id: <#T##String?#>, createdAt: <#T##String?#>, caller: <#T##String?#>, callEndTime: <#T##String?#>, callStartTime: <#T##String?#>)
             }
             completionHandler(.newData)
         }
@@ -320,7 +321,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         } else {
             MainRouter().assemblyModule()
         }
-        //self.window?.makeKeyAndVisible()
     }
     
     func defineMode() {
@@ -336,10 +336,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
              SharedConfigs.shared.setMode(selectedMode: "light")
          }
      }
-    
-    
-    
-    
 }
 
 extension AppDelegate: Subscriber {

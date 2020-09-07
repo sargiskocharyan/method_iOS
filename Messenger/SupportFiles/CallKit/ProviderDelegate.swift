@@ -66,6 +66,7 @@ extension ProviderDelegate: CXProviderDelegate {
         
         action.fulfill()
 //        SocketTaskManager.shared.connect {
+            print(SocketTaskManager.shared.socket?.status)
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
 //        }
     }
@@ -88,6 +89,7 @@ extension ProviderDelegate: CXProviderDelegate {
         
         callManager.remove(call: call)
 //        SocketTaskManager.shared.connect {
+        print(SocketTaskManager.shared.socket?.status)
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
             self.webrtcClient?.peerConnection?.close()
 //        }

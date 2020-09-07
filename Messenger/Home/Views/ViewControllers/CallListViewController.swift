@@ -267,7 +267,7 @@ class CallListViewController: UIViewController {
             self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
             if AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
                            AppDelegate.shared.isVoIPCallStarted = false
-                           SocketTaskManager.shared.disconnect()
+                SocketTaskManager.shared.disconnect{}
                        }
             }
         })

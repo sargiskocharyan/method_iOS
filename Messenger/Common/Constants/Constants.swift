@@ -10,7 +10,7 @@ import Foundation
 
 struct Environment {
     static let baseURL = "https://192.168.0.105:3000" //"https://192.168.0.105:3000"
-    static let socketUrl = "wss://192.168.0.105:3000"
+    static let socketUrl = "wss://192.168.0.105:3000" //messenger-dynamic.herokuapp.com
 }
 
 struct AUTHUrls {

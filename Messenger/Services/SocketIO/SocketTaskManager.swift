@@ -67,15 +67,13 @@ class SocketTaskManager {
                 completions.append(completionHandler)
             }
         } else {
-           
             queue.sync {
                 completions.append(completionHandler)
             }
             socket!.connect()
             changeSocketStatus(status: .connecting)
-            socket!.on(clientEvent: .connect) { (dataArray, ack) in
+            self.addAuthenticatedListener {
                 self.manager?.reconnects = true
-
                 self.changeSocketStatus(status: .connected)
                 print(self.socket!.handlers)
                 if self.socket!.handlers.count <= 2 {
@@ -104,6 +102,16 @@ class SocketTaskManager {
         }
     }
     
+    func addAuthenticatedListener(completionHandler: @escaping () -> ()) {
+        socket?.on("authenticated", callback: { (dataArray, socketAck) in
+            if dataArray[0] as! Bool == true {
+                completionHandler()
+            } else {
+                print("error")
+            }
+        })
+    }
+    
     func emit() {
         socket!.emit("join") {
             print("join")
@@ -113,7 +121,6 @@ class SocketTaskManager {
     func messageReceived(chatId: String, messageId: String, completionHandler: @escaping () -> ()) {
         socket?.emit("messageReceived", chatId, messageId) {
             print("message Received")
-            
             completionHandler()
         }
     }
@@ -123,6 +130,8 @@ class SocketTaskManager {
                print("message Read")
            }
        }
+    
+    
     
     func messageTyping(chatId: String) {
         socket?.emit("messageTyping", chatId)
@@ -263,7 +272,7 @@ class SocketTaskManager {
         })
     }
     
-    func disconnect() {
+    func disconnect(completion: @escaping () -> ()) {
         socket?.disconnect()
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)

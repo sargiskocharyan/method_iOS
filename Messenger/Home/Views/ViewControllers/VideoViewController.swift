@@ -92,6 +92,7 @@ class VideoViewController: UIViewController {
                     DispatchQueue.main.async {
                         sender.setImage(UIImage(named: "cameraOn"), for: .normal)
                     }
+                    self.webRTCClient?.sendData("turn camera off".data(using: .utf8)!)
                     self.isCameraOff = false
                 })
             } else {
@@ -102,6 +103,7 @@ class VideoViewController: UIViewController {
                 DispatchQueue.main.async {
                     sender.setImage(UIImage(named: "cameraOff"), for: .normal)
                 }
+                self.webRTCClient?.sendData("turn camera on".data(using: .utf8)!)
             }
         } else {
             videoVCMode = .videoCall
@@ -110,18 +112,20 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func endCallButton(_ sender: Any) {
+        webRTCClient?.sendData("opponent leave call".data(using: .utf8)!)
         endCall()
     }
     
     @IBAction func speakerOnAndOff(_ sender: UIButton) {
-        webRTCClient?.sendData("turn off microphone".data(using: .utf8)!)
         if !isSpeakerOn {
             isSpeakerOn = true
             sender.setImage(UIImage(named: "speakerOn"), for: .normal)
+             webRTCClient?.sendData("turn on microphone".data(using: .utf8)!)
             webRTCClient?.speakerOn()
         } else if isSpeakerOn {
             isSpeakerOn = false
             sender.setImage(UIImage(named: "speakerOff"), for: .normal)
+            webRTCClient?.sendData("turn off microphone".data(using: .utf8)!)
             webRTCClient?.speakerOff()
         }
     }
@@ -145,10 +149,13 @@ class VideoViewController: UIViewController {
     @IBAction func switchCamera(_ sender: Any) {
         localRenderer!.tag = 11
         if cameraPosition == .front {
-            ourView.transform = CGAffineTransform(scaleX: 1, y: 1);
+            ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
+            webRTCClient?.sendData("turn camera to back".data(using: .utf8)!)
             cameraPosition = .back
+            
         } else {
-            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
+            webRTCClient?.sendData("turn camera to front".data(using: .utf8)!)
             cameraPosition = .front
         }
         self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition)

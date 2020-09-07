@@ -244,7 +244,7 @@ final class WebRTCClient: NSObject {
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
 //        print("\n\nsendData \(self.localDataChannel)")
-        print("\n***\n \(self.localDataChannel!.sendData(buffer))")
+        self.localDataChannel!.sendData(buffer)
          print("count after sent \(localDataChannel?.bufferedAmount)")
     }
 }

@@ -29,8 +29,6 @@ public class Contacts: NSObject, NSCoding {
         
         self.init(contacts: mContacts)
     }
-    
-    
 }
 
 public class User: NSObject,  Codable, NSCoding {

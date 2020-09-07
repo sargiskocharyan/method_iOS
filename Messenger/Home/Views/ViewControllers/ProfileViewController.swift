@@ -338,7 +338,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 UserDataController().logOutUser()
                 AuthRouter().assemblyModule()
             }
-            SocketTaskManager.shared.disconnect()
+            SocketTaskManager.shared.disconnect{}
         }
     }
     

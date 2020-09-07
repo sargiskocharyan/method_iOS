@@ -395,7 +395,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func sessionExpires() {
-        SocketTaskManager.shared.disconnect()
+        SocketTaskManager.shared.disconnect{}
         UserDataController().logOutUser()
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
@@ -485,6 +485,8 @@ extension MainTabBarController: WebRTCClientDelegate {
             videoVC?.turnOffOtherSideCamera()
         } else if message == "turn camera on" {
             videoVC?.turnOnOtherSideCamera()
+        } else if message == "opponent leave call" {
+            videoVC?.endCall()
         } else {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
@@ -492,6 +494,7 @@ extension MainTabBarController: WebRTCClientDelegate {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+        
     }
     
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
