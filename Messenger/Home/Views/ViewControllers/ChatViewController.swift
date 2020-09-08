@@ -363,7 +363,6 @@ class ChatViewController: UIViewController {
                         let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
                         if date.compare(readMessageDate!).rawValue == 1 {
                             SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
-                            
                             if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
                                 self.allMessages?.statuses![0].readMessageDate = createdAt
                             } else {
@@ -371,13 +370,19 @@ class ChatViewController: UIViewController {
                             }
                             let recent = (tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                             recent.handleRead(id: self.id!)
-                            var oldModel = SharedConfigs.shared.signedUser
-                            oldModel?.unreadMessagesCount! -= 1
-                            UserDataController().populateUserProfile(model: oldModel!)
-                            let profileNC = tabbar?.viewControllers![2] as! UINavigationController
-                            let profileVC = profileNC.viewControllers[0] as! ProfileViewController
-                            profileVC.changeNotificationNumber()
-                            break
+                            if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].call == nil {
+                                var oldModel = SharedConfigs.shared.signedUser
+                                if oldModel?.unreadMessagesCount != nil {
+                                    oldModel?.unreadMessagesCount! -= 1
+                                }
+                                UserDataController().populateUserProfile(model: oldModel!)
+                                let profileNC = tabbar?.viewControllers![2] as! UINavigationController
+                                let profileVC = profileNC.viewControllers[0] as! ProfileViewController
+                                profileVC.changeNotificationNumber()
+                                break
+                            } else {
+                                continue
+                            }
                         }
                     }
                 }

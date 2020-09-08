@@ -486,7 +486,9 @@ extension MainTabBarController: WebRTCClientDelegate {
         } else if message == "turn camera on" {
             videoVC?.turnOnOtherSideCamera()
         } else if message == "opponent leave call" {
-            videoVC?.endCall()
+            DispatchQueue.main.async {
+                self.videoVC?.endCall()
+            }
         } else {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)

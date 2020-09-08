@@ -34,8 +34,6 @@ protocol CallListViewDelegate: class  {
 
 class CallListViewController: UIViewController {
     
-    
-    
     //MARK: Properties
     private let config = Config.default
     private var roomName: String?
@@ -62,7 +60,6 @@ class CallListViewController: UIViewController {
         super.viewWillAppear(animated)
         
         DispatchQueue.main.async {
-//            UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
             if let tabItems = self.tabbar?.tabBar.items {
                 let tabItem = tabItems[0]
                 tabItem.badgeValue = nil
@@ -82,7 +79,6 @@ class CallListViewController: UIViewController {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                         }
                     } else {
-//                        UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
                         var oldModel = SharedConfigs.shared.signedUser
                         oldModel?.missedCallHistoryCount = 0
                         UserDataController().populateUserProfile(model: oldModel!)
@@ -108,33 +104,6 @@ class CallListViewController: UIViewController {
         profileVC.delegate = self
         if networkCheck.currentStatus == .satisfied {
             getCallHistory {
-//                if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount  {
-//                    if count > 0 && self.viewModel!.calls.count > 0 {
-//                        let missed = self.viewModel?.calls.filter({ (call) -> Bool in
-//                            return call.status == CallStatus.missed.rawValue
-//                        })
-//                        if missed!.count > 0 {
-//                            var oldModel = SharedConfigs.shared.signedUser
-//                            oldModel?.missedCallHistoryCount = 0
-//                            UserDataController().populateUserProfile(model: oldModel!)
-//                            self.tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
-//                                if error == nil {
-//                                    DispatchQueue.main.async {
-//                                        UIApplication.shared.applicationIconBadgeNumber = (SharedConfigs.shared.signedUser?.unreadMessagesCount)!
-//                                        if let tabItems = self.tabbar?.tabBar.items {
-//                                            let tabItem = tabItems[0]
-//                                            tabItem.badgeValue = nil
-//                                        }
-//                                    }
-//                                } else {
-//                                    DispatchQueue.main.async {
-//                                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                                    }
-//                                }
-//                            })
-//                        }
-//                    }
-//                }
             }
         } else {
             getCallHistoryFromDB()

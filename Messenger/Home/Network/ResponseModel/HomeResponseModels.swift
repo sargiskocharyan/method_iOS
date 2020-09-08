@@ -65,6 +65,7 @@ struct Chat: Codable {
     var online: Bool?
     let statuses: [MessageStatus]?
     var unreadMessageExists: Bool
+    var isAddedOne: Bool?
 }
 
 struct Chats :Codable {

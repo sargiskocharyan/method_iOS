@@ -169,6 +169,18 @@ class SocketTaskManager {
         }
     }
 
+    func checkCallState(roomname: String) {
+        socket!.emitWithAck("checkCallState", roomname).timingOut(after: 0.0) { (dataArray) in
+//            completionHandler(dataArray[0] as! String)
+        if dataArray[0] as! String != CallStatus.ongoing.rawValue {
+            for call in AppDelegate.shared.callManager.calls {
+                AppDelegate.shared.callManager.end(call: call)
+            }
+            AppDelegate.shared.callManager.removeAllCalls()
+        }
+     }
+    }
+    
     func callStarted(roomname: String) {
         self.socket!.emit("callStarted", roomname)
     }
@@ -305,20 +317,33 @@ class SocketTaskManager {
                 let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
                 completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
-                for chat in vc.chats {
-                    if chat.id == data["senderId"] as? String {
-                        if !chat.unreadMessageExists {
+                for i in 0..<vc.chats.count {
+                    if vc.chats[i].id == data["senderId"] as? String {
+                        if !vc.chats[i].unreadMessageExists {
                             var oldModel = SharedConfigs.shared.signedUser
                             oldModel?.unreadMessagesCount! += 1
-//                            UIApplication.shared.applicationIconBadgeNumber += 1
+                            vc.chats[i].isAddedOne = true
                             UserDataController().populateUserProfile(model: oldModel!)
-                            
                             DispatchQueue.main.async {
                                 let nc = self.tabbar!.viewControllers![2] as! UINavigationController
                                 let profile = nc.viewControllers[0] as! ProfileViewController
                                 profile.changeNotificationNumber()
                             }
-                            
+                            if let tabItems = self.tabbar?.tabBar.items {
+                                let tabItem = tabItems[1]
+                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                            }
+                            break
+                        } else if vc.chats[i].unreadMessageExists && vc.chats[i].isAddedOne == nil && vc.chats[i].message?.call != nil {
+                            var oldModel = SharedConfigs.shared.signedUser
+                            oldModel?.unreadMessagesCount! += 1
+                            vc.chats[i].isAddedOne = true
+                            UserDataController().populateUserProfile(model: oldModel!)
+                            DispatchQueue.main.async {
+                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                                let profile = nc.viewControllers[0] as! ProfileViewController
+                                profile.changeNotificationNumber()
+                            }
                             if let tabItems = self.tabbar?.tabBar.items {
                                 let tabItem = tabItems[1]
                                 tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil

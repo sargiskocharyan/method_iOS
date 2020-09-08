@@ -84,10 +84,14 @@ class RecentMessageTableViewCell: UITableViewCell {
         
         if chat.id == chat.message?.senderId {
             lastMessageLabel.text = chat.message?.text ?? "Call"
-//            if chat.unreadMessageExists {
-//                lastMessageLabel.textColor = .black
-//                self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-//            } 
+            if chat.unreadMessageExists && lastMessageLabel.text != "Call" {
+                lastMessageLabel.textColor = .black
+                let boldAttribute = [
+                   NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-Bold", size: 14.0)!
+                ]
+                let boldText = NSAttributedString(string: lastMessageLabel.text!, attributes: boldAttribute)
+                lastMessageLabel.attributedText = boldText
+            }
         } else {
             lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "Call")
         }

@@ -21,7 +21,7 @@ protocol AppDelegateD : class {
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
-//    let nc = NotificationCenter.default
+    //    let nc = NotificationCenter.default
     weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
@@ -71,11 +71,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         }
     }()
     
-
+    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
-         UserDataController().loadUserInfo()
+        UserDataController().loadUserInfo()
         subscribeForChangesObservation()
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
@@ -159,6 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 SocketTaskManager.shared.connect {
                     self.isVoIPCallStarted = true
+                    SocketTaskManager.shared.checkCallState(roomname: payload.dictionaryPayload["roomName"] as! String)
                     completion()
                 }
             }
@@ -195,33 +196,32 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if notification.request.content.categoryIdentifier == "local" || notification.request.content.categoryIdentifier == "contactRequest" {
             completionHandler([.alert, .badge, .sound])
         } else {
-             completionHandler([])
+            completionHandler([])
         }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-            switch response.actionIdentifier {
-            case "first":
-                print("first")
-                let userinfo = response.notification.request.content.userInfo
-                viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
-                    if error == nil {
-                        print("confirmed")
-                    }
+        switch response.actionIdentifier {
+        case "first":
+            print("first")
+            let userinfo = response.notification.request.content.userInfo
+            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
+                if error == nil {
+                    print("confirmed")
                 }
-            case "second":
-                print("second")
-                let userinfo = response.notification.request.content.userInfo
-                viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: false) { (error) in
-                    if error == nil {
-                        print("merjec")
-                    }
-                }
-            default:
-                print("default")
             }
-            completionHandler()
-
+        case "second":
+            print("second")
+            let userinfo = response.notification.request.content.userInfo
+            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: false) { (error) in
+                if error == nil {
+                    print("merjec")
+                }
+            }
+        default:
+            print("default")
+        }
+        completionHandler()
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -235,8 +235,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         if window?.rootViewController == nil {
             setInitialStoryboard()
+        } else {
+            if let vc = (tabbar?.viewControllers?[0] as? UINavigationController)?.viewControllers[0] as? CallListViewController {
+                if (tabbar?.viewControllers?[0] as? UINavigationController)?.viewControllers.count == 1 && tabbar?.selectedIndex == 0 {
+                    vc.viewWillAppear(false)
+                }
+            }
         }
-       if SharedConfigs.shared.signedUser != nil {
+        if SharedConfigs.shared.signedUser != nil {
             SocketTaskManager.shared.connect {
                 print("scene page connect")
             }
@@ -250,19 +256,43 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if userInfo["type"] as? String == "message" {
             backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "krakadil") {
                 self.endBackgroundTask(task: &self.backgroundTask)
-                }
+            }
             SocketTaskManager.shared.connect {
-                var oldModel = SharedConfigs.shared.signedUser
-                if oldModel?.unreadMessagesCount != nil {
-                    oldModel?.unreadMessagesCount! += 1
+                let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
+                for chat in vc.chats {
+                    if chat.id == userInfo["chatId"] as? String {
+                        if !chat.unreadMessageExists {
+                            var oldModel = SharedConfigs.shared.signedUser
+                            if oldModel?.unreadMessagesCount != nil {
+                                oldModel?.unreadMessagesCount! += 1
+                            } else {
+                                oldModel?.unreadMessagesCount = 1
+                            }
+                            UserDataController().populateUserProfile(model: oldModel!)
+                            let user = SharedConfigs.shared.signedUser
+                            DispatchQueue.main.async {
+                                let nc = self.tabbar?.viewControllers?[2] as? UINavigationController
+                                let profile = nc?.viewControllers[0] as? ProfileViewController
+                                profile?.changeNotificationNumber()
+                                UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+                            }
+                            if let tabItems = self.tabbar?.tabBar.items {
+                                let tabItem = tabItems[1]
+                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                            }
+                            break
+                        }
+                    }
                 }
-                UserDataController().populateUserProfile(model: oldModel!)
-                if let tabItems = self.tabbar?.tabBar.items {
-                    let tabItem = tabItems[1]
-                    tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
-                }
-                let user = SharedConfigs.shared.signedUser
-                UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+//                var oldModel = SharedConfigs.shared.signedUser
+//
+//                UserDataController().populateUserProfile(model: oldModel!)
+//                if let tabItems = self.tabbar?.tabBar.items {
+//                    let tabItem = tabItems[1]
+//                    tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+//                }
+//
+                
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
                     
@@ -324,18 +354,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func defineMode() {
-         if UserDefaults.standard.object(forKey: "mode") as? String == "dark" {
-             UIApplication.shared.windows.forEach { window in
-                 window.overrideUserInterfaceStyle = .dark
-             }
-             SharedConfigs.shared.setMode(selectedMode: "dark")
-         } else {
-             UIApplication.shared.windows.forEach { window in
-                 window.overrideUserInterfaceStyle = .light
-             }
-             SharedConfigs.shared.setMode(selectedMode: "light")
-         }
-     }
+        if UserDefaults.standard.object(forKey: "mode") as? String == "dark" {
+            UIApplication.shared.windows.forEach { window in
+                window.overrideUserInterfaceStyle = .dark
+            }
+            SharedConfigs.shared.setMode(selectedMode: "dark")
+        } else {
+            UIApplication.shared.windows.forEach { window in
+                window.overrideUserInterfaceStyle = .light
+            }
+            SharedConfigs.shared.setMode(selectedMode: "light")
+        }
+    }
 }
 
 extension AppDelegate: Subscriber {

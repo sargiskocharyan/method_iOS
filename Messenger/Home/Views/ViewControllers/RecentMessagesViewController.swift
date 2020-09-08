@@ -134,6 +134,13 @@ class RecentMessagesViewController: UIViewController {
         for i in 0..<chats.count {
             if chats[i].id == id {
                 chats[i].unreadMessageExists = false
+                chats[i].isAddedOne = nil
+                let regularAttribute = [
+                    NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
+                ]
+                let regularText = NSAttributedString(string: (chats[i].message?.text) ?? "Call", attributes: regularAttribute)
+                 (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.attributedText = regularText
+                (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.textColor = .darkGray
             }
         }
     }
