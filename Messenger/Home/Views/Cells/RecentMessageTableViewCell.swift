@@ -84,7 +84,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         
         if chat.id == chat.message?.senderId {
             lastMessageLabel.text = chat.message?.text ?? "Call"
-            if chat.unreadMessageExists && lastMessageLabel.text != "Call" {
+            if chat.unreadMessageExists {
                 lastMessageLabel.textColor = .black
                 let boldAttribute = [
                    NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-Bold", size: 14.0)!

@@ -134,7 +134,6 @@ class RecentMessagesViewController: UIViewController {
         for i in 0..<chats.count {
             if chats[i].id == id {
                 chats[i].unreadMessageExists = false
-                chats[i].isAddedOne = nil
                 let regularAttribute = [
                     NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
                 ]
@@ -268,8 +267,14 @@ class RecentMessagesViewController: UIViewController {
                     }
                 }
                 for i in 0..<self.chats.count {
+                    var isUnreadMessage = false
                     if self.chats[i].id == id {
-                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: true)
+                        if callHistory != nil {
+                            isUnreadMessage = self.chats[i].unreadMessageExists
+                        } else {
+                            isUnreadMessage = true
+                        }
+                        self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: isUnreadMessage)
                         self.sort()
                         DispatchQueue.main.async {
                             self.tableView?.reloadData()
@@ -277,7 +282,7 @@ class RecentMessagesViewController: UIViewController {
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: true))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
                 self.sort()
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()

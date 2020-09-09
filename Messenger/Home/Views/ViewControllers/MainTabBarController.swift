@@ -349,7 +349,7 @@ class MainTabBarController: UITabBarController {
                         } else {
                             chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                         }
-                    } else if callHistory?.status == CallStatus.missed.rawValue  {
+                    } else if callHistory?.status == CallStatus.missed.rawValue {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else if callHistory == nil && recentNc.viewControllers.count == 2 && message.senderId != SharedConfigs.shared.signedUser?.id {

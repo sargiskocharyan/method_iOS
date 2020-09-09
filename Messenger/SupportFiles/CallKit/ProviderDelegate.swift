@@ -33,6 +33,8 @@ class ProviderDelegate: NSObject {
         let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .phoneNumber, value: handle)
         update.hasVideo = hasVideo
+        update.supportsDTMF = false
+        update.supportsGrouping = false
         provider.reportNewIncomingCall(with: uuid, update: update) { error in
             if error == nil {
                 let call = Call(id: id, uuid: uuid, handle: handle, roomName: roomName)
@@ -56,6 +58,10 @@ extension ProviderDelegate: CXProviderDelegate {
         callManager.removeAllCalls()
     }
     
+    func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
+        print("")
+    }
+    
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         guard let call = callManager.callWithUUID(uuid: action.callUUID) else {
             action.fail()
@@ -65,10 +71,7 @@ extension ProviderDelegate: CXProviderDelegate {
         call.answer()
         
         action.fulfill()
-//        SocketTaskManager.shared.connect {
-            print(SocketTaskManager.shared.socket?.status)
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
-//        }
     }
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
@@ -80,7 +83,18 @@ extension ProviderDelegate: CXProviderDelegate {
             action.fail()
             return
         }
-        
+        if call.state == .active {
+            tabbar?.videoVC?.endCallFromCallkitView(call: call)
+            if AppDelegate.shared.isVoIPCallStarted! {
+                SocketTaskManager.shared.disconnect(completion: {})
+            }
+        } else {
+            SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
+            self.webrtcClient?.peerConnection?.close()
+            if AppDelegate.shared.isVoIPCallStarted! {
+                SocketTaskManager.shared.disconnect(completion: {})
+            }
+        }
         stopAudio()
         
         call.end()
@@ -88,11 +102,6 @@ extension ProviderDelegate: CXProviderDelegate {
         action.fulfill()
         
         callManager.remove(call: call)
-//        SocketTaskManager.shared.connect {
-        print(SocketTaskManager.shared.socket?.status)
-            SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
-            self.webrtcClient?.peerConnection?.close()
-//        }
         
     }
     

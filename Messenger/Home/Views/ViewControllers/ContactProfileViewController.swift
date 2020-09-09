@@ -88,7 +88,6 @@ class ContactProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getRequests()
 //        addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
         addContact = addToContactButton
         tabBar = tabBarController as? MainTabBarController
@@ -101,7 +100,9 @@ class ContactProfileViewController: UIViewController {
         infoView.layer.borderWidth = 1.0
         infoView.layer.masksToBounds = true
         addToContactButton.tag = 45
-        getUserInformation()
+        getUserInformation {
+            self.getRequests()
+        }
         sendMessageButton.addTarget(self, action: #selector(startMessage), for: .touchUpInside)
         sendMessageButton.backgroundColor = .clear
     }
@@ -136,7 +137,7 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-    func getUserInformation() {
+    func getUserInformation(completion: @escaping ()->()) {
         callListViewController?.viewModel!.getuserById(id: id!) { (user, error) in
             if error != nil {
                 DispatchQueue.main.async {
@@ -144,6 +145,7 @@ class ContactProfileViewController: UIViewController {
                 }
             } else if user != nil {
                 self.contact = user
+                completion()
                 DispatchQueue.main.async {
                     self.configureView()
                 }
@@ -203,7 +205,6 @@ class ContactProfileViewController: UIViewController {
                 }
             } else if requests != nil {
                 self.requestsArray = requests!
-//                for viewModelContact in self.viewModel!.contacts {
                     for request in requests! {
                         if self.contact!._id == request.receiver {
                             isOnRequests = true
@@ -225,7 +226,6 @@ class ContactProfileViewController: UIViewController {
                             break
                         }
                     }
-//                }
                 if !isOnRequests {
                     if !self.onContactPage! {
                         self.isRequestSent = .nothing

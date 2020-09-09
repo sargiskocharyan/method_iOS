@@ -125,21 +125,24 @@ final class WebRTCClient: NSObject {
         localVideoTrack?.add(renderer)
     }
     
-    func startCaptureLocalVideo(renderer: RTCVideoRenderer, cameraPosition: AVCaptureDevice.Position) {
+    func startCaptureLocalVideo(renderer: RTCVideoRenderer, cameraPosition: AVCaptureDevice.Position, completion: @escaping () ->()) {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
             return
         }
         if cameraPosition == .back {
-         capturer.startCapture(with: backCamera!, format: backFormat!, fps: Int(backFps!.maxFrameRate))
+                capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
+                    completion()
+                    return
+            }
+            
         } else if cameraPosition == .front {
-            capturer.startCapture(with: frontCamera!, format: frontFormat!, fps: Int(frontFps!.maxFrameRate))
+                capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
+                    completion()
+                    return
+                }
         }
-            localVideoTrack?.remove(renderer)
-            localVideoTrack?.add(renderer)
         
     }
-    
-    
     
     func stopCaptureLocalVideo(renderer: RTCVideoRenderer, completion: @escaping () -> ()) {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
@@ -233,7 +236,6 @@ final class WebRTCClient: NSObject {
         config.isOrdered = true
         config.isNegotiated = true
         config.maxPacketLifeTime = 30000
-        print(config.streamId)
         guard let dataChannel = self.peerConnection?.dataChannel(forLabel: "1", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
@@ -245,7 +247,6 @@ final class WebRTCClient: NSObject {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
 //        print("\n\nsendData \(self.localDataChannel)")
         self.localDataChannel!.sendData(buffer)
-         print("count after sent \(localDataChannel?.bufferedAmount)")
     }
 }
 

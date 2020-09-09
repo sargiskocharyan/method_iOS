@@ -200,6 +200,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
     }
     
+    func application(_ application: UIApplication,
+              continue userActivity: NSUserActivity,
+              restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
+        if userActivity.activityType == "INStartVideoCallIntent" {
+            // treat start video
+        }
+        return true
+    }
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         switch response.actionIdentifier {
         case "first":
@@ -248,6 +258,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         }
     }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
             completionHandler(.failed)
@@ -258,10 +269,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 self.endBackgroundTask(task: &self.backgroundTask)
             }
             SocketTaskManager.shared.connect {
-                let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
-                for chat in vc.chats {
-                    if chat.id == userInfo["chatId"] as? String {
-                        if !chat.unreadMessageExists {
+                let vc = (self.tabbar?.viewControllers?[1] as? UINavigationController)?.viewControllers[0] as? RecentMessagesViewController
+                for i in 0..<(vc?.chats.count ?? 0) {
+                    if vc?.chats[i].id == userInfo["chatId"] as? String {
+                        if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
                             var oldModel = SharedConfigs.shared.signedUser
                             if oldModel?.unreadMessagesCount != nil {
                                 oldModel?.unreadMessagesCount! += 1
@@ -269,6 +280,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 oldModel?.unreadMessagesCount = 1
                             }
                             UserDataController().populateUserProfile(model: oldModel!)
+                            vc?.chats[i].unreadMessageExists = true
                             let user = SharedConfigs.shared.signedUser
                             DispatchQueue.main.async {
                                 let nc = self.tabbar?.viewControllers?[2] as? UINavigationController
@@ -284,14 +296,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         }
                     }
                 }
-//                var oldModel = SharedConfigs.shared.signedUser
-//
-//                UserDataController().populateUserProfile(model: oldModel!)
-//                if let tabItems = self.tabbar?.tabBar.items {
-//                    let tabItem = tabItems[1]
-//                    tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
-//                }
-//
+
                 
                 print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {

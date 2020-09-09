@@ -233,11 +233,15 @@ class CallListViewController: UIViewController {
     func showEndedCall(_ callHistory: CallHistory) {
         viewModel?.save(newCall: callHistory, completion: {
             if self.tableView != nil {
-            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-            if AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
-                           AppDelegate.shared.isVoIPCallStarted = false
-                SocketTaskManager.shared.disconnect{}
-                       }
+                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                if callHistory.status == CallStatus.missed.rawValue {
+                    if AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
+                        AppDelegate.shared.isVoIPCallStarted = false
+                        SocketTaskManager.shared.disconnect{}
+                    }
+                } else {
+                    AppDelegate.shared.isVoIPCallStarted = false
+                }
             }
         })
     }
