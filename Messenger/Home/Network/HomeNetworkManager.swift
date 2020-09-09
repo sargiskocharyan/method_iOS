@@ -88,6 +88,25 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    
+    func confirmRequest(id: String, confirm: Bool, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.confirmRequest(id: id, confirm: confirm)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     func logout(deviceUUID: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.logout(deviceUUID: deviceUUID)) { data, response, error in
             if error != nil {
@@ -106,7 +125,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
+    func getChats(completion: @escaping (Chats?, NetworkResponse?)->()) {
         router.request(.getChats) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -121,7 +140,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Chat].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(Chats.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -134,8 +153,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChatMessages(id: String,  completion: @escaping ([Message]?, NetworkResponse?)->()) {
-        router.request(.getChatMessages(id: id)) { data, response, error in
+    func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
+        router.request(.getChatMessages(id: id, dateUntil: dateUntil)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -149,7 +168,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Message].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode(Messages.self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -206,6 +225,34 @@ class HomeNetworkManager: NetworkManager {
                     }
                     let image = UIImage(data: responseData)
                     completion(image, nil)
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func getRequests(completion: @escaping ([Request]?, NetworkResponse?)->()) {
+        router.request(.getRequests) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let response = try JSONDecoder().decode([Request].self, from: responseData)
+                        completion(response, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
                 case .failure( _):
                     completion(nil, NetworkResponse.failed)
                 }
@@ -286,6 +333,24 @@ class HomeNetworkManager: NetworkManager {
     
     func deleteAvatar(completion: @escaping (NetworkResponse?)->()) {
         router.request(.deleteAvatar) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteRequest(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteRequest(id: id)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(error)

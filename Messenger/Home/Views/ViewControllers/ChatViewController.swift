@@ -23,12 +23,13 @@ class ChatViewController: UIViewController {
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var typingLabel: UILabel!
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var viewModel: ChatMessagesViewModel?
     var id: String?
-    var allMessages: [Message] = []
+    var allMessages: Messages?
     var bottomConstraint: NSLayoutConstraint?
     let center = UNUserNotificationCenter.current()
     var name: String?
@@ -39,6 +40,7 @@ class ChatViewController: UIViewController {
     var image = UIImage(named: "noPhoto")
     var tabbar: MainTabBarController?
     var mainRouter: MainRouter?
+    var statuses: [MessageStatus]?
     let messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "imputColor")
@@ -57,7 +59,10 @@ class ChatViewController: UIViewController {
         button.setImage(UIImage(named: "send"), for: .normal)
         return button
     }()
-    
+    var timer: Timer?
+    var check = false
+    var newArray: [Message]?
+    var test = false
     
     
     //MARK: Lifecycles
@@ -65,7 +70,7 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        getChatMessages()
+        getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
         setupInputComponents()
@@ -77,15 +82,24 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-       
+            if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
+                self.handleReadMessage()
+                self.handleMessageTyping()
+                self.handleReceiveMessage()
+        }
+        inputTextField.addTarget(self, action: #selector(inputTextFieldDidCghe), for: .editingChanged)
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.endEditing(true)
-        tabBarController?.tabBar.isHidden = true
-        navigationController?.navigationBar.isHidden = false
+        if !(tabBarController?.tabBar.isHidden)! {
+            tabBarController?.tabBar.isHidden = true
+        }
+        if (navigationController?.navigationBar.isHidden)! {
+            navigationController?.navigationBar.isHidden = false
+        }
+        checkAndSendReadEvent()
     }
     
     //MARK: Helper methods
@@ -93,9 +107,18 @@ class ChatViewController: UIViewController {
         mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
     }
     
+    @objc func inputTextFieldDidCghe() {
+        SocketTaskManager.shared.messageTyping(chatId: id!)
+    }
+    
     @objc func sendMessage() {
         if inputTextField.text != "" {
-            SocketTaskManager.shared.send(message: inputTextField.text!, id: id!)
+            let text = inputTextField.text
+            inputTextField.text = ""
+            SocketTaskManager.shared.send(message: text!, id: id!)
+            self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
+            
+            self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
         }
     }
     
@@ -114,6 +137,113 @@ class ChatViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    func handleMessageReadFromTabbar(createdAt: String, userId: String) {
+        if userId == self.id {
+            let createdAtDate = self.stringToDateD(date: createdAt)!
+            for i in 0..<self.allMessages!.array!.count {
+                if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
+                if date <= createdAtDate {
+                    if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                        self.allMessages?.statuses![1].readMessageDate = createdAt
+                    } else {
+                        self.allMessages?.statuses![0].readMessageDate = createdAt
+                    }
+                    if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                    (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen"
+                    }
+                }
+                }
+            }
+        }
+    }
+    
+    func handleMessageReceiveFromTabbar(createdAt: String, userId: String) {
+        if userId == self.id {
+            let createdAtDate = self.stringToDateD(date: createdAt)!
+            for i in 0..<self.allMessages!.array!.count {
+                
+                if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
+                if date <= createdAtDate {
+                    if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                        self.allMessages?.statuses![1].receivedMessageDate = createdAt
+                    } else {
+                        self.allMessages?.statuses![0].receivedMessageDate = createdAt
+                    }
+                    if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "received"
+                    }
+                }
+                } else {
+                    
+                }
+        }
+    }
+}
+
+    func handleMessageTypingFromTabbar(userId: String) {
+         if userId == self.id {
+                       self.typingLabel.text = "typing"
+                       self.timer?.invalidate()
+                       self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true, block: { (timer) in
+                           self.typingLabel.text = ""
+                       })
+                   }
+    }
+    
+    func handleReadMessage()  {
+        SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
+           if userId == self.id {
+                let createdAtDate = self.stringToDateD(date: createdAt)!
+                for i in 0..<self.allMessages!.array!.count {
+                    let date = self.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
+                    if date <= createdAtDate {
+                        if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                            self.allMessages?.statuses![1].readMessageDate = createdAt
+                        } else {
+                            self.allMessages?.statuses![0].readMessageDate = createdAt
+                        }
+                        if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func handleReceiveMessage()  {
+        SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
+            if userId == self.id {
+                let createdAtDate = self.stringToDateD(date: createdAt)!
+                for i in 0..<self.allMessages!.array!.count {
+                    let date = self.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
+                    if date <= createdAtDate {
+                        if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                            self.allMessages?.statuses![1].receivedMessageDate = createdAt
+                        } else {
+                            self.allMessages?.statuses![0].receivedMessageDate = createdAt
+                        }
+                        if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "received"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func handleMessageTyping()  {
+        SocketTaskManager.shared.addMessageTypingListener { (userId) in
+            if userId == self.id {
+                self.typingLabel.text = "typing"
+                self.timer?.invalidate()
+                self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true, block: { (timer) in
+                    self.typingLabel.text = ""
+                })
+            }
+        }
+    }
+    
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
@@ -124,8 +254,8 @@ class ChatViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
                 if isKeyboardShowing {
-                    if self.allMessages.count > 1 {
-                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                    if (self.allMessages?.array != nil && (self.allMessages?.array!.count)! > 1) {
+                        let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
                         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                     }
                 }
@@ -135,25 +265,32 @@ class ChatViewController: UIViewController {
     
     func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
-            if message.reciever == self.id {
-                DispatchQueue.main.async {
-                    self.inputTextField.text = ""
+            if message.senderId != SharedConfigs.shared.signedUser?.id {
+                self.allMessages?.array!.append(message)
+                if navigationController?.viewControllers.count == 2 {
+                    SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
+                }
+            } else {
+                for i in 0..<allMessages!.array!.count {
+                    if message.text  == allMessages!.array![i].text {
+                         (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "hasav serverin"
+                        self.allMessages!.array![i] = message
+                    }
                 }
             }
-            self.allMessages.append(message)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else if self.id == SharedConfigs.shared.signedUser?.id && message.senderId == message.reciever  {
             DispatchQueue.main.async {
                 self.inputTextField.text = ""
             }
-            self.allMessages.append(message)
+            self.allMessages?.array!.append(message)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
+                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
@@ -214,25 +351,80 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func getChatMessages() {
-        self.activity.startAnimating()
-        viewModel!.getChatMessages(id: id!) { (messages, error) in
+    func checkAndSendReadEvent() {
+        if allMessages != nil && allMessages?.array != nil {
+            if (self.allMessages?.array!.count)! > 0 {
+                let status = self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? self.allMessages?.statuses![0] : self.allMessages?.statuses![1]
+                let readMessageDate = self.stringToDateD(date: (status?.readMessageDate)!)
+                for i in (0...((self.allMessages?.array!.count)! - 1)) {
+                    let index = (self.allMessages?.array!.count)! - i - 1
+                    let createdAt = self.allMessages!.array![index].createdAt
+                    if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].senderId != SharedConfigs.shared.signedUser?.id {
+                        let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
+                        if date.compare(readMessageDate!).rawValue == 1 {
+                            SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
+                            if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                                self.allMessages?.statuses![0].readMessageDate = createdAt
+                            } else {
+                                self.allMessages?.statuses![1].readMessageDate = createdAt
+                            }
+                            let recent = (tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
+                            recent.handleRead(id: self.id!)
+                            if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].call == nil {
+                                var oldModel = SharedConfigs.shared.signedUser
+                                if oldModel?.unreadMessagesCount != nil {
+                                    oldModel?.unreadMessagesCount! -= 1
+                                }
+                                UserDataController().populateUserProfile(model: oldModel!)
+                                let profileNC = tabbar?.viewControllers![2] as! UINavigationController
+                                let profileVC = profileNC.viewControllers[0] as! ProfileViewController
+                                profileVC.changeNotificationNumber()
+                                break
+                            } else {
+                                continue
+                            }
+                        }
+                    }
+                }
+                let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
+            }
+        }
+    }
+    
+    func getChatMessages(dateUntil: String?) {
+        if self.activity != nil {
+            self.activity.startAnimating()
+        }
+        viewModel!.getChatMessages(id: id!, dateUntil: dateUntil) { (messages, error) in
+            if messages?.array?.count == 0 || messages?.array == nil {
+                self.check = true
+            }
             if error != nil {
                 DispatchQueue.main.async {
+                    if self.activity != nil {
                     self.activity.stopAnimating()
+                    }
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
-            } else if messages != nil {
-                self.allMessages = messages!
+            } else if messages?.array != nil {
+                if self.allMessages != nil && self.allMessages!.array != nil {
+                    let array = self.allMessages?.array
+                    self.allMessages?.array = messages?.array
+                    self.allMessages?.array?.append(contentsOf: array!)
+                    self.test = true
+                } else {
+                    self.newArray = messages?.array
+                    self.allMessages = messages
+                }
                 DispatchQueue.main.async {
-                    self.activity.stopAnimating()
+                    if self.activity != nil {
+                        self.activity.stopAnimating()
+                    }
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.tableView.reloadData()
-                    if self.allMessages.count > 0 {
-                        let indexPath = IndexPath(item: self.allMessages.count - 1, section: 0)
-                        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
-                    }
+                    self.checkAndSendReadEvent()
                 }
             }
         }
@@ -241,26 +433,27 @@ class ChatViewController: UIViewController {
 
 //MARK: Extension
 extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allMessages.count
+        return (allMessages?.array?.count ?? 0)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         var size: CGSize?
         
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        if (allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
-            if allMessages[indexPath.row].type == "text" {
+        if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
+            if allMessages?.array![indexPath.row].type == "text" {
                 size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-                return frame.height + 30
+                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+                return frame.height + 30 + 22
             } else {
                 return 80
             }
         } else {
-            if allMessages[indexPath.row].type == "text" {
+            if allMessages?.array![indexPath.row].type == "text" {
                 size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages[indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
                 return frame.height + 30
             } else {
                 return 80
@@ -296,73 +489,113 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
         if !tabbar!.onCall {
-            tabbar!.handleCallClick(id: id!, name: name ?? username ?? "")
+            tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
             tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabbar!.handleClickOnSamePerson()
         }
     }
     
+    func stringToDateD(date:String) -> Date? {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+           let parsedDate = formatter.date(from: date)
+           if parsedDate == nil {
+               return nil
+           } else {
+               return parsedDate
+           }
+       }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if allMessages[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
-            if allMessages[indexPath.row].type == "text" {
+        if indexPath.row == 3 && self.allMessages?.array![indexPath.row] != nil  {
+            if check == false {
+                self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+            }
+        }
+        if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
-                cell.messageLabel.text = allMessages[indexPath.row].text
+                cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
                 cell.messageLabel.textColor = .white
                 cell.messageLabel.sizeToFit()
+                if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+                    if allMessages?.array![indexPath.row]._id != nil {
+                        let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
+                        let status = allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? allMessages?.statuses![1] : allMessages?.statuses![0]
+                        if date! < stringToDateD(date: status!.receivedMessageDate!)! {
+                            if date! < stringToDateD(date: status!.readMessageDate!)! || date! == stringToDateD(date: status!.readMessageDate!)! {
+                                cell.readMessage.text = "seen"
+                            } else {
+                                cell.readMessage.text = "received"
+                            }
+                        } else if date! > stringToDateD(date: status!.receivedMessageDate!)! {
+                            cell.readMessage.text = "hasav serverin"
+                        } else {
+                            if date! == stringToDateD(date: status!.readMessageDate!)! || date! < stringToDateD(date: status!.readMessageDate!)! {
+                                cell.readMessage.text = "seen"
+                            } else {
+                                cell.readMessage.text = "received"
+                            }
+                        }
+                    } else {
+                        cell.readMessage.text = "chi hasel server"
+                    }
+                }
                 return cell
-            } else if allMessages[indexPath.row].type == "call" {
+            } else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
                 let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
                 cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
-                if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
+                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
-                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
-                } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 } else {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 }
             } 
         } else {
-            if allMessages[indexPath.row].type == "text" {
+            if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
                 cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
                 cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
                 cell.userImageView.image = image
-                cell.messageLabel.text = allMessages[indexPath.row].text
+                cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.sizeToFit()
                 return cell
-            }  else if allMessages[indexPath.row].type == "call" {
+            }  else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
                 let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
                 cell.cellMessageView.addGestureRecognizer(tapSendCallTableViewCell)
                 cell.userImageView.image = image
-                if allMessages[indexPath.row].call?.status == CallStatus.accepted.rawValue {
+                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages[indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
                     return cell
-                } else if allMessages[indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 } else  {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages[indexPath.row].call?.callSuggestTime)!))"
+                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 }
                 
             }
         }
+        
         return UITableViewCell()
     }
 }

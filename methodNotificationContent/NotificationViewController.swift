@@ -16,14 +16,30 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
            case emptyData
            case invalidImage
        }
+    
+    
 
     @IBOutlet var label: UILabel?
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
+    var defaults: UserDefaults?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any required interface initialization here.
+        defaults = UserDefaults(suiteName: "group.am.dynamic.method")
+    }
+   
+    @IBAction func rejectRequestAction(_ sender: UIButton) {
+        print("dfjgfg")
+       
+//        defaults.addObserver(self, forKeyPath: "Last", options: [.initial], context: nil)
+        
+        defaults!.set(!(defaults?.object(forKey: "Last") as! Bool), forKey: "Last")
+//        defaults!.synchronize()
+    }
+    
+    @IBAction func confirmRequestAction(_ sender: UIButton) {
+        NotificationCenter.default.post(name: NSNotification.Name.init("confirm"), object: nil, userInfo: ["confirm": true])
     }
     
     func didReceive(_ notification: UNNotification) {
@@ -36,7 +52,6 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         let bestAttemptContent = (notification.request.content.mutableCopy() as? UNMutableNotificationContent)
         guard let imageURLString =
             bestAttemptContent!.userInfo["imageURL"] as? String else {
-          
           return
         }
         if let url = URL(string: imageURLString) {
@@ -76,4 +91,14 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         task.resume()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
+    
+}
+extension UserDefaults {
+    @objc dynamic var greetingsCount: Int {
+        return integer(forKey: "greetingsCount")
+    }
 }

@@ -88,7 +88,7 @@ class ContactsViewController: UIViewController {
     
     //MARK: Helper methods
     func setNavigationItems() {
-        if contactsMode == .fromProfile || contactsMode == .fromRecentMessages {
+        if contactsMode == .fromProfile || contactsMode == .fromRecentMessages || contactsMode == .fromCallList {
             if onContactPage {
                 self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
                 self.navigationItem.title = "contacts".localized()
@@ -148,7 +148,7 @@ class ContactsViewController: UIViewController {
                         }
                     }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                        User(name: user.name, lastname: user.lastname, university: nil, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender)
+                        User(name: user.name, lastname: user.lastname, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender, missedCallHistory: user.missedCallHistory)
                     })
                     DispatchQueue.main.async {
                         self.removeView()
@@ -204,8 +204,6 @@ class ContactsViewController: UIViewController {
         }
     }
     
-    
-    
     func getContacts() {
         if !isLoaded {
             spinner.startAnimating()
@@ -216,6 +214,7 @@ class ContactsViewController: UIViewController {
                 return
             }
             self.contactsMiniInformation = viewModel!.contacts
+            self.onContactPage = true
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -250,7 +249,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
         } else if self.contactsMode == .fromCallList {
             let tabBar = tabBarController as! MainTabBarController
             if !tabBar.onCall {
-                tabBar.handleCallClick(id: contactsMiniInformation[indexPath.row]._id!, name: contactsMiniInformation[indexPath.row].name ?? contactsMiniInformation[indexPath.row].username!)
+                tabBar.handleCallClick(id: contactsMiniInformation[indexPath.row]._id!, name: contactsMiniInformation[indexPath.row].name ?? contactsMiniInformation[indexPath.row].username!, mode: .videoCall)
                 let nc = tabBar.viewControllers![0] as! UINavigationController
                 let callListViewController = nc.viewControllers[0] as! CallListViewController
                 callListViewController.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: contactsMiniInformation[indexPath.row]._id!)

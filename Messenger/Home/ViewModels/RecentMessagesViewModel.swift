@@ -18,7 +18,9 @@ struct FetchedCall {
 }
 class RecentMessagesViewModel {
      var calls: [CallHistory] = []
+    
     private var privateCalls: [NSManagedObject] = []
+  
     func getHistory(completion: @escaping ([CallHistory])->()) {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                     completion([])
@@ -37,21 +39,24 @@ class RecentMessagesViewModel {
             } catch let error as NSError {
                 print("Could not fetch. \(error), \(error.userInfo)")
                 completion([])
-            }
+        }
     }
     
     func saveCalls(calls: [CallHistory], completion: @escaping ([CallHistory]?, NetworkResponse?)->()) {
         var count = 0
         deleteAllRecords()
         for call in calls {
-            if call.status != CallStatus.ongoing.rawValue {
-            save(newCall: call) {
-                count += 1
-                if count == calls.count {
-                    completion(calls, nil)
-                    return
-                }
+            let filteredCalls: [CallHistory] = calls.filter { (call) -> Bool in
+                return call.status != CallStatus.ongoing.rawValue
             }
+            if call.status != CallStatus.ongoing.rawValue {
+                save(newCall: call) {
+                    count += 1
+                    if count == filteredCalls.count {
+                        completion(filteredCalls, nil)
+                        return
+                    }
+                }
             }
         }
     }
@@ -90,7 +95,7 @@ class RecentMessagesViewModel {
         }
     }
     
-    func getChats(completion: @escaping ([Chat]?, NetworkResponse?)->()) {
+    func getChats(completion: @escaping (Chats?, NetworkResponse?)->()) {
         HomeNetworkManager().getChats() { (chats, error) in
             completion(chats, error)
         }
@@ -132,33 +137,6 @@ class RecentMessagesViewModel {
         }
         completion()
        return
-    }
-    
-    func replaceCall(index: Int, newCall: CallHistory, completion: @escaping ()->()) {
-        let appDelegate = AppDelegate.shared
-         let managedContext = appDelegate.persistentContainer.viewContext
-         let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
-         let call = privateCalls[index]
-         call.setValue(newCall._id, forKeyPath: "id")
-         call.setValue(newCall.type, forKeyPath: "type")
-         call.setValue(newCall.status, forKeyPath: "status")
-         call.setValue(newCall.callEndTime, forKeyPath: "callEndTime")
-         call.setValue(newCall.callSuggestTime, forKeyPath: "callSuggestTime")
-         call.setValue(newCall.caller, forKeyPath: "caller")
-         call.setValue(newCall.participants, forKeyPath: "participants")
-         call.setValue(newCall.createdAt, forKeyPath: "createdAt")
-         call.setValue(newCall.callStartTime, forKeyPath: "callStartTime")
-         call.setValue(newCall.receiver, forKeyPath: "receiver")
-         
-         do {
-             try managedContext.save()
-             privateCalls.append(call)
-             calls.insert(newCall, at: 0)
-         } catch let error as NSError {
-             print("Could not save. \(error), \(error.userInfo)")
-         }
-         completion()
-        return
     }
     
 }

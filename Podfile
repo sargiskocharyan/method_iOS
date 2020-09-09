@@ -6,8 +6,31 @@ target 'Messenger' do
   use_frameworks!
   
   # Pods for Messenger
-	pod 'DropDown'
+        pod 'DropDown'
         pod 'Firebase/Analytics'
         pod 'GoogleWebRTC'
 
 end
+
+#target 'methodNotificationService' do
+#  # Comment the next line if you don't want to use dynamic frameworks
+#  use_frameworks!
+#  
+#  # Pods for Messenger
+#        pod 'DropDown'
+#        pod 'Firebase/Analytics'
+#        pod 'GoogleWebRTC'
+#
+#end
+#
+#target 'methodNotificationContent' do
+#  # Comment the next line if you don't want to use dynamic frameworks
+#  use_frameworks!
+#  
+#  # Pods for Messenger
+#        pod 'DropDown'
+#        pod 'Firebase/Analytics'
+#        pod 'GoogleWebRTC'
+#
+#end
+

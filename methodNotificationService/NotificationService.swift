@@ -18,12 +18,20 @@ class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
-
+  
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
+       
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         if let bestAttemptContent = bestAttemptContent {
-            if let aps = bestAttemptContent.userInfo["aps"] as? [String: Any]{
+            if let aps = bestAttemptContent.userInfo["aps"] as? [String: Any] {
+//                SocketTaskManager.shared.connect {
+//                    SocketTaskManager.shared.messageReceived(chatId: bestAttemptContent.userInfo["chatId"] as! String, messageId: bestAttemptContent.userInfo["messageId"] as! String) {
+//                        SocketTaskManager.shared.disconnect()
+//                    }
+//                }
+                let name = Notification.Name("didReceiveData")
+                NotificationCenter.default.post(name: name, object: nil)
                 if let alert = aps["alert"] as? [String: String]{
                     bestAttemptContent.title = alert["title"]!
                 }
@@ -94,6 +102,7 @@ class NotificationService: UNNotificationServiceExtension {
         } catch {
           return nil
       }
+        
     }
     
     private func getMediaAttachment(
@@ -111,8 +120,17 @@ class NotificationService: UNNotificationServiceExtension {
           completion(nil)
           return
         }
+       
         completion(image)
       }
+        let firstAction = UNNotificationAction( identifier: "first", title: "Confirm", options: [])
+               
+        let secondAction = UNNotificationAction( identifier: "second", title: "Reject", options: [])
+               
+        let category = UNNotificationCategory( identifier: "contactRequest", actions: [firstAction, secondAction], intentIdentifiers: [], options: [.customDismissAction])
+               
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+        
     }
     
     public func downloadImage(forURL url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
@@ -131,7 +149,7 @@ class NotificationService: UNNotificationServiceExtension {
           completion(.failure(DownloadError.invalidImage))
           return
         }
-        
+          
         completion(.success(image))
       }
       

@@ -31,6 +31,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var contactView: UIView!
     @IBOutlet weak var contactsLabel: UILabel!
+    @IBOutlet weak var notificationLabel: UILabel!
     @IBOutlet weak var phoneTextLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var nameTextLabel: UILabel!
@@ -39,10 +40,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var languageLabel: UILabel!
     @IBOutlet weak var logoutLabel: UILabel!
     @IBOutlet weak var languageView: UIView!
+    @IBOutlet weak var notificationView: UIView!
     @IBOutlet weak var darkModeView: UIView!
     @IBOutlet weak var logoutView: UIView!
     @IBOutlet weak var headerUsernameLabel: UILabel!
     @IBOutlet weak var flagImageView: UIImageView!
+    @IBOutlet weak var notificationCountLabel: UILabel!
     @IBOutlet weak var logOutLanguageVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var logOutDarkModeVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var headerEmailLabel: UILabel!
@@ -68,13 +71,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         setBorder(view: languageView)
         setBorder(view: darkModeView)
         setBorder(view: logoutView)
+        setBorder(view: notificationView)
         checkVersion()
         setImage()
         configureImageView()
         addGestures()
         defineSwithState()
         localizeStrings()
-        MainTabBarController.center.delegate = self
+   //     MainTabBarController.center.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -334,7 +338,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 UserDataController().logOutUser()
                 AuthRouter().assemblyModule()
             }
-            SocketTaskManager.shared.disconnect()
+            SocketTaskManager.shared.disconnect{}
         }
     }
     
@@ -387,8 +391,17 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func checkInformation() {
+    func changeNotificationNumber() {
         let user = SharedConfigs.shared.signedUser
+        UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+        if notificationCountLabel != nil {
+            notificationCountLabel.text = "\(((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0)))"
+        }
+    }
+    
+    func checkInformation() {
+         let user = SharedConfigs.shared.signedUser
+        changeNotificationNumber()
         if user?.name == nil {
             nameLabel.text = "not_defined".localized()
             nameLabel.textColor = .lightGray

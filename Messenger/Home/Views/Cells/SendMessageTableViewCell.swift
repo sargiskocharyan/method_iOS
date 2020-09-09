@@ -9,6 +9,7 @@
 import UIKit
 
 class SendMessageTableViewCell: UITableViewCell {
+    @IBOutlet weak var readMessage: UILabel!
     @IBOutlet weak var messageLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()

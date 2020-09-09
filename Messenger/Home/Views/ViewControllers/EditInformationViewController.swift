@@ -387,7 +387,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                         AuthRouter().assemblyModule()
                     }
                 }
-                SocketTaskManager.shared.disconnect()
+                SocketTaskManager.shared.disconnect{}
             }
         }))
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
@@ -409,7 +409,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                          AuthRouter().assemblyModule()
                     }
                 }
-                SocketTaskManager.shared.disconnect()
+                SocketTaskManager.shared.disconnect{}
             }
         }))
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))

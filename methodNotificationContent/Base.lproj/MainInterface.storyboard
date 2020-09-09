@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -16,44 +16,42 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="GcN-lo-r42">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yfh-FT-rtY">
-                                <rect key="frame" x="0.0" y="80" width="320" height="320"/>
+                                <rect key="frame" x="0.0" y="40" width="320" height="310"/>
                                 <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="EOo-Ef-3IO">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="87"/>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="EOo-Ef-3IO">
+                                        <rect key="frame" x="8" y="0.0" width="304" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bmX-w8-K19">
-                                        <rect key="frame" x="0.0" y="92" width="320" height="228"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="bmX-w8-K19" secondAttribute="height" multiplier="80:57" id="Z9X-Mh-k1B"/>
-                                        </constraints>
+                                        <rect key="frame" x="32" y="41" width="256" height="269"/>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
-                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="2eX-bn-4RF"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="3na-FG-cnT"/>
-                                    <constraint firstItem="bmX-w8-K19" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" id="6sL-HV-aoD"/>
-                                    <constraint firstAttribute="trailing" secondItem="bmX-w8-K19" secondAttribute="trailing" id="MHE-yt-1sf"/>
-                                    <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" id="OZn-KM-JMw"/>
+                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="leading" secondItem="yfh-FT-rtY" secondAttribute="leading" constant="8" id="2eX-bn-4RF"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="top" secondItem="EOo-Ef-3IO" secondAttribute="bottom" constant="5" id="7VP-12-O90"/>
+                                    <constraint firstAttribute="trailing" secondItem="EOo-Ef-3IO" secondAttribute="trailing" constant="8" id="OZn-KM-JMw"/>
+                                    <constraint firstAttribute="bottom" secondItem="bmX-w8-K19" secondAttribute="bottom" id="SYq-sC-fgc"/>
                                     <constraint firstItem="EOo-Ef-3IO" firstAttribute="top" secondItem="yfh-FT-rtY" secondAttribute="top" id="XEc-gt-2lC"/>
-                                    <constraint firstAttribute="bottom" secondItem="bmX-w8-K19" secondAttribute="bottom" id="hTQ-KT-x8z"/>
+                                    <constraint firstItem="EOo-Ef-3IO" firstAttribute="height" secondItem="yfh-FT-rtY" secondAttribute="height" multiplier="0.1" constant="5" id="YM2-bT-jyc"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="centerX" secondItem="yfh-FT-rtY" secondAttribute="centerX" id="j7s-FE-CBG"/>
+                                    <constraint firstItem="bmX-w8-K19" firstAttribute="width" secondItem="yfh-FT-rtY" secondAttribute="width" multiplier="0.8" id="yNq-3Z-LAw"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="trailing" secondItem="2BE-c3-nQJ" secondAttribute="trailing" id="Dwl-On-adX"/>
-                            <constraint firstItem="GcN-lo-r42" firstAttribute="height" secondItem="S3S-Oj-5AN" secondAttribute="height" multiplier="0.2" id="Fez-S5-41A"/>
+                            <constraint firstItem="GcN-lo-r42" firstAttribute="height" secondItem="S3S-Oj-5AN" secondAttribute="height" multiplier="0.1" id="Fez-S5-41A"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="top" secondItem="S3S-Oj-5AN" secondAttribute="top" id="GYT-JO-8Rh"/>
                             <constraint firstItem="GcN-lo-r42" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" id="Gx2-zu-zZz"/>
-                            <constraint firstItem="2BE-c3-nQJ" firstAttribute="bottom" secondItem="yfh-FT-rtY" secondAttribute="bottom" id="JOy-5H-Uf3"/>
+                            <constraint firstItem="2BE-c3-nQJ" firstAttribute="bottom" secondItem="yfh-FT-rtY" secondAttribute="bottom" constant="50" id="JOy-5H-Uf3"/>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="top" secondItem="GcN-lo-r42" secondAttribute="bottom" id="O5v-jQ-449"/>
                             <constraint firstItem="yfh-FT-rtY" firstAttribute="leading" secondItem="2BE-c3-nQJ" secondAttribute="leading" id="R5z-8N-sLd"/>
                             <constraint firstAttribute="trailing" secondItem="GcN-lo-r42" secondAttribute="trailing" id="cla-CY-dSv"/>

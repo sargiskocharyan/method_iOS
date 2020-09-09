@@ -33,7 +33,7 @@ func configureAudioSession() {
   let session = AVAudioSession.sharedInstance()
   do {
     
-    try session.setCategory(.playAndRecord, mode: .videoChat, options: [AVAudioSession.CategoryOptions.defaultToSpeaker, AVAudioSession.CategoryOptions.mixWithOthers, AVAudioSession.CategoryOptions.allowBluetooth, AVAudioSession.CategoryOptions.allowAirPlay])
+    try session.setCategory(.playAndRecord, mode: .videoChat, options: [AVAudioSession.CategoryOptions.duckOthers, AVAudioSession.CategoryOptions.allowBluetooth, AVAudioSession.CategoryOptions.allowBluetoothA2DP])
   } catch (let error) {
     print("Error while configuring audio session: \(error)")
   }

@@ -7,7 +7,7 @@
         <attribute name="callSuggestTime" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="participants" optional="YES" attributeType="Transformable" customClassName="Participants"/>
+        <attribute name="participants" optional="YES" attributeType="Transformable" valueTransformerName="NSKeyedUnarchiveFromDataTransformerName" customClassName="Participants"/>
         <attribute name="receiver" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>

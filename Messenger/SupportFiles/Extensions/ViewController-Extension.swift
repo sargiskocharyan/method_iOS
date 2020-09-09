@@ -32,6 +32,38 @@ extension UIViewController {
         return appStoryboard.viewController(viewControllerClass: self)
     }
     
+    func scheduleRequestNotification(center: UNUserNotificationCenter, userId: String) {
+         let content = UNMutableNotificationContent()
+        AppDelegate.shared.viewModel.getuserById(id: userId) { (user, error) in
+            if error != nil {
+                print(error?.rawValue as Any)
+            } else {
+                content.title = "New contact request"
+                content.body = "\(user?.username ?? "") send you a contact request"
+                 content.categoryIdentifier = "request"
+                content.sound = UNNotificationSound.defaultCritical
+                let currentDateTime = Date()
+                let userCalendar = Calendar.current
+                let requestedComponents: Set<Calendar.Component> = [
+                    .year,
+                    .month,
+                    .day,
+                    .hour,
+                    .minute,
+                    .second
+                ]
+                let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateTimeComponents, repeats: true)
+                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                center.add(request) { (error) in
+                    if let error = error {
+                        print("Notification Error: ", error)
+                    }
+                }
+            }
+        }       
+    }
+    
     func scheduleNotification(center: UNUserNotificationCenter, _ callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
         let content = UNMutableNotificationContent()
         if lastname != nil && name != nil {
@@ -41,7 +73,9 @@ extension UIViewController {
         } else {
             content.title = "New message"
         }
+       content.categoryIdentifier = "local"
         content.body = message.text ?? ""
+        
         content.sound = UNNotificationSound.defaultCritical
         let currentDateTime = Date()
         let userCalendar = Calendar.current

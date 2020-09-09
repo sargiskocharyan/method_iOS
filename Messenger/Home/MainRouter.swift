@@ -49,14 +49,15 @@ class MainRouter {
         router.profileViewController = (profileNC.viewControllers[0] as! ProfileViewController)
         router.profileViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.profileViewController?.viewModel = ProfileViewModel()
-        let window: UIWindow? = UIApplication.shared.windows[0]
+        let window = AppDelegate.shared.window
         window?.rootViewController = router.mainTabBarController
         window?.makeKeyAndVisible()
     }
     
-    func showVideoViewController() {
+    func showVideoViewController(mode: VideoVCMode) {
         let selectedNC = self.mainTabBarController!.selectedViewController as? UINavigationController
         if selectedNC?.viewControllers.last as? VideoViewController == nil {
+            self.mainTabBarController?.videoVC?.videoVCMode = mode
         selectedNC?.pushViewController(self.mainTabBarController!.videoVC!, animated: false)
         } else {
             return

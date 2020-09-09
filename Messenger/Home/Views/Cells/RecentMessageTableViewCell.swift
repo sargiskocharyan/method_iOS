@@ -24,6 +24,7 @@ class RecentMessageTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+//        contentView.translatesAutoresizingMaskIntoConstraints = false
         changeShapeOfImageView()
         
     }
@@ -58,6 +59,7 @@ class RecentMessageTableViewCell: UITableViewCell {
     }
     
     func configure(chat: Chat) {
+        print(nameLabel.hasAmbiguousLayout)
         if isOnline != nil && isOnline == true {
             setOnlineView()
         } else {
@@ -79,8 +81,17 @@ class RecentMessageTableViewCell: UITableViewCell {
         if chat.message != nil {
             timeLabel.text = stringToDate(date: chat.message!.createdAt ?? "" )
         }
+        
         if chat.id == chat.message?.senderId {
             lastMessageLabel.text = chat.message?.text ?? "Call"
+            if chat.unreadMessageExists {
+                lastMessageLabel.textColor = .black
+                let boldAttribute = [
+                   NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-Bold", size: 14.0)!
+                ]
+                let boldText = NSAttributedString(string: lastMessageLabel.text!, attributes: boldAttribute)
+                lastMessageLabel.attributedText = boldText
+            }
         } else {
             lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "Call")
         }
