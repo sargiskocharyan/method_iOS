@@ -64,7 +64,7 @@ class MainRouter {
         }
     }
     
-    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String) {
+    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String, isReceiverWe: Bool) {
         let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = callListViewController?.mainRouter
         vc.name = name
@@ -73,6 +73,7 @@ class MainRouter {
         vc.callMode = callMode
         vc.avatarURL = avatarURL
         vc.id = id
+        vc.isReceiverWe = isReceiverWe
         vc.onContactPage = false
         for j in 0..<mainTabBarController!.contactsViewModel!.contacts.count {
             if id == mainTabBarController!.contactsViewModel!.contacts[j]._id {

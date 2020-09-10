@@ -50,6 +50,7 @@ class CallListViewController: UIViewController {
     var mainRouter: MainRouter?
     var networkCheck = NetworkCheck.sharedInstance()
     var badge: Int?
+    var sortedDictionary: [(CallHistory, Int)] = []
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -68,7 +69,7 @@ class CallListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
-        if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount  {
+        if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount {
             if count > 0 && viewModel!.calls.count > 0 {
                 let missed = viewModel?.calls.filter({ (call) -> Bool in
                     return call.status == CallStatus.missed.rawValue
@@ -102,12 +103,14 @@ class CallListViewController: UIViewController {
         let vc = tabbar!.viewControllers![2] as! UINavigationController
         let profileVC = vc.viewControllers[0] as! ProfileViewController
         profileVC.delegate = self
-        if networkCheck.currentStatus == .satisfied {
-            getCallHistory {
-            }
-        } else {
-            getCallHistoryFromDB()
+//        if networkCheck.currentStatus == .satisfied {
+        getCallHistory {
+            
         }
+//            }
+//        } else {
+//            getCallHistoryFromDB()
+//        }
         networkCheck.addObserver(observer: self)
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
@@ -198,6 +201,7 @@ class CallListViewController: UIViewController {
                         if calls != nil {
                             self.viewModel!.calls = calls!
                             self.sort()
+                            self.groupCalls()
                             self.tableView.reloadData()
                             completion()
                         }
@@ -206,6 +210,45 @@ class CallListViewController: UIViewController {
             }
         })
     }
+    
+    func groupCalls() {
+        var callsArray = viewModel?.calls
+        var dictionary: Dictionary<CallHistory, Int> = [:]
+        while callsArray?.count != 0 {
+            var countOfCalls = 1
+            var i = 1
+            while i < callsArray!.count {
+                if callsArray![0].caller == SharedConfigs.shared.signedUser?.id && callsArray![0].caller == callsArray![i].caller && callsArray![0].receiver == callsArray![i].receiver {
+                    countOfCalls += 1
+                    callsArray?.remove(at: i)
+                } else if callsArray![0].receiver == SharedConfigs.shared.signedUser?.id && callsArray![0].status == callsArray![i].status && callsArray![0].status == CallStatus.missed.rawValue && callsArray![0].caller == callsArray![i].caller {
+                    countOfCalls += 1
+                    callsArray?.remove(at: i)
+                } else if callsArray![0].receiver == SharedConfigs.shared.signedUser?.id && callsArray![0].status != CallStatus.missed.rawValue && callsArray![i].status != CallStatus.missed.rawValue && callsArray![0].caller == callsArray![i].caller {
+                    countOfCalls += 1
+                    callsArray?.remove(at: i)
+                } else {
+                    i += 1
+                }
+            }
+            dictionary[callsArray![0]] = countOfCalls
+            print("caller: \(callsArray![0]), count: \(countOfCalls)")
+            callsArray?.remove(at: 0)
+            print("count of array: \(callsArray!.count)")
+            print("i: \(i)")
+        }
+        
+         sortedDictionary = dictionary.sorted { (arg0, arg1) -> Bool in
+            return stringToDate(date: arg0.key.callSuggestTime!)!.compare(stringToDate(date: arg1.key.callSuggestTime!)!).rawValue == 1
+        }
+        for (key, value) in sortedDictionary {
+            print("stacox:  \(key.receiver), zangox:  \(key.caller), \(key.status)")
+            print("value  : \(value)")
+        }
+        
+        print("")
+    }
+    
     
     func getCallHistoryFromDB() {
         viewModel?.getHistory(completion: { (callsFromDB) in
@@ -233,11 +276,17 @@ class CallListViewController: UIViewController {
     func showEndedCall(_ callHistory: CallHistory) {
         viewModel?.save(newCall: callHistory, completion: {
             if self.tableView != nil {
-                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+//                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self.sort()
+                self.groupCalls()
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
                 if callHistory.status == CallStatus.missed.rawValue {
                     if AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
                         AppDelegate.shared.isVoIPCallStarted = false
                         SocketTaskManager.shared.disconnect{}
+                        
                     }
                 } else {
                     AppDelegate.shared.isVoIPCallStarted = false
@@ -279,7 +328,7 @@ extension CallListViewController: UNUserNotificationCenterDelegate {
 
 extension CallListViewController: CallTableViewDelegate {
     
-    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String) {
+    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String, isReceiverWe: Bool) {
         var status: CallStatus?
         if callStatus == "ongoing" {
             status = .ongoing
@@ -290,7 +339,7 @@ extension CallListViewController: CallTableViewDelegate {
         } else {
             status = .cancelled
         }
-        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: callStartTime!, callMode: status!, avatarURL: avatarURL)
+        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: callStartTime!, callMode: status!, avatarURL: avatarURL, isReceiverWe: isReceiverWe)
     }
     
 }
@@ -298,21 +347,21 @@ extension CallListViewController: CallTableViewDelegate {
 extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel!.calls.count
+        return sortedDictionary.count
     }
     
     func getUser(_ cell: CallTableViewCell, _ indexPath: Int) {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.viewModel!.calls[indexPath])
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)
                     self.tabbar?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
                         self.tabbar?.contactsViewModel!.otherContacts = users!
                     })
-                    cell.configureCell(contact: user!, call: self.viewModel!.calls[indexPath])
+                    cell.configureCell(contact: user!, call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
                 }
             }
         }
@@ -320,14 +369,14 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.callCellIdentifier, for: indexPath) as! CallTableViewCell
-        cell.calleId = viewModel!.calls[indexPath.row].caller == SharedConfigs.shared.signedUser?.id ? viewModel!.calls[indexPath.row].receiver : viewModel!.calls[indexPath.row].caller
+        cell.calleId = sortedDictionary[indexPath.row].0.caller == SharedConfigs.shared.signedUser?.id ? sortedDictionary[indexPath.row].0.receiver : sortedDictionary[indexPath.row].0.caller
         var existsInContactList = false
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
         for i in 0..<count {
             if tabbar?.contactsViewModel!.contacts[i]._id == cell.calleId {
                 existsInContactList = true
-                cell.configureCell(contact: tabbar!.contactsViewModel!.contacts[i], call: viewModel!.calls[indexPath.row])
+                cell.configureCell(contact: tabbar!.contactsViewModel!.contacts[i], call: sortedDictionary[indexPath.row].0, count: sortedDictionary[indexPath.row].1)
                 break
             }
         }
@@ -335,7 +384,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
             for i in 0..<otherContactsCount {
                 if tabbar?.contactsViewModel!.otherContacts[i]._id == cell.calleId {
                     existsInContactList = true
-                    cell.configureCell(contact: tabbar!.contactsViewModel!.otherContacts[i], call: viewModel!.calls[indexPath.row])
+                    cell.configureCell(contact: tabbar!.contactsViewModel!.otherContacts[i], call: sortedDictionary[indexPath.row].0, count: sortedDictionary[indexPath.row].1)
                     break
                 }
             }
@@ -393,7 +442,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
-        let call = viewModel!.calls[indexPath.row]
+        let call = sortedDictionary[indexPath.row].0
         activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: SharedConfigs.shared.signedUser!.id)
         activeCall?.time = Date()
         activeCall?.isHandleCall = false

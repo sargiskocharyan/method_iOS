@@ -104,6 +104,7 @@
 		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
 		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
 		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
+		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
@@ -261,6 +262,7 @@
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
+		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 				CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */,
 				CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */,
 				CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */,
+				CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1034,6 +1037,7 @@
 				CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */,
 				CD5E713F24865935008D876E /* MainTabBarController.swift in Sources */,
 				CDD9C67E247BC88C0048A9A1 /* AuthNetworkManager.swift in Sources */,
+				CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */,
 				CDD9C675247BC4AE0048A9A1 /* Router.swift in Sources */,
 				CDBE8E08247681690049F971 /* HeaderShapeView.swift in Sources */,
 				CDBF72F324E125F700D7A727 /* Date-Extension.swift in Sources */,

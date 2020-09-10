@@ -181,7 +181,6 @@ class VideoViewController: UIViewController {
     }
     
     @IBAction func switchCamera(_ sender: Any) {
-        
         localRenderer!.tag = 11
         localRenderer?.backgroundColor = .clear
         ourView.backgroundColor = .clear
@@ -201,7 +200,6 @@ class VideoViewController: UIViewController {
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
                 DispatchQueue.main.async {
                     self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
-                    //                    self.embedView(self.localRenderer!, into: self.ourView)
                     self.embedView(self.localRenderer!, into: self.ourView)
                 }
             })

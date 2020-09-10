@@ -91,7 +91,7 @@ extension ProviderDelegate: CXProviderDelegate {
         } else {
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
             self.webrtcClient?.peerConnection?.close()
-            if AppDelegate.shared.isVoIPCallStarted! {
+            if  AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
                 SocketTaskManager.shared.disconnect(completion: {})
             }
         }
