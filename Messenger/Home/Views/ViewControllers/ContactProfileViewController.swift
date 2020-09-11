@@ -84,6 +84,8 @@ class ContactProfileViewController: UIViewController {
         } else {
             videoCallButton.isEnabled = true
         }
+        confirmButton.setTitle("confirm".localized(), for: .normal)
+        rejectButton.setTitle("reject".localized(), for: .normal)
     }
     
     override func viewDidLoad() {

@@ -25,11 +25,22 @@ class CallDetailViewController: UIViewController {
     var contactsViewModel: ContactsViewModel?
     var isThereContacts: Bool = false
     var mainRouter: MainRouter?
+    let headerViewMaxHeight: CGFloat = 270
+    var headerViewMinHeight: CGFloat?
+    let userImageViewMaxHeight: CGFloat = 110
+    let userImageViewMinHeight: CGFloat = 50
+    let userImageViewMaxWidth: CGFloat = 110
+    let userImageViewMinWidth: CGFloat = 50
+    let usernameLabelMaxHeight: CGFloat = 29
+    let usernameLabelMinHeight: CGFloat = 16
     
     @IBOutlet weak var audioCallButton: UIButton!
     @IBOutlet weak var videoCallButton: UIButton!
     @IBOutlet weak var aboutCallView: UIView!
     @IBOutlet weak var audioCallView: UIView!
+    @IBOutlet weak var usernameLabelHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var userImageViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var userImageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoCallView: UIView!
     @IBOutlet weak var messageView: UIView!
     @IBOutlet weak var audioCallLabel: UILabel!
@@ -39,6 +50,7 @@ class CallDetailViewController: UIViewController {
     @IBOutlet weak var userImageView: UIImageView!
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var headerViewHeightConstraint: NSLayoutConstraint!
     
     func configureViews() {
         userImageView.contentMode = . scaleAspectFill
@@ -79,6 +91,7 @@ class CallDetailViewController: UIViewController {
                 isThereContacts = true
             }
         }
+        tableView.tableFooterView = UIView()
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
         aboutCallView.backgroundColor = UIColor(named: "imputColor")
@@ -88,7 +101,9 @@ class CallDetailViewController: UIViewController {
         super.viewDidLoad()
         configureViews()
         setLabels()
+        username.adjustsFontSizeToFitWidth = true
         username.text = name
+        username.minimumScaleFactor = 0.5
         tableView.delegate = self
         tableView.dataSource = self
         tabBar = tabBarController as? MainTabBarController
@@ -169,6 +184,39 @@ class CallDetailViewController: UIViewController {
 
 
 extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let headerViewMinHeight: CGFloat = 189
+        let yPos = tableView.contentOffset.y
+        let newHeaderViewHeight: CGFloat = headerViewHeightConstraint.constant - yPos
+        let newUsernameLabelHeight: CGFloat = usernameLabelHeightConstraint.constant - yPos
+        let newUserImageViewHeight: CGFloat = userImageViewHeightConstraint.constant - yPos
+
+        if newHeaderViewHeight > headerViewMaxHeight {
+            headerViewHeightConstraint.constant = headerViewMaxHeight
+            userImageView.layer.cornerRadius = userImageViewMaxHeight / 2
+            userImageViewHeightConstraint.constant = userImageViewMaxHeight
+            userImageViewWidthConstraint.constant = userImageViewMaxWidth
+            usernameLabelHeightConstraint.constant = usernameLabelMaxHeight
+        } else if newHeaderViewHeight < headerViewMinHeight {
+            headerViewHeightConstraint.constant = headerViewMinHeight
+            userImageView.layer.cornerRadius = userImageViewMinHeight / 2
+            userImageViewHeightConstraint.constant = userImageViewMinHeight
+            userImageViewWidthConstraint.constant = userImageViewMinWidth
+            usernameLabelHeightConstraint.constant = usernameLabelMinHeight
+        } else {
+            headerViewHeightConstraint.constant = newHeaderViewHeight
+            userImageView.layer.cornerRadius = newUserImageViewHeight / 2
+            if newUserImageViewHeight <= 110 && newUserImageViewHeight >= 50 {
+                userImageViewHeightConstraint.constant = newUserImageViewHeight
+                userImageViewWidthConstraint.constant = newUserImageViewHeight
+            }
+            if newUsernameLabelHeight <= 29 && newUsernameLabelHeight >= 16 {
+                usernameLabelHeightConstraint.constant = newUsernameLabelHeight
+            }
+            tableView.contentOffset.y = 0 // block scroll view
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calls.count
     }
@@ -211,7 +259,9 @@ extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let hourToSeconds = timeDifference.hour! * 3600
             let minuteToSeconds = timeDifference.minute! * 60
             let seconds = timeDifference.second!
-            cell.durationLabel.text = "\(hourToSeconds)"
+            cell.durationLabel.text = (seconds + minuteToSeconds + hourToSeconds).secondsToHoursMinutesSeconds()
+        } else {
+            cell.durationLabel.text = ""
         }
         return cell
     }

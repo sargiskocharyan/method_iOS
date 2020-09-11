@@ -13,7 +13,23 @@ import AVFoundation
 import WebRTC
 import CoreData
 
-class MainTabBarController: UITabBarController {
+class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        print(flag)
+    }
+    
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        print(error?.localizedDescription as Any)
+    }
+    
+    func audioPlayerBeginInterruption(_ player: AVAudioPlayer) {
+        print("audioPlayerBeginInterruption")
+    }
+    
+    func audioPlayerEndInterruption(_ player: AVAudioPlayer, withOptions flags: Int) {
+        print(flags)
+    }
     
     //MARK: Properties
     var viewModel: HomePageViewModel?
@@ -43,17 +59,18 @@ class MainTabBarController: UITabBarController {
     var mode: VideoVCMode?
     var nc = NotificationCenter.default
     
-    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
+        
         self.retrieveCoreDataObjects()
         verifyToken()
         SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
+        
         callManager = AppDelegate.shared.callManager
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
@@ -117,21 +134,6 @@ class MainTabBarController: UITabBarController {
         self.callsVC?.handleCall(id: id)
         completionHandler()
         return
-        //        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-        //            if (error != nil) {
-        //                DispatchQueue.main.async {
-        //                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-        //                }
-        //                completionHandler("")
-        //                return
-        //            } else if user != nil {
-        //                DispatchQueue.main.async {
-        //
-        //                    completionHandler(user?.name ?? user?.username ?? "dsf")
-        //                    return
-        //                }
-        //            }
-        //        }
     }
     
     func handleCall() {
@@ -394,6 +396,25 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    
+//    func playSound() {
+//        if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
+//            do {
+//                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+//                try AVAudioSession.sharedInstance().setActive(true)
+//                player = try AVAudioPlayer(contentsOf: soundURL)
+//            }
+//            catch {
+//                print(error)
+//            }
+//        } else {
+//            print("Unable to locate audio file")
+//        }
+//        player?.volume = 1
+//        player?.delegate = self
+//        player?.play()
+//    }
+    
     func sessionExpires() {
         SocketTaskManager.shared.disconnect{}
         UserDataController().logOutUser()
@@ -435,10 +456,6 @@ class MainTabBarController: UITabBarController {
                 } else {
                     self.checkOurInfo(completion: {
                         DispatchQueue.main.async {
-//                            if let tabItems = self.tabBar.items {
-//                                let tabItem = tabItems[0]
-//                                tabItem.badgeValue = SharedConfigs.shared.signedUser?.missedCallHistoryCount != nil && SharedConfigs.shared.signedUser!.missedCallHistoryCount! > 0 ? "\(SharedConfigs.shared.signedUser!.missedCallHistoryCount!)" : nil
-//                            }
                             let recentNC = self.viewControllers![1] as! UINavigationController
                             let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
                             if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
@@ -574,7 +591,7 @@ extension MainTabBarController: CallListViewDelegate {
     }
     
     func handleCallClick(id: String, name: String, mode: VideoVCMode) {
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+       self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         SocketTaskManager.shared.call(id: id, type: mode.rawValue) { (roomname) in
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)
@@ -584,8 +601,10 @@ extension MainTabBarController: CallListViewDelegate {
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        videoVC?.startCall("calling".localized() + " \(name)...")
         mainRouter?.showVideoViewController(mode: mode)
+        videoVC?.startCall("calling".localized() + " \(name)...")
+//        playSound()
+       
         //        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
         //            self.videoVC?.endCall()
         //        })

@@ -99,3 +99,20 @@
 "the_username_must_contain_at_least_4_letters" = "Օգտագործողի անունը պետք է պարունակի առնվազն 4 տառ";
 "this_username_is_taken" = "Այս օգտվողի անունը վերցված է";
 "you" = "You: ";
+"seen" =  "Տեսած";
+"delivered" = "Առաքված";
+"sent" = "Ուղարկված";
+"waiting" = "Սպասում";
+"not_answered" = "Չպատասխանեց";
+"missed" = "Բաց թողնված";
+"remove_from_account" = "Հեռացնել կոնտակտներից";
+"outgoing_call" = "Ելքային զանգ";
+"missed_call" = "Բաց թողնված զանգ";
+"canceled" = "Չեղարկված";
+"confirm" = "Հաստատել";
+"reject" = "Մերժել";
+"new_contact_request" = "Նոր կոնտակտային հարցում";
+"send_you_a_friend_request" = "Ուղարկել է ձեզ կոնտակտային հարցում";
+"new_message" = "Նոր հաղորդագրություն";
+"connecting" = "Միացում";
+

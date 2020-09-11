@@ -35,7 +35,7 @@ class CallTableViewCell: UITableViewCell {
     
     @IBAction func infoButtonAction(_ sender: UIButton) {
         let isReceiverWe = !(call?.caller == SharedConfigs.shared.signedUser?.id)
-        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, callStartTime: stringToDate(date: call?.callStartTime ?? call!.callSuggestTime!), callStatus: call!.status!, type: call!.type!, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "", isReceiverWe: isReceiverWe)
+        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, callStartTime: stringToDate(date: call?.callStartTime ?? call!.callSuggestTime!), callStatus: call!.status!, type: call!.type!, name: contact?.name ?? contact?.username ?? "Dynamic's user".localized(), avatarURL: contact?.avatarURL ?? "", isReceiverWe: isReceiverWe)
         //delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: stringToDate(date: call?.createdAt) , callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
     }
     override func awakeFromNib() {
@@ -79,9 +79,9 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.timeLabel.text = stringToDate(date: call.callSuggestTime!)?.dateToString()
             if call.caller == SharedConfigs.shared.signedUser?.id {
-                callDurationLabel.text = "Not answered"
+                callDurationLabel.text = "Not answered".localized()
             } else {
-                callDurationLabel.text = "Missed"
+                callDurationLabel.text = "Missed".localized()
             }
         }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in

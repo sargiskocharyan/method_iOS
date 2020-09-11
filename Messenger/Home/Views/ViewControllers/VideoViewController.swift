@@ -8,13 +8,23 @@
 
 import UIKit
 import WebRTC
-
+import AVFoundation
 enum VideoVCMode: String {
     case audioCall = "audio"
     case videoCall = "video"
 }
 
-class VideoViewController: UIViewController {
+class VideoViewController: UIViewController, AVAudioPlayerDelegate {
+    
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        print(error?.localizedDescription)
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        print(flag)
+    }
+    
+    
     var roomName: String?
     var webRTCClient: WebRTCClient?
     var cameraPosition = AVCaptureDevice.Position.front
@@ -24,6 +34,7 @@ class VideoViewController: UIViewController {
     var isCameraOff = true
     var remoteRenderer: UIView?
     var videoVCMode: VideoVCMode?
+    var player: AVAudioPlayer?
     @IBOutlet weak var ourView: UIView!
     @IBOutlet weak var cameraOffButton: UIButton!
     @IBOutlet weak var speakerOnOffButton: UIButton!
@@ -39,6 +50,7 @@ class VideoViewController: UIViewController {
         UIApplication.shared.isIdleTimerDisabled = true
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
+        playSound()
         if videoVCMode == .videoCall {
             DispatchQueue.main.async {
                 self.cameraOffButton.setImage(UIImage(named: "cameraOff"), for: .normal)
@@ -139,6 +151,7 @@ class VideoViewController: UIViewController {
         }
     }
     func endCall() {
+//        player?.stop()
         for call in callManager.calls {
             callManager.end(call: call)
         }
@@ -152,6 +165,23 @@ class VideoViewController: UIViewController {
         webRTCClient?.peerConnection?.close()
         self.navigationController?.popViewController(animated: false)
     }
+    
+    func playSound() {
+         if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
+             do {
+                 try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+                 try AVAudioSession.sharedInstance().setActive(true)
+                 player = try AVAudioPlayer(contentsOf: soundURL)
+             }
+             catch {
+                 print(error)
+             }
+         } else {
+             print("Unable to locate audio file")
+         }
+         player?.volume = 1
+        player?.delegate = self
+     }
     
     func endCallFromCallkitView(call: Call) {
         webRTCClient?.sendData("opponent leave call".data(using: .utf8)!)
@@ -247,6 +277,7 @@ class VideoViewController: UIViewController {
         let label = UILabel()
         label.tag = 6
         label.text = callText
+//        player?.play()
         label.textColor = UIColor(named: "color")
         label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
@@ -260,6 +291,7 @@ class VideoViewController: UIViewController {
     func handleAnswer() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
             self.view.viewWithTag(6)?.removeFromSuperview()
+            
         })
     }
     

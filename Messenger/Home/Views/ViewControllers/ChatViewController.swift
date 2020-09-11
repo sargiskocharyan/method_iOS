@@ -149,7 +149,7 @@ class ChatViewController: UIViewController {
                         self.allMessages?.statuses![0].readMessageDate = createdAt
                     }
                     if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                    (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen"
+                    (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
                     }
                 }
                 }
@@ -170,7 +170,7 @@ class ChatViewController: UIViewController {
                         self.allMessages?.statuses![0].receivedMessageDate = createdAt
                     }
                     if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "received"
+                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
                     }
                 }
                 } else {
@@ -203,7 +203,7 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen"
+                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
                         }
                     }
                 }
@@ -224,7 +224,7 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "received"
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
                         }
                     }
                 }
@@ -273,7 +273,7 @@ class ChatViewController: UIViewController {
             } else {
                 for i in 0..<allMessages!.array!.count {
                     if message.text  == allMessages!.array![i].text {
-                         (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "hasav serverin"
+                         (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
                         self.allMessages!.array![i] = message
                     }
                 }
@@ -517,8 +517,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
                 cell.messageLabel.text = allMessages?.array![indexPath.row].text
-                cell.messageLabel.backgroundColor =  UIColor.blue.withAlphaComponent(0.8)
-                cell.messageLabel.textColor = .white
+                cell.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
+                cell.messageLabel.textColor = .black
                 cell.messageLabel.sizeToFit()
                 if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
                     if allMessages?.array![indexPath.row]._id != nil {
@@ -526,21 +526,21 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         let status = allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? allMessages?.statuses![1] : allMessages?.statuses![0]
                         if date! < stringToDateD(date: status!.receivedMessageDate!)! {
                             if date! < stringToDateD(date: status!.readMessageDate!)! || date! == stringToDateD(date: status!.readMessageDate!)! {
-                                cell.readMessage.text = "seen"
+                                cell.readMessage.text = "seen".localized()
                             } else {
-                                cell.readMessage.text = "received"
+                                cell.readMessage.text = "delivered".localized()
                             }
                         } else if date! > stringToDateD(date: status!.receivedMessageDate!)! {
-                            cell.readMessage.text = "hasav serverin"
+                            cell.readMessage.text = "sent".localized()
                         } else {
                             if date! == stringToDateD(date: status!.readMessageDate!)! || date! < stringToDateD(date: status!.readMessageDate!)! {
-                                cell.readMessage.text = "seen"
+                                cell.readMessage.text = "seen".localized()
                             } else {
-                                cell.readMessage.text = "received"
+                                cell.readMessage.text = "delivered".localized()
                             }
                         }
                     } else {
-                        cell.readMessage.text = "chi hasel server"
+                        cell.readMessage.text = "waiting".localized()
                     }
                 }
                 return cell

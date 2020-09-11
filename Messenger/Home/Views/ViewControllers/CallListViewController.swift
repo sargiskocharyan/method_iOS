@@ -32,7 +32,7 @@ protocol CallListViewDelegate: class  {
     func handleClickOnSamePerson()
 }
 
-class CallListViewController: UIViewController {
+class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     
     //MARK: Properties
     private let config = Config.default
@@ -56,7 +56,7 @@ class CallListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 //    @IBOutlet weak var activity: UIActivityIndicatorView!
     
-    //MARK: LifecyclesF
+    //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -100,6 +100,7 @@ class CallListViewController: UIViewController {
     //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
+       
         let vc = tabbar!.viewControllers![2] as! UINavigationController
         let profileVC = vc.viewControllers[0] as! ProfileViewController
         profileVC.delegate = self
@@ -117,13 +118,36 @@ class CallListViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
     
     //MARK: Helper methods
     @objc func addButtonTapped() {
-        mainRouter?.showContactsViewFromCallList()
+          mainRouter?.showContactsViewFromCallList()
+//        playSound()
     }
+
+//    func playSound() {
+//        if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
+//            do {
+//                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+//                try AVAudioSession.sharedInstance().setActive(true)
+//                player = try AVAudioPlayer(contentsOf: soundURL)
+//            }
+//            catch {
+//                print(error)
+//            }
+//        } else {
+//            print("Unable to locate audio file")
+//        }
+//        player?.volume = 1
+//        player?.delegate = self
+//        player?.play()
+//    }
     
     func getHistory() {
 //        activity.startAnimating()
@@ -232,21 +256,12 @@ class CallListViewController: UIViewController {
                 }
             }
             dictionary[callsArray![0]] = countOfCalls
-            print("caller: \(callsArray![0]), count: \(countOfCalls)")
             callsArray?.remove(at: 0)
-            print("count of array: \(callsArray!.count)")
-            print("i: \(i)")
         }
         
          sortedDictionary = dictionary.sorted { (arg0, arg1) -> Bool in
             return stringToDate(date: arg0.key.callSuggestTime!)!.compare(stringToDate(date: arg1.key.callSuggestTime!)!).rawValue == 1
         }
-        for (key, value) in sortedDictionary {
-            print("stacox:  \(key.receiver), zangox:  \(key.caller), \(key.status)")
-            print("value  : \(value)")
-        }
-        
-        print("")
     }
     
     
@@ -440,6 +455,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
         let call = sortedDictionary[indexPath.row].0

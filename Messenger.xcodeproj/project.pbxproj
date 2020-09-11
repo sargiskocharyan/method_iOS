@@ -64,6 +64,8 @@
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */; };
 		CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA04E2924E522070055A412 /* NetworkChecker.swift */; };
+		CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A045250B6EFD0067B245 /* ringback.mp3 */; };
+		CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A047250B72FE0067B245 /* karch.mp3 */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
@@ -220,6 +222,8 @@
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNotificationManager.swift; sourceTree = "<group>"; };
 		CDA04E2924E522070055A412 /* NetworkChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkChecker.swift; sourceTree = "<group>"; };
+		CDA1A045250B6EFD0067B245 /* ringback.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringback.mp3; sourceTree = "<group>"; };
+		CDA1A047250B72FE0067B245 /* karch.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = karch.mp3; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
@@ -558,6 +562,8 @@
 		CDBE8E06247674C00049F971 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CDA1A047250B72FE0067B245 /* karch.mp3 */,
+				CDA1A045250B6EFD0067B245 /* ringback.mp3 */,
 				CD361E1F248B8DFA00BCF154 /* Localizable.strings */,
 				CDD1756124852796001E804B /* JSON */,
 				CDBE8DF92476744D0049F971 /* Assets.xcassets */,
@@ -909,12 +915,14 @@
 				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
+				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
 				CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */,
 				CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */,
 				CDBE8DFA2476744D0049F971 /* Assets.xcassets in Resources */,
 				CD424917248A315E00A38987 /* message.json in Resources */,
+				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
