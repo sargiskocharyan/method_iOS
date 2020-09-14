@@ -90,7 +90,6 @@ class ContactProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        addToContactButton.setImage(UIImage(systemName: "person.badge.plus.fill"), for: .normal)
         addContact = addToContactButton
         tabBar = tabBarController as? MainTabBarController
         nc = tabBar?.viewControllers?[0] as? UINavigationController
@@ -283,6 +282,7 @@ class ContactProfileViewController: UIViewController {
     }
     
     @IBAction func startVideoCall(_ sender: Any) {
+        tabBar?.videoVC?.isCallHandled = false
         let tabBar = tabBarController as! MainTabBarController
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!, name: contact!.name ?? contact!.username!, mode: .videoCall)

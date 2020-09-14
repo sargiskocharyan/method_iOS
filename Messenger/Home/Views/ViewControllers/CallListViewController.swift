@@ -51,6 +51,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     var networkCheck = NetworkCheck.sharedInstance()
     var badge: Int?
     var sortedDictionary: [(CallHistory, Int)] = []
+//    var player: AVAudioPlayer?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -128,26 +129,8 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     //MARK: Helper methods
     @objc func addButtonTapped() {
           mainRouter?.showContactsViewFromCallList()
-//        playSound()
     }
 
-//    func playSound() {
-//        if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
-//            do {
-//                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-//                try AVAudioSession.sharedInstance().setActive(true)
-//                player = try AVAudioPlayer(contentsOf: soundURL)
-//            }
-//            catch {
-//                print(error)
-//            }
-//        } else {
-//            print("Unable to locate audio file")
-//        }
-//        player?.volume = 1
-//        player?.delegate = self
-//        player?.play()
-//    }
     
     func getHistory() {
 //        activity.startAnimating()

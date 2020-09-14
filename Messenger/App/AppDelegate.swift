@@ -159,6 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 SocketTaskManager.shared.connect {
                     self.isVoIPCallStarted = true
+                    self.tabbar?.videoVC?.isCallHandled = true
                     SocketTaskManager.shared.checkCallState(roomname: payload.dictionaryPayload["roomName"] as! String)
                     completion()
                 }

@@ -488,6 +488,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        tabbar?.videoVC?.isCallHandled = false
         if !tabbar!.onCall {
             tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
             tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)

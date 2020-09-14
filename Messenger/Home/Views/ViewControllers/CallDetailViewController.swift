@@ -149,6 +149,7 @@ class CallDetailViewController: UIViewController {
     
     @IBAction func startAudioCall(_ sender: Any) {
         let tabBar = tabBarController as! MainTabBarController
+        tabBar.videoVC?.isCallHandled = false
         if !tabBar.onCall {
             tabBar.handleCallClick(id: id!, name: name!, mode: .audioCall)
             callListViewController?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
@@ -160,26 +161,7 @@ class CallDetailViewController: UIViewController {
     @IBAction func sendMessageButton(_ sender: Any) {
         mainRouter?.showChatViewControllerFromCallDetail(name: name, username: name, avatarURL: avatarURL, id: id!)
     }
-//
-//    func dateToString(date: Date) -> String {
-////        let parsedDate = date
-//        let calendar = Calendar.current
-//        let day = calendar.component(.day, from: parsedDate)
-//        let month = calendar.component(.month, from: parsedDate)
-//        let year = calendar.component(.year, from: parsedDate)
-//        let time = Date()
-//        let currentDay = calendar.component(.day, from: time as Date)
-//        if currentDay == day {
-//            dateLabel.text = "today".localized()
-//        } else if currentDay - 1 == day {
-//            dateLabel.text = "yesterday".localized()
-//        } else {
-//            dateLabel.text = "\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)").\(year)"
-//        }
-//        let hour = calendar.component(.hour, from: parsedDate)
-//        let minutes = calendar.component(.minute, from: parsedDate)
-//        timeLabel.text = "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
-//    }
+
 }
 
 

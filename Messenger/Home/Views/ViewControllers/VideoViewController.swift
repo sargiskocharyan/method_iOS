@@ -17,7 +17,7 @@ enum VideoVCMode: String {
 class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        print(error?.localizedDescription)
+        print(error?.localizedDescription as Any)
     }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -35,6 +35,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     var remoteRenderer: UIView?
     var videoVCMode: VideoVCMode?
     var player: AVAudioPlayer?
+    var isCallHandled: Bool?
     @IBOutlet weak var ourView: UIView!
     @IBOutlet weak var cameraOffButton: UIButton!
     @IBOutlet weak var speakerOnOffButton: UIButton!
@@ -50,7 +51,6 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         UIApplication.shared.isIdleTimerDisabled = true
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
-        playSound()
         if videoVCMode == .videoCall {
             DispatchQueue.main.async {
                 self.cameraOffButton.setImage(UIImage(named: "cameraOff"), for: .normal)
@@ -92,8 +92,12 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(named: "videoColor")
-        
         webRTCClient?.webRTCCDelegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
     }
     
     @IBAction func cameraOffOrOnAction(_ sender: UIButton) {
@@ -151,10 +155,12 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         }
     }
     func endCall() {
-//        player?.stop()
+        player?.stop()
         for call in callManager.calls {
             callManager.end(call: call)
         }
+        (tabBarController as? MainTabBarController)?.onCall = false
+        ((tabBarController as? MainTabBarController)?.viewControllers?[0] as? CallListViewController)?.onCall = false
         if roomName != nil {
             SocketTaskManager.shared.leaveRoom(roomName: roomName!)
         }
@@ -167,21 +173,23 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     }
     
     func playSound() {
-         if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
-             do {
-                 try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-                 try AVAudioSession.sharedInstance().setActive(true)
-                 player = try AVAudioPlayer(contentsOf: soundURL)
-             }
-             catch {
-                 print(error)
-             }
-         } else {
-             print("Unable to locate audio file")
-         }
-         player?.volume = 1
+        if !isCallHandled! {
+        if let soundURL = Bundle.main.url(forResource: "ringback", withExtension: "mp3") {
+            do {
+                player = try AVAudioPlayer(contentsOf: soundURL)
+                player?.prepareToPlay()
+            }
+            catch {
+                print(error)
+            }
+        } else {
+            print("Unable to locate audio file")
+        }
+        player?.play()
+        player?.volume = 1
         player?.delegate = self
-     }
+        }
+    }
     
     func endCallFromCallkitView(call: Call) {
         webRTCClient?.sendData("opponent leave call".data(using: .utf8)!)
@@ -193,18 +201,6 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         self.navigationController?.popViewController(animated: false)
     }
     
-    func addView()  {
-        let firstView = UIView()
-        firstView.backgroundColor = .red
-        localRenderer!.addSubview(firstView)
-        firstView.tag = 123
-        firstView.topAnchor.constraint(equalTo: localRenderer!.topAnchor, constant: -10).isActive = true
-        firstView.rightAnchor.constraint(equalTo: localRenderer!.rightAnchor, constant: 0).isActive = true
-        firstView.bottomAnchor.constraint(equalTo: localRenderer!.bottomAnchor, constant: -10).isActive = true
-        firstView.leftAnchor.constraint(equalTo: localRenderer!.leftAnchor, constant: -10).isActive = true
-        firstView.isUserInteractionEnabled = true
-        firstView.anchor(top: localRenderer!.topAnchor, paddingTop: 0, bottom: localRenderer!.bottomAnchor, paddingBottom: 0, left: localRenderer!.leftAnchor, paddingLeft: 0, right: localRenderer!.rightAnchor, paddingRight: 10, width: 0, height: 0)
-    }
     
     func removeFromLocalrenderer() {
              self.view.viewWithTag(123)?.removeFromSuperview()
@@ -277,7 +273,6 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         let label = UILabel()
         label.tag = 6
         label.text = callText
-//        player?.play()
         label.textColor = UIColor(named: "color")
         label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
@@ -291,11 +286,12 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     func handleAnswer() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
             self.view.viewWithTag(6)?.removeFromSuperview()
-            
         })
+        player?.stop()
     }
     
     func handleCallConnect() {
+        player?.stop()
         if self.videoVCMode == .audioCall {
             self.webRTCClient?.speakerOff()
             self.isSpeakerOn = false

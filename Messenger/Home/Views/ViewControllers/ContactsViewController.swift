@@ -244,6 +244,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tabbar?.videoVC?.isCallHandled = false
         if self.contactsMode == .fromProfile {
             mainRouter?.showContactProfileViewControllerFromContacts(id: contactsMiniInformation[indexPath.row]._id!, contact: contactsMiniInformation[indexPath.row], onContactPage: onContactPage)
         } else if self.contactsMode == .fromCallList {

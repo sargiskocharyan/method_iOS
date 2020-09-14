@@ -127,7 +127,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    
     func setFlagImage() {
         if SharedConfigs.shared.appLang == AppLangKeys.Eng {
             flagImageView.image = UIImage(named: "English")

@@ -120,9 +120,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
             self.callManager.removeAllCalls()
         }
     }
-    
-    
-    
+        
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
@@ -132,11 +130,13 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
         self.callsVC?.handleCall(id: id)
+        videoVC?.isCallHandled = true
         completionHandler()
         return
     }
     
     func handleCall() {
+        videoVC?.isCallHandled = true
         SocketTaskManager.shared.addCallListener { (id, roomname, name, type) in
             if !self.onCall {
                 self.startCall(id, roomname, name, type) {
@@ -291,6 +291,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
     func handleOffer() {
         print("1111111-----------------------------11111111")
         print(SocketTaskManager.shared.socket!.status)
+        videoVC?.isCallHandled = true
         SocketTaskManager.shared.addOfferListener { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
@@ -361,7 +362,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
                     }
                 } else if recentNc.viewControllers.count > 2 {
                     if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
-                        if callHistory?.status == CallStatus.missed.rawValue  {
+                        if callHistory?.status == CallStatus.missed.rawValue && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
                             self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                         }
                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
@@ -396,25 +397,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
         }
     }
     
-    
-//    func playSound() {
-//        if let soundURL = Bundle.main.url(forResource: "karch", withExtension: "mp3") {
-//            do {
-//                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-//                try AVAudioSession.sharedInstance().setActive(true)
-//                player = try AVAudioPlayer(contentsOf: soundURL)
-//            }
-//            catch {
-//                print(error)
-//            }
-//        } else {
-//            print("Unable to locate audio file")
-//        }
-//        player?.volume = 1
-//        player?.delegate = self
-//        player?.play()
-//    }
-    
+
     func sessionExpires() {
         SocketTaskManager.shared.disconnect{}
         UserDataController().logOutUser()
@@ -596,18 +579,20 @@ extension MainTabBarController: CallListViewDelegate {
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)
         }
-        callManager.startCall(handle: name, videoEnabled: true)
+        
         webRTCClient?.delegate = self
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
+        self.videoVC?.isCallHandled = false
         mainRouter?.showVideoViewController(mode: mode)
         videoVC?.startCall("calling".localized() + " \(name)...")
-//        playSound()
-       
-        //        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
-        //            self.videoVC?.endCall()
-        //        })
+        callManager.startCall(handle: name, videoEnabled: true)
+        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+            if self.isFirstConnect != true {
+                self.videoVC?.endCall()
+            }
+        })
     }
 }
 

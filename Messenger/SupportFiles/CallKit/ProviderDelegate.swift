@@ -1,6 +1,7 @@
 
 import AVFoundation
 import CallKit
+import UIKit
 
 class ProviderDelegate: NSObject {
     private let callManager: CallManager
@@ -76,6 +77,7 @@ extension ProviderDelegate: CXProviderDelegate {
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
         startAudio()
+        tabbar?.videoVC?.playSound()
     }
     
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
