@@ -97,7 +97,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
     }
     
     @IBAction func cameraOffOrOnAction(_ sender: UIButton) {
@@ -174,20 +174,20 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     func playSound() {
         if !isCallHandled! {
-        if let soundURL = Bundle.main.url(forResource: "ringback", withExtension: "mp3") {
-            do {
-                player = try AVAudioPlayer(contentsOf: soundURL)
-                player?.prepareToPlay()
+            if let soundURL = Bundle.main.url(forResource: "ringback", withExtension: "mp3") {
+                do {
+                    player = try AVAudioPlayer(contentsOf: soundURL)
+                    player?.prepareToPlay()
+                }
+                catch {
+                    print(error)
+                }
+            } else {
+                print("Unable to locate audio file")
             }
-            catch {
-                print(error)
-            }
-        } else {
-            print("Unable to locate audio file")
-        }
-        player?.play()
-        player?.volume = 1
-        player?.delegate = self
+            player?.play()
+            player?.volume = 1
+            player?.delegate = self
         }
     }
     
@@ -203,7 +203,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     
     func removeFromLocalrenderer() {
-             self.view.viewWithTag(123)?.removeFromSuperview()
+        self.view.viewWithTag(123)?.removeFromSuperview()
     }
     
     @IBAction func switchCamera(_ sender: Any) {
@@ -314,9 +314,9 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     }
 }
 
+//MARK: Extensions
 extension VideoViewController: WebRTCDelegate {
     func removeView() {
         self.handleAnswer()
     }
-    
 }

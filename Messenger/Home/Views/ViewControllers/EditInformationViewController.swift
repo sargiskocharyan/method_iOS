@@ -165,24 +165,24 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-   func checkInfo(_ signedUser: UserModel?) -> Bool? {
-         if  signedUser?.info != infoView.textField.text {
-             if (infoView.textField.text == "") {
-                 if (signedUser?.info == nil && infoView.textField.text == "") {
-                     info = nil
-                     return nil
-                 } else {
-                     info = infoView.textField.text!
-                     return true
-                 }
-             } else {
-                 info = infoView.textField.text
-                 return true
-             }
-         }
-         info = nil
-         return nil
-     }
+    func checkInfo(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.info != infoView.textField.text {
+            if (infoView.textField.text == "") {
+                if (signedUser?.info == nil && infoView.textField.text == "") {
+                    info = nil
+                    return nil
+                } else {
+                    info = infoView.textField.text!
+                    return true
+                }
+            } else {
+                info = infoView.textField.text
+                return true
+            }
+        }
+        info = nil
+        return nil
+    }
     
     func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
         if  stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) != birdthdateView.textField.text {
@@ -320,7 +320,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func lastnameTextFieldAction() {
-         lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
+        lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -406,7 +406,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 } else {
                     DispatchQueue.main.async {
                         UserDataController().logOutUser()
-                         AuthRouter().assemblyModule()
+                        AuthRouter().assemblyModule()
                     }
                 }
                 SocketTaskManager.shared.disconnect{}
@@ -474,7 +474,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 20, height: 20)
     }
     
-  
+    
     
     func addButtonOnGenderTextField(button: UIButton, textField: UITextField) {
         button.addTarget(self, action: #selector(tappedGenderTextField), for: .touchUpInside)
@@ -557,7 +557,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             }
         }
     }
-
+    
     
     func addGenderDropDown() {
         addButtonOnGenderTextField(button: genderButton, textField: genderView.textField)

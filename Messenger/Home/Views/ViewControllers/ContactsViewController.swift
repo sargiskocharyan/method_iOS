@@ -58,7 +58,7 @@ class ContactsViewController: UIViewController {
     
     @objc private func refreshWeatherData(_ sender: UIRefreshControl) {
         if onContactPage {
-          getContacts()
+            getContacts()
         } else {
             sender.endRefreshing()
         }
@@ -208,16 +208,16 @@ class ContactsViewController: UIViewController {
         if !isLoaded {
             spinner.startAnimating()
         }
-            self.isLoaded = true
-            if viewModel!.contacts.count == 0 {
-                self.setView("no_contacts".localized())
-                return
-            }
-            self.contactsMiniInformation = viewModel!.contacts
-            self.onContactPage = true
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        self.isLoaded = true
+        if viewModel!.contacts.count == 0 {
+            self.setView("no_contacts".localized())
+            return
+        }
+        self.contactsMiniInformation = viewModel!.contacts
+        self.onContactPage = true
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
             self.spinner.stopAnimating()
@@ -225,13 +225,13 @@ class ContactsViewController: UIViewController {
     }
 }
 
-//MARK: Extension
+//MARK: Extensions
 extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, ContactProfileDelegate {
     func removeContact() {
         contactsMiniInformation = viewModel!.contacts
         tableView.reloadData()
     }
-
+    
     func addNewContact(contact: User) {
         self.onContactPage = true
         self.contactsMiniInformation = self.viewModel!.contacts
@@ -242,7 +242,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource, Co
             self.spinner.stopAnimating()
         }
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tabbar?.videoVC?.isCallHandled = false
         if self.contactsMode == .fromProfile {

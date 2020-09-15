@@ -13,23 +13,7 @@ import AVFoundation
 import WebRTC
 import CoreData
 
-class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
-    
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        print(flag)
-    }
-    
-    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        print(error?.localizedDescription as Any)
-    }
-    
-    func audioPlayerBeginInterruption(_ player: AVAudioPlayer) {
-        print("audioPlayerBeginInterruption")
-    }
-    
-    func audioPlayerEndInterruption(_ player: AVAudioPlayer, withOptions flags: Int) {
-        print(flags)
-    }
+class MainTabBarController: UITabBarController {
     
     //MARK: Properties
     var viewModel: HomePageViewModel?
@@ -64,13 +48,11 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
-        
         self.retrieveCoreDataObjects()
         verifyToken()
         SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
-        
         callManager = AppDelegate.shared.callManager
         AppDelegate.shared.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
@@ -86,18 +68,6 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
                 print("D'oh")
             }
         }
-        
-        
-    }
-    
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
     }
     
     //MARK: Helper methods
@@ -120,7 +90,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
             self.callManager.removeAllCalls()
         }
     }
-        
+    
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
@@ -152,7 +122,6 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
     func handleNewContactRequest() {
         SocketTaskManager.shared.addNewContactRequestListener { (userId) in
             print("new request sent")
-            
         }
     }
     
@@ -213,7 +182,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
             if recentNC.viewControllers.count > 1 {
-            let chatVC = recentNC.viewControllers[1] as! ChatViewController
+                let chatVC = recentNC.viewControllers[1] as! ChatViewController
                 chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
             }
         }
@@ -397,7 +366,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
         }
     }
     
-
+    
     func sessionExpires() {
         SocketTaskManager.shared.disconnect{}
         UserDataController().logOutUser()
@@ -442,19 +411,19 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
                             let recentNC = self.viewControllers![1] as! UINavigationController
                             let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
                             if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
-                            self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], completion: { (error) in
-                                if error == nil {
-                                    var oldModel = SharedConfigs.shared.signedUser
-                                    oldModel?.missedCallHistoryCount = 0
-                                    UserDataController().populateUserProfile(model: oldModel!)
-                                    DispatchQueue.main.async {
-                                        if let tabItems = self.tabBar.items {
-                                            let tabItem = tabItems[0]
-                                            tabItem.badgeValue = nil
+                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], completion: { (error) in
+                                    if error == nil {
+                                        var oldModel = SharedConfigs.shared.signedUser
+                                        oldModel?.missedCallHistoryCount = 0
+                                        UserDataController().populateUserProfile(model: oldModel!)
+                                        DispatchQueue.main.async {
+                                            if let tabItems = self.tabBar.items {
+                                                let tabItem = tabItems[0]
+                                                tabItem.badgeValue = nil
+                                            }
                                         }
                                     }
-                                }
-                            })
+                                })
                             }
                             recentVC.getChats(isFromHome: true)
                         }
@@ -467,7 +436,7 @@ class MainTabBarController: UITabBarController, AVAudioPlayerDelegate {
     }
 }
 
-//MARK: Extension
+//MARK: Extensions
 extension MainTabBarController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
@@ -574,12 +543,11 @@ extension MainTabBarController: CallListViewDelegate {
     }
     
     func handleCallClick(id: String, name: String, mode: VideoVCMode) {
-       self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         SocketTaskManager.shared.call(id: id, type: mode.rawValue) { (roomname) in
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)
         }
-        
         webRTCClient?.delegate = self
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
@@ -601,13 +569,5 @@ extension MainTabBarController: AppDelegateD {
         self.startCall(id, roomName, name, type) {
             completionHandler()
         }
-    }
-    
-    
-}
-
-extension MainTabBarController: Subscriber {
-    func didHandleConnectionEvent() {
-        
     }
 }

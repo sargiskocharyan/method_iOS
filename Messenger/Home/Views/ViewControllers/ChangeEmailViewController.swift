@@ -17,8 +17,15 @@ protocol ChangeEmailViewControllerDelegate: class {
     func setEmail(email: String)
     func setPhone(phone: String)
 }
+
 class ChangeEmailViewController: UIViewController  {
     
+    //MARK: IBOutlets
+    @IBOutlet weak var updateInformationButton: UIButton!
+    @IBOutlet weak var codeCustomView: CustomTextField!
+    @IBOutlet weak var emailCustomView: CustomTextField!
+    
+    //MARK: Properties
     var mainRouter: MainRouter?
     var viewModel: ChangeEmailViewModel?
     var isVerifedEmail: Bool?
@@ -26,10 +33,7 @@ class ChangeEmailViewController: UIViewController  {
     var changingSubject: ChangingSubject?
     weak var delegate: ChangeEmailViewControllerDelegate?
     
-    @IBOutlet weak var updateInformationButton: UIButton!
-    @IBOutlet weak var codeCustomView: CustomTextField!
-    @IBOutlet weak var emailCustomView: CustomTextField!
-    
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         emailCustomView.delagate = self
@@ -43,52 +47,53 @@ class ChangeEmailViewController: UIViewController  {
     
     override func viewWillAppear(_ animated: Bool) {
         if changingSubject == .email {
-        updateInformationButton.setTitle("check_mail".localized(), for: .normal)
+            updateInformationButton.setTitle("check_mail".localized(), for: .normal)
         } else if changingSubject == .phone {
             emailCustomView.placeholder = "phone"
-        updateInformationButton.setTitle("check_phone".localized(), for: .normal)
+            updateInformationButton.setTitle("check_phone".localized(), for: .normal)
         }
     }
     
+    //MARK: Helper methods
     @IBAction func changeEmailButtonAction(_ sender: Any) {
         if changingSubject == .email {
-        if !isVerifedEmail! {
-            viewModel?.changeEmail(email: emailCustomView.textField.text!, completion: { (responseObj, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                    }
-                } else if responseObj != nil {
-                    if responseObj?.mailExist == false {
+            if !isVerifedEmail! {
+                viewModel?.changeEmail(email: emailCustomView.textField.text!, completion: { (responseObj, error) in
+                    if error != nil {
                         DispatchQueue.main.async {
-                            self.codeCustomView.isHidden = false
-                            self.isVerifedEmail = true
-                            self.codeCustomView.textField.text = responseObj?.code
-                            self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                         }
-                    } else {
+                    } else if responseObj != nil {
+                        if responseObj?.mailExist == false {
+                            DispatchQueue.main.async {
+                                self.codeCustomView.isHidden = false
+                                self.isVerifedEmail = true
+                                self.codeCustomView.textField.text = responseObj?.code
+                                self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: "this_email_is_taken".localized())
+                            }
+                        }
+                    }
+                })
+            } else {
+                viewModel?.verifyEmail(email: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
+                    if error != nil {
                         DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: "this_email_is_taken".localized())
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                        }
+                    } else if responseObj != nil {
+                        DispatchQueue.main.async {
+                            let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                            UserDataController().populateUserProfile(model: user)
+                            self.delegate?.setEmail(email: self.emailCustomView.textField.text!)
+                            self.dismiss(animated: true, completion: nil)
                         }
                     }
-                }
-            })
-        } else {
-            viewModel?.verifyEmail(email: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                    }
-                } else if responseObj != nil {
-                    DispatchQueue.main.async {
-                        let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
-                        UserDataController().populateUserProfile(model: user)
-                        self.delegate?.setEmail(email: self.emailCustomView.textField.text!)
-                        self.dismiss(animated: true, completion: nil)
-                    }
-                }
-            })
-        }
+                })
+            }
         } else if changingSubject == .phone {
             if !isVerifiedPhone! {
                 viewModel?.changePhone(phone: emailCustomView.textField.text!, completion: { (responseObj, error) in
@@ -133,18 +138,18 @@ class ChangeEmailViewController: UIViewController  {
     func enableUpdateInfoButton() {
         updateInformationButton.backgroundColor = .clear
         updateInformationButton.titleLabel?.textColor = .white
-          updateInformationButton.isEnabled = true
-      }
+        updateInformationButton.isEnabled = true
+    }
     
     func disableUpdateInfoButton() {
-           updateInformationButton.isEnabled = false
-           updateInformationButton.titleLabel?.textColor = UIColor.white
-           updateInformationButton.backgroundColor = UIColor.lightGray
-       }
+        updateInformationButton.isEnabled = false
+        updateInformationButton.titleLabel?.textColor = UIColor.white
+        updateInformationButton.backgroundColor = UIColor.lightGray
+    }
 }
 
+//MARK: Extension
 extension ChangeEmailViewController: CustomTextFieldDelegate {
-    
     func texfFieldDidChange(placeholder: String) {
         if placeholder == "email".localized() {
             if !emailCustomView.textField.text!.isValidEmail() {
@@ -173,5 +178,4 @@ extension ChangeEmailViewController: CustomTextFieldDelegate {
             }
         }
     }
-    
 }

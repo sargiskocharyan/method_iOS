@@ -22,7 +22,7 @@ class RecentMessagesViewController: UIViewController {
     let refreshControl = UIRefreshControl()
     var timer: Timer?
     var mainRouter: MainRouter?
-//    var spinner = UIActivityIndicatorView(style: .medium)
+    //    var spinner = UIActivityIndicatorView(style: .medium)
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -43,12 +43,12 @@ class RecentMessagesViewController: UIViewController {
         }
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         tableView.tableFooterView = UIView()
-//        spinner.translatesAutoresizingMaskIntoConstraints = false
-//        spinner.startAnimating()
-//        view.addSubview(spinner)
-//        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
-//        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
+        //        spinner.translatesAutoresizingMaskIntoConstraints = false
+        //        spinner.startAnimating()
+        //        view.addSubview(spinner)
+        //        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        //        spinner.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        //        spinner.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1, constant: 35).isActive = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -99,7 +99,7 @@ class RecentMessagesViewController: UIViewController {
                     self.sort()
                     DispatchQueue.main.async {
                         self.removeView()
-//                        self.spinner.stopAnimating()
+                        //                        self.spinner.stopAnimating()
                         self.tableView.reloadData()
                     }
                 }
@@ -138,7 +138,7 @@ class RecentMessagesViewController: UIViewController {
                     NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
                 ]
                 let regularText = NSAttributedString(string: (chats[i].message?.text) ?? "Call", attributes: regularAttribute)
-                 (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.attributedText = regularText
+                (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.attributedText = regularText
                 (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.textColor = .darkGray
             }
         }
@@ -188,7 +188,7 @@ class RecentMessagesViewController: UIViewController {
         self.isLoaded = true
         if isLoadedMessages == false {
             DispatchQueue.main.async {
-//                self.spinner.startAnimating()
+                //                self.spinner.startAnimating()
             }
         }
         if !isLoadedMessages {
@@ -210,7 +210,7 @@ class RecentMessagesViewController: UIViewController {
                 if (error != nil) {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-//                        self.spinner.stopAnimating()
+                        //                        self.spinner.stopAnimating()
                     }
                 } else {
                     if (messages?.array != nil) {
@@ -218,7 +218,7 @@ class RecentMessagesViewController: UIViewController {
                         if messages?.array?.count == 0 {
                             self.setView("you_have_no_messages".localized())
                             DispatchQueue.main.async {
-//                                self.spinner.stopAnimating()
+                                //                                self.spinner.stopAnimating()
                             }
                         } else {
                             self.chats = messages!.array!.filter({ (chat) -> Bool in
@@ -228,7 +228,7 @@ class RecentMessagesViewController: UIViewController {
                             if !isFromHome {
                                 DispatchQueue.main.async {
                                     self.removeView()
-//                                    self.spinner.stopAnimating()
+                                    //                                    self.spinner.stopAnimating()
                                     self.tableView.reloadData()
                                 }
                                 
@@ -255,7 +255,7 @@ class RecentMessagesViewController: UIViewController {
             if (error != nil) {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-//                    self.spinner.stopAnimating()
+                    //                    self.spinner.stopAnimating()
                 }
             } else if user != nil {
                 DispatchQueue.main.async {

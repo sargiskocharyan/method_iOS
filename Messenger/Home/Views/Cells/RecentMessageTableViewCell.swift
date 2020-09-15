@@ -9,11 +9,12 @@
 import UIKit
 
 class RecentMessageTableViewCell: UITableViewCell {
+    
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var lastMessageLabel: UILabel!
-
+    
     var isOnline: Bool?
     
     override public func prepareForReuse() {
@@ -24,9 +25,7 @@ class RecentMessageTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-//        contentView.translatesAutoresizingMaskIntoConstraints = false
         changeShapeOfImageView()
-        
     }
     
     func changeShapeOfImageView() {
@@ -87,7 +86,7 @@ class RecentMessageTableViewCell: UITableViewCell {
             if chat.unreadMessageExists {
                 lastMessageLabel.textColor = .black
                 let boldAttribute = [
-                   NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-Bold", size: 14.0)!
+                    NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-Bold", size: 14.0)!
                 ]
                 let boldText = NSAttributedString(string: lastMessageLabel.text!, attributes: boldAttribute)
                 lastMessageLabel.attributedText = boldText

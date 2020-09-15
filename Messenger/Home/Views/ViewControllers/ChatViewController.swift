@@ -82,10 +82,10 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-            if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
-                self.handleReadMessage()
-                self.handleMessageTyping()
-                self.handleReceiveMessage()
+        if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
+            self.handleReadMessage()
+            self.handleMessageTyping()
+            self.handleReceiveMessage()
         }
         inputTextField.addTarget(self, action: #selector(inputTextFieldDidCghe), for: .editingChanged)
     }
@@ -142,16 +142,16 @@ class ChatViewController: UIViewController {
             let createdAtDate = self.stringToDateD(date: createdAt)!
             for i in 0..<self.allMessages!.array!.count {
                 if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
-                if date <= createdAtDate {
-                    if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
-                        self.allMessages?.statuses![1].readMessageDate = createdAt
-                    } else {
-                        self.allMessages?.statuses![0].readMessageDate = createdAt
+                    if date <= createdAtDate {
+                        if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                            self.allMessages?.statuses![1].readMessageDate = createdAt
+                        } else {
+                            self.allMessages?.statuses![0].readMessageDate = createdAt
+                        }
+                        if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                        }
                     }
-                    if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                    (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
-                    }
-                }
                 }
             }
         }
@@ -163,36 +163,36 @@ class ChatViewController: UIViewController {
             for i in 0..<self.allMessages!.array!.count {
                 
                 if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
-                if date <= createdAtDate {
-                    if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
-                        self.allMessages?.statuses![1].receivedMessageDate = createdAt
-                    } else {
-                        self.allMessages?.statuses![0].receivedMessageDate = createdAt
+                    if date <= createdAtDate {
+                        if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
+                            self.allMessages?.statuses![1].receivedMessageDate = createdAt
+                        } else {
+                            self.allMessages?.statuses![0].receivedMessageDate = createdAt
+                        }
+                        if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
+                        }
                     }
-                    if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
-                    }
-                }
                 } else {
                     
                 }
+            }
         }
     }
-}
-
+    
     func handleMessageTypingFromTabbar(userId: String) {
-         if userId == self.id {
-                       self.typingLabel.text = "typing"
-                       self.timer?.invalidate()
-                       self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true, block: { (timer) in
-                           self.typingLabel.text = ""
-                       })
-                   }
+        if userId == self.id {
+            self.typingLabel.text = "typing"
+            self.timer?.invalidate()
+            self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true, block: { (timer) in
+                self.typingLabel.text = ""
+            })
+        }
     }
     
     func handleReadMessage()  {
         SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
-           if userId == self.id {
+            if userId == self.id {
                 let createdAtDate = self.stringToDateD(date: createdAt)!
                 for i in 0..<self.allMessages!.array!.count {
                     let date = self.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
@@ -203,7 +203,7 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
                         }
                     }
                 }
@@ -273,7 +273,7 @@ class ChatViewController: UIViewController {
             } else {
                 for i in 0..<allMessages!.array!.count {
                     if message.text  == allMessages!.array![i].text {
-                         (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
+                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
                         self.allMessages!.array![i] = message
                     }
                 }
@@ -387,10 +387,57 @@ class ChatViewController: UIViewController {
                     }
                 }
                 let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                //self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
             }
         }
     }
+    
+    func secondsToHoursMinutesSeconds(seconds : Int) -> String {
+           if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+               return "\((seconds % 3600) % 60) sec."
+           } else if seconds / 3600 == 0 {
+               return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+           }
+           return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+       }
+       
+       func stringToDate(date:String) -> String {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+           let parsedDate = formatter.date(from: date)
+           let calendar = Calendar.current
+           let day = calendar.component(.day, from: parsedDate!)
+           let month = calendar.component(.month, from: parsedDate!)
+           let time = Date()
+           let currentDay = calendar.component(.day, from: time as Date)
+           if currentDay != day {
+               return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
+           }
+           let hour = calendar.component(.hour, from: parsedDate!)
+           let minutes = calendar.component(.minute, from: parsedDate!)
+           return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
+       }
+       
+       @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+           tabbar?.videoVC?.isCallHandled = false
+           if !tabbar!.onCall {
+               tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
+               tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+           } else {
+               tabbar!.handleClickOnSamePerson()
+           }
+       }
+       
+       func stringToDateD(date:String) -> Date? {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+           let parsedDate = formatter.date(from: date)
+           if parsedDate == nil {
+               return nil
+           } else {
+               return parsedDate
+           }
+       }
     
     func getChatMessages(dateUntil: String?) {
         if self.activity != nil {
@@ -403,7 +450,7 @@ class ChatViewController: UIViewController {
             if error != nil {
                 DispatchQueue.main.async {
                     if self.activity != nil {
-                    self.activity.stopAnimating()
+                        self.activity.stopAnimating()
                     }
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -423,7 +470,23 @@ class ChatViewController: UIViewController {
                         self.activity.stopAnimating()
                     }
                     self.view.viewWithTag(5)?.removeFromSuperview()
-                    self.tableView.reloadData()
+                    //self.tableView.reloadData()
+                    var arrayOfIndexPaths: [IndexPath] = []
+                    for i in 0..<messages!.array!.count {
+                        arrayOfIndexPaths.append(IndexPath(row: i, section: 0))
+                    }
+                    if dateUntil != nil {
+                        let initialOffset = self.tableView.contentOffset.y
+                        self.tableView.beginUpdates()
+                        UIView.setAnimationsEnabled(false)
+                        self.tableView.insertRows(at: arrayOfIndexPaths, with: .none)
+                        self.tableView.endUpdates()
+                        self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                        UIView.setAnimationsEnabled(true)
+                        self.tableView.contentOffset.y += initialOffset
+                    } else {
+                        self.tableView.reloadData()
+                    }
                     self.checkAndSendReadEvent()
                 }
             }
@@ -461,59 +524,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-        if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-            return "\((seconds % 3600) % 60) sec."
-        } else if seconds / 3600 == 0 {
-            return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-        }
-        return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-    }
-    
-    func stringToDate(date:String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        let calendar = Calendar.current
-        let day = calendar.component(.day, from: parsedDate!)
-        let month = calendar.component(.month, from: parsedDate!)
-        let time = Date()
-        let currentDay = calendar.component(.day, from: time as Date)
-        if currentDay != day {
-            return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
-        }
-        let hour = calendar.component(.hour, from: parsedDate!)
-        let minutes = calendar.component(.minute, from: parsedDate!)
-        return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
-    }
-    
-    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-        tabbar?.videoVC?.isCallHandled = false
-        if !tabbar!.onCall {
-            tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
-            tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
-        } else {
-            tabbar!.handleClickOnSamePerson()
-        }
-    }
-    
-    func stringToDateD(date:String) -> Date? {
-           let formatter = DateFormatter()
-           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-           let parsedDate = formatter.date(from: date)
-           if parsedDate == nil {
-               return nil
-           } else {
-               return parsedDate
-           }
-       }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 3 && self.allMessages?.array![indexPath.row] != nil  {
-            if check == false {
-                self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-            }
-        }
+        
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
@@ -544,6 +556,11 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.readMessage.text = "waiting".localized()
                     }
                 }
+//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                    if check == false {
+//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                    }
+//                }
                 return cell
             } else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
@@ -552,14 +569,29 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
                     cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 } else {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 }
             } 
@@ -571,6 +603,11 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.userImageView.image = image
                 cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.sizeToFit()
+//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                    if check == false {
+//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                    }
+//                }
                 return cell
             }  else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
@@ -581,22 +618,44 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 } else  {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//                        if check == false {
+//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//                        }
+//                    }
                     return cell
                 }
                 
             }
         }
-        
         return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+//            if check == false {
+                self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+//            }
+        }
     }
 }

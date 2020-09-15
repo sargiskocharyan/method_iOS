@@ -9,7 +9,26 @@
 import UIKit
 
 class CallDetailViewController: UIViewController {
-
+    
+    //MARK: IBOutlets
+    @IBOutlet weak var audioCallButton: UIButton!
+    @IBOutlet weak var videoCallButton: UIButton!
+    @IBOutlet weak var aboutCallView: UIView!
+    @IBOutlet weak var audioCallView: UIView!
+    @IBOutlet weak var usernameLabelHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var userImageViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var userImageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var videoCallView: UIView!
+    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var audioCallLabel: UILabel!
+    @IBOutlet weak var videoCallLabel: UILabel!
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var username: UILabel!
+    @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var headerViewHeightConstraint: NSLayoutConstraint!
+    
+    //MARK: Properties
     var date: Date?
     var callDuration: String?
     var callMode: CallStatus?
@@ -34,54 +53,7 @@ class CallDetailViewController: UIViewController {
     let usernameLabelMaxHeight: CGFloat = 29
     let usernameLabelMinHeight: CGFloat = 16
     
-    @IBOutlet weak var audioCallButton: UIButton!
-    @IBOutlet weak var videoCallButton: UIButton!
-    @IBOutlet weak var aboutCallView: UIView!
-    @IBOutlet weak var audioCallView: UIView!
-    @IBOutlet weak var usernameLabelHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var userImageViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var userImageViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var videoCallView: UIView!
-    @IBOutlet weak var messageView: UIView!
-    @IBOutlet weak var audioCallLabel: UILabel!
-    @IBOutlet weak var videoCallLabel: UILabel!
-    @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var username: UILabel!
-    @IBOutlet weak var userImageView: UIImageView!
-    
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var headerViewHeightConstraint: NSLayoutConstraint!
-    
-    func configureViews() {
-        userImageView.contentMode = . scaleAspectFill
-        userImageView.layer.cornerRadius = 55
-        userImageView.clipsToBounds = true
-        
-        audioCallView.contentMode = . scaleAspectFill
-        audioCallView.layer.cornerRadius = 22.5
-        audioCallView.clipsToBounds = true
-        
-        videoCallView.contentMode = . scaleAspectFill
-        videoCallView.layer.cornerRadius = 22.5
-        videoCallView.clipsToBounds = true
-        
-        messageView.contentMode = . scaleAspectFill
-        messageView.layer.cornerRadius = 22.5
-        messageView.clipsToBounds = true
-        
-        aboutCallView.layer.borderColor = UIColor.lightGray.cgColor
-        aboutCallView.layer.borderWidth = 1.0
-        aboutCallView.layer.masksToBounds = true
-    }
-    
-    func setLabels() {
-        messageLabel.text = "message".localized()
-        videoCallLabel.text = "video".localized()
-        audioCallLabel.text = "call".localized()
-    }
-    
-    
-    
+    //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         contactsViewModel = tabBar?.contactsViewModel
@@ -116,7 +88,47 @@ class CallDetailViewController: UIViewController {
             }
         }
     }
-
+    
+    //MARK: Helper methods
+    func configureViews() {
+        userImageView.contentMode = . scaleAspectFill
+        userImageView.layer.cornerRadius = 55
+        userImageView.clipsToBounds = true
+        
+        audioCallView.contentMode = . scaleAspectFill
+        audioCallView.layer.cornerRadius = 22.5
+        audioCallView.clipsToBounds = true
+        
+        videoCallView.contentMode = . scaleAspectFill
+        videoCallView.layer.cornerRadius = 22.5
+        videoCallView.clipsToBounds = true
+        
+        messageView.contentMode = . scaleAspectFill
+        messageView.layer.cornerRadius = 22.5
+        messageView.clipsToBounds = true
+        
+        aboutCallView.layer.borderColor = UIColor.lightGray.cgColor
+        aboutCallView.layer.borderWidth = 1.0
+        aboutCallView.layer.masksToBounds = true
+    }
+    
+    func setLabels() {
+        messageLabel.text = "message".localized()
+        videoCallLabel.text = "video".localized()
+        audioCallLabel.text = "call".localized()
+    }
+    
+    func stringToDateD(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        if parsedDate == nil {
+            return nil
+        } else {
+            return parsedDate
+        }
+    }
+    
     func getCalls() {
         if isReceiverWe! {
             for i in 0..<(callListViewController?.viewModel?.calls.count)! {
@@ -161,10 +173,10 @@ class CallDetailViewController: UIViewController {
     @IBAction func sendMessageButton(_ sender: Any) {
         mainRouter?.showChatViewControllerFromCallDetail(name: name, username: name, avatarURL: avatarURL, id: id!)
     }
-
+    
 }
 
-
+//MARK: Extensions
 extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let headerViewMinHeight: CGFloat = 189
@@ -172,7 +184,7 @@ extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
         let newHeaderViewHeight: CGFloat = headerViewHeightConstraint.constant - yPos
         let newUsernameLabelHeight: CGFloat = usernameLabelHeightConstraint.constant - yPos
         let newUserImageViewHeight: CGFloat = userImageViewHeightConstraint.constant - yPos
-
+        
         if newHeaderViewHeight > headerViewMaxHeight {
             headerViewHeightConstraint.constant = headerViewMaxHeight
             userImageView.layer.cornerRadius = userImageViewMaxHeight / 2
@@ -195,23 +207,12 @@ extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
             if newUsernameLabelHeight <= 29 && newUsernameLabelHeight >= 16 {
                 usernameLabelHeightConstraint.constant = newUsernameLabelHeight
             }
-            tableView.contentOffset.y = 0 // block scroll view
+            tableView.contentOffset.y = 0
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calls.count
-    }
-    
-    func stringToDateD(date:String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        if parsedDate == nil {
-            return nil
-        } else {
-            return parsedDate
-        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -247,6 +248,4 @@ extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return cell
     }
-    
-    
 }

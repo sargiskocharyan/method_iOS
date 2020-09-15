@@ -9,16 +9,16 @@
 import UIKit
 
 class ContactTableViewCell: UITableViewCell {
-
+    
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var lastnameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-       changeShapeOfImageView()
+        changeShapeOfImageView()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -55,7 +55,7 @@ class ContactTableViewCell: UITableViewCell {
             usernameLabel.text = contact.username
             usernameLabel.textColor = UIColor(named: "color")
         } else {
-             usernameLabel.text = "Method's user"
+            usernameLabel.text = "Method's user"
         }
     }
 }

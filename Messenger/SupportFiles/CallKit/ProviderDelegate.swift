@@ -18,6 +18,8 @@ class ProviderDelegate: NSObject {
     static var providerConfiguration: CXProviderConfiguration = {
         let providerConfiguration = CXProviderConfiguration(localizedName: "Method")
         providerConfiguration.supportsVideo = true
+        providerConfiguration.iconTemplateImageData = UIImage(named: "user")?.pngData()
+    
         providerConfiguration.maximumCallsPerCallGroup = 1
         providerConfiguration.supportedHandleTypes = [.phoneNumber]
         return providerConfiguration

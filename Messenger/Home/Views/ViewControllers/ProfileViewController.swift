@@ -78,7 +78,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         addGestures()
         defineSwithState()
         localizeStrings()
-   //     MainTabBarController.center.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -154,7 +153,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             SharedConfigs.shared.setMode(selectedMode: "light")
         }
-          self.viewDidLoad()
+        self.viewDidLoad()
     }
     
     func configureImageView() {
@@ -204,12 +203,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
-        if response {
-            print("Permission allowed")
-        } else {
-            print("Permission don't allowed")
-             }
-         }
+            if response {
+                print("Permission allowed")
+            } else {
+                print("Permission don't allowed")
+            }
+        }
         let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -399,7 +398,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func checkInformation() {
-         let user = SharedConfigs.shared.signedUser
+        let user = SharedConfigs.shared.signedUser
         changeNotificationNumber()
         if user?.name == nil {
             nameLabel.text = "not_defined".localized()
@@ -413,7 +412,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
-             lastnameLabel.textColor = UIColor(named: "color")
+            lastnameLabel.textColor = UIColor(named: "color")
         }
         if user?.email == nil {
             emailLabel.text = "not_defined".localized()
@@ -449,15 +448,15 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }    
 }
-
+//MARK: Extension
 extension ProfileViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-          completionHandler()
-      }
-      
-      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-          completionHandler([.alert, .badge, .sound])
-      }
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
 }
 
 extension ProfileViewController: ChangeEmailViewControllerDelegate {

@@ -51,11 +51,10 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     var networkCheck = NetworkCheck.sharedInstance()
     var badge: Int?
     var sortedDictionary: [(CallHistory, Int)] = []
-//    var player: AVAudioPlayer?
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-//    @IBOutlet weak var activity: UIActivityIndicatorView!
+    //    @IBOutlet weak var activity: UIActivityIndicatorView!
     
     //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
@@ -98,44 +97,34 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
-    //    MainTabBarController.center.delegate = self
+        //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-       
+        
         let vc = tabbar!.viewControllers![2] as! UINavigationController
         let profileVC = vc.viewControllers[0] as! ProfileViewController
         profileVC.delegate = self
-//        if networkCheck.currentStatus == .satisfied {
+        //        if networkCheck.currentStatus == .satisfied {
         getCallHistory {
             
         }
-//            }
-//        } else {
-//            getCallHistoryFromDB()
-//        }
+        //            }
+        //        } else {
+        //            getCallHistoryFromDB()
+        //        }
         networkCheck.addObserver(observer: self)
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
     //MARK: Helper methods
     @objc func addButtonTapped() {
-          mainRouter?.showContactsViewFromCallList()
+        mainRouter?.showContactsViewFromCallList()
     }
-
     
     func getHistory() {
-//        activity.startAnimating()
+        //        activity.startAnimating()
         viewModel!.getHistory { (calls) in
-//            self.activity.stopAnimating()
+            //            self.activity.stopAnimating()
             self.viewModel!.calls = calls
             if self.viewModel!.calls.count == 0 {
                 self.addNoCallView()
@@ -242,15 +231,13 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
             callsArray?.remove(at: 0)
         }
         
-         sortedDictionary = dictionary.sorted { (arg0, arg1) -> Bool in
+        sortedDictionary = dictionary.sorted { (arg0, arg1) -> Bool in
             return stringToDate(date: arg0.key.callSuggestTime!)!.compare(stringToDate(date: arg1.key.callSuggestTime!)!).rawValue == 1
         }
     }
     
-    
     func getCallHistoryFromDB() {
         viewModel?.getHistory(completion: { (callsFromDB) in
-//            self.sort()
             self.tableView.reloadData()
         })
     }
@@ -274,7 +261,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     func showEndedCall(_ callHistory: CallHistory) {
         viewModel?.save(newCall: callHistory, completion: {
             if self.tableView != nil {
-//                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self.sort()
                 self.groupCalls()
                 DispatchQueue.main.async {
@@ -292,7 +278,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
             }
         })
     }
-
+    
     func stringToDate(date: Date) -> String {
         let parsedDate = date
         let calendar = Calendar.current
@@ -307,13 +293,8 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         let minutes = calendar.component(.minute, from: parsedDate)
         return ("\(hour):\(minutes)")
     }
-    
-    
-    private func buildSignalingClient() -> SignalingClient {
-        return SignalingClient()
-    }
 }
-
+// MAARK: Extensions
 extension CallListViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()

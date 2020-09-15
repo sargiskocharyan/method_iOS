@@ -26,6 +26,7 @@ enum RequestMode: String {
 
 class ContactProfileViewController: UIViewController {
     
+    //MARK: IBOutlets
     @IBOutlet weak var videoCallButton: UIButton!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var addToContactButton: UIButton!
@@ -50,9 +51,10 @@ class ContactProfileViewController: UIViewController {
     @IBOutlet weak var emailTextLabel: UILabel!
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var removeFromContactsButton: UIButton!
-    
     @IBOutlet weak var rejectButton: UIButton!
     @IBOutlet weak var confirmButton: UIButton!
+    
+    //MARK: Properties
     var addContact: UIButton?
     var contact: User?
     var id: String?
@@ -68,6 +70,7 @@ class ContactProfileViewController: UIViewController {
     var isRequestSent: RequestMode?
     var requestsArray: [Request] = []
     
+    //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
@@ -108,6 +111,7 @@ class ContactProfileViewController: UIViewController {
         sendMessageButton.backgroundColor = .clear
     }
     
+    //MARK: Helper methods
     @IBAction func removeFromContactsAction(_ sender: Any) {
         viewModel?.removeContact(id: id!, completion: { (error) in
             if error != nil {
@@ -206,27 +210,27 @@ class ContactProfileViewController: UIViewController {
                 }
             } else if requests != nil {
                 self.requestsArray = requests!
-                    for request in requests! {
-                        if self.contact!._id == request.receiver {
-                            isOnRequests = true
-                            self.isRequestSent = RequestMode.sent
-                            DispatchQueue.main.async {
-                                self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
-                                self.rejectButton.isHidden = true
-                                self.confirmButton.isHidden = true
-                            }
-                            break
-                        } else if self.contact!._id == request.sender {
-                            isOnRequests = true
-                            self.isRequestSent = RequestMode.received
-                            DispatchQueue.main.async {
-                                self.view.viewWithTag(45)?.removeFromSuperview()
-                                self.rejectButton.isHidden = false
-                                self.confirmButton.isHidden = false
-                            }
-                            break
+                for request in requests! {
+                    if self.contact!._id == request.receiver {
+                        isOnRequests = true
+                        self.isRequestSent = RequestMode.sent
+                        DispatchQueue.main.async {
+                            self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
+                            self.rejectButton.isHidden = true
+                            self.confirmButton.isHidden = true
                         }
+                        break
+                    } else if self.contact!._id == request.sender {
+                        isOnRequests = true
+                        self.isRequestSent = RequestMode.received
+                        DispatchQueue.main.async {
+                            self.view.viewWithTag(45)?.removeFromSuperview()
+                            self.rejectButton.isHidden = false
+                            self.confirmButton.isHidden = false
+                        }
+                        break
                     }
+                }
                 if !isOnRequests {
                     if !self.onContactPage! {
                         self.isRequestSent = .nothing
@@ -310,16 +314,16 @@ class ContactProfileViewController: UIViewController {
         }
     }
     
-   func stringToDate(date:String) -> Date? {
-         let formatter = DateFormatter()
-         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-         let parsedDate = formatter.date(from: date)
-         if parsedDate == nil {
-             return nil
-         } else {
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        if parsedDate == nil {
+            return nil
+        } else {
             return parsedDate
-         }
-     }
+        }
+    }
     
     func stringToDate(date:String?) -> String? {
         if date == nil {
