@@ -386,8 +386,8 @@ class ChatViewController: UIViewController {
                         }
                     }
                 }
-                let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
-                //self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
+//                let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
+//                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
             }
         }
     }

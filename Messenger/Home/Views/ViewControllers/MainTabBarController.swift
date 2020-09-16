@@ -50,6 +50,7 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
+        getRequests()
         SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
@@ -279,10 +280,24 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    func getRequests() {
+        contactsViewModel?.getRequests(completion: { (requests, error) in
+            if error != nil {
+                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+            } else if requests != nil {
+                SharedConfigs.shared.contactRequests = requests!
+            }
+        })
+    }
+    
     func getNewMessage() {
         SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
-            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
+            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
+            if callHistory != nil && callHistory?.status == CallStatus.missed.rawValue && callHistory?.callStartTime == SharedConfigs.shared.signedUser?.id {
+                SharedConfigs.shared.missedCalls.append(callHistory!._id!)
+                self.mainRouter?.notificationListViewController?.reloadData()
+            }
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
@@ -381,8 +396,11 @@ class MainTabBarController: UITabBarController {
     
     func checkOurInfo(completion: @escaping ()->()) {
         recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
-            if error == nil {
+            if error == nil && user != nil {
                 UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory, missedCallHistoryCount: user?.missedCallHistory?.count))
+                if user?.missedCallHistory != nil {
+                    SharedConfigs.shared.missedCalls = user!.missedCallHistory!
+                }
                 completion()
             }
         })

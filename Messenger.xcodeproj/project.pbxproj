@@ -69,6 +69,11 @@
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
+		CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */; };
+		CDB7D98F2511DF4500DBAD51 /* NotificationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */; };
+		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
+		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
+		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
@@ -227,6 +232,11 @@
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
+		CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListViewController.swift; sourceTree = "<group>"; };
+		CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListTableViewCell.swift; sourceTree = "<group>"; };
+		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
+		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
+		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -363,6 +373,9 @@
 				CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */,
 				CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */,
 				CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */,
+				CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */,
+				CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */,
+				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -412,6 +425,8 @@
 				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */,
 				CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */,
+				CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */,
+				CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1001,6 +1016,7 @@
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
+				CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */,
 				CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */,
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
@@ -1025,7 +1041,9 @@
 				CD36733224790D430002E606 /* BottomShapeView.swift in Sources */,
 				CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */,
 				CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */,
+				CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */,
 				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
+				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
@@ -1052,6 +1070,7 @@
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */,
+				CDB7D98F2511DF4500DBAD51 /* NotificationListTableViewCell.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
 				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
@@ -1070,6 +1089,7 @@
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
 				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
+				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,

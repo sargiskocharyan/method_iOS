@@ -69,6 +69,7 @@ class ContactProfileViewController: UIViewController {
     var mainRouter: MainRouter?
     var isRequestSent: RequestMode?
     var requestsArray: [Request] = []
+    var request: Request?
     
     //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
@@ -166,6 +167,10 @@ class ContactProfileViewController: UIViewController {
                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
+                    SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                        return req._id != self.request?._id
+                    })
+                    self.mainRouter?.notificationListViewController?.reloadData()
                     self.isRequestSent = .nothing
                     DispatchQueue.main.async {
                         self.stackView.addArrangedSubview(self.addContact!)
@@ -189,6 +194,10 @@ class ContactProfileViewController: UIViewController {
                 } else {
                     self.isRequestSent = .inContacts
                     DispatchQueue.main.async {
+                        SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                            return req._id != self.request?._id
+                        })
+                        self.mainRouter?.notificationListViewController?.reloadData()
                         self.isRequestSent = .inContacts
                         self.removeFromContactsButton.isHidden = false
                         self.view.viewWithTag(45)?.removeFromSuperview()
@@ -224,6 +233,7 @@ class ContactProfileViewController: UIViewController {
                         isOnRequests = true
                         self.isRequestSent = RequestMode.received
                         DispatchQueue.main.async {
+                            self.request = request
                             self.view.viewWithTag(45)?.removeFromSuperview()
                             self.rejectButton.isHidden = false
                             self.confirmButton.isHidden = false

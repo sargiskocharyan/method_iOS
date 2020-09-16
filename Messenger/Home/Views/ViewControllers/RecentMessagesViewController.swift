@@ -134,6 +134,10 @@ class RecentMessagesViewController: UIViewController {
         for i in 0..<chats.count {
             if chats[i].id == id {
                 chats[i].unreadMessageExists = false
+                SharedConfigs.shared.unreadMessages = SharedConfigs.shared.unreadMessages.filter({ (chat) -> Bool in
+                    return chat.id != id
+                })
+                mainRouter?.notificationListViewController?.reloadData()
                 let regularAttribute = [
                     NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
                 ]
@@ -195,6 +199,13 @@ class RecentMessagesViewController: UIViewController {
             viewModel!.getChats { (messages, error) in
                 var oldModel = SharedConfigs.shared.signedUser
                 oldModel?.unreadMessagesCount = messages?.badge
+                if messages?.array != nil {
+                    for chat in messages!.array! {
+                        if chat.unreadMessageExists {
+                            SharedConfigs.shared.unreadMessages.append(chat)
+                        }
+                    }
+                }
                 UserDataController().populateUserProfile(model: oldModel!)
                 DispatchQueue.main.async {
                     let tabbar = self.tabBarController as? MainTabBarController
@@ -228,7 +239,7 @@ class RecentMessagesViewController: UIViewController {
                             if !isFromHome {
                                 DispatchQueue.main.async {
                                     self.removeView()
-                                    //                                    self.spinner.stopAnimating()
+                                    //  self.spinner.stopAnimating()
                                     self.tableView.reloadData()
                                 }
                                 

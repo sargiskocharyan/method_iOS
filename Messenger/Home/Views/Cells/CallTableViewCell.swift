@@ -14,7 +14,6 @@ protocol CallTableViewDelegate: class {
 }
 
 class CallTableViewCell: UITableViewCell {
-
     @IBOutlet weak var callIcon: UIImageView!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!

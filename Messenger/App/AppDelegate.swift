@@ -212,21 +212,33 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userinfo = response.notification.request.content.userInfo
+        let request = userinfo["request"] as! NSDictionary
         switch response.actionIdentifier {
         case "first":
             print("first")
-            let userinfo = response.notification.request.content.userInfo
-            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
+            viewModel.confirmRequest(id: request["sender"] as! String, confirm: true) { (error) in
                 if error == nil {
                     print("confirmed")
+                    SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                        return req._id != request["_id"] as! String
+                    })
+                    DispatchQueue.main.async {
+                        self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+                    }
                 }
             }
         case "second":
             print("second")
-            let userinfo = response.notification.request.content.userInfo
-            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: false) { (error) in
+            viewModel.confirmRequest(id: request["sender"] as! String, confirm: false) { (error) in
                 if error == nil {
                     print("merjec")
+                    SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                        return req._id != request["_id"] as! String
+                    })
+                    DispatchQueue.main.async {
+                        self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+                    }
                 }
             }
         default:
@@ -265,6 +277,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.failed)
             return
         }
+        if userInfo["type"] as! String == "contactRequest" {
+            let requestDictionary = userInfo["request"] as! NSDictionary
+            let request = Request(_id: requestDictionary["_id"] as! String, sender: requestDictionary["sender"] as! String, receiver: requestDictionary["receiver"] as! String, createdAt: requestDictionary["createdAt"] as! String, updatedAt: requestDictionary["updatedAt"] as! String)
+            SharedConfigs.shared.contactRequests.append(request)
+            tabbar?.mainRouter?.notificationListViewController?.reloadData()
+        }
         if userInfo["type"] as? String == "message" {
             backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "krakadil") {
                 self.endBackgroundTask(task: &self.backgroundTask)
@@ -274,6 +292,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 for i in 0..<(vc?.chats.count ?? 0) {
                     if vc?.chats[i].id == userInfo["chatId"] as? String {
                         if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
+                            SharedConfigs.shared.unreadMessages.append(vc!.chats[i])
                             var oldModel = SharedConfigs.shared.signedUser
                             if oldModel?.unreadMessagesCount != nil {
                                 oldModel?.unreadMessagesCount! += 1
@@ -316,6 +335,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 UserDataController().populateUserProfile(model: oldModel!)
                 let nc = tabbar?.viewControllers?[2] as? UINavigationController
                 let profile = nc?.viewControllers[0] as? ProfileViewController
+                print(userInfo)
+                SharedConfigs.shared.missedCalls = userInfo["missedCalls"] as! [String]
+                tabbar?.mainRouter?.notificationListViewController?.reloadData()
                 profile?.changeNotificationNumber()
                 if tabbar?.selectedIndex == 0 {
                     let nc = tabbar!.viewControllers![0] as! UINavigationController

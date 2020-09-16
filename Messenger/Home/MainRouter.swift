@@ -21,7 +21,8 @@ class MainRouter {
     weak var callDetailViewController: CallDetailViewController?
     weak var videoViewController: VideoViewController?
     weak var changeEmailViewController: ChangeEmailViewController?
-    
+    weak var notificationListViewController: NotificationListViewController?
+    weak var notificationDetailViewController: NotificationDetailViewController?
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
         let router = MainRouter()
@@ -207,5 +208,22 @@ class MainRouter {
         self.changeEmailViewController = vc
         profileViewController?.navigationController?.present(vc, animated: true, completion: nil)
     }
+    
+    
+    func showNotificationListViewController() {
+        let vc = NotificationListViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = profileViewController?.mainRouter
+        self.notificationListViewController = vc
+        profileViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showNotificationDetailViewController(type: CellType) {
+        let vc = NotificationDetailViewController.instantiate(fromAppStoryboard: .main)
+        vc.type = type
+        vc.mainRouter = notificationListViewController?.mainRouter
+        self.notificationDetailViewController = vc
+        notificationListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     
 }

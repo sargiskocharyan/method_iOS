@@ -16,6 +16,10 @@ class SharedConfigs {
     var voIPToken: String?
     var isRegistered: Bool?
     var deviceUUID: String?
+    var contactRequests: [Request] = []
+    var unreadMessages: [Chat] = []
+    var missedCalls: [String] = []
+    var adminMessages: [String] = []
     
     private init () {
        let _ = appLang

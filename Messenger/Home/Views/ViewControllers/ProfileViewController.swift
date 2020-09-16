@@ -195,10 +195,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let tapLanguage = UITapGestureRecognizer(target: self, action: #selector(self.handleLanguageTab(_:)))
         languageView.addGestureRecognizer(tapLanguage)
         let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.handleImageTap(_:)))
+        let tapNotification = UITapGestureRecognizer(target: self, action: #selector(self.tapOnNotification(_:)))
+        notificationView.addGestureRecognizer(tapNotification)
+//        notificationView.isUserInteractionEnabled = true
         userImageView.isUserInteractionEnabled = true
         userImageView.addGestureRecognizer(tapImage)
     }
     
+    @objc func tapOnNotification(_ sender: UITapGestureRecognizer? = nil) {
+        mainRouter?.showNotificationListViewController()
+    }
     
     
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {

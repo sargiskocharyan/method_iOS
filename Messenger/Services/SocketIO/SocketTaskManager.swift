@@ -322,6 +322,8 @@ class SocketTaskManager {
                         print("vc.chats[i].id: \( vc.chats[i].id)")
                         print("data[senderId] as? String \(data["senderId"] as? String ?? "0000000")")
                         if !vc.chats[i].unreadMessageExists {
+                            SharedConfigs.shared.unreadMessages.append(vc.chats[i])
+                            self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
                             var oldModel = SharedConfigs.shared.signedUser
                             oldModel?.unreadMessagesCount! += 1
                             UserDataController().populateUserProfile(model: oldModel!)
