@@ -234,7 +234,6 @@ class SocketTaskManager {
     
     func addAnswerListener(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
             socket!.on("answer") { (dataArray, socketAck) in
-                
                 let data = dataArray[0] as! Dictionary<String, String>
                 self.delegate?.receiveData(sdp: data["sdp"] ?? "")
                 completionHandler(data)

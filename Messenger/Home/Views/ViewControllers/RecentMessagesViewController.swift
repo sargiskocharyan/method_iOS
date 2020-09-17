@@ -66,6 +66,7 @@ class RecentMessagesViewController: UIViewController {
             let tabItem = tabItems[1]
             let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
             tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
+//            tabItem.badgeValue =
         }
     }
     
@@ -138,12 +139,16 @@ class RecentMessagesViewController: UIViewController {
                     return chat.id != id
                 })
                 mainRouter?.notificationListViewController?.reloadData()
+                if mainRouter?.notificationDetailViewController?.type == CellType.message {
+                    mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                }
+                tabBarController?.tabBar.items![1].badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                 let regularAttribute = [
                     NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
                 ]
                 let regularText = NSAttributedString(string: (chats[i].message?.text) ?? "Call", attributes: regularAttribute)
-                (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.attributedText = regularText
-                (tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.textColor = .darkGray
+                (tableView?.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.attributedText = regularText
+                (tableView?.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.lastMessageLabel.textColor = .darkGray
             }
         }
     }
@@ -295,6 +300,14 @@ class RecentMessagesViewController: UIViewController {
                 }
                 self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
                 self.sort()
+                SharedConfigs.shared.unreadMessages = self.chats.filter({ (chat) -> Bool in
+                    return chat.unreadMessageExists
+                })
+                if self.mainRouter?.notificationDetailViewController?.type == CellType.message {
+                    DispatchQueue.main.async {
+                        self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                    }
+                }
                 DispatchQueue.main.async {
                     self.tableView?.reloadData()
                 }

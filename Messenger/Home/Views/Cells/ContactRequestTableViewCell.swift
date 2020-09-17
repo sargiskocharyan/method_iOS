@@ -8,12 +8,21 @@
 
 import UIKit
 
+protocol ContactRequestTableViewCellDelegate: class {
+    func requestRemoved(number: Int)
+    func showAlert(error: NetworkResponse)
+}
+
 class ContactRequestTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var confirmButton: UIButton!
     @IBOutlet weak var rejectButton: UIButton!
     @IBOutlet weak var userImageView: UIImageView!
+    var user: User?
+    var request: Request?
+    var number: Int?
+    weak var delegate: ContactRequestTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,13 +35,46 @@ class ContactRequestTableViewCell: UITableViewCell {
         rejectButton.clipsToBounds = true
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    @IBAction func rejectRequestButtonAction(_ sender: UIButton) {
+        AppDelegate.shared.viewModel.confirmRequest(id: (user?._id)!, confirm: false) { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.delegate?.showAlert(error: error!)
+                }
+            } else {
+                SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                    return req._id != self.request?._id
+                })
+                DispatchQueue.main.async {
+                    self.delegate?.requestRemoved(number: self.number! )
+                }
+                
+            }
+        }
     }
-
-    func configure(user: User) {
+    
+    @IBAction func confirmRequestButtonAction(_ sender: UIButton) {
+        AppDelegate.shared.viewModel.confirmRequest(id: (user?._id)!, confirm: true) { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.delegate?.showAlert(error: error!)
+                }
+            } else {
+                SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                    return req._id != self.request?._id
+                })
+                DispatchQueue.main.async {
+                    self.delegate?.requestRemoved(number: self.number! )
+                }
+            }
+        }
+    }
+    
+    
+    func configure(user: User, request: Request, number: Int) {
+        self.user = user
+        self.number = number
+        self.request = request
         if user.name != nil && user.lastname != nil {
             nameLabel.text = user.name! + " " + user.lastname!
         } else {

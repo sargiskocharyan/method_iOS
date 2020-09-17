@@ -32,7 +32,7 @@ public enum HomeApi {
     case changePhone(phone: String)
     case verifyPhone(number: String, code: String)
     case registerDevice(token: String, voipToken: String)
-    case readCalls(id: String)
+    case readCalls(id: String, readOne: Bool)
     case confirmRequest(id: String, confirm: Bool)
     case deleteRequest(id: String)
     case getRequests
@@ -91,7 +91,7 @@ extension HomeApi: EndPointType {
             return AUTHUrls.VerifyPhone
         case .registerDevice(_,_):
             return AUTHUrls.RegisterDevice
-        case .readCalls(_):
+        case .readCalls(_,_):
             return AUTHUrls.ReadCalls
         case .confirmRequest(_, _):
             return AUTHUrls.confirmRequest
@@ -149,7 +149,7 @@ extension HomeApi: EndPointType {
             return .post
         case .registerDevice(_,_):
             return .post
-        case .readCalls(_):
+        case .readCalls(_,_):
             return .post
         case .confirmRequest(_, _):
             return .post
@@ -263,8 +263,8 @@ extension HomeApi: EndPointType {
             let parameters:Parameters = ["deviceUUID": UIDevice.current.identifierForVendor?.uuidString, "token": token, "voIPToken": voipToken, "platform": "ios"]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .readCalls(id: let id):
-            let parameters:Parameters = ["callId": id]
+        case .readCalls(id: let id, readOne: let readOne):
+            let parameters:Parameters = ["callId": id, "readOne": readOne]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .confirmRequest(id: let id, confirm: let confirm):

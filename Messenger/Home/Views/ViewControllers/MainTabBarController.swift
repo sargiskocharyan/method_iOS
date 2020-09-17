@@ -283,12 +283,72 @@ class MainTabBarController: UITabBarController {
     func getRequests() {
         contactsViewModel?.getRequests(completion: { (requests, error) in
             if error != nil {
-                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
             } else if requests != nil {
                 SharedConfigs.shared.contactRequests = requests!
             }
         })
     }
+    
+    
+    func sort() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        for i in 0..<SharedConfigs.shared.unreadMessages.count {
+            for j in i..<SharedConfigs.shared.unreadMessages.count {
+                guard SharedConfigs.shared.unreadMessages[i].message != nil, SharedConfigs.shared.unreadMessages[j].message != nil else {
+                    break
+                }
+                let firstDate = formatter.date(from: SharedConfigs.shared.unreadMessages[i].message!.createdAt ?? "")
+                let secondDate = formatter.date(from: SharedConfigs.shared.unreadMessages[j].message!.createdAt ?? "")
+                if firstDate?.compare(secondDate!).rawValue == -1 {
+                    let temp = SharedConfigs.shared.unreadMessages[i]
+                    SharedConfigs.shared.unreadMessages[i] = SharedConfigs.shared.unreadMessages[j]
+                    SharedConfigs.shared.unreadMessages[j] = temp
+                }
+            }
+        }
+    }
+    
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+          mainRouter?.callListViewController?.viewModel!.getuserById(id: message.senderId!) { (user, error) in
+                 if (error != nil) {
+                     DispatchQueue.main.async {
+                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                     }
+                 } else if user != nil {
+                  for i in 0..<SharedConfigs.shared.unreadMessages.count {
+                    var isUnreadMessage = false
+                    if SharedConfigs.shared.unreadMessages[i].id == message.senderId! {
+                        if callHistory != nil {
+                            isUnreadMessage = SharedConfigs.shared.unreadMessages[i].unreadMessageExists
+                        } else {
+                            isUnreadMessage = true
+                        }
+                        SharedConfigs.shared.unreadMessages[i] = Chat(id: message.senderId!, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: isUnreadMessage)
+                        self.sort()
+                        if self.mainRouter?.notificationDetailViewController?.type == CellType.message {
+                            DispatchQueue.main.async {
+                                self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                            }
+                        }
+                        return
+                    }
+                     }
+                  if callHistory == nil {
+                     SharedConfigs.shared.unreadMessages.append(Chat(id: message.senderId!, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
+                      self.sort()
+                  }
+                     if self.mainRouter?.notificationDetailViewController?.type == CellType.message {
+                         DispatchQueue.main.async {
+                             self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                         }
+                     }
+                 }
+             }
+         }
     
     func getNewMessage() {
         SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
@@ -301,6 +361,7 @@ class MainTabBarController: UITabBarController {
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
+            self.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             if callHistory != nil  {
                 self.callsVC?.showEndedCall(callHistory!)
             }
@@ -429,7 +490,7 @@ class MainTabBarController: UITabBarController {
                             let recentNC = self.viewControllers![1] as! UINavigationController
                             let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
                             if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
-                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], completion: { (error) in
+                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], readOne: false, completion: { (error) in
                                     if error == nil {
                                         var oldModel = SharedConfigs.shared.signedUser
                                         oldModel?.missedCallHistoryCount = 0

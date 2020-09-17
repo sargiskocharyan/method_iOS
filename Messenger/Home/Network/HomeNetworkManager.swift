@@ -385,8 +385,8 @@ class HomeNetworkManager: NetworkManager {
            }
        }
     
-    func readCalls(id: String, completion: @escaping (NetworkResponse?)->()) {
-              router.request(.readCalls(id: id)) { data, response, error in
+    func readCalls(id: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.readCalls(id: id, readOne: readOne)) { data, response, error in
                   if error != nil {
                       print(error!.rawValue)
                       completion(error)

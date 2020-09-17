@@ -197,13 +197,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.handleImageTap(_:)))
         let tapNotification = UITapGestureRecognizer(target: self, action: #selector(self.tapOnNotification(_:)))
         notificationView.addGestureRecognizer(tapNotification)
-//        notificationView.isUserInteractionEnabled = true
         userImageView.isUserInteractionEnabled = true
         userImageView.addGestureRecognizer(tapImage)
     }
     
     @objc func tapOnNotification(_ sender: UITapGestureRecognizer? = nil) {
-        mainRouter?.showNotificationListViewController()
+        if SharedConfigs.shared.getNumberOfNotifications() > 0 {
+            mainRouter?.showNotificationListViewController()
+        }
     }
     
     

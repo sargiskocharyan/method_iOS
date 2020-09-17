@@ -25,6 +25,10 @@ class SharedConfigs {
        let _ = appLang
     }
     
+    func getNumberOfNotifications() -> Int {
+        return contactRequests.count + unreadMessages.count + adminMessages.count + missedCalls.count
+    }
+    
     var mode: String = ""
     var isHidden: Bool = false
     

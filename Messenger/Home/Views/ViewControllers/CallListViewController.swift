@@ -74,7 +74,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 let missed = viewModel?.calls.filter({ (call) -> Bool in
                     return call.status == CallStatus.missed.rawValue
                 })
-                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, completion: { (error) in
+                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, readOne: false, completion: { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)

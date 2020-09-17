@@ -41,6 +41,7 @@ class ChatViewController: UIViewController {
     var tabbar: MainTabBarController?
     var mainRouter: MainRouter?
     var statuses: [MessageStatus]?
+    var fromContactProfile: Bool?
     let messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "imputColor")
@@ -104,7 +105,11 @@ class ChatViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func infoButtonAction() {
-        mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
+        if !fromContactProfile! {
+            mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
+        } else {
+            self.navigationController?.popViewController(animated: false)
+        }
     }
     
     @objc func inputTextFieldDidCghe() {

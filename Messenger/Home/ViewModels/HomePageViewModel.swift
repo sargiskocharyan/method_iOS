@@ -16,8 +16,8 @@ class HomePageViewModel {
         }
     }
     
-    func checkCallAsSeen(callId: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().readCalls(id: callId) { (error) in
+    func checkCallAsSeen(callId: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().readCalls(id: callId, readOne: readOne) { (error) in
             completion(error)
         }
     }

@@ -536,12 +536,18 @@
                                                     <state key="normal" title="Confirm">
                                                         <color key="titleColor" red="0.9332516193" green="0.93338567019999996" blue="0.93322223419999994" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="confirmRequestButtonAction:" destination="1Sq-Ve-4DP" eventType="touchUpInside" id="f0A-St-0Hx"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTb-hF-vvh">
                                                     <rect key="frame" x="251.33333333333337" y="52.666666666666657" width="124" height="30"/>
                                                     <color key="backgroundColor" systemColor="systemGray5Color" red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <state key="normal" title="Reject"/>
+                                                    <connections>
+                                                        <action selector="rejectRequestButtonAction:" destination="1Sq-Ve-4DP" eventType="touchUpInside" id="flw-o8-5kf"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
