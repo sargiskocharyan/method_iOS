@@ -64,7 +64,7 @@ class ContactRequestTableViewCell: UITableViewCell {
                     return req._id != self.request?._id
                 })
                 DispatchQueue.main.async {
-                    self.delegate?.requestRemoved(number: self.number! )
+                    self.delegate?.requestRemoved(number: self.number!)
                 }
             }
         }

@@ -46,6 +46,7 @@ struct AUTHUrls {
     static let confirmRequest    = "/confirmContactRequest"
     static let DeleteRequest     = "/deleteContactRequest"
     static let GetRequests       = "/contactRequests"
+    static let GetAdminMessage   = "/adminmessages"
 }
 
 struct AppLangKeys {

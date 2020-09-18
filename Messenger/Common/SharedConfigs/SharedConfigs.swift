@@ -19,7 +19,7 @@ class SharedConfigs {
     var contactRequests: [Request] = []
     var unreadMessages: [Chat] = []
     var missedCalls: [String] = []
-    var adminMessages: [String] = []
+    var adminMessages: [AdminMessage] = []
     
     private init () {
        let _ = appLang

@@ -26,7 +26,7 @@ public enum HomeApi {
     case onlineUsers(arrayOfId: [String])
     case hideData(isHideData: Bool)
     case getCallHistory
-    case removeCall(id: String)
+    case removeCall(id: [String])
     case changeEmail(email: String)
     case verifyEmail(email: String, code: String)
     case changePhone(phone: String)
@@ -36,6 +36,7 @@ public enum HomeApi {
     case confirmRequest(id: String, confirm: Bool)
     case deleteRequest(id: String)
     case getRequests
+    case getAdminMessage
 }
 
 extension HomeApi: EndPointType {
@@ -99,6 +100,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.DeleteRequest
         case .getRequests:
             return AUTHUrls.GetRequests
+        case .getAdminMessage:
+            return AUTHUrls.GetAdminMessage
         }
     }
     
@@ -157,6 +160,8 @@ extension HomeApi: EndPointType {
             return .delete
         case .getRequests:
             return .get
+        case .getAdminMessage:
+        return .get
         }
     }
     
@@ -240,7 +245,7 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .removeCall(id: let id):
-            let parameters:Parameters = ["callId": id]
+            let parameters:Parameters = ["calls": id]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .changeEmail(email: let email):
@@ -276,6 +281,9 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .getRequests:
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getAdminMessage:
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

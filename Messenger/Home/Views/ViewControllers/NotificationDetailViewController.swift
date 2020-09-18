@@ -28,7 +28,7 @@ class NotificationDetailViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tabbar = tabBarController as? MainTabBarController
-        
+        tableView.tableFooterView = UIView()
         // Do any additional setup after loading the view.
     }
     
@@ -36,6 +36,9 @@ class NotificationDetailViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
+        if (SharedConfigs.shared.unreadMessages.count == 0 && type == CellType.message) || (SharedConfigs.shared.missedCalls.count == 0 && type == CellType.missedCall) || (SharedConfigs.shared.contactRequests.count == 0 && type == CellType.contactRequest) || (SharedConfigs.shared.adminMessages.count == 0 && type == CellType.adminMessage){
+            navigationController?.popViewController(animated: false)
+        }
     }
     
     func getUser(call: CallHistory, _ cell: CallTableViewCell, _ indexPath: Int) {
@@ -88,7 +91,7 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
         case .message:
             return 80
         default:
-            return 0
+            return 80
         }
     }
     
@@ -101,7 +104,7 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
         case .message:
             return SharedConfigs.shared.unreadMessages.count
         default:
-            return 0
+            return SharedConfigs.shared.adminMessages.count
         }
     }
     
@@ -133,7 +136,13 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
                 tableView.endUpdates()
             }
         default:
-            print()
+            let vc = CustomAlertViewController.instantiate(fromAppStoryboard: .main)
+            vc.adminMessage = SharedConfigs.shared.adminMessages[indexPath.row]
+            vc.row = indexPath.row
+            vc.mainRouter = mainRouter
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+            alertController.setValue(vc, forKey: "contentViewController")
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
@@ -196,7 +205,9 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
             cell.configure(chat: SharedConfigs.shared.unreadMessages[indexPath.row])
             return cell
         default:
-            return UITableViewCell()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "adminMessageCell", for: indexPath) as! AdminMessageTableViewCell
+            cell.configure(adminMessage: SharedConfigs.shared.adminMessages[indexPath.row])
+            return cell
         }
     }
     
@@ -212,6 +223,7 @@ extension NotificationDetailViewController: ContactRequestTableViewCellDelegate 
     func requestRemoved(number: Int) {
         self.tableView.deleteRows(at: [IndexPath(row: number, section: 0)], with: .automatic)
         mainRouter?.notificationListViewController?.reloadData()
+        mainRouter?.notificationDetailViewController?.viewWillAppear(false)
     }
     
     func showAlert(error: NetworkResponse) {

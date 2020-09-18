@@ -30,6 +30,14 @@ struct Messages: Codable {
     var statuses: [MessageStatus]?
 }
 
+struct AdminMessage: Codable {
+    var _id: String
+    var body: String
+    var title: String
+    var category: String
+    var expiredAt: String
+}
+
 struct Request: Codable {
     var _id: String
     var sender: String

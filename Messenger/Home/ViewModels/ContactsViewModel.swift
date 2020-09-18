@@ -50,6 +50,12 @@ class ContactsViewModel {
         }
     }
     
+    func getAdminMessages(completion: @escaping ([AdminMessage]?, NetworkResponse?)->())  {
+        HomeNetworkManager().getAdminMessages { (adminMessages, error) in
+            completion(adminMessages, error)
+        }
+    }
+    
     func deleteRequest(id: String, completion: @escaping (NetworkResponse?) -> ()) {
         HomeNetworkManager().deleteRequest(id: id) { (error) in
             completion(error)

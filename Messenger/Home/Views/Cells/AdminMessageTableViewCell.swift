@@ -10,9 +10,14 @@ import UIKit
 
 class AdminMessageTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var appImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        appImageView.clipsToBounds = true
+        appImageView.layer.cornerRadius = 30
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -21,4 +26,10 @@ class AdminMessageTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    func configure(adminMessage: AdminMessage)  {
+        self.messageLabel.text = adminMessage.body
+        self.titleLabel.text = adminMessage.title
+        self.appImageView.image = UIImage(named: "AppIcon")
+    }
+    
 }

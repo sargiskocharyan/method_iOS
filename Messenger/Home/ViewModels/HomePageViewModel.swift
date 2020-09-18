@@ -34,7 +34,7 @@ class HomePageViewModel {
            }
        }
     
-    func removeCall(id: String, completion: @escaping (NetworkResponse?)->()) {
+    func removeCall(id: [String], completion: @escaping (NetworkResponse?)->()) {
         HomeNetworkManager().removeCall(id: id) { (error) in
             completion(error)
         }

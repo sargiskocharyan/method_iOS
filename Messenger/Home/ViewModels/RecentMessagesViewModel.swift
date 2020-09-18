@@ -76,7 +76,7 @@ class RecentMessagesViewModel {
     }
     
     
-    func deleteItem(index: Int, completion: @escaping (NetworkResponse?)->()) {
+    func deleteItem(id: [String], completion: @escaping (NetworkResponse?)->()) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
         fetchRequest.includesPropertyValues = false
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -84,9 +84,19 @@ class RecentMessagesViewModel {
         }
         let managedContext = appDelegate.persistentContainer.viewContext
         do {
-            managedContext.delete(privateCalls[privateCalls.count - index - 1])
-            privateCalls.remove(at: privateCalls.count - index - 1)
-            calls.remove(at: index)
+            
+//            privateCalls.remove(at: privateCalls.count - index - 1)
+            privateCalls = privateCalls.filter { (obj) -> Bool in
+                if id.contains(obj.value(forKey: "id") as! String) {
+                    managedContext.delete(obj)
+                }
+                return !(id.contains(obj.value(forKey: "id") as! String))
+            }
+//            calls.remove(at: index)
+            calls = calls.filter({ (call) -> Bool in
+                return !(id.contains(call._id!))
+            })
+            print(calls)
             try managedContext.save()
             completion(nil)
             return

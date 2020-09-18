@@ -42,6 +42,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     var id: String?
     var viewModel: RecentMessagesViewModel?
     var calls: [CallHistory] = []
+    var removedCalls: [String] = []
     var activeCall: FetchedCall?
     var tabbar: MainTabBarController?
     var count = 0
@@ -159,6 +160,26 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         }
     }
     
+    func removeCalls(isReceiverWe: Bool, callMode: CallStatus, id: String) {
+        removedCalls = []
+          if isReceiverWe {
+              for i in 0..<(viewModel?.calls.count)! {
+                  if viewModel?.calls[i].caller == id && viewModel?.calls[i].status == callMode.rawValue && viewModel?.calls[i].status == CallStatus.missed.rawValue {
+                    removedCalls.append((viewModel?.calls[i]._id)!)
+                  } else if viewModel?.calls[i].caller == id && callMode.rawValue != CallStatus.missed.rawValue && viewModel?.calls[i].status != CallStatus.missed.rawValue {
+                    removedCalls.append((viewModel?.calls[i]._id)!)
+                  }
+              }
+          }
+          else {
+            for call in viewModel!.calls {
+                if call.caller == SharedConfigs.shared.signedUser?.id && call.receiver == id {
+                    removedCalls.append(call._id!)
+                }
+            }
+        }
+        print(removedCalls)
+      }
     
     func addNoCallView() {
         let label = UILabel()
@@ -378,13 +399,27 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         self.sort()
         tableView.beginUpdates()
-        tabbar?.viewModel?.removeCall(id: viewModel?.calls[indexPath.row]._id ?? "", completion: { (error) in
+        var callMode: CallStatus = .accepted
+        if viewModel?.calls[indexPath.row].status == CallStatus.missed.rawValue {
+            callMode = .missed
+        } else if viewModel?.calls[indexPath.row].status == CallStatus.accepted.rawValue {
+            callMode = .accepted
+        } else if viewModel?.calls[indexPath.row].status == CallStatus.cancelled.rawValue {
+            callMode = .cancelled
+        }
+        let isreceiverMe = viewModel?.calls[indexPath.row].receiver == SharedConfigs.shared.signedUser?.id
+        removeCalls(isReceiverWe: isreceiverMe, callMode: callMode, id: isreceiverMe ? (viewModel?.calls[indexPath.row].caller)! : (viewModel?.calls[indexPath.row].receiver)!)
+        tabbar?.viewModel?.removeCall(id: removedCalls, completion: { (error) in
             if error != nil {
-                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
             } else {
                 DispatchQueue.main.async {
-                    self.viewModel!.deleteItem(index: indexPath.row, completion: { (error)   in
+                    self.viewModel!.deleteItem(id: self.removedCalls, completion: { (error)   in
+                        self.sortedDictionary.remove(at: indexPath.row)
                         tableView.deleteRows(at: [indexPath], with: .automatic)
+                         tableView.endUpdates()
                         if self.viewModel!.calls.count == 0 {
                             self.addNoCallView()
                         } else {
@@ -394,7 +429,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         })
-        tableView.endUpdates()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -429,7 +463,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         let calleeId = call.caller == SharedConfigs.shared.signedUser?.id ? call.receiver : call.caller
         if onCall == false  {
             self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text ?? "", mode: .videoCall)
-            
         } else if onCall && id != nil {
             if id == calleeId {
                 self.delegate?.handleClickOnSamePerson()

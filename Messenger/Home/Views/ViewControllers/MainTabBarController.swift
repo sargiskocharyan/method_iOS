@@ -51,6 +51,7 @@ class MainTabBarController: UITabBarController {
         self.retrieveCoreDataObjects()
         verifyToken()
         getRequests()
+        getAdminMessages()
         SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
@@ -104,6 +105,18 @@ class MainTabBarController: UITabBarController {
         videoVC?.isCallHandled = true
         completionHandler()
         return
+    }
+    
+    func getAdminMessages() {
+        contactsViewModel?.getAdminMessages(completion: { (adminMessages, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if adminMessages != nil && adminMessages!.count > 0 {
+                SharedConfigs.shared.adminMessages = adminMessages!
+            }
+        })
     }
     
     func handleCall() {

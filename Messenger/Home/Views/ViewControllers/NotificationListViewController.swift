@@ -17,7 +17,7 @@ class NotificationListViewController: UIViewController {
     var isSetTextOnContactRequests: Bool?
     var isSetTextOnUnreadMessages: Bool?
     var isSetTextOnMissedCalls: Bool?
-    //    var isSetTextOnAdminMessages: Bool?
+    var isSetTextOnAdminMessages: Bool?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -27,11 +27,19 @@ class NotificationListViewController: UIViewController {
         tableView.tableFooterView = UIView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if SharedConfigs.shared.getNumberOfNotifications() == 0 {
+            navigationController?.popViewController(animated: false)
+        }
+    }
+    
     //MARK: Helper methods
     func reloadData() {
         isSetTextOnContactRequests  = false
         isSetTextOnUnreadMessages = false
         isSetTextOnMissedCalls = false
+        isSetTextOnAdminMessages = false
         tableView?.reloadData()
     }
 }
@@ -81,12 +89,13 @@ extension NotificationListViewController: UITableViewDelegate, UITableViewDataSo
             return cell
         }
         if SharedConfigs.shared.missedCalls.count > 0 && isSetTextOnMissedCalls != true {
-            isSetTextOnMissedCalls = nil
+            isSetTextOnMissedCalls = true
             cell.cellTextLabel.text = "missed_calls".localized()
             cell.type = CellType.missedCall
             return cell
         }
-        if SharedConfigs.shared.adminMessages.count > 0 { 
+        if SharedConfigs.shared.adminMessages.count > 0 && isSetTextOnAdminMessages != true {
+            isSetTextOnAdminMessages = true
             cell.type = CellType.adminMessage
             cell.cellTextLabel.text = "admin_messages".localized()
             return cell

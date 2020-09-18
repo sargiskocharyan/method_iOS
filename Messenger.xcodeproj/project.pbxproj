@@ -74,6 +74,7 @@
 		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
 		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
+		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
@@ -237,6 +238,7 @@
 		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
 		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 				CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */,
 				CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */,
 				CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */,
+				CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1080,6 +1083,7 @@
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
 				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
+				CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */,
 				CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,

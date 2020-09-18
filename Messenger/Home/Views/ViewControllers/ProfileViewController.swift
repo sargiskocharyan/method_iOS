@@ -397,10 +397,9 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func changeNotificationNumber() {
-        let user = SharedConfigs.shared.signedUser
-        UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+        UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
         if notificationCountLabel != nil {
-            notificationCountLabel.text = "\(((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0)))"
+            notificationCountLabel.text = "\(SharedConfigs.shared.getNumberOfNotifications())"
         }
     }
     
