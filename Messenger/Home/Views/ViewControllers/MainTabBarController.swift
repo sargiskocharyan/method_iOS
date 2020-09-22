@@ -43,7 +43,6 @@ class MainTabBarController: UITabBarController {
     var mode: VideoVCMode?
     var nc = NotificationCenter.default
     
-    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +50,8 @@ class MainTabBarController: UITabBarController {
         self.saveContacts()
         self.retrieveCoreDataObjects()
         verifyToken()
+        getRequests()
+        getAdminMessages()
         SocketTaskManager.shared.connect(completionHandler: {
             print("home page connect")
         })
@@ -69,18 +70,6 @@ class MainTabBarController: UITabBarController {
                 print("D'oh")
             }
         }
-        
-        
-    }
-    
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
     }
     
     //MARK: Helper methods
@@ -104,8 +93,6 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    
-    
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname
@@ -115,26 +102,25 @@ class MainTabBarController: UITabBarController {
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
         self.callsVC?.handleCall(id: id)
+        videoVC?.isCallHandled = true
         completionHandler()
         return
-        //        self.recentMessagesViewModel!.getuserById(id: id) { (user, error) in
-        //            if (error != nil) {
-        //                DispatchQueue.main.async {
-        //                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-        //                }
-        //                completionHandler("")
-        //                return
-        //            } else if user != nil {
-        //                DispatchQueue.main.async {
-        //
-        //                    completionHandler(user?.name ?? user?.username ?? "dsf")
-        //                    return
-        //                }
-        //            }
-        //        }
+    }
+    
+    func getAdminMessages() {
+        contactsViewModel?.getAdminMessages(completion: { (adminMessages, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if adminMessages != nil && adminMessages!.count > 0 {
+                SharedConfigs.shared.adminMessages = adminMessages!
+            }
+        })
     }
     
     func handleCall() {
+        videoVC?.isCallHandled = true
         SocketTaskManager.shared.addCallListener { (id, roomname, name, type) in
             if !self.onCall {
                 self.startCall(id, roomname, name, type) {
@@ -150,7 +136,6 @@ class MainTabBarController: UITabBarController {
     func handleNewContactRequest() {
         SocketTaskManager.shared.addNewContactRequestListener { (userId) in
             print("new request sent")
-            
         }
     }
     
@@ -211,7 +196,7 @@ class MainTabBarController: UITabBarController {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
             if recentNC.viewControllers.count > 1 {
-            let chatVC = recentNC.viewControllers[1] as! ChatViewController
+                let chatVC = recentNC.viewControllers[1] as! ChatViewController
                 chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
             }
         }
@@ -289,6 +274,7 @@ class MainTabBarController: UITabBarController {
     func handleOffer() {
         print("1111111-----------------------------11111111")
         print(SocketTaskManager.shared.socket!.status)
+        videoVC?.isCallHandled = true
         SocketTaskManager.shared.addOfferListener { (roomName, offer) in
             self.onCall = true
             self.callsVC?.onCall = true
@@ -307,13 +293,88 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    func getRequests() {
+        contactsViewModel?.getRequests(completion: { (requests, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if requests != nil {
+                SharedConfigs.shared.contactRequests = requests!
+            }
+        })
+    }
+    
+    
+    func sort() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        for i in 0..<SharedConfigs.shared.unreadMessages.count {
+            for j in i..<SharedConfigs.shared.unreadMessages.count {
+                guard SharedConfigs.shared.unreadMessages[i].message != nil, SharedConfigs.shared.unreadMessages[j].message != nil else {
+                    break
+                }
+                let firstDate = formatter.date(from: SharedConfigs.shared.unreadMessages[i].message!.createdAt ?? "")
+                let secondDate = formatter.date(from: SharedConfigs.shared.unreadMessages[j].message!.createdAt ?? "")
+                if firstDate?.compare(secondDate!).rawValue == -1 {
+                    let temp = SharedConfigs.shared.unreadMessages[i]
+                    SharedConfigs.shared.unreadMessages[i] = SharedConfigs.shared.unreadMessages[j]
+                    SharedConfigs.shared.unreadMessages[j] = temp
+                }
+            }
+        }
+    }
+    
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+          mainRouter?.callListViewController?.viewModel!.getuserById(id: message.senderId!) { (user, error) in
+                 if (error != nil) {
+                     DispatchQueue.main.async {
+                         self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                     }
+                 } else if user != nil {
+                  for i in 0..<SharedConfigs.shared.unreadMessages.count {
+                    var isUnreadMessage = false
+                    if SharedConfigs.shared.unreadMessages[i].id == message.senderId! {
+                        if callHistory != nil {
+                            isUnreadMessage = SharedConfigs.shared.unreadMessages[i].unreadMessageExists
+                        } else {
+                            isUnreadMessage = true
+                        }
+                        SharedConfigs.shared.unreadMessages[i] = Chat(id: message.senderId!, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: isUnreadMessage)
+                        self.sort()
+                        if self.mainRouter?.notificationDetailViewController?.type == CellType.message {
+                            DispatchQueue.main.async {
+                                self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                            }
+                        }
+                        return
+                    }
+                     }
+                  if callHistory == nil {
+                     SharedConfigs.shared.unreadMessages.append(Chat(id: message.senderId!, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
+                      self.sort()
+                  }
+                     if self.mainRouter?.notificationDetailViewController?.type == CellType.message {
+                         DispatchQueue.main.async {
+                             self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
+                         }
+                     }
+                 }
+             }
+         }
+    
     func getNewMessage() {
         SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
-            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController                          
+            let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
+            if callHistory != nil && callHistory?.status == CallStatus.missed.rawValue && callHistory?.receiver == SharedConfigs.shared.signedUser?.id {
+                SharedConfigs.shared.missedCalls.append(callHistory!._id!)
+                self.mainRouter?.notificationListViewController?.reloadData()
+            }
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
+            self.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             if callHistory != nil  {
                 self.callsVC?.showEndedCall(callHistory!)
             }
@@ -359,7 +420,7 @@ class MainTabBarController: UITabBarController {
                     }
                 } else if recentNc.viewControllers.count > 2 {
                     if let _ = recentNc.viewControllers[2] as? ContactProfileViewController {
-                        if callHistory?.status == CallStatus.missed.rawValue  {
+                        if callHistory?.status == CallStatus.missed.rawValue && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
                             self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                         }
                         let chatVC = recentNc.viewControllers[1] as? ChatViewController
@@ -394,6 +455,7 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    
     func sessionExpires() {
         SocketTaskManager.shared.disconnect{}
         UserDataController().logOutUser()
@@ -408,8 +470,11 @@ class MainTabBarController: UITabBarController {
     
     func checkOurInfo(completion: @escaping ()->()) {
         recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
-            if error == nil {
-                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory, missedCallHistoryCount: user?.missedCallHistory?.count))
+            if error == nil && user != nil {
+                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil))
+                if user?.missedCallHistory != nil {
+                    SharedConfigs.shared.missedCalls = user!.missedCallHistory!
+                }
                 completion()
             }
         })
@@ -435,26 +500,20 @@ class MainTabBarController: UITabBarController {
                 } else {
                     self.checkOurInfo(completion: {
                         DispatchQueue.main.async {
-//                            if let tabItems = self.tabBar.items {
-//                                let tabItem = tabItems[0]
-//                                tabItem.badgeValue = SharedConfigs.shared.signedUser?.missedCallHistoryCount != nil && SharedConfigs.shared.signedUser!.missedCallHistoryCount! > 0 ? "\(SharedConfigs.shared.signedUser!.missedCallHistoryCount!)" : nil
-//                            }
                             let recentNC = self.viewControllers![1] as! UINavigationController
                             let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
                             if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
-                            self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], completion: { (error) in
-                                if error == nil {
-                                    var oldModel = SharedConfigs.shared.signedUser
-                                    oldModel?.missedCallHistoryCount = 0
-                                    UserDataController().populateUserProfile(model: oldModel!)
-                                    DispatchQueue.main.async {
-                                        if let tabItems = self.tabBar.items {
-                                            let tabItem = tabItems[0]
-                                            tabItem.badgeValue = nil
+                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], readOne: false, completion: { (error) in
+                                    if error == nil {
+                                        SharedConfigs.shared.missedCalls = SharedConfigs.shared.signedUser!.missedCallHistory!
+                                        DispatchQueue.main.async {
+                                            if let tabItems = self.tabBar.items {
+                                                let tabItem = tabItems[0]
+                                                tabItem.badgeValue = nil
+                                            }
                                         }
                                     }
-                                }
-                            })
+                                })
                             }
                             recentVC.getChats(isFromHome: true)
                         }
@@ -467,7 +526,7 @@ class MainTabBarController: UITabBarController {
     }
 }
 
-//MARK: Extension
+//MARK: Extensions
 extension MainTabBarController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
@@ -579,16 +638,19 @@ extension MainTabBarController: CallListViewDelegate {
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)
         }
-        callManager.startCall(handle: name, videoEnabled: true)
         webRTCClient?.delegate = self
         self.videoVC?.webRTCClient = self.webRTCClient
         self.onCall = true
         self.callsVC?.onCall = true
-        videoVC?.startCall("calling".localized() + " \(name)...")
+        self.videoVC?.isCallHandled = false
         mainRouter?.showVideoViewController(mode: mode)
-        //        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { (timer) in
-        //            self.videoVC?.endCall()
-        //        })
+        videoVC?.startCall("calling".localized() + " \(name)...")
+        callManager.startCall(handle: name, videoEnabled: true)
+        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+            if self.isFirstConnect != true {
+                self.videoVC?.endCall()
+            }
+        })
     }
 }
 
@@ -597,13 +659,5 @@ extension MainTabBarController: AppDelegateD {
         self.startCall(id, roomName, name, type) {
             completionHandler()
         }
-    }
-    
-    
-}
-
-extension MainTabBarController: Subscriber {
-    func didHandleConnectionEvent() {
-        
     }
 }

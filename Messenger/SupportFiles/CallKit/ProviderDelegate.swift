@@ -1,6 +1,7 @@
 
 import AVFoundation
 import CallKit
+import UIKit
 
 class ProviderDelegate: NSObject {
     private let callManager: CallManager
@@ -17,6 +18,8 @@ class ProviderDelegate: NSObject {
     static var providerConfiguration: CXProviderConfiguration = {
         let providerConfiguration = CXProviderConfiguration(localizedName: "Method")
         providerConfiguration.supportsVideo = true
+        providerConfiguration.iconTemplateImageData = UIImage(named: "user")?.pngData()
+    
         providerConfiguration.maximumCallsPerCallGroup = 1
         providerConfiguration.supportedHandleTypes = [.phoneNumber]
         return providerConfiguration
@@ -76,6 +79,7 @@ extension ProviderDelegate: CXProviderDelegate {
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
         startAudio()
+        tabbar?.videoVC?.playSound()
     }
     
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
@@ -91,7 +95,7 @@ extension ProviderDelegate: CXProviderDelegate {
         } else {
             SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: false)
             self.webrtcClient?.peerConnection?.close()
-            if AppDelegate.shared.isVoIPCallStarted! {
+            if  AppDelegate.shared.isVoIPCallStarted != nil && AppDelegate.shared.isVoIPCallStarted! {
                 SocketTaskManager.shared.disconnect(completion: {})
             }
         }

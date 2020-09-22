@@ -36,7 +36,7 @@ struct ErrorResponse: Codable {
     var Error: String?
 }
 
-struct CallHistory: Codable {
+struct CallHistory: Codable, Hashable {
     var type: String?
     var receiver: String?
     var status: String?

@@ -37,12 +37,12 @@ class UserDataController {
         defaults.synchronize()
         self.removeUserSensitiveData()
     }
-      
+    
     func saveUserSensitiveData(token:String) {
         let data = token.data(using: .utf8)!
         let saved = KeyChain.save(key: Keys.TOKEN_KEYCHAIN_ID_KEY, data: data)
         if saved == noErr {
-           SharedConfigs.shared.signedUser?.token = token
+            SharedConfigs.shared.signedUser?.token = token
         }
     }
     
@@ -53,18 +53,21 @@ class UserDataController {
         }
     }
     
-      private func removeUserSensitiveData() {
+    private func removeUserSensitiveData() {
         let _ = KeyChain.remove(key: Keys.TOKEN_KEYCHAIN_ID_KEY)
-      }
-      
-      func logOutUser(){
-          deleteUserInfo()
-          SharedConfigs.shared.signedUser?.token = nil
-      }
-      
-      func populateUserProfile(model: UserModel ) {
-        let user = UserModel(name: model.name, lastname: model.lastname, username: model.username, email: model.email,  token: model.token, id: model.id, avatarURL: model.avatarURL, phoneNumber: model.phoneNumber, birthDate: model.birthDate, gender: model.gender, info: model.info, tokenExpire: model.tokenExpire, missedCallHistory: model.missedCallHistory,  missedCallHistoryCount: model.missedCallHistoryCount, unreadMessagesCount: model.unreadMessagesCount)
-       SharedConfigs.shared.signedUser = user
+    }
+    
+    func logOutUser(){
+        deleteUserInfo()
+        SharedConfigs.shared.signedUser?.token = nil
+        SharedConfigs.shared.adminMessages = []
+        SharedConfigs.shared.unreadMessages = []
+        SharedConfigs.shared.contactRequests = []
+        SharedConfigs.shared.missedCalls = []
+    }
+    
+    func populateUserProfile(model: UserModel ) {
+        SharedConfigs.shared.signedUser = model
         saveUserInfo()
-      }
+    }
 }

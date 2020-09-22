@@ -78,12 +78,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         addGestures()
         defineSwithState()
         localizeStrings()
-   //     MainTabBarController.center.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
+       
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
     }
@@ -115,6 +115,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         contactsLabel.text = "contacts".localized()
         languageLabel.text = "language".localized()
         darkModeLabel.text = "dark_mode".localized()
+        notificationLabel.text = "notifications".localized()
         logoutLabel.text = "log_out".localized()
         self.navigationController?.navigationBar.topItem?.title = "profile".localized()
     }
@@ -126,7 +127,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             switchMode.isOn = false
         }
     }
-    
     
     func setFlagImage() {
         if SharedConfigs.shared.appLang == AppLangKeys.Eng {
@@ -155,7 +155,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             SharedConfigs.shared.setMode(selectedMode: "light")
         }
-          self.viewDidLoad()
+        self.viewDidLoad()
     }
     
     func configureImageView() {
@@ -197,20 +197,27 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let tapLanguage = UITapGestureRecognizer(target: self, action: #selector(self.handleLanguageTab(_:)))
         languageView.addGestureRecognizer(tapLanguage)
         let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.handleImageTap(_:)))
+        let tapNotification = UITapGestureRecognizer(target: self, action: #selector(self.tapOnNotification(_:)))
+        notificationView.addGestureRecognizer(tapNotification)
         userImageView.isUserInteractionEnabled = true
         userImageView.addGestureRecognizer(tapImage)
     }
     
+    @objc func tapOnNotification(_ sender: UITapGestureRecognizer? = nil) {
+        if SharedConfigs.shared.getNumberOfNotifications() > 0 {
+            mainRouter?.showNotificationListViewController()
+        }
+    }
     
     
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
-        if response {
-            print("Permission allowed")
-        } else {
-            print("Permission don't allowed")
-             }
-         }
+            if response {
+                print("Permission allowed")
+            } else {
+                print("Permission don't allowed")
+            }
+        }
         let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -368,6 +375,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
+            self.mainRouter?.callDetailViewController?.tableView?.reloadData()
         }
         dropDown.backgroundColor = UIColor(named: "dropDownColor")
         dropDown.cellNib = UINib(nibName: Self.nameOfDropdownCell, bundle: nil)
@@ -392,15 +400,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func changeNotificationNumber() {
-        let user = SharedConfigs.shared.signedUser
-        UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+        UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
         if notificationCountLabel != nil {
-            notificationCountLabel.text = "\(((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0)))"
+            notificationCountLabel.text = "\(SharedConfigs.shared.getNumberOfNotifications())"
         }
     }
     
     func checkInformation() {
-         let user = SharedConfigs.shared.signedUser
+        let user = SharedConfigs.shared.signedUser
         changeNotificationNumber()
         if user?.name == nil {
             nameLabel.text = "not_defined".localized()
@@ -414,7 +421,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
-             lastnameLabel.textColor = UIColor(named: "color")
+            lastnameLabel.textColor = UIColor(named: "color")
         }
         if user?.email == nil {
             emailLabel.text = "not_defined".localized()
@@ -450,15 +457,15 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }    
 }
-
+//MARK: Extension
 extension ProfileViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-          completionHandler()
-      }
-      
-      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-          completionHandler([.alert, .badge, .sound])
-      }
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
 }
 
 extension ProfileViewController: ChangeEmailViewControllerDelegate {
@@ -468,5 +475,6 @@ extension ProfileViewController: ChangeEmailViewControllerDelegate {
     
     func setPhone(phone: String) {
         phoneLabel.text = phone
+        phoneLabel.textColor = UIColor(named: "color")
     }
 }

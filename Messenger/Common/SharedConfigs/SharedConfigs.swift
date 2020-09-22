@@ -16,9 +16,20 @@ class SharedConfigs {
     var voIPToken: String?
     var isRegistered: Bool?
     var deviceUUID: String?
+    var contactRequests: [Request] = []
+    var unreadMessages: [Chat] = []
+    var missedCalls: [String] = []
+    var adminMessages: [AdminMessage] = []
     
     private init () {
        let _ = appLang
+    }
+    
+    func getNumberOfNotifications() -> Int {
+        let filteredRequests = contactRequests.filter { (request) -> Bool in
+            return request.receiver == signedUser?.id
+        }
+        return filteredRequests.count + unreadMessages.count + adminMessages.count + missedCalls.count
     }
     
     var mode: String = ""

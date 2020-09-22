@@ -10,12 +10,10 @@ import UIKit
 import CoreData
 
 protocol CallTableViewDelegate: class {
-    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String,  name: String, avatarURL: String)
+    func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String,  name: String, avatarURL: String, isReceiverWe: Bool)
 }
 
-
 class CallTableViewCell: UITableViewCell {
-
     @IBOutlet weak var callIcon: UIImageView!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
@@ -34,9 +32,10 @@ class CallTableViewCell: UITableViewCell {
     }
     
     @IBAction func infoButtonAction(_ sender: UIButton) {
-        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, callStartTime: stringToDate(date: call?.callStartTime ?? call!.callSuggestTime!), callStatus: call!.status!, type: call!.type!, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
-        //delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, time: stringToDate(date: call?.createdAt) , callMode: call!.isHandleCall ? CallMode.incoming : CallMode.outgoing, name: contact?.name ?? contact?.username ?? "Dynamic's user", avatarURL: contact?.avatarURL ?? "")
+        let isReceiverWe = !(call?.caller == SharedConfigs.shared.signedUser?.id)
+        delegate?.callSelected(id: calleId!, duration: callDurationLabel.text!, callStartTime: stringToDate(date: call?.callStartTime ?? call!.callSuggestTime!), callStatus: call!.status!, type: call!.type!, name: contact?.name ?? contact?.username ?? "Dynamic's user".localized(), avatarURL: contact?.avatarURL ?? "", isReceiverWe: isReceiverWe)
     }
+    
     override func awakeFromNib() {
            super.awakeFromNib()
            userImageView.contentMode = .scaleAspectFill
@@ -55,13 +54,13 @@ class CallTableViewCell: UITableViewCell {
            }
        }
     
-    func configureCell(contact: User, call: CallHistory) {
+    func configureCell(contact: User, call: CallHistory, count: Int) {
         self.call = call
         self.contact = contact
         if contact.name != nil {
-        self.nameLabel.text = contact.name
+        self.nameLabel.text = "\(contact.name!) (\(count)) "
         } else if contact.username != nil {
-            self.nameLabel.text = contact.username
+            self.nameLabel.text = "\(contact.username!) (\(count))"
         } else {
             self.nameLabel.text = "Dynamic's user".localized()
         }
@@ -78,9 +77,9 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.timeLabel.text = stringToDate(date: call.callSuggestTime!)?.dateToString()
             if call.caller == SharedConfigs.shared.signedUser?.id {
-                callDurationLabel.text = "Not answered"
+                callDurationLabel.text = "not_answered".localized()
             } else {
-                callDurationLabel.text = "Missed"
+                callDurationLabel.text = "missed".localized()
             }
         }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in

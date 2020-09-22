@@ -25,5 +25,4 @@ class SendMessageTableViewCell: UITableViewCell {
            messageLabel.clipsToBounds = true
            messageLabel.layer.cornerRadius = 10
        }
-    
 }

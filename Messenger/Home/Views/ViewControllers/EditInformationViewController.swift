@@ -13,6 +13,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     //MARK: IBOutlets
     @IBOutlet weak var birdthdateView: CustomTextField!
+    @IBOutlet weak var hidePersonalDataLabel: UILabel!
     @IBOutlet weak var updateInformationButton: UIButton!
     @IBOutlet weak var usernameView: CustomTextField!
     @IBOutlet weak var nameView: CustomTextField!
@@ -22,6 +23,9 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var viewOnScroll: UIView!
     @IBOutlet weak var genderView: CustomTextField!
     @IBOutlet weak var infoView: CustomTextField!
+    @IBOutlet weak var deleteAccountButton: UIButton!
+    
+    @IBOutlet weak var deactivateAccountButton: UIButton!
     
     //MARK: Properties
     var viewModel: RegisterViewModel?
@@ -55,13 +59,22 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         constant = stackViewTopConstraint.constant
         setDelegates()
         addGenderDropDown()
-        setLabelTexts()
+        
         self.hideKeyboardWhenTappedAround()
         setObservers()
-        setTopLabels()
+        
         disableUpdateInfoButton()
         addTargets()
         hideDataSwitch.isOn = SharedConfigs.shared.isHidden
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        deleteAccountButton.setTitle("delete_account".localized(), for: .normal)
+        deactivateAccountButton.setTitle("deactivate_account".localized(), for: .normal)
+        hidePersonalDataLabel.text = "hide_personal_data".localized()
+        setLabelTexts()
+        setTopLabels()
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -125,7 +138,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         usernameView.textField.text = SharedConfigs.shared.signedUser?.username
         genderView.textField.text = SharedConfigs.shared.signedUser?.gender
         infoView.textField.text = signedUser?.info
-        genderView.textField.text = signedUser?.gender
+        genderView.textField.text = signedUser?.gender?.lowercased().localized()
         birdthdateView.textField.text = stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) ?? ""
         updateInformationButton.setTitle("update_information".localized(), for: .normal)
     }
@@ -155,7 +168,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             usernameView.topLabel.text = "username".localized()
         }
         if birdthdateView.textField.text != "" {
-            birdthdateView.topLabel.text = "birthdate".localized()
+            birdthdateView.topLabel.text = "birth_date".localized()
         }
         if genderView.textField.text != "" {
             genderView.topLabel.text = "gender".localized()
@@ -165,24 +178,24 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         }
     }
     
-   func checkInfo(_ signedUser: UserModel?) -> Bool? {
-         if  signedUser?.info != infoView.textField.text {
-             if (infoView.textField.text == "") {
-                 if (signedUser?.info == nil && infoView.textField.text == "") {
-                     info = nil
-                     return nil
-                 } else {
-                     info = infoView.textField.text!
-                     return true
-                 }
-             } else {
-                 info = infoView.textField.text
-                 return true
-             }
-         }
-         info = nil
-         return nil
-     }
+    func checkInfo(_ signedUser: UserModel?) -> Bool? {
+        if  signedUser?.info != infoView.textField.text {
+            if (infoView.textField.text == "") {
+                if (signedUser?.info == nil && infoView.textField.text == "") {
+                    info = nil
+                    return nil
+                } else {
+                    info = infoView.textField.text!
+                    return true
+                }
+            } else {
+                info = infoView.textField.text
+                return true
+            }
+        }
+        info = nil
+        return nil
+    }
     
     func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
         if  stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) != birdthdateView.textField.text {
@@ -320,7 +333,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func lastnameTextFieldAction() {
-         lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
+        lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
         isChangingUsername = false
         checkFields()
     }
@@ -406,7 +419,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 } else {
                     DispatchQueue.main.async {
                         UserDataController().logOutUser()
-                         AuthRouter().assemblyModule()
+                        AuthRouter().assemblyModule()
                     }
                 }
                 SocketTaskManager.shared.disconnect{}
@@ -474,7 +487,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 20, height: 20)
     }
     
-  
+    
     
     func addButtonOnGenderTextField(button: UIButton, textField: UITextField) {
         button.addTarget(self, action: #selector(tappedGenderTextField), for: .touchUpInside)
@@ -557,14 +570,14 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             }
         }
     }
-
+    
     
     func addGenderDropDown() {
         addButtonOnGenderTextField(button: genderButton, textField: genderView.textField)
         addImage(textField: genderView.textField, imageView: genderMoreOrLessImageView)
         genderDropDown.anchorView = genderButton
         genderDropDown.direction = .any
-        genderDropDown.dataSource = ["Male", "Female"]
+        genderDropDown.dataSource = ["male".localized(), "female".localized()]
         genderDropDown.bottomOffset = CGPoint(x: 0, y:((genderDropDown.anchorView?.plainView.bounds.height)! + genderView.textField.frame.height + 30))
         genderDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
             self.genderView.textField.text = item

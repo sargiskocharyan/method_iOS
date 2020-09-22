@@ -385,8 +385,8 @@ class HomeNetworkManager: NetworkManager {
            }
        }
     
-    func readCalls(id: String, completion: @escaping (NetworkResponse?)->()) {
-              router.request(.readCalls(id: id)) { data, response, error in
+    func readCalls(id: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.readCalls(id: id, readOne: readOne)) { data, response, error in
                   if error != nil {
                       print(error!.rawValue)
                       completion(error)
@@ -449,7 +449,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func removeCall(id: String, completion: @escaping (NetworkResponse?)->()) {
+    func removeCall(id: [String], completion: @escaping (NetworkResponse?)->()) {
            router.request(.removeCall(id: id)) { data, response, error in
                if error != nil {
                    print(error!.rawValue)
@@ -652,6 +652,35 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
+    func getAdminMessages(completion: @escaping ([AdminMessage]?, NetworkResponse?)->()) {
+        router.request(.getAdminMessage) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let response = try JSONDecoder().decode([AdminMessage].self, from: responseData)
+                        completion(response, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     
 }
 

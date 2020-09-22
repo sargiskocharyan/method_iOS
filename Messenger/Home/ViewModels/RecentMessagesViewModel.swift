@@ -16,29 +16,30 @@ struct FetchedCall {
     var callDuration: Int?
     let calleeId: String
 }
+
 class RecentMessagesViewModel {
-     var calls: [CallHistory] = []
+    var calls: [CallHistory] = []
     
     private var privateCalls: [NSManagedObject] = []
-  
+    
     func getHistory(completion: @escaping ([CallHistory])->()) {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                    completion([])
-                    return
-            }
-            let managedContext = appDelegate.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
-            do {
-                let callsFetched = try managedContext.fetch(fetchRequest)
-                self.privateCalls = callsFetched
-                self.calls = callsFetched.map({ (call) -> CallHistory in
-                    return CallHistory(type: call.value(forKey: "type") as? String, receiver: call.value(forKey: "receiver") as? String, status: call.value(forKey: "status") as? String, participants: call.value(forKey: "participants") as! [String], callSuggestTime: call.value(forKey: "callSuggestTime") as? String, _id: call.value(forKey: "id") as? String, createdAt: call.value(forKey: "createdAt") as? String, caller: call.value(forKey: "caller") as? String, callEndTime: call.value(forKey: "callEndTime") as? String, callStartTime: call.value(forKey: "callStartTime") as? String)
-                })
-                completion(self.calls)
-                return
-            } catch let error as NSError {
-                print("Could not fetch. \(error), \(error.userInfo)")
-                completion([])
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            completion([])
+            return
+        }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
+        do {
+            let callsFetched = try managedContext.fetch(fetchRequest)
+            self.privateCalls = callsFetched
+            self.calls = callsFetched.map({ (call) -> CallHistory in
+                return CallHistory(type: call.value(forKey: "type") as? String, receiver: call.value(forKey: "receiver") as? String, status: call.value(forKey: "status") as? String, participants: call.value(forKey: "participants") as! [String], callSuggestTime: call.value(forKey: "callSuggestTime") as? String, _id: call.value(forKey: "id") as? String, createdAt: call.value(forKey: "createdAt") as? String, caller: call.value(forKey: "caller") as? String, callEndTime: call.value(forKey: "callEndTime") as? String, callStartTime: call.value(forKey: "callStartTime") as? String)
+            })
+            completion(self.calls)
+            return
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+            completion([])
         }
     }
     
@@ -62,20 +63,20 @@ class RecentMessagesViewModel {
     }
     
     func deleteAllRecords() {
-             let delegate = UIApplication.shared.delegate as! AppDelegate
-             let context = delegate.persistentContainer.viewContext
-             let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
-             let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-             do {
-                 try context.execute(deleteRequest)
-                 try context.save()
-             } catch {
-                 print ("There was an error")
-             }
-         }
-       
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+        } catch {
+            print ("There was an error")
+        }
+    }
     
-    func deleteItem(index: Int, completion: @escaping (NetworkResponse?)->()) {
+    
+    func deleteItem(id: [String], completion: @escaping (NetworkResponse?)->()) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
         fetchRequest.includesPropertyValues = false
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -83,9 +84,19 @@ class RecentMessagesViewModel {
         }
         let managedContext = appDelegate.persistentContainer.viewContext
         do {
-            managedContext.delete(privateCalls[privateCalls.count - index - 1])
-            privateCalls.remove(at: privateCalls.count - index - 1)
-            calls.remove(at: index)
+            
+//            privateCalls.remove(at: privateCalls.count - index - 1)
+            privateCalls = privateCalls.filter { (obj) -> Bool in
+                if id.contains(obj.value(forKey: "id") as! String) {
+                    managedContext.delete(obj)
+                }
+                return !(id.contains(obj.value(forKey: "id") as! String))
+            }
+//            calls.remove(at: index)
+            calls = calls.filter({ (call) -> Bool in
+                return !(id.contains(call._id!))
+            })
+            print(calls)
             try managedContext.save()
             completion(nil)
             return
@@ -106,10 +117,10 @@ class RecentMessagesViewModel {
         }
     }
     func onlineUsers(arrayOfId: [String], completion: @escaping (OnlineUsers?, NetworkResponse?)->()) {
-           HomeNetworkManager().onlineUsers(arrayOfId: arrayOfId) { (user, error) in
-               completion(user, error)
-           }
-       }
+        HomeNetworkManager().onlineUsers(arrayOfId: arrayOfId) { (user, error) in
+            completion(user, error)
+        }
+    }
     
     
     func save(newCall: CallHistory, completion: @escaping ()->()) {
@@ -136,7 +147,7 @@ class RecentMessagesViewModel {
             print("Could not save. \(error), \(error.userInfo)")
         }
         completion()
-       return
+        return
     }
     
 }

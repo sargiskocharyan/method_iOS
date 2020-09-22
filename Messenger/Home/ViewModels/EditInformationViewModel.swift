@@ -16,10 +16,10 @@ class EditInformationViewModel {
     }
     
     func deactivateAccount(completion: @escaping (NetworkResponse?)->()) {
-           HomeNetworkManager().deactivateAccount() { (error) in
-               completion(error)
-           }
-       }
+        HomeNetworkManager().deactivateAccount() { (error) in
+            completion(error)
+        }
+    }
     
     func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
         HomeNetworkManager().editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate) { (user, error) in

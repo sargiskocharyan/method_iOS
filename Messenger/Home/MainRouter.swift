@@ -21,6 +21,8 @@ class MainRouter {
     weak var callDetailViewController: CallDetailViewController?
     weak var videoViewController: VideoViewController?
     weak var changeEmailViewController: ChangeEmailViewController?
+    weak var notificationListViewController: NotificationListViewController?
+    weak var notificationDetailViewController: NotificationDetailViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -64,7 +66,7 @@ class MainRouter {
         }
     }
     
-    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String) {
+    func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String, isReceiverWe: Bool) {
         let vc = CallDetailViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = callListViewController?.mainRouter
         vc.name = name
@@ -73,6 +75,7 @@ class MainRouter {
         vc.callMode = callMode
         vc.avatarURL = avatarURL
         vc.id = id
+        vc.isReceiverWe = isReceiverWe
         vc.onContactPage = false
         for j in 0..<mainTabBarController!.contactsViewModel!.contacts.count {
             if id == mainTabBarController!.contactsViewModel!.contacts[j]._id {
@@ -89,6 +92,7 @@ class MainRouter {
         vc.viewModel = ChatMessagesViewModel()
         vc.mainRouter = recentMessagesViewController?.mainRouter
         vc.name = name
+        vc.fromContactProfile = false
         vc.username = username
         vc.avatar = avatarURL
         vc.id = id
@@ -140,6 +144,7 @@ class MainRouter {
         vc.viewModel = ChatMessagesViewModel()
         vc.mainRouter = contactsViewController?.mainRouter
         vc.name = name
+        vc.fromContactProfile = false
         vc.username = username
         vc.avatar = avatarURL
         vc.id = id
@@ -158,9 +163,10 @@ class MainRouter {
     
     func showChatViewControllerFromContactProfile(name: String?, username: String?, avatarURL: String?, id: String) {
         let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
-        vc.mainRouter = contactsViewController?.mainRouter
+        vc.mainRouter = contactProfileViewController?.mainRouter
         vc.viewModel = ChatMessagesViewModel()
         vc.name = name
+        vc.fromContactProfile = true
         vc.username = username
         vc.avatar = avatarURL
         vc.id = id
@@ -173,6 +179,7 @@ class MainRouter {
         vc.mainRouter = callDetailViewController?.mainRouter
         vc.viewModel = ChatMessagesViewModel()
         vc.name = name
+        vc.fromContactProfile = false
         vc.username = username
         vc.avatar = avatarURL
         vc.id = id
@@ -206,5 +213,47 @@ class MainRouter {
         self.changeEmailViewController = vc
         profileViewController?.navigationController?.present(vc, animated: true, completion: nil)
     }
+    
+    
+    func showNotificationListViewController() {
+        let vc = NotificationListViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = profileViewController?.mainRouter
+        self.notificationListViewController = vc
+        profileViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showNotificationDetailViewController(type: CellType) {
+        let vc = NotificationDetailViewController.instantiate(fromAppStoryboard: .main)
+        vc.type = type
+        vc.mainRouter = notificationListViewController?.mainRouter
+        self.notificationDetailViewController = vc
+        notificationListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
+    func showContactProfileViewControllerFromNotificationDetail(id: String) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .main)
+        vc.id = id
+        vc.onContactPage = false
+        vc.fromChat = false
+        vc.viewModel = mainTabBarController?.contactsViewModel
+        vc.mainRouter = notificationDetailViewController?.mainRouter
+        self.contactProfileViewController = vc
+        notificationDetailViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showChatViewControllerFromNotificationDetail(name: String?, id: String, avatarURL: String?, username: String?) {
+         let vc = ChatViewController.instantiate(fromAppStoryboard: .main)
+         vc.viewModel = ChatMessagesViewModel()
+         vc.mainRouter = notificationDetailViewController?.mainRouter
+         vc.name = name
+         vc.fromContactProfile = false
+         vc.username = username
+         vc.avatar = avatarURL
+         vc.id = id
+         self.chatViewController = vc
+         notificationDetailViewController?.navigationController?.pushViewController(vc, animated: false)
+     }
+     
     
 }

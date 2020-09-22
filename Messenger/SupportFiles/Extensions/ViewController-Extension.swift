@@ -38,9 +38,9 @@ extension UIViewController {
             if error != nil {
                 print(error?.rawValue as Any)
             } else {
-                content.title = "New contact request"
-                content.body = "\(user?.username ?? "") send you a contact request"
-                 content.categoryIdentifier = "request"
+                content.title = "new_contact_request".localized()
+                content.body = "\(user?.username ?? "")" + "send_you_a_contact_request".localized()
+                content.categoryIdentifier = "request"
                 content.sound = UNNotificationSound.defaultCritical
                 let currentDateTime = Date()
                 let userCalendar = Calendar.current
@@ -71,7 +71,7 @@ extension UIViewController {
         } else if username != nil {
             content.title = username!
         } else {
-            content.title = "New message"
+            content.title = "new_message".localized()
         }
        content.categoryIdentifier = "local"
         content.body = message.text ?? ""

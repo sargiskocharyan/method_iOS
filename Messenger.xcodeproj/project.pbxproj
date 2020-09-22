@@ -64,9 +64,17 @@
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */; };
 		CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA04E2924E522070055A412 /* NetworkChecker.swift */; };
+		CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A045250B6EFD0067B245 /* ringback.mp3 */; };
+		CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A047250B72FE0067B245 /* karch.mp3 */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
 		CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */; };
+		CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */; };
+		CDB7D98F2511DF4500DBAD51 /* NotificationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */; };
+		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
+		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
+		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
+		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
 		CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */; };
@@ -104,6 +112,7 @@
 		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
 		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
 		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
+		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
@@ -219,9 +228,17 @@
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNotificationManager.swift; sourceTree = "<group>"; };
 		CDA04E2924E522070055A412 /* NetworkChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkChecker.swift; sourceTree = "<group>"; };
+		CDA1A045250B6EFD0067B245 /* ringback.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringback.mp3; sourceTree = "<group>"; };
+		CDA1A047250B72FE0067B245 /* karch.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = karch.mp3; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
 		CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNetworkManager.swift; sourceTree = "<group>"; };
 		CDA56E6F2488E7250027AA4E /* HomeResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeResponseModels.swift; sourceTree = "<group>"; };
+		CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListViewController.swift; sourceTree = "<group>"; };
+		CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListTableViewCell.swift; sourceTree = "<group>"; };
+		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
+		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
+		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
 		CDBCCA65247BF29900115C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -261,6 +278,7 @@
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
+		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -356,6 +374,10 @@
 				CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */,
 				CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */,
 				CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */,
+				CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */,
+				CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */,
+				CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */,
+				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -405,6 +427,9 @@
 				CD3F12D624BC290200040D8E /* CallManager.swift */,
 				CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */,
 				CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */,
+				CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */,
+				CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */,
+				CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -555,6 +580,8 @@
 		CDBE8E06247674C00049F971 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CDA1A047250B72FE0067B245 /* karch.mp3 */,
+				CDA1A045250B6EFD0067B245 /* ringback.mp3 */,
 				CD361E1F248B8DFA00BCF154 /* Localizable.strings */,
 				CDD1756124852796001E804B /* JSON */,
 				CDBE8DF92476744D0049F971 /* Assets.xcassets */,
@@ -906,12 +933,14 @@
 				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
+				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
 				CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */,
 				CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */,
 				CDBE8DFA2476744D0049F971 /* Assets.xcassets in Resources */,
 				CD424917248A315E00A38987 /* message.json in Resources */,
+				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -990,6 +1019,7 @@
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
+				CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */,
 				CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */,
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
@@ -1014,7 +1044,9 @@
 				CD36733224790D430002E606 /* BottomShapeView.swift in Sources */,
 				CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */,
 				CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */,
+				CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */,
 				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
+				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
@@ -1034,12 +1066,14 @@
 				CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */,
 				CD5E713F24865935008D876E /* MainTabBarController.swift in Sources */,
 				CDD9C67E247BC88C0048A9A1 /* AuthNetworkManager.swift in Sources */,
+				CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */,
 				CDD9C675247BC4AE0048A9A1 /* Router.swift in Sources */,
 				CDBE8E08247681690049F971 /* HeaderShapeView.swift in Sources */,
 				CDBF72F324E125F700D7A727 /* Date-Extension.swift in Sources */,
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
 				CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */,
+				CDB7D98F2511DF4500DBAD51 /* NotificationListTableViewCell.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
 				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
@@ -1049,6 +1083,7 @@
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
 				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
+				CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */,
 				CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
@@ -1058,6 +1093,7 @@
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
 				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
+				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,

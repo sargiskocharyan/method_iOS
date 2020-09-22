@@ -16,10 +16,10 @@ class AppDelegateViewModel {
     }
     
     func confirmRequest(id: String, confirm: Bool, completion: @escaping (NetworkResponse?)->()) {
-           HomeNetworkManager().confirmRequest(id: id, confirm: confirm) { (error) in
-               completion(error)
-           }
-       }
+        HomeNetworkManager().confirmRequest(id: id, confirm: confirm) { (error) in
+            completion(error)
+        }
+    }
     
     func getuserById(id: String, completion: @escaping (User?, NetworkResponse?)->()) {
         HomeNetworkManager().getuserById(id: id) { (user, error) in

@@ -159,6 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
                 SocketTaskManager.shared.connect {
                     self.isVoIPCallStarted = true
+                    self.tabbar?.videoVC?.isCallHandled = true
                     SocketTaskManager.shared.checkCallState(roomname: payload.dictionaryPayload["roomName"] as! String)
                     completion()
                 }
@@ -211,21 +212,33 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userinfo = response.notification.request.content.userInfo
+        let request = userinfo["request"] as! NSDictionary
         switch response.actionIdentifier {
         case "first":
             print("first")
-            let userinfo = response.notification.request.content.userInfo
-            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: true) { (error) in
+            viewModel.confirmRequest(id: request["sender"] as! String, confirm: true) { (error) in
                 if error == nil {
                     print("confirmed")
+                    SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                        return req._id != request["_id"] as! String
+                    })
+                    DispatchQueue.main.async {
+                        self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+                    }
                 }
             }
         case "second":
             print("second")
-            let userinfo = response.notification.request.content.userInfo
-            viewModel.confirmRequest(id: userinfo["userId"] as! String, confirm: false) { (error) in
+            viewModel.confirmRequest(id: request["sender"] as! String, confirm: false) { (error) in
                 if error == nil {
                     print("merjec")
+                    SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
+                        return req._id != request["_id"] as! String
+                    })
+                    DispatchQueue.main.async {
+                        self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+                    }
                 }
             }
         default:
@@ -264,6 +277,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.failed)
             return
         }
+        if userInfo["type"] as! String == "contactRequest" {
+            let requestDictionary = userInfo["request"] as! NSDictionary
+            let request = Request(_id: requestDictionary["_id"] as! String, sender: requestDictionary["sender"] as! String, receiver: requestDictionary["receiver"] as! String, createdAt: requestDictionary["createdAt"] as! String, updatedAt: requestDictionary["updatedAt"] as! String)
+            SharedConfigs.shared.contactRequests.append(request)
+            tabbar?.mainRouter?.notificationListViewController?.reloadData()
+        }
         if userInfo["type"] as? String == "message" {
             backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "krakadil") {
                 self.endBackgroundTask(task: &self.backgroundTask)
@@ -273,24 +292,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 for i in 0..<(vc?.chats.count ?? 0) {
                     if vc?.chats[i].id == userInfo["chatId"] as? String {
                         if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
-                            var oldModel = SharedConfigs.shared.signedUser
-                            if oldModel?.unreadMessagesCount != nil {
-                                oldModel?.unreadMessagesCount! += 1
-                            } else {
-                                oldModel?.unreadMessagesCount = 1
-                            }
-                            UserDataController().populateUserProfile(model: oldModel!)
+                            SharedConfigs.shared.unreadMessages.append(vc!.chats[i])
                             vc?.chats[i].unreadMessageExists = true
-                            let user = SharedConfigs.shared.signedUser
                             DispatchQueue.main.async {
                                 let nc = self.tabbar?.viewControllers?[2] as? UINavigationController
                                 let profile = nc?.viewControllers[0] as? ProfileViewController
                                 profile?.changeNotificationNumber()
-                                UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+                                UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
                             }
                             if let tabItems = self.tabbar?.tabBar.items {
                                 let tabItem = tabItems[1]
-                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0  ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                             }
                             break
                         }
@@ -310,11 +322,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         if userInfo["type"] as? String == "missedCallHistory" {
             if let badge = aps["badge"] as? Int {
-                var oldModel = SharedConfigs.shared.signedUser
-                oldModel?.missedCallHistoryCount = badge
-                UserDataController().populateUserProfile(model: oldModel!)
+                
                 let nc = tabbar?.viewControllers?[2] as? UINavigationController
                 let profile = nc?.viewControllers[0] as? ProfileViewController
+                print(userInfo)
+                SharedConfigs.shared.missedCalls = userInfo["missedCalls"] as! [String]
+                tabbar?.mainRouter?.notificationListViewController?.reloadData()
                 profile?.changeNotificationNumber()
                 if tabbar?.selectedIndex == 0 {
                     let nc = tabbar!.viewControllers![0] as! UINavigationController
