@@ -67,12 +67,12 @@ class CallDetailViewController: UIViewController {
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
         aboutCallView.backgroundColor = UIColor(named: "imputColor")
+        setLabels()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-        setLabels()
         username.adjustsFontSizeToFitWidth = true
         username.text = name
         username.minimumScaleFactor = 0.5

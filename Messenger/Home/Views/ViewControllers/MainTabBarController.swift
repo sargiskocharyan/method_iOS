@@ -97,7 +97,7 @@ class MainTabBarController: UITabBarController {
         self.id = id
         self.roomName = roomname
         self.mode = type == "video" ? VideoVCMode.videoCall : VideoVCMode.audioCall
-       // self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
@@ -633,7 +633,7 @@ extension MainTabBarController: CallListViewDelegate {
     }
     
     func handleCallClick(id: String, name: String, mode: VideoVCMode) {
-      //  self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         SocketTaskManager.shared.call(id: id, type: mode.rawValue) { (roomname) in
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)

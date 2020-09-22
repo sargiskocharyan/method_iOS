@@ -15,14 +15,15 @@ enum CellType {
 }
 class NotificationDetailViewController: UIViewController {
     
+    //MARK: IBOutlets
+    @IBOutlet weak var tableView: UITableView!
+    
+    //MARK: Properties
     var mainRouter: MainRouter?
     var type: CellType?
     var tabbar: MainTabBarController?
     
-    
-    @IBOutlet weak var tableView: UITableView!
-    
-    
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -39,6 +40,7 @@ class NotificationDetailViewController: UIViewController {
         configureNavigationBar()
     }
     
+    //MARK: Helper methods
     func getUser(call: CallHistory, _ cell: CallTableViewCell, _ indexPath: Int) {
         mainRouter?.callListViewController?.viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
@@ -71,11 +73,11 @@ class NotificationDetailViewController: UIViewController {
             navigationController?.popViewController(animated: false)
         }
     }
-
+    
     func getUserById(id: String, _ cell: ContactRequestTableViewCell, _ row: Int, request: Request) {
         mainRouter?.callListViewController?.viewModel!.getuserById(id: id) { (user, error) in
             DispatchQueue.main.async {
-                 if error == nil && user != nil {
+                if error == nil && user != nil {
                     var newArray = self.mainRouter?.mainTabBarController?.contactsViewModel?.otherContacts
                     newArray?.append(user!)
                     self.mainRouter?.mainTabBarController?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
@@ -86,9 +88,10 @@ class NotificationDetailViewController: UIViewController {
             }
         }
     }
-
+    
 }
 
+//MARK: Extensions
 extension NotificationDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -223,7 +226,6 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
 
 extension NotificationDetailViewController: CallTableViewDelegate {
     func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String, isReceiverWe: Bool) {
-       // print("exav")
         var status: CallStatus?
         if callStatus == "missed" {
             status = CallStatus.missed

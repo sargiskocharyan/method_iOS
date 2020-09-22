@@ -375,6 +375,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
+            self.mainRouter?.callDetailViewController?.tableView?.reloadData()
         }
         dropDown.backgroundColor = UIColor(named: "dropDownColor")
         dropDown.cellNib = UINib(nibName: Self.nameOfDropdownCell, bundle: nil)

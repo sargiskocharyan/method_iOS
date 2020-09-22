@@ -13,6 +13,7 @@ class CustomAlertViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var gifImageView: UIImageView!
     @IBOutlet weak var bodyLabel: UILabel!
+    
     var adminMessage: AdminMessage?
     var mainRouter: MainRouter?
     var row: Int?

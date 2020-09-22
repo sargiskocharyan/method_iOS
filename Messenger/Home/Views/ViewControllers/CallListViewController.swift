@@ -312,6 +312,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         return ("\(hour):\(minutes)")
     }
 }
+
 // MAARK: Extensions
 extension CallListViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
