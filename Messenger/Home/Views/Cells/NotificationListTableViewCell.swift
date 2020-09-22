@@ -10,12 +10,13 @@ import UIKit
 
 class NotificationListTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var notificationCountLabel: UILabel!
     @IBOutlet weak var cellTextLabel: UILabel!
     var type: CellType?
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
     }
 
 

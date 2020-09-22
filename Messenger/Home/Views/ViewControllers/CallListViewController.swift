@@ -70,29 +70,26 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "calls".localized()
-        if let count = SharedConfigs.shared.signedUser?.missedCallHistoryCount {
-            if count > 0 && viewModel!.calls.count > 0 {
-                let missed = viewModel?.calls.filter({ (call) -> Bool in
-                    return call.status == CallStatus.missed.rawValue
-                })
-                tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, readOne: false, completion: { (error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    } else {
-                        var oldModel = SharedConfigs.shared.signedUser
-                        oldModel?.missedCallHistoryCount = 0
-                        UserDataController().populateUserProfile(model: oldModel!)
-                        DispatchQueue.main.async {
-                            let nc = self.tabbar!.viewControllers![2] as! UINavigationController
-                            let profile = nc.viewControllers[0] as! ProfileViewController
-                            profile.changeNotificationNumber()
-                        }
+        let count = SharedConfigs.shared.missedCalls.count
+        if count > 0 && viewModel!.calls.count > 0 {
+            let missed = viewModel?.calls.filter({ (call) -> Bool in
+                return call.status == CallStatus.missed.rawValue
+            })
+            tabbar?.viewModel?.checkCallAsSeen(callId: missed![0]._id!, readOne: false, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                     }
-                })
-            }
+                } else {
+                    DispatchQueue.main.async {
+                        let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                        let profile = nc.viewControllers[0] as! ProfileViewController
+                        profile.changeNotificationNumber()
+                    }
+                }
+            })
         }
+        
     }
     
     override func viewDidLoad() {

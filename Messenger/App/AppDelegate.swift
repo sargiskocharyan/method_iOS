@@ -293,24 +293,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     if vc?.chats[i].id == userInfo["chatId"] as? String {
                         if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
                             SharedConfigs.shared.unreadMessages.append(vc!.chats[i])
-                            var oldModel = SharedConfigs.shared.signedUser
-                            if oldModel?.unreadMessagesCount != nil {
-                                oldModel?.unreadMessagesCount! += 1
-                            } else {
-                                oldModel?.unreadMessagesCount = 1
-                            }
-                            UserDataController().populateUserProfile(model: oldModel!)
                             vc?.chats[i].unreadMessageExists = true
-                            let user = SharedConfigs.shared.signedUser
                             DispatchQueue.main.async {
                                 let nc = self.tabbar?.viewControllers?[2] as? UINavigationController
                                 let profile = nc?.viewControllers[0] as? ProfileViewController
                                 profile?.changeNotificationNumber()
-                                UIApplication.shared.applicationIconBadgeNumber = ((user?.missedCallHistoryCount ?? 0) + (user?.unreadMessagesCount ?? 0))
+                                UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
                             }
                             if let tabItems = self.tabbar?.tabBar.items {
                                 let tabItem = tabItems[1]
-                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0  ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                             }
                             break
                         }
@@ -330,9 +322,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         if userInfo["type"] as? String == "missedCallHistory" {
             if let badge = aps["badge"] as? Int {
-                var oldModel = SharedConfigs.shared.signedUser
-                oldModel?.missedCallHistoryCount = badge
-                UserDataController().populateUserProfile(model: oldModel!)
+                
                 let nc = tabbar?.viewControllers?[2] as? UINavigationController
                 let profile = nc?.viewControllers[0] as? ProfileViewController
                 print(userInfo)

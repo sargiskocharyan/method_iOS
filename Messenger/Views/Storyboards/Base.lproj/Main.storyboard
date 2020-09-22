@@ -329,20 +329,29 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pai-lk-YSQ">
-                                                    <rect key="frame" x="10" y="17.666666666666668" width="44" height="21.000000000000004"/>
+                                                    <rect key="frame" x="15" y="17.666666666666668" width="44" height="21.000000000000004"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eM2-7N-cBx">
+                                                    <rect key="frame" x="352" y="17.666666666666668" width="42" height="21.000000000000004"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Pai-lk-YSQ" secondAttribute="trailing" constant="20" id="99S-Ab-mKH"/>
+                                                <constraint firstItem="eM2-7N-cBx" firstAttribute="centerY" secondItem="dBP-Fz-Uem" secondAttribute="centerY" id="Grn-Ta-5l0"/>
+                                                <constraint firstAttribute="trailing" secondItem="eM2-7N-cBx" secondAttribute="trailing" constant="20" id="Lny-QG-k6e"/>
+                                                <constraint firstItem="eM2-7N-cBx" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Pai-lk-YSQ" secondAttribute="trailing" constant="20" id="MWR-Ph-Fdd"/>
                                                 <constraint firstItem="Pai-lk-YSQ" firstAttribute="centerY" secondItem="dBP-Fz-Uem" secondAttribute="centerY" id="Ovs-mX-t1u"/>
-                                                <constraint firstItem="Pai-lk-YSQ" firstAttribute="leading" secondItem="dBP-Fz-Uem" secondAttribute="leading" constant="10" id="ucU-0l-U8A"/>
+                                                <constraint firstItem="Pai-lk-YSQ" firstAttribute="leading" secondItem="dBP-Fz-Uem" secondAttribute="leading" constant="15" id="ucU-0l-U8A"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="cellTextLabel" destination="Pai-lk-YSQ" id="Amx-cR-38Z"/>
+                                            <outlet property="notificationCountLabel" destination="eM2-7N-cBx" id="YGC-q5-MbD"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

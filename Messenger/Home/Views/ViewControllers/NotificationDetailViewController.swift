@@ -36,9 +36,7 @@ class NotificationDetailViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        if (SharedConfigs.shared.unreadMessages.count == 0 && type == CellType.message) || (SharedConfigs.shared.missedCalls.count == 0 && type == CellType.missedCall) || (SharedConfigs.shared.contactRequests.count == 0 && type == CellType.contactRequest) || (SharedConfigs.shared.adminMessages.count == 0 && type == CellType.adminMessage){
-            navigationController?.popViewController(animated: false)
-        }
+        configureNavigationBar()
     }
     
     func getUser(call: CallHistory, _ cell: CallTableViewCell, _ indexPath: Int) {
@@ -58,11 +56,22 @@ class NotificationDetailViewController: UIViewController {
         }
     }
     
-    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
-       
-       }
+    func configureNavigationBar() {
+        switch type {
+        case .adminMessage:
+            self.title = "admin_messages".localized()
+        case .contactRequest:
+            self.title = "contact_requests".localized()
+        case .message:
+            self.title = "unread_messages".localized()
+        default:
+            self.title = "missed_calls".localized()
+        }
+        if (SharedConfigs.shared.unreadMessages.count == 0 && type == CellType.message) || (SharedConfigs.shared.missedCalls.count == 0 && type == CellType.missedCall) || (SharedConfigs.shared.contactRequests.count == 0 && type == CellType.contactRequest) || (SharedConfigs.shared.adminMessages.count == 0 && type == CellType.adminMessage){
+            navigationController?.popViewController(animated: false)
+        }
+    }
 
-    
     func getUserById(id: String, _ cell: ContactRequestTableViewCell, _ row: Int, request: Request) {
         mainRouter?.callListViewController?.viewModel!.getuserById(id: id) { (user, error) in
             DispatchQueue.main.async {
@@ -123,7 +132,6 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
                         tableView.deleteRows(at: [indexPath], with: .automatic)
                         tableView.endUpdates()
                     }
-                    
                 }
             })
         case .message:

@@ -26,7 +26,10 @@ class SharedConfigs {
     }
     
     func getNumberOfNotifications() -> Int {
-        return contactRequests.count + unreadMessages.count + adminMessages.count + missedCalls.count
+        let filteredRequests = contactRequests.filter { (request) -> Bool in
+            return request.receiver == signedUser?.id
+        }
+        return filteredRequests.count + unreadMessages.count + adminMessages.count + missedCalls.count
     }
     
     var mode: String = ""

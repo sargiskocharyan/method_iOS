@@ -376,14 +376,9 @@ class ChatViewController: UIViewController {
                             let recent = (tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                             recent.handleRead(id: self.id!)
                             if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].call == nil {
-                                var oldModel = SharedConfigs.shared.signedUser
-                                if oldModel?.unreadMessagesCount != nil {
-                                    oldModel?.unreadMessagesCount! -= 1
-                                }
-                                UserDataController().populateUserProfile(model: oldModel!)
-                                let profileNC = tabbar?.viewControllers![2] as! UINavigationController
-                                let profileVC = profileNC.viewControllers[0] as! ProfileViewController
-                                profileVC.changeNotificationNumber()
+                                let profileNC = tabbar?.viewControllers?[2] as? UINavigationController
+                                let profileVC = profileNC?.viewControllers[0] as? ProfileViewController
+                                profileVC?.changeNotificationNumber()
                                 break
                             } else {
                                 continue
@@ -391,8 +386,6 @@ class ChatViewController: UIViewController {
                         }
                     }
                 }
-//                let indexPath = IndexPath(item: self.allMessages!.array!.count - 1, section: 0)
-//                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: false)
             }
         }
     }

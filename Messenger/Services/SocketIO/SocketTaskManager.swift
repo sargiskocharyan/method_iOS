@@ -318,14 +318,9 @@ class SocketTaskManager {
                 let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                 for i in 0..<vc.chats.count {
                     if vc.chats[i].id == data["senderId"] as? String {
-                        print("vc.chats[i].id: \( vc.chats[i].id)")
-                        print("data[senderId] as? String \(data["senderId"] as? String ?? "0000000")")
                         if !vc.chats[i].unreadMessageExists {
                             SharedConfigs.shared.unreadMessages.append(vc.chats[i])
                             self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
-                            var oldModel = SharedConfigs.shared.signedUser
-                            oldModel?.unreadMessagesCount! += 1
-                            UserDataController().populateUserProfile(model: oldModel!)
                             DispatchQueue.main.async {
                                 let nc = self.tabbar!.viewControllers![2] as! UINavigationController
                                 let profile = nc.viewControllers[0] as! ProfileViewController
@@ -333,7 +328,7 @@ class SocketTaskManager {
                             }
                             if let tabItems = self.tabbar?.tabBar.items {
                                 let tabItem = tabItems[1]
-                                tabItem.badgeValue = oldModel?.unreadMessagesCount != nil && oldModel!.unreadMessagesCount! > 0 ? "\(oldModel!.unreadMessagesCount!)" : nil
+                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                             }
                             break
                         }

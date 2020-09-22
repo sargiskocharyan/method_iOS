@@ -64,9 +64,8 @@ class RecentMessagesViewController: UIViewController {
         let tabbar = self.tabBarController as? MainTabBarController
         if let tabItems = tabbar?.tabBar.items {
             let tabItem = tabItems[1]
-            let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
-            tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
-//            tabItem.badgeValue =
+            let count = SharedConfigs.shared.unreadMessages.count
+            tabItem.badgeValue = count > 0 ? "\(count)" : nil
         }
     }
     
@@ -202,16 +201,14 @@ class RecentMessagesViewController: UIViewController {
         }
         if !isLoadedMessages {
             viewModel!.getChats { (messages, error) in
-                var oldModel = SharedConfigs.shared.signedUser
-                oldModel?.unreadMessagesCount = messages?.badge
                 if messages?.array != nil {
+                    SharedConfigs.shared.unreadMessages = []
                     for chat in messages!.array! {
                         if chat.unreadMessageExists {
                             SharedConfigs.shared.unreadMessages.append(chat)
                         }
                     }
                 }
-                UserDataController().populateUserProfile(model: oldModel!)
                 DispatchQueue.main.async {
                     let tabbar = self.tabBarController as? MainTabBarController
                     let nc = tabbar!.viewControllers![2] as! UINavigationController
@@ -219,8 +216,8 @@ class RecentMessagesViewController: UIViewController {
                     profile.changeNotificationNumber()
                     if let tabItems = tabbar?.tabBar.items {
                         let tabItem = tabItems[1]
-                        let count = SharedConfigs.shared.signedUser?.unreadMessagesCount
-                        tabItem.badgeValue = count != nil && count! > 0 ? "\(count!)" : nil
+                        let count = SharedConfigs.shared.unreadMessages.count
+                        tabItem.badgeValue = count > 0 ? "\(count)" : nil
                     }
                 }
                 if (error != nil) {

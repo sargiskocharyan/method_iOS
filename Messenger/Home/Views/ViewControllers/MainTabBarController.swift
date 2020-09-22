@@ -97,7 +97,7 @@ class MainTabBarController: UITabBarController {
         self.id = id
         self.roomName = roomname
         self.mode = type == "video" ? VideoVCMode.videoCall : VideoVCMode.audioCall
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+       // self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         self.webRTCClient?.delegate = self
         AppDelegate.shared.providerDelegate.webrtcClient = self.webRTCClient
         self.videoVC?.webRTCClient = self.webRTCClient
@@ -367,7 +367,7 @@ class MainTabBarController: UITabBarController {
         SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
-            if callHistory != nil && callHistory?.status == CallStatus.missed.rawValue && callHistory?.callStartTime == SharedConfigs.shared.signedUser?.id {
+            if callHistory != nil && callHistory?.status == CallStatus.missed.rawValue && callHistory?.receiver == SharedConfigs.shared.signedUser?.id {
                 SharedConfigs.shared.missedCalls.append(callHistory!._id!)
                 self.mainRouter?.notificationListViewController?.reloadData()
             }
@@ -471,7 +471,7 @@ class MainTabBarController: UITabBarController {
     func checkOurInfo(completion: @escaping ()->()) {
         recentMessagesViewModel?.getuserById(id: SharedConfigs.shared.signedUser!.id, completion: { (user, error) in
             if error == nil && user != nil {
-                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil, missedCallHistory: user?.missedCallHistory, missedCallHistoryCount: user?.missedCallHistory?.count))
+                UserDataController().populateUserProfile(model: UserModel(name: user?.name, lastname: user?.lastname, username: user?.username, email: user?.email, token: SharedConfigs.shared.signedUser?.token, id: SharedConfigs.shared.signedUser!.id, avatarURL: user?.avatarURL, phoneNumber: user?.phoneNumber, birthDate: user?.birthday, gender: user?.gender, info: user?.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire, deactivated: nil, blocked: nil))
                 if user?.missedCallHistory != nil {
                     SharedConfigs.shared.missedCalls = user!.missedCallHistory!
                 }
@@ -505,9 +505,7 @@ class MainTabBarController: UITabBarController {
                             if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
                                 self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], readOne: false, completion: { (error) in
                                     if error == nil {
-                                        var oldModel = SharedConfigs.shared.signedUser
-                                        oldModel?.missedCallHistoryCount = 0
-                                        UserDataController().populateUserProfile(model: oldModel!)
+                                        SharedConfigs.shared.missedCalls = SharedConfigs.shared.signedUser!.missedCallHistory!
                                         DispatchQueue.main.async {
                                             if let tabItems = self.tabBar.items {
                                                 let tabItem = tabItems[0]
@@ -635,7 +633,7 @@ extension MainTabBarController: CallListViewDelegate {
     }
     
     func handleCallClick(id: String, name: String, mode: VideoVCMode) {
-        self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
+        //self.webRTCClient = WebRTCClient(iceServers: self.config.webRTCIceServers)
         SocketTaskManager.shared.call(id: id, type: mode.rawValue) { (roomname) in
             self.roomName = roomname
             self.videoVC?.handleOffer(roomName: roomname)

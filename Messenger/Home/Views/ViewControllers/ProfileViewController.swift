@@ -472,5 +472,6 @@ extension ProfileViewController: ChangeEmailViewControllerDelegate {
     
     func setPhone(phone: String) {
         phoneLabel.text = phone
+        phoneLabel.textColor = UIColor(named: "color")
     }
 }

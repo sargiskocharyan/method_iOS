@@ -10,7 +10,6 @@ import UIKit
 
 class NotificationListViewController: UIViewController {
     
-    
     //MARK: Properties
     @IBOutlet weak var tableView: UITableView!
     var mainRouter: MainRouter?
@@ -29,6 +28,7 @@ class NotificationListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.title = "notifications".localized()
         if SharedConfigs.shared.getNumberOfNotifications() == 0 {
             navigationController?.popViewController(animated: false)
         }
@@ -79,24 +79,28 @@ extension NotificationListViewController: UITableViewDelegate, UITableViewDataSo
         if receivedRequests.count > 0 && isSetTextOnContactRequests != true {
             isSetTextOnContactRequests = true
             cell.cellTextLabel.text = "contact_requests".localized()
+            cell.notificationCountLabel.text = "\(receivedRequests.count)"
             cell.type = CellType.contactRequest
             return cell
         }
         if SharedConfigs.shared.unreadMessages.count > 0 && isSetTextOnUnreadMessages != true {
             isSetTextOnUnreadMessages = true
             cell.cellTextLabel.text = "unread_messages".localized()
+            cell.notificationCountLabel.text = "\(SharedConfigs.shared.unreadMessages.count)"
             cell.type = CellType.message
             return cell
         }
         if SharedConfigs.shared.missedCalls.count > 0 && isSetTextOnMissedCalls != true {
             isSetTextOnMissedCalls = true
             cell.cellTextLabel.text = "missed_calls".localized()
+            cell.notificationCountLabel.text = "\(SharedConfigs.shared.missedCalls.count)"
             cell.type = CellType.missedCall
             return cell
         }
         if SharedConfigs.shared.adminMessages.count > 0 && isSetTextOnAdminMessages != true {
             isSetTextOnAdminMessages = true
             cell.type = CellType.adminMessage
+            cell.notificationCountLabel.text = "\(SharedConfigs.shared.adminMessages.count)"
             cell.cellTextLabel.text = "admin_messages".localized()
             return cell
         }
