@@ -234,7 +234,7 @@ extension CallDetailViewController: UITableViewDelegate, UITableViewDataSource {
         let hour = calendar.component(.hour, from: parsedDate)
         let minutes = calendar.component(.minute, from: parsedDate)
         cell.timeLabel.text = "\(hour >= 10 ? "\(hour)" : "0\(hour)"):\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")"
-        cell.statusLabel.text = calls[indexPath.row].status
+        cell.statusLabel.text = calls[indexPath.row].status?.localized()
         let userCalendar = Calendar.current
         let requestedComponent: Set<Calendar.Component> = [.hour, .minute, .second]
         if calls[indexPath.row].callStartTime != nil {

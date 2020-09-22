@@ -398,7 +398,7 @@ class ContactProfileViewController: UIViewController {
             genderLabel.text = "not_defined".localized()
             genderLabel.textColor = .lightGray
         } else {
-            genderLabel.text = contact?.gender
+            genderLabel.text = contact?.gender?.lowercased().localized()
             genderLabel.textColor = UIColor(named: "color")
         }
         

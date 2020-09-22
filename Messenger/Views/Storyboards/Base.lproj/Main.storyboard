@@ -2531,8 +2531,11 @@
                     <navigationItem key="navigationItem" id="LGu-ag-PZ6"/>
                     <connections>
                         <outlet property="birdthdateView" destination="G4H-Z2-Qdl" id="T5l-A8-cpr"/>
+                        <outlet property="deactivateAccountButton" destination="GCh-ft-alm" id="fkl-1Q-KKZ"/>
+                        <outlet property="deleteAccountButton" destination="FnS-Ch-JgX" id="gka-HA-l8l"/>
                         <outlet property="genderView" destination="0je-pm-sq1" id="e6f-cA-MN6"/>
                         <outlet property="hideDataSwitch" destination="86T-i4-Pbr" id="8DM-zV-NLy"/>
+                        <outlet property="hidePersonalDataLabel" destination="ww8-cA-Tvf" id="iBA-9w-ciL"/>
                         <outlet property="infoView" destination="y71-dD-R7Q" id="oeo-Gw-CLj"/>
                         <outlet property="lastnameView" destination="L6j-1p-JqA" id="DjE-Kd-uhX"/>
                         <outlet property="nameView" destination="cz6-MA-tGk" id="lFN-XK-fby"/>

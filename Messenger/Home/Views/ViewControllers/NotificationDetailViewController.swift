@@ -223,7 +223,16 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
 
 extension NotificationDetailViewController: CallTableViewDelegate {
     func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String, name: String, avatarURL: String, isReceiverWe: Bool) {
-        print("exav")
+       // print("exav")
+        var status: CallStatus?
+        if callStatus == "missed" {
+            status = CallStatus.missed
+        } else if callStatus == "accepted" {
+            status = CallStatus.accepted
+        } else {
+            status = CallStatus.cancelled
+        }
+        mainRouter?.showCallDetailViewController(id: id, name: name, duration: duration, time: callStartTime, callMode: status!, avatarURL: avatarURL, isReceiverWe: true)
     }
 }
 

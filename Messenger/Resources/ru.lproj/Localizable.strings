@@ -73,6 +73,7 @@
 "info" = "Информация";
 "address:" = "Адрес:";
 "gender:" = "Пол:";
+"gender" = "Пол";
 "username:" = "Имя пользователя:";
 "birth_date:" = "Дата рождения:";
 "male" = "Мужской";
@@ -116,3 +117,19 @@
 "send_you_a_friend_request" = "отправил вам запрос на контакт";
 "new_message" = "Новое сообщение";
 "connecting" = "Подключение";
+"delete_account" = "Удалить аккаунт";
+"deactivate_account" = "Деактивировать аккаунт";
+"deactivate" = "Деактивировать";
+"are_you_sure_want_to_deactivate_your_account_you_can_activate_account_again" = "Вы действительно хотите деактивировать свою учетную запись, вы можете активировать ее снова";
+"notifications" = "Уведомления";
+"cancelled" = "Отменено";
+"cancelled_call" = "Отмененный звонок";
+"incoming_call" = "Входящий звонок";
+"not_defined" = "Не определено";
+"check_mail" = "Проверь электронную почту";
+"phone" = "Телефонный номер";
+"check_phone" = "Проверить номер телефона";
+"contact_requests" = "Контактные запросы";
+"unread_messages" = "Непрочитанные сообщения";
+"missed_calls"  = "Пропущенные звонки";
+"admin_messages" = "Сообщения администратора";

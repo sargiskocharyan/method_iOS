@@ -77,9 +77,9 @@ class CallTableViewCell: UITableViewCell {
         } else {
             self.timeLabel.text = stringToDate(date: call.callSuggestTime!)?.dateToString()
             if call.caller == SharedConfigs.shared.signedUser?.id {
-                callDurationLabel.text = "Not answered".localized()
+                callDurationLabel.text = "not_answered".localized()
             } else {
-                callDurationLabel.text = "Missed".localized()
+                callDurationLabel.text = "missed".localized()
             }
         }
         ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in

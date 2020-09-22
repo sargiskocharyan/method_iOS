@@ -83,6 +83,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
+       
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
     }
@@ -114,6 +115,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         contactsLabel.text = "contacts".localized()
         languageLabel.text = "language".localized()
         darkModeLabel.text = "dark_mode".localized()
+        notificationLabel.text = "notifications".localized()
         logoutLabel.text = "log_out".localized()
         self.navigationController?.navigationBar.topItem?.title = "profile".localized()
     }
