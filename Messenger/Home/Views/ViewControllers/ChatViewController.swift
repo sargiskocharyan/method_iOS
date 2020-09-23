@@ -479,11 +479,17 @@ class ChatViewController: UIViewController {
                         UIView.setAnimationsEnabled(false)
                         self.tableView.insertRows(at: arrayOfIndexPaths, with: .none)
                         self.tableView.endUpdates()
-                        self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                           
                         UIView.setAnimationsEnabled(true)
                         self.tableView.contentOffset.y += initialOffset
                     } else {
-                        self.tableView.reloadData()
+                       
+                        DispatchQueue.main.async {
+                             self.tableView.reloadData()
+                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
+                        }
+                        
                     }
                     self.checkAndSendReadEvent()
                 }
@@ -554,11 +560,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.readMessage.text = "waiting".localized()
                     }
                 }
-//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                    if check == false {
-//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                    }
-//                }
                 return cell
             } else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
@@ -567,29 +568,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
                     cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 }
             } 
@@ -601,11 +587,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.userImageView.image = image
                 cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.sizeToFit()
-//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                    if check == false {
-//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                    }
-//                }
                 return cell
             }  else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
@@ -616,31 +597,16 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else  {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 }
                 
@@ -651,9 +617,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//            if check == false {
                 self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//            }
         }
     }
 }

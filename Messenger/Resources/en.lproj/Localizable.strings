@@ -129,7 +129,7 @@
 "notifications" = "Notifications";
 "cancelled" = "Cancelled";
 "cancelled_call" = "Cancelled call";
-"incoming_call" = "";
+"incoming_call" = "Incoming call";
 "not_defined" = "Not defined";
 "check_mail" = "Check mail";
 "phone" = "Phone number";

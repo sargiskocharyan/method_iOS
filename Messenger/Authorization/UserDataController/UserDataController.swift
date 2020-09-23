@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit.UIApplication
 
 class UserDataController {
     
@@ -64,6 +65,7 @@ class UserDataController {
         SharedConfigs.shared.unreadMessages = []
         SharedConfigs.shared.contactRequests = []
         SharedConfigs.shared.missedCalls = []
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
     func populateUserProfile(model: UserModel ) {
