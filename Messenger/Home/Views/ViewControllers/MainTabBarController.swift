@@ -126,7 +126,9 @@ class MainTabBarController: UITabBarController {
                 self.startCall(id, roomname, name, type) {
                     self.mode = type == "video" ? VideoVCMode.videoCall : VideoVCMode.audioCall
                     DispatchQueue.main.async {
-                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { _ in }
+                        AppDelegate.shared.displayIncomingCall(id: id, uuid: UUID(), handle: name, hasVideo: true, roomName: roomname) { error in
+                            print("error \(error?.localizedDescription ?? "nil")")
+                        }
                     }
                 }
             }
@@ -502,10 +504,11 @@ class MainTabBarController: UITabBarController {
                         DispatchQueue.main.async {
                             let recentNC = self.viewControllers![1] as! UINavigationController
                             let recentVC = recentNC.viewControllers[0] as! RecentMessagesViewController
-                            if SharedConfigs.shared.signedUser!.missedCallHistory != nil && SharedConfigs.shared.signedUser!.missedCallHistory!.count > 0 {
-                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.signedUser!.missedCallHistory![SharedConfigs.shared.signedUser!.missedCallHistory!.count - 1], readOne: false, completion: { (error) in
+                            if SharedConfigs.shared.missedCalls.count > 0 {
+                                self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.missedCalls[SharedConfigs.shared.missedCalls.count - 1], readOne: false, completion: { (error) in
                                     if error == nil {
-                                        SharedConfigs.shared.missedCalls = SharedConfigs.shared.signedUser!.missedCallHistory!
+                                        SharedConfigs.shared.missedCalls = []
+                                        self.mainRouter?.profileViewController?.changeNotificationNumber()
                                         DispatchQueue.main.async {
                                             if let tabItems = self.tabBar.items {
                                                 let tabItem = tabItems[0]

@@ -285,6 +285,7 @@ class SocketTaskManager {
     
     func disconnect(completion: @escaping () -> ()) {
         socket?.disconnect()
+        print("disconnected!!!")
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }

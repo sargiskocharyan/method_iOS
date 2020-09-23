@@ -78,11 +78,13 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             }
             self.embedView(remoteRenderer!, into: self.view)
             self.view.sendSubviewToBack(remoteRenderer!)
+            cameraSwitchButton.isEnabled = true
         } else {
             DispatchQueue.main.async {
                 self.cameraOffButton.setImage(UIImage(named: "cameraOn"), for: .normal)
             }
             isSpeakerOn = false
+            cameraSwitchButton.isEnabled = false
             speakerOnOffButton.setImage(UIImage(named: "speakerOff"), for: .normal)
             webRTCClient?.speakerOff()
             ourView.backgroundColor = .clear
