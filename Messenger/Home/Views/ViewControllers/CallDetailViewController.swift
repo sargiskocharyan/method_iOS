@@ -36,7 +36,7 @@ class CallDetailViewController: UIViewController {
     var name: String?
     var avatarURL: String?
     var id: String?
-    var isReceiverWe: Bool?
+    var isHandledCall: Bool?
     var calls: [CallHistory] = []
     var callListViewController: CallListViewController?
     var tabBar: MainTabBarController?
@@ -130,7 +130,7 @@ class CallDetailViewController: UIViewController {
     }
     
     func getCalls() {
-        if isReceiverWe! {
+        if isHandledCall! {
             for i in 0..<(callListViewController?.viewModel?.calls.count)! {
                 if callListViewController?.viewModel?.calls[i].caller == id && callListViewController?.viewModel?.calls[i].status == callMode?.rawValue && callListViewController?.viewModel?.calls[i].status == CallStatus.missed.rawValue {
                     calls.append((callListViewController?.viewModel?.calls[i])!)

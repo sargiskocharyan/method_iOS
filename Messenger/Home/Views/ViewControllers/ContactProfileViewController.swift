@@ -421,15 +421,6 @@ class ContactProfileViewController: UIViewController {
             infoLabel.textColor = UIColor(named: "color")
         }
         
-//        genderTextLabel.text = "gender:".localized()
-//        phoneTextLabel.text = "phone:".localized()
-//        emailTextLabel.text = "email:".localized()
-//        nameTextLabel.text = "name:".localized()
-//        lastnameTextLabel.text = "lastname:".localized()
-//        usernameTextLabel.text = "username:".localized()
-//        birthDateTextLabel.text = "birth_date:".localized()
-//        emailTextLabel.text = "email:".localized()
-//        infoTextLabel.text = "info".localized()
         if contact?.avatarURL != nil {
             ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!) { (image) in
                 DispatchQueue.main.async {

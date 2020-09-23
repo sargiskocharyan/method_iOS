@@ -147,7 +147,7 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
                 tableView.endUpdates()
             }
         default:
-            let vc = CustomAlertViewController.instantiate(fromAppStoryboard: .main)
+            let vc = CustomAlertViewController.instantiate(fromAppStoryboard: .profile)
             vc.adminMessage = SharedConfigs.shared.adminMessages[indexPath.row]
             vc.row = indexPath.row
             vc.mainRouter = mainRouter

@@ -155,6 +155,8 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         }
     }
     func endCall() {
+        let tabbar = self.tabBarController as? MainTabBarController
+        tabbar?.timer?.invalidate()
         player?.stop()
         for call in callManager.calls {
             callManager.end(call: call)

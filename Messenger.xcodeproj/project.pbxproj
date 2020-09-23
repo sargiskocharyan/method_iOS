@@ -59,6 +59,9 @@
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
+		CD9ACF3E251A351300BF34BF /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3D251A351300BF34BF /* Calls.storyboard */; };
+		CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3F251A36D100BF34BF /* Chats.storyboard */; };
+		CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF41251A391000BF34BF /* Profile.storyboard */; };
 		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
@@ -223,6 +226,9 @@
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
+		CD9ACF3D251A351300BF34BF /* Calls.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
+		CD9ACF3F251A36D100BF34BF /* Chats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
+		CD9ACF41251A391000BF34BF /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
 		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
@@ -612,6 +618,9 @@
 				CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */,
 				CDBCCA66247BF29900115C99 /* Main.storyboard */,
 				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
+				CD9ACF3D251A351300BF34BF /* Calls.storyboard */,
+				CD9ACF3F251A36D100BF34BF /* Chats.storyboard */,
+				CD9ACF41251A391000BF34BF /* Profile.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -931,15 +940,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
+				CD9ACF3E251A351300BF34BF /* Calls.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
+				CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */,
 				CDBCCA69247BF29900115C99 /* Main.storyboard in Resources */,
 				CDBCCA68247BF29900115C99 /* LaunchScreen.storyboard in Resources */,
 				CDBE8DFA2476744D0049F971 /* Assets.xcassets in Resources */,
 				CD424917248A315E00A38987 /* message.json in Resources */,
+				CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */,
 				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
