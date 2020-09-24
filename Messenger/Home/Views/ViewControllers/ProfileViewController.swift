@@ -162,26 +162,30 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let cameraView = UIView()
         view.addSubview(cameraView)
         userImageView.backgroundColor = .clear
+        cameraView.translatesAutoresizingMaskIntoConstraints = false
         cameraView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
         cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
         cameraView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
         cameraView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.isUserInteractionEnabled = true
-        cameraView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 30, height: 30)
+//        cameraView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 30, height: 30)
         cameraView.contentMode = . scaleAspectFill
         cameraView.layer.cornerRadius = 15
         cameraView.clipsToBounds = true
         let cameraImageView = UIImageView()
         cameraImageView.image = UIImage(named: "camera")
         cameraView.addSubview(cameraImageView)
+        cameraImageView.translatesAutoresizingMaskIntoConstraints = false
         cameraImageView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
-        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: 5).isActive = true
-        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: 5).isActive = true
+        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: -5).isActive = true
+        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: -5).isActive = true
         cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: 5).isActive = true
         cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
+//        cameraImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+//        cameraImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         cameraImageView.isUserInteractionEnabled = true
-        cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
+//        cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
         let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
         cameraImageView.addGestureRecognizer(tapCamera)
         userImageView.contentMode = . scaleAspectFill

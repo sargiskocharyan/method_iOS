@@ -110,7 +110,10 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch type {
         case .contactRequest:
-            return SharedConfigs.shared.contactRequests.count
+            let ourContactRequests = SharedConfigs.shared.contactRequests.filter { (request) -> Bool in
+                return request.receiver == SharedConfigs.shared.signedUser?.id
+            }
+            return ourContactRequests.count
         case .missedCall:
             return SharedConfigs.shared.missedCalls.count
         case .message:
@@ -123,7 +126,10 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch type {
         case .contactRequest:
-            mainRouter?.showContactProfileViewControllerFromNotificationDetail(id: SharedConfigs.shared.contactRequests[indexPath.row].sender)
+            let ourContactRequests = SharedConfigs.shared.contactRequests.filter { (request) -> Bool in
+                           return request.receiver == SharedConfigs.shared.signedUser?.id
+                       }
+            mainRouter?.showContactProfileViewControllerFromNotificationDetail(id: ourContactRequests[indexPath.row].sender)
         case .missedCall:
             let cell = tableView.cellForRow(at: indexPath) as? CallTableViewCell
             tabbar?.handleCallClick(id: (cell?.contact?._id)!, name: cell?.contact?.username ?? "", mode: cell?.call?.type == "audio" ? VideoVCMode.audioCall : VideoVCMode.videoCall)
@@ -160,19 +166,21 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch type {
         case .contactRequest:
+            let ourContactRequests = SharedConfigs.shared.contactRequests.filter { (request) -> Bool in
+                return request.receiver == SharedConfigs.shared.signedUser?.id
+            }
             let cell = tableView.dequeueReusableCell(withIdentifier: "requestCell", for: indexPath) as! ContactRequestTableViewCell
             var existsInContactList = false
             let otherContactsCount = mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts.count
-            
             for i in 0..<otherContactsCount {
-                if mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i]._id == SharedConfigs.shared.contactRequests[indexPath.row].sender {
+                if mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i]._id == ourContactRequests[indexPath.row].sender {
                     existsInContactList = true
-                    cell.configure(user: mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i], request: SharedConfigs.shared.contactRequests[indexPath.row], number: indexPath.row)
+                    cell.configure(user: mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i], request: ourContactRequests[indexPath.row], number: indexPath.row)
                     break
                 }
             }
             if existsInContactList == false {
-                getUserById(id: SharedConfigs.shared.contactRequests[indexPath.row].sender, cell, indexPath.row, request: SharedConfigs.shared.contactRequests[indexPath.row])
+                getUserById(id: SharedConfigs.shared.contactRequests[indexPath.row].sender, cell, indexPath.row, request: ourContactRequests[indexPath.row])
             }
             cell.delegate = self
             return cell
