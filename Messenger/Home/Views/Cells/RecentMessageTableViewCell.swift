@@ -41,6 +41,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         let onlineView = UIView()
         self.addSubview(onlineView)
         userImageView.backgroundColor = .clear
+        onlineView.translatesAutoresizingMaskIntoConstraints = false
         onlineView.backgroundColor = UIColor(red: 125/255, green: 204/255, blue: 1/255, alpha: 1)
         onlineView.contentMode = . scaleAspectFill
         onlineView.layer.masksToBounds = true
@@ -51,10 +52,9 @@ class RecentMessageTableViewCell: UITableViewCell {
         onlineView.tag = 50
         onlineView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
         onlineView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
-        onlineView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        onlineView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        onlineView.isUserInteractionEnabled = true
-        onlineView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 18, height: 18)
+        onlineView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        onlineView.widthAnchor.constraint(equalToConstant: 18).isActive = true
+//        onlineView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 18, height: 18)
     }
     
     func configure(chat: Chat) {

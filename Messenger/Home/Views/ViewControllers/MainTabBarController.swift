@@ -302,6 +302,7 @@ class MainTabBarController: UITabBarController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if requests != nil {
+                print(requests?.count)
                 SharedConfigs.shared.contactRequests = requests!
             }
         })
@@ -508,8 +509,8 @@ class MainTabBarController: UITabBarController {
                                 self.viewModel?.checkCallAsSeen(callId: SharedConfigs.shared.missedCalls[SharedConfigs.shared.missedCalls.count - 1], readOne: false, completion: { (error) in
                                     if error == nil {
                                         SharedConfigs.shared.missedCalls = []
-                                        self.mainRouter?.profileViewController?.changeNotificationNumber()
                                         DispatchQueue.main.async {
+                                            self.mainRouter?.profileViewController?.changeNotificationNumber()
                                             if let tabItems = self.tabBar.items {
                                                 let tabItem = tabItems[0]
                                                 tabItem.badgeValue = nil
