@@ -228,6 +228,7 @@ class MainTabBarController: UITabBarController {
             } else if callAccepted == false {
                 self.webRTCClient?.peerConnection?.close()
             }
+             self.timer?.invalidate()
         }
     }
     
@@ -242,6 +243,7 @@ class MainTabBarController: UITabBarController {
             }
             self.startDate = Date()
             self.callsVC?.activeCall?.time = Date()
+           
         }
     }
     

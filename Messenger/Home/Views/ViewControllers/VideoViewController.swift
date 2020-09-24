@@ -48,6 +48,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         UIApplication.shared.isIdleTimerDisabled = true
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
@@ -156,6 +157,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             webRTCClient?.speakerOff()
         }
     }
+    
     func endCall() {
         let tabbar = self.tabBarController as? MainTabBarController
         tabbar?.timer?.invalidate()

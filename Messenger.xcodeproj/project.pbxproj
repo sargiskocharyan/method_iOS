@@ -59,7 +59,6 @@
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
-		CD9ACF3E251A351300BF34BF /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3D251A351300BF34BF /* Calls.storyboard */; };
 		CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3F251A36D100BF34BF /* Chats.storyboard */; };
 		CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF41251A391000BF34BF /* Profile.storyboard */; };
 		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
@@ -116,6 +115,8 @@
 		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
 		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
 		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
+		D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
+		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0F664B5251B177D0018D9B7 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		D0F664B6251B177D0018D9B7 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		D0F664B7251B177D0018D9B7 /* RecentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */; };
@@ -366,7 +367,6 @@
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
-		CD9ACF3D251A351300BF34BF /* Calls.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
 		CD9ACF3F251A36D100BF34BF /* Chats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		CD9ACF41251A391000BF34BF /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
 		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
@@ -425,6 +425,7 @@
 		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
+		D0065B73251CCB0700EE880A /* Calls.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
@@ -772,8 +773,8 @@
 			children = (
 				CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */,
 				CDBCCA66247BF29900115C99 /* Main.storyboard */,
+				D0065B73251CCB0700EE880A /* Calls.storyboard */,
 				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
-				CD9ACF3D251A351300BF34BF /* Calls.storyboard */,
 				CD9ACF3F251A36D100BF34BF /* Chats.storyboard */,
 				CD9ACF41251A391000BF34BF /* Profile.storyboard */,
 			);
@@ -1123,7 +1124,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
-				CD9ACF3E251A351300BF34BF /* Calls.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
@@ -1135,6 +1135,7 @@
 				CDBE8DFA2476744D0049F971 /* Assets.xcassets in Resources */,
 				CD424917248A315E00A38987 /* message.json in Resources */,
 				CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */,
+				D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */,
 				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1145,6 +1146,7 @@
 			files = (
 				D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */,
 				D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */,
+				D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */,
 				D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */,
 				D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */,
 				D0F66520251B177D0018D9B7 /* congr.json in Resources */,
