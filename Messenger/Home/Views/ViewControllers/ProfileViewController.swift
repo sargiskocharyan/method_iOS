@@ -251,7 +251,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         closeButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
-//        closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
         imageView.backgroundColor = UIColor(named: "imputColor")
         
@@ -259,12 +258,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageView.addSubview(deleteImageButton)
         deleteImageButton.translatesAutoresizingMaskIntoConstraints = false
         deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -40).isActive = true
-//        deleteImageButton.leftAnchor.constraint(equalTo: imageView.leftAnchor, constant: self.view.frame.width / 2 - 15).isActive = true
         deleteImageButton.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
         deleteImageButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         deleteImageButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         deleteImageButton.isUserInteractionEnabled = true
-//        deleteImageButton.anchor(top: nil, paddingTop: 0, bottom: imageView.bottomAnchor, paddingBottom: 40, left: imageView.leftAnchor, paddingLeft: self.view.frame.width / 2 - 15, right: nil, paddingRight: 0, width: 30, height: 30)
         deleteImageButton.setImage(UIImage(named: "trash"), for: .normal)
         deleteImageButton.addTarget(self, action: #selector(deleteAvatar), for: .touchUpInside)
         
