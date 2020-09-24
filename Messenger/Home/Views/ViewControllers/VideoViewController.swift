@@ -280,13 +280,13 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         label.tag = 6
         label.text = callText
         label.textColor = UIColor(named: "color")
-        label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        label.widthAnchor.constraint(equalToConstant: 200).isActive = true
         label.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
         label.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
         label.isUserInteractionEnabled = true
-        label.anchor(top: nil, paddingTop: 0, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: nil, paddingRight: 0, width: 0, height: 100)
     }
     
     func handleAnswer() {

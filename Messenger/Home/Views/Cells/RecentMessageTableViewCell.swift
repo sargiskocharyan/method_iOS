@@ -54,7 +54,6 @@ class RecentMessageTableViewCell: UITableViewCell {
         onlineView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
         onlineView.heightAnchor.constraint(equalToConstant: 18).isActive = true
         onlineView.widthAnchor.constraint(equalToConstant: 18).isActive = true
-//        onlineView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 18, height: 18)
     }
     
     func configure(chat: Chat) {

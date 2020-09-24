@@ -487,7 +487,9 @@ class ChatViewController: UIViewController {
                        
                         DispatchQueue.main.async {
                              self.tableView.reloadData()
+                            if arrayOfIndexPaths.count > 1 {
                             self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
+                            }
                         }
                         
                     }

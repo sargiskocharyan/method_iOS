@@ -169,7 +169,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         cameraView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.isUserInteractionEnabled = true
-//        cameraView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 30, height: 30)
         cameraView.contentMode = . scaleAspectFill
         cameraView.layer.cornerRadius = 15
         cameraView.clipsToBounds = true
@@ -182,10 +181,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: -5).isActive = true
         cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: 5).isActive = true
         cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
-//        cameraImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-//        cameraImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         cameraImageView.isUserInteractionEnabled = true
-//        cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
         let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
         cameraImageView.addGestureRecognizer(tapCamera)
         userImageView.contentMode = . scaleAspectFill
@@ -281,7 +277,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         imageView.isUserInteractionEnabled = true
-//        imageView.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 25)
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
     }
