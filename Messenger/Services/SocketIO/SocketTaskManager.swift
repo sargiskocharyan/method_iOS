@@ -124,10 +124,10 @@ class SocketTaskManager {
     }
     
     func messageRead(chatId: String, messageId: String) {
-           socket?.emit("messageRead", chatId, messageId) {
-               print("message Read")
-           }
-       }
+        socket?.emit("messageRead", chatId, messageId) {
+            print("message Read")
+        }
+    }
     
     
     
@@ -166,17 +166,17 @@ class SocketTaskManager {
             completionHandler(dataArray[0] as! String)
         }
     }
-
+    
     func checkCallState(roomname: String) {
         socket!.emitWithAck("checkCallState", roomname).timingOut(after: 0.0) { (dataArray) in
-//            completionHandler(dataArray[0] as! String)
-        if dataArray[0] as! String != CallStatus.ongoing.rawValue {
-            for call in AppDelegate.shared.callManager.calls {
-                AppDelegate.shared.callManager.end(call: call)
+            //            completionHandler(dataArray[0] as! String)
+            if dataArray[0] as! String != CallStatus.ongoing.rawValue {
+                for call in AppDelegate.shared.callManager.calls {
+                    AppDelegate.shared.callManager.end(call: call)
+                }
+                AppDelegate.shared.callManager.removeAllCalls()
             }
-            AppDelegate.shared.callManager.removeAllCalls()
         }
-     }
     }
     
     func callStarted(roomname: String) {
@@ -205,7 +205,7 @@ class SocketTaskManager {
             completionHandler(dataArray[0] as! String)
         }
     }
-  
+    
     func addOfferListener(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
         socket!.on("offer") { (dataArray, socketAck) in
             let dic = dataArray[1] as! Dictionary<String, String>
@@ -219,7 +219,7 @@ class SocketTaskManager {
             print("answered")
         }
     }
-
+    
     func addCallAcceptedLister(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
         socket!.on("callAccepted") { (dataArray, socketAck) in
             completionHandler(Bool(exactly: dataArray[0] as! NSNumber) ?? false, dataArray[1] as! String)
@@ -231,12 +231,12 @@ class SocketTaskManager {
     }
     
     func addAnswerListener(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
-            socket!.on("answer") { (dataArray, socketAck) in
-                let data = dataArray[0] as! Dictionary<String, String>
-                self.delegate?.receiveData(sdp: data["sdp"] ?? "")
-                completionHandler(data)
-            }
+        socket!.on("answer") { (dataArray, socketAck) in
+            let data = dataArray[0] as! Dictionary<String, String>
+            self.delegate?.receiveData(sdp: data["sdp"] ?? "")
+            completionHandler(data)
         }
+    }
     
     func addCandidatesListener(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
         socket!.on("candidates") { (dataArray, socketAck) in
@@ -254,10 +254,10 @@ class SocketTaskManager {
     }
     
     func addNewContactListener(completionHandler: @escaping (_ userId: String) -> Void) {
-           socket?.on("newContact", callback: { (dataArray, socketAck) in
-               completionHandler(dataArray[0] as! String)
-           })
-       }
+        socket?.on("newContact", callback: { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        })
+    }
     
     func addContactRequestRejectedListener(completionHandler: @escaping (_ userId: String) -> Void) {
         socket?.on("contactRequestRejected", callback: { (dataArray, socketAck) in
@@ -287,12 +287,12 @@ class SocketTaskManager {
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }
-        
+    
     func addCallEndListener(completionHandler: @escaping (_ roomName: String) -> Void) {
-           socket!.on("callEnded") { (dataArray, socketAck) -> Void in
-               completionHandler(dataArray[0] as! String)
-           }
-       }
+        socket!.on("callEnded") { (dataArray, socketAck) -> Void in
+            completionHandler(dataArray[0] as! String)
+        }
+    }
     
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
@@ -308,7 +308,7 @@ class SocketTaskManager {
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
                 let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-            completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
             if let text = data["text"] as? String {

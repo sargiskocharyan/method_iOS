@@ -647,7 +647,7 @@ extension MainTabBarController: CallListViewDelegate {
         mainRouter?.showVideoViewController(mode: mode)
         videoVC?.startCall("calling".localized() + " \(name)...")
         callManager.startCall(handle: name, videoEnabled: true)
-        self.timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { (timer) in
+        self.timer = Timer.scheduledTimer(withTimeInterval: 200, repeats: false, block: { (timer) in
             if self.isFirstConnect != true {
                 self.videoVC?.endCall()
             }

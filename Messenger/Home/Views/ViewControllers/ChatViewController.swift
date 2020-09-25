@@ -313,17 +313,18 @@ class ChatViewController: UIViewController {
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
+        messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
+        bottomConstraint = messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        bottomConstraint?.isActive = true
         messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+//        messageInputContainerView.addConstraint(bottomConstraint!)
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
-        messageInputContainerView.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
-        view.addConstraint(bottomConstraint!)
+//        view.addConstraint(bottomConstraint!)
     }
     
     private func setupInputComponents() {
@@ -339,15 +340,13 @@ class ChatViewController: UIViewController {
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
         sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: 0).isActive = true
+        sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: -10).isActive = true
         sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 10).isActive = true
         sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.isUserInteractionEnabled = true
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
-        view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
-        view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: messageInputContainerView, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
     func getImage() {

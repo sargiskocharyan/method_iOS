@@ -40,7 +40,6 @@ final class WebRTCClient: NSObject {
     var localVideoTrack: RTCVideoTrack?
     var remoteVideoTrack: RTCVideoTrack?
     private var localDataChannel: RTCDataChannel?
-    //    private var remoteDataChannel: RTCDataChannel?
     private var audioTrackGlobal: RTCAudioTrack?
     var webRTCCDelegate: WebRTCDelegate?
     var stream: RTCMediaStream?
@@ -120,7 +119,6 @@ final class WebRTCClient: NSObject {
     }
     
     // MARK: Media
-    
     func addRenderer(renderer: RTCVideoRenderer) {
         localVideoTrack?.add(renderer)
     }
@@ -145,7 +143,6 @@ final class WebRTCClient: NSObject {
                 }
             }
         }
-        
     }
     
     func stopCaptureLocalVideo(renderer: RTCVideoRenderer, completion: @escaping () -> ()) {
