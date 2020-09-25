@@ -185,12 +185,11 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         label.textAlignment = .center
         label.textColor = .lightGray
         self.tableView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        
-        label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
     func handleCall(id: String) {

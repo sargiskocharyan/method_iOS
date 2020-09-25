@@ -342,23 +342,22 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
    func addImage(textField: UITextField, imageView: UIImageView) {
         textField.addSubview(imageView)
         imageView.image = UIImage(named: "more")
+    imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
         imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 22).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
         imageView.isUserInteractionEnabled = true
-        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 25, height: 22)
     }
     
     func addButton() {
         button.addTarget(self, action: #selector(imageTapped), for: .touchUpInside)
         self.genderCustomView.textField.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.topAnchor.constraint(equalTo: genderCustomView.textField.topAnchor, constant: 0).isActive = true
         button.rightAnchor.constraint(equalTo: genderCustomView.textField.rightAnchor, constant: 0).isActive = true
         button.leftAnchor.constraint(equalTo: genderCustomView.textField.leftAnchor, constant: 0).isActive = true
-        button.heightAnchor.constraint(equalToConstant: genderCustomView.textField.frame.height).isActive = true
-        button.widthAnchor.constraint(equalToConstant: genderCustomView.textField.frame.width).isActive = true
-        button.anchor(top: genderCustomView.textField.topAnchor, paddingTop: 0, bottom: genderCustomView.textField.bottomAnchor, paddingBottom: 0, left: genderCustomView.textField.leftAnchor, paddingLeft: 0, right: genderCustomView.textField.rightAnchor, paddingRight: 0, width: genderCustomView.textField.frame.width, height: genderCustomView.textField.frame.height)
+        button.bottomAnchor.constraint(equalTo: genderCustomView.textField.bottomAnchor, constant: 0).isActive = true
     }
     
     func addDropDown() {

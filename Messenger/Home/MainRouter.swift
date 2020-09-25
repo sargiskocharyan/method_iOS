@@ -140,7 +140,7 @@ class MainRouter {
        }
     
     func showChatViewControllerFromContacts(name: String?, username: String?, avatarURL: String?, id: String) {
-        let vc = ChatViewController.instantiate(fromAppStoryboard: .profile)
+        let vc = ChatViewController.instantiate(fromAppStoryboard: .chats)
         vc.viewModel = ChatMessagesViewModel()
         vc.mainRouter = contactsViewController?.mainRouter
         vc.name = name
