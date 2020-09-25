@@ -221,19 +221,19 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             webRTCClient?.sendData("turn camera to back".data(using: .utf8)!)
             cameraPosition = .back
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
                     self.embedView(self.localRenderer!, into: self.ourView)
-                }
+//                }
             })
         } else {
             webRTCClient?.sendData("turn camera to front".data(using: .utf8)!)
             cameraPosition = .front
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
                     self.embedView(self.localRenderer!, into: self.ourView)
-                }
+//                }
             })
         }
     }

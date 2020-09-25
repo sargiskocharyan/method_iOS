@@ -453,38 +453,38 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         let okLabel = UILabel()
         okLabel.text = "ok".localized()
         viewUnderDatePicker.addSubview(okLabel)
-        okLabel.bottomAnchor.constraint(equalTo: viewUnderDatePicker.bottomAnchor, constant: 84).isActive = true
-        okLabel.leftAnchor.constraint(equalTo: viewUnderDatePicker.leftAnchor, constant: self.view.frame.width / 2 - 15).isActive = true
+        okLabel.translatesAutoresizingMaskIntoConstraints = false
+        okLabel.bottomAnchor.constraint(equalTo: viewUnderDatePicker.bottomAnchor, constant: -75).isActive = true
+        okLabel.centerXAnchor.constraint(equalTo: viewUnderDatePicker.centerXAnchor).isActive = true
         okLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         okLabel.widthAnchor.constraint(equalToConstant: 30).isActive = true
         okLabel.isUserInteractionEnabled = true
-        okLabel.anchor(top: nil, paddingTop: 0, bottom: viewUnderDatePicker.bottomAnchor, paddingBottom: 84, left: viewUnderDatePicker.leftAnchor, paddingLeft: self.view.frame.width / 2 - 15, right: nil, paddingRight: 0, width: 30, height: 30)
         viewUnderDatePicker.addGestureRecognizer(tapViewUnderDatePicker)
         view.addSubview(viewUnderDatePicker)
         viewUnderDatePicker.addSubview(datePicker)
         viewUnderDatePicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        viewUnderDatePicker.translatesAutoresizingMaskIntoConstraints = false
         viewUnderDatePicker.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
         viewUnderDatePicker.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
         viewUnderDatePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         viewUnderDatePicker.isUserInteractionEnabled = true
-        viewUnderDatePicker.anchor(top: view.topAnchor, paddingTop: 0, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: self.view.frame.width, height: 250)
-        datePicker.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).isActive = true
         datePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        datePicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         datePicker.heightAnchor.constraint(equalToConstant: 250).isActive = true
-        datePicker.widthAnchor.constraint(equalToConstant: self.view.frame.width).isActive = true
         datePicker.isUserInteractionEnabled = true
-        datePicker.anchor(top: nil, paddingTop: 100, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: self.view.frame.width, height: 250)
     }
     
     func addImage(textField: UITextField, imageView: UIImageView) {
         textField.addSubview(imageView)
         imageView.image = UIImage(named: "more")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
         imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.isUserInteractionEnabled = true
-        imageView.anchor(top: textField.topAnchor, paddingTop: 5, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: 20, height: 20)
     }
     
     
@@ -496,6 +496,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     @objc func tappedGenderTextField() {
         checkFields()
+        genderDropDown.width = genderView.textField.frame.width
         if isMoreGender {
             isMoreGender = false
             genderDropDown.hide()
@@ -510,12 +511,11 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func addConstraintsOnButton(button: UIButton, textField: UITextField) {
         textField.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0).isActive = true
         button.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
         button.leftAnchor.constraint(equalTo: textField.leftAnchor, constant: 0).isActive = true
-        button.heightAnchor.constraint(equalToConstant: textField.frame.height).isActive = true
-        button.widthAnchor.constraint(equalToConstant: textField.frame.width).isActive = true
-        button.anchor(top: textField.topAnchor, paddingTop: 0, bottom: textField.bottomAnchor, paddingBottom: 0, left: textField.leftAnchor, paddingLeft: 0, right: textField.rightAnchor, paddingRight: 0, width: textField.frame.width, height: textField.frame.height)
+        button.bottomAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0).isActive = true
     }
     
     @IBAction func hidePersonalData(_ sender: UISwitch) {
@@ -586,7 +586,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             self.isChangingUsername = false
             self.checkFields()
         }
-        genderDropDown.width = genderView.textField.frame.width
+        genderDropDown.width = genderView.textField.bounds.width
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderView.textField.frame.height))
         genderView.textField.rightView = paddingView
         genderView.textField.rightViewMode = UITextField.ViewMode.always

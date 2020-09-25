@@ -131,14 +131,18 @@ final class WebRTCClient: NSObject {
         }
         if cameraPosition == .back {
                 capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
-                    completion()
-                    return
+                    DispatchQueue.main.async {
+                        completion()
+                        return
+                    }
             }
             
         } else if cameraPosition == .front {
                 capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
-                    completion()
-                    return
+                    DispatchQueue.main.async {
+                        completion()
+                        return
+                    }
                 }
         }
         

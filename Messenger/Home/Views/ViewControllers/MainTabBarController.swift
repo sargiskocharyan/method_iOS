@@ -304,7 +304,6 @@ class MainTabBarController: UITabBarController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if requests != nil {
-                print(requests?.count)
                 SharedConfigs.shared.contactRequests = requests!
             }
         })
