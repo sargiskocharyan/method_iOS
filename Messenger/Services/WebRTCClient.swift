@@ -129,21 +129,21 @@ final class WebRTCClient: NSObject {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
             return
         }
+        localVideoTrack?.isEnabled = true
         if cameraPosition == .back {
-                capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
-                    DispatchQueue.main.async {
-                        completion()
-                        return
-                    }
-            }
-            
-        } else if cameraPosition == .front {
-                capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
-                    DispatchQueue.main.async {
-                        completion()
-                        return
-                    }
+            capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
+                DispatchQueue.main.async {
+                    completion()
+                    return
                 }
+            }
+        } else if cameraPosition == .front {
+            capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
+                DispatchQueue.main.async {
+                    completion()
+                    return
+                }
+            }
         }
         
     }
@@ -154,11 +154,11 @@ final class WebRTCClient: NSObject {
                }
         localVideoTrack?.isEnabled = false
         capturer.stopCapture {
-//            self.localVideoTrack?.remove(renderer)
-//            self.stream?.removeVideoTrack(self.localVideoTrack!)
-//            self.peerConnection?.remove(self.stream!)
-//            self.localVideoTrack = nil
-//            self.videoCapturer = nil
+            self.localVideoTrack?.remove(renderer)
+            self.stream?.removeVideoTrack(self.localVideoTrack!)
+            self.peerConnection?.remove(self.stream!)
+            self.localVideoTrack = nil
+            self.videoCapturer = nil
             completion()
             return
         }
@@ -249,7 +249,6 @@ final class WebRTCClient: NSObject {
     
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
-//        print("\n\nsendData \(self.localDataChannel)")
         self.localDataChannel!.sendData(buffer)
     }
 }

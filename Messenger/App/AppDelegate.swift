@@ -37,10 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
     
-    @objc func handleNotification() {
-        print("bcfgvjfgyvyugrvyugruvgrg-----")
-    }
-    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         //print("\n\n++++++++changed! \(change), \(object)")
     }

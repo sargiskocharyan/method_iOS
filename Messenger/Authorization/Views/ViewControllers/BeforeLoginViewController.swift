@@ -81,7 +81,6 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        print(size)
         if size.width > size.height {
             constant = -50
         } else {

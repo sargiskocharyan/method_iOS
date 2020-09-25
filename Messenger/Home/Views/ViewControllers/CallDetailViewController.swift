@@ -144,7 +144,6 @@ class CallDetailViewController: UIViewController {
                 return (call.caller == SharedConfigs.shared.signedUser?.id && call.receiver == id)
             })
         }
-        print(calls)
         tableView.reloadData()
     }
     

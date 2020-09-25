@@ -51,7 +51,6 @@ class SocketTaskManager {
     
     func connect(completionHandler: @escaping () -> ()) {
         if status == .disconnected || status == .notConnected {
-            print(SharedConfigs.shared.signedUser?.token as Any)
             manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(false), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
         }
         if status == .connected {
@@ -75,7 +74,6 @@ class SocketTaskManager {
             self.addAuthenticatedListener {
                 self.manager?.reconnects = true
                 self.changeSocketStatus(status: .connected)
-                print(self.socket!.handlers)
                 if self.socket!.handlers.count <= 2 {
                     self.tabbar?.handleCallAccepted()
                     self.tabbar?.handleCall()
@@ -327,7 +325,7 @@ class SocketTaskManager {
                                 let profile = nc.viewControllers[0] as! ProfileViewController
                                 profile.changeNotificationNumber()
                             }
-                            if let tabItems = self.tabbar?.tabBar.items {
+                            if let tabItems = self.tabbar?.tabBar.items  {
                                 let tabItem = tabItems[1]
                                 tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                             }

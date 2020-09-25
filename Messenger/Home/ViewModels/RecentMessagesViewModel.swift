@@ -71,7 +71,7 @@ class RecentMessagesViewModel {
             try context.execute(deleteRequest)
             try context.save()
         } catch {
-            print ("There was an error")
+            print("There was an error")
         }
     }
     
@@ -96,7 +96,6 @@ class RecentMessagesViewModel {
             calls = calls.filter({ (call) -> Bool in
                 return !(id.contains(call._id!))
             })
-            print(calls)
             try managedContext.save()
             completion(nil)
             return

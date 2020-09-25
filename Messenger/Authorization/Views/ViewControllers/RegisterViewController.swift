@@ -69,7 +69,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: Lifecycles
     override func viewDidLayoutSubviews() {
-        print("viewDidLayoutSubviews")
         dropDown.width = button.frame.width
         nameCustomView.handleRotate()
         lastnameCustomView.handleRotate()
@@ -356,8 +355,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.topAnchor.constraint(equalTo: genderCustomView.textField.topAnchor, constant: 0).isActive = true
         button.rightAnchor.constraint(equalTo: genderCustomView.textField.rightAnchor, constant: 0).isActive = true
-        button.leftAnchor.constraint(equalTo: genderCustomView.textField.leftAnchor, constant: 0).isActive = true
-        button.bottomAnchor.constraint(equalTo: genderCustomView.textField.bottomAnchor, constant: 0).isActive = true
+        button.widthAnchor.constraint(equalTo: genderCustomView.textField.widthAnchor, multiplier: 1).isActive = true
+        button.heightAnchor.constraint(equalTo: genderCustomView.textField.heightAnchor, multiplier: 1).isActive = true
     }
     
     func addDropDown() {
@@ -387,6 +386,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     
     @objc func imageTapped() {
         checkFields()
+        dropDown.width = genderCustomView.textField.frame.width
         if isMoreGender {
             isMoreGender = false
             dropDown.hide()

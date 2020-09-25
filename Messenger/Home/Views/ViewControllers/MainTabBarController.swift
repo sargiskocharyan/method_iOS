@@ -85,7 +85,6 @@ class MainTabBarController: UITabBarController {
     
     func handleCallSessionEnded() {
         SocketTaskManager.shared.addCallSessionEndedListener { (roomname) in
-            print(roomname)
             for call in self.callManager.calls {
                 self.callManager.end(call: call)
             }
@@ -211,7 +210,6 @@ class MainTabBarController: UITabBarController {
                 let chatVC = recentNC.viewControllers[1] as? ChatViewController
                 chatVC?.handleMessageTypingFromTabbar(userId: userId)
             }
-            print(userId)
         }
     }
     
@@ -276,8 +274,6 @@ class MainTabBarController: UITabBarController {
     
     
     func handleOffer() {
-        print("1111111-----------------------------11111111")
-        print(SocketTaskManager.shared.socket!.status)
         videoVC?.isCallHandled = true
         SocketTaskManager.shared.addOfferListener { (roomName, offer) in
             self.onCall = true
@@ -354,7 +350,7 @@ class MainTabBarController: UITabBarController {
                         return
                     }
                      }
-                  if callHistory == nil {
+                    if callHistory == nil && message.senderId != SharedConfigs.shared.signedUser?.id {
                      SharedConfigs.shared.unreadMessages.append(Chat(id: message.senderId!, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
                       self.sort()
                   }

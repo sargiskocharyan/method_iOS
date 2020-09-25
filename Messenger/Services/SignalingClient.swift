@@ -28,12 +28,6 @@ final class SignalingClient {
     init() {
         SocketTaskManager.shared.delegate = self
     }
-
-//    func connect() {
-//        self.socketTaskManager.connect {
-//            print("Connected")
-//        }
-//    }
     
     func sendOffer(sdp rtcSdp: RTCSessionDescription, roomName: String) {
         let json = [

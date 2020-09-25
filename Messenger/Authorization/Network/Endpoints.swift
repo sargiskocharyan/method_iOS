@@ -96,8 +96,6 @@ extension AuthApi: EndPointType {
                     parameters[key] = value
                 }
             }
-            print(allParameters)
-            print(parameters)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .verifyToken(token: let token):
             let parameters:Parameters = [:]

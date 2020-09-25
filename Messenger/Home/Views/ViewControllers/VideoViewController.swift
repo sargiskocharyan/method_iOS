@@ -64,7 +64,9 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
             (localRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
             (remoteRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
-            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            if cameraPosition == .front {
+                ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            }
             #else
             localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
             remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
@@ -127,7 +129,6 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
                     sender.setImage(UIImage(named: "cameraOff"), for: .normal)
                     self.cameraSwitchButton.isEnabled = true
                 }
-                
                 self.webRTCClient?.sendData("turn camera on".data(using: .utf8)!)
             }
         } else {
@@ -216,22 +217,25 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         localRenderer!.tag = 11
         localRenderer?.backgroundColor = .clear
         ourView.backgroundColor = .clear
+      //  webRTCClient?.stopCaptureLocalVideo(renderer: localRenderer as! RTCVideoRenderer, completion: {})
         self.view.viewWithTag(11)?.removeFromSuperview()
         if cameraPosition == .front {
             webRTCClient?.sendData("turn camera to back".data(using: .utf8)!)
             cameraPosition = .back
+            self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
 //                DispatchQueue.main.async {
-                    self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    
                     self.embedView(self.localRenderer!, into: self.ourView)
 //                }
             })
         } else {
             webRTCClient?.sendData("turn camera to front".data(using: .utf8)!)
             cameraPosition = .front
+            self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
 //                DispatchQueue.main.async {
-                    self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
+                    
                     self.embedView(self.localRenderer!, into: self.ourView)
 //                }
             })

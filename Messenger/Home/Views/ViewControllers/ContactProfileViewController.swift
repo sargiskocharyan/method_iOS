@@ -280,7 +280,6 @@ class ContactProfileViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
                     }
-                    print("fsyo narmalny")
                 }
             }
         } else if isRequestSent! == .sent {
