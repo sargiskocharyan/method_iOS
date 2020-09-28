@@ -41,7 +41,6 @@ class CustomTextField: UIView {
         self.addConstraint(NSLayoutConstraint(item: border, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
         self.addConstraint(NSLayoutConstraint(item: border, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 1))
         self.addConstraint(NSLayoutConstraint(item: border, attribute: .top, relatedBy: .equal, toItem: textField, attribute: .bottom, multiplier: 1, constant: -7))
-       
         DispatchQueue.main.async {
             self.configureViews()
             self.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)

@@ -381,9 +381,3 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
     }
 }
-
-extension AppDelegate: Subscriber {
-    func didHandleConnectionEvent() {
-        
-    }
-}

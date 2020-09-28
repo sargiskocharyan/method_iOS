@@ -18,21 +18,13 @@ class ProviderDelegate: NSObject {
     static var providerConfiguration: CXProviderConfiguration = {
         let providerConfiguration = CXProviderConfiguration(localizedName: "Method")
         providerConfiguration.supportsVideo = true
-        providerConfiguration.iconTemplateImageData = UIImage(named: "user")?.pngData()
-    
+        providerConfiguration.iconTemplateImageData = UIImage(named: "whiteIcon")?.pngData()
         providerConfiguration.maximumCallsPerCallGroup = 1
         providerConfiguration.supportedHandleTypes = [.phoneNumber]
         return providerConfiguration
     }()
     
-    func reportIncomingCall(
-        id: String,
-        uuid: UUID,
-        handle: String,
-        hasVideo: Bool = false,
-        roomName: String,
-        completion: ((Error?) -> Void)?
-    ) {
+    func reportIncomingCall(id: String, uuid: UUID, handle: String, hasVideo: Bool = false, roomName: String, completion: ((Error?) -> Void)?) {
         let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .phoneNumber, value: handle)
         update.hasVideo = hasVideo
@@ -45,7 +37,6 @@ class ProviderDelegate: NSObject {
             }
             completion?(error)
         }
-        
     }
 }
 
@@ -53,11 +44,9 @@ class ProviderDelegate: NSObject {
 extension ProviderDelegate: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         stopAudio()
-        
         for call in callManager.calls {
             call.end()
         }
-        
         callManager.removeAllCalls()
     }
     

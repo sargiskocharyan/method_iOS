@@ -37,6 +37,7 @@ public enum HomeApi {
     case deleteRequest(id: String)
     case getRequests
     case getAdminMessage
+    case createChannel(name: String)
 }
 
 extension HomeApi: EndPointType {
@@ -102,6 +103,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.GetRequests
         case .getAdminMessage:
             return AUTHUrls.GetAdminMessage
+        case .createChannel(_):
+            return AUTHUrls.CreateChannel
         }
     }
     
@@ -161,7 +164,9 @@ extension HomeApi: EndPointType {
         case .getRequests:
             return .get
         case .getAdminMessage:
-        return .get
+            return .get
+        case .createChannel(_):
+            return .post
         }
     }
     
@@ -286,6 +291,10 @@ extension HomeApi: EndPointType {
         case .getAdminMessage:
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .createChannel(name: let name):
+            let parameters:Parameters = ["name": name]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

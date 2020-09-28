@@ -387,21 +387,21 @@ class HomeNetworkManager: NetworkManager {
     
     func readCalls(id: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
         router.request(.readCalls(id: id, readOne: readOne)) { data, response, error in
-                  if error != nil {
-                      print(error!.rawValue)
-                      completion(error)
-                  }
-                  if let response = response as? HTTPURLResponse {
-                      let result = self.handleNetworkResponse(response)
-                      switch result {
-                      case .success:
-                          completion(nil)
-                      case .failure( _):
-                          completion(NetworkResponse.failed)
-                      }
-                  }
-              }
-          }
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
     
     func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
         router.request(.editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate)) { data, response, error in
@@ -444,6 +444,34 @@ class HomeNetworkManager: NetworkManager {
                     completion(nil)
                 case .failure( _):
                     completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func createChannel(name: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        router.request(.createChannel(name: name)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
                 }
             }
         }

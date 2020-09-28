@@ -46,6 +46,22 @@ struct Request: Codable {
     var updatedAt: String
 }
 
+struct Channel: Codable {
+    var _id: String
+    var name: String
+    var creator: String
+    var admins: [Admin]
+    var subscribers: [Subscriber]
+}
+
+struct Admin: Codable {
+    var admin: String
+}
+
+struct Subscriber: Codable {
+    var user: String
+}
+
 struct Message: Codable {
     var call: MessageCall?
     var type: String?

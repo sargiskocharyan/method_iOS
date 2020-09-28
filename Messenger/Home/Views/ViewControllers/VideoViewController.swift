@@ -224,10 +224,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             cameraPosition = .back
             self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
-//                DispatchQueue.main.async {
-                    
                     self.embedView(self.localRenderer!, into: self.ourView)
-//                }
             })
         } else {
             webRTCClient?.sendData("turn camera to front".data(using: .utf8)!)

@@ -15,10 +15,6 @@ protocol SocketIODelegate: class {
     func receiveCandidate(remoteCandidate: RTCIceCandidate)
 }
 
-protocol Subscriber {
-    func didHandleConnectionEvent()
-}
-
 enum Status {
     case connected
     case connecting
@@ -32,7 +28,6 @@ class SocketTaskManager {
     static let shared = SocketTaskManager()
     weak var delegate: SocketIODelegate?
     private var lock: NSLock = NSLock()
-    private var subscribers: [Subscriber] = []
     private var status: SocketIOStatus = .notConnected
     let queue = DispatchQueue(label: "queue", qos: .default, attributes: [], autoreleaseFrequency: .inherit, target: nil)
     var socket: SocketIOClient? {
