@@ -50,8 +50,23 @@ struct Channel: Codable {
     var _id: String
     var name: String
     var creator: String
-    var admins: [Admin]
-    var subscribers: [Subscriber]
+    var admins: [Admin]?
+    var subscribers: [Subscriber]?
+    var avatar: String?
+    var createdAt: String
+    var subscribersCount: Int?
+    var statuses: [ChannelStatus]?
+}
+
+struct ChannelMessages: Codable {
+    var array: [Message]?
+    var statuses: [ChannelStatus]?
+}
+
+struct ChannelStatus: Codable {
+    var userId: String?
+    var receivedMessageDate: String?
+    var readMessageDate: String?
 }
 
 struct Admin: Codable {

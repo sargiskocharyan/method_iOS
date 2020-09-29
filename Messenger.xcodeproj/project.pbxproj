@@ -88,6 +88,12 @@
 		CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6A2FE24974C4B0014837F /* ProfileViewModel.swift */; };
 		CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */; };
 		CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */; };
+		CDCB74B92522FAE700E805E2 /* Channel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDCB74B82522FAE700E805E2 /* Channel.storyboard */; };
+		CDCB74BA2522FAE700E805E2 /* Channel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDCB74B82522FAE700E805E2 /* Channel.storyboard */; };
+		CDCB74C02522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */; };
+		CDCB74C12522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */; };
+		CDCB74C72523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */; };
+		CDCB74C82523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */; };
 		CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */; };
 		CDCF9D7B24B601E20070B762 /* EditInformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */; };
 		CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD1755F24851E2A001E804B /* HomePageViewModel.swift */; };
@@ -395,6 +401,9 @@
 		CDC6A2FE24974C4B0014837F /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCodeViewModel.swift; sourceTree = "<group>"; };
 		CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainWrapper.swift; sourceTree = "<group>"; };
+		CDCB74B82522FAE700E805E2 /* Channel.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Channel.storyboard; sourceTree = "<group>"; };
+		CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
+		CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewModel.swift; sourceTree = "<group>"; };
 		CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-Extension.swift"; sourceTree = "<group>"; };
 		CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInformationViewModel.swift; sourceTree = "<group>"; };
 		CDD1755F24851E2A001E804B /* HomePageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewModel.swift; sourceTree = "<group>"; };
@@ -706,6 +715,7 @@
 				CD36536624C05C4800432264 /* CallModel.xcdatamodeld */,
 				CD3F12E024BC558B00040D8E /* Services */,
 				CDD9C651247BC3090048A9A1 /* Networking */,
+				CDCB74BB2522FE5F00E805E2 /* Channel */,
 				CD5E713D2486590C008D876E /* Home */,
 				CDD9C680247BC92F0048A9A1 /* Common */,
 				CDD9C648247BC1C00048A9A1 /* Authorization */,
@@ -756,6 +766,47 @@
 			path = Wrappers;
 			sourceTree = "<group>";
 		};
+		CDCB74BB2522FE5F00E805E2 /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				CDCB74C5252302D900E805E2 /* ViewModels */,
+				CDCB74BC2522FEAF00E805E2 /* Views */,
+			);
+			path = Channel;
+			sourceTree = "<group>";
+		};
+		CDCB74BC2522FEAF00E805E2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CDCB74BE2522FEC400E805E2 /* ViewControllers */,
+				CDCB74BD2522FEBA00E805E2 /* Cells */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CDCB74BD2522FEBA00E805E2 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		CDCB74BE2522FEC400E805E2 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		CDCB74C5252302D900E805E2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		CDD1756124852796001E804B /* JSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -769,6 +820,7 @@
 			isa = PBXGroup;
 			children = (
 				CDBCCA64247BF29900115C99 /* LaunchScreen.storyboard */,
+				CDCB74B82522FAE700E805E2 /* Channel.storyboard */,
 				D0FA588A251DB776007CFC52 /* Main.storyboard */,
 				D0065B73251CCB0700EE880A /* Calls.storyboard */,
 				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
@@ -1123,6 +1175,7 @@
 				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
+				CDCB74B92522FAE700E805E2 /* Channel.storyboard in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
@@ -1148,6 +1201,7 @@
 				D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */,
 				D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */,
 				D0F66520251B177D0018D9B7 /* congr.json in Resources */,
+				CDCB74BA2522FAE700E805E2 /* Channel.storyboard in Resources */,
 				D0F66521251B177D0018D9B7 /* Localizable.strings in Resources */,
 				D0F66523251B177D0018D9B7 /* LaunchScreen.storyboard in Resources */,
 				D0F66524251B177D0018D9B7 /* Assets.xcassets in Resources */,
@@ -1275,6 +1329,7 @@
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
 				CDD9C67F247BC88C0048A9A1 /* ResponseModels.swift in Sources */,
+				CDCB74C02522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */,
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
 				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
@@ -1296,6 +1351,7 @@
 				CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */,
 				CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */,
 				CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */,
+				CDCB74C72523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */,
 				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
 				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
@@ -1379,6 +1435,7 @@
 				D0F664C2251B177D0018D9B7 /* RegisterViewModel.swift in Sources */,
 				D0F664C3251B177D0018D9B7 /* AppDelegateViewModel.swift in Sources */,
 				D0F664C4251B177D0018D9B7 /* ResponseModels.swift in Sources */,
+				CDCB74C12522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */,
 				D0F664C5251B177D0018D9B7 /* ConfirmCodeViewController.swift in Sources */,
 				D0F664C6251B177D0018D9B7 /* Call.swift in Sources */,
 				D0F664C7251B177D0018D9B7 /* CongratulationsViewController.swift in Sources */,
@@ -1400,6 +1457,7 @@
 				D0F664D7251B177D0018D9B7 /* WebRTCClient.swift in Sources */,
 				D0F664D8251B177D0018D9B7 /* ContactsViewModel.swift in Sources */,
 				D0F664D9251B177D0018D9B7 /* ContactRequestTableViewCell.swift in Sources */,
+				CDCB74C82523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */,
 				D0F664DA251B177D0018D9B7 /* ImageCache.swift in Sources */,
 				D0F664DB251B177D0018D9B7 /* NotificationListViewController.swift in Sources */,
 				D0F664DC251B177D0018D9B7 /* IceCandidate.swift in Sources */,

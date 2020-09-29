@@ -38,6 +38,8 @@ public enum HomeApi {
     case getRequests
     case getAdminMessage
     case createChannel(name: String)
+    case getChannelInfo(id: String)
+    case getChannelMessages(id: String, dateUntil: String?)
 }
 
 extension HomeApi: EndPointType {
@@ -105,6 +107,10 @@ extension HomeApi: EndPointType {
             return AUTHUrls.GetAdminMessage
         case .createChannel(_):
             return AUTHUrls.CreateChannel
+        case .getChannelInfo(let id):
+            return "\(AUTHUrls.GetChannelInfo)/\(id)"
+        case .getChannelMessages(let id, _):
+            return "\(AUTHUrls.CreateChannel)/\(id)/messages"
         }
     }
     
@@ -166,6 +172,10 @@ extension HomeApi: EndPointType {
         case .getAdminMessage:
             return .get
         case .createChannel(_):
+            return .post
+        case .getChannelInfo(_):
+            return .get
+        case .getChannelMessages(_,_):
             return .post
         }
     }
@@ -294,6 +304,16 @@ extension HomeApi: EndPointType {
         case .createChannel(name: let name):
             let parameters:Parameters = ["name": name]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getChannelInfo(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getChannelMessages(_, let dateUntil):
+            var parameters: Parameters? = ["dateUntil" : dateUntil]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            if dateUntil == nil {
+                parameters = nil
+            }
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
