@@ -38,8 +38,10 @@ public enum HomeApi {
     case getRequests
     case getAdminMessage
     case createChannel(name: String)
-    case getChannelInfo(id: String)
+    case getChannelInfo(ids: String)
     case getChannelMessages(id: String, dateUntil: String?)
+    case checkChannelName(name: String)
+    case subscribe(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -107,10 +109,14 @@ extension HomeApi: EndPointType {
             return AUTHUrls.GetAdminMessage
         case .createChannel(_):
             return AUTHUrls.CreateChannel
-        case .getChannelInfo(let id):
-            return "\(AUTHUrls.GetChannelInfo)/\(id)"
+        case .getChannelInfo(_):
+            return "\(AUTHUrls.GetChannelInfo)"
         case .getChannelMessages(let id, _):
             return "\(AUTHUrls.CreateChannel)/\(id)/messages"
+        case .checkChannelName(_):
+            return AUTHUrls.CheckChannelName
+        case .subscribe(let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)/subscribe"
         }
     }
     
@@ -174,8 +180,12 @@ extension HomeApi: EndPointType {
         case .createChannel(_):
             return .post
         case .getChannelInfo(_):
-            return .get
+            return .post
         case .getChannelMessages(_,_):
+            return .post
+        case .checkChannelName(_):
+            return .post
+        case .subscribe(_):
             return .post
         }
     }
@@ -305,9 +315,10 @@ extension HomeApi: EndPointType {
             let parameters:Parameters = ["name": name]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .getChannelInfo(_):
+        case .getChannelInfo(ids: let ids):
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
-            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+            let parameters:Parameters = ["ids": ids]
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .getChannelMessages(_, let dateUntil):
             var parameters: Parameters? = ["dateUntil" : dateUntil]
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
@@ -315,6 +326,13 @@ extension HomeApi: EndPointType {
                 parameters = nil
             }
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .checkChannelName(name: let name):
+            let parameters:Parameters = ["name": name]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .subscribe(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

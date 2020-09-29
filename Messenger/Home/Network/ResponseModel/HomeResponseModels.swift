@@ -49,13 +49,15 @@ struct Request: Codable {
 struct Channel: Codable {
     var _id: String
     var name: String
-    var creator: String
+    var creator: String?
     var admins: [Admin]?
     var subscribers: [Subscriber]?
     var avatar: String?
     var createdAt: String
     var subscribersCount: Int?
     var statuses: [ChannelStatus]?
+    var description: String?
+    var publicUrl: String?
 }
 
 struct ChannelMessages: Codable {
@@ -67,6 +69,14 @@ struct ChannelStatus: Codable {
     var userId: String?
     var receivedMessageDate: String?
     var readMessageDate: String?
+}
+
+struct CheckChannelName: Codable {
+    var channelNameExists: Bool?
+}
+
+struct SubscribedResponse: Codable {
+    var subscribed: Bool?
 }
 
 struct Admin: Codable {

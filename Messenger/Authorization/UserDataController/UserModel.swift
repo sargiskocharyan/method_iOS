@@ -40,7 +40,7 @@ struct UserModel: Codable, PropertyReflectable {
     var deactivated: Bool?
     var blocked: Bool?
     var missedCallHistory: [String]?
-    //var missedCallHistoryCount: Int?
+    var channels: [String]?
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -58,6 +58,7 @@ struct UserModel: Codable, PropertyReflectable {
         case deactivated
         case blocked
         case missedCallHistory
+        case channels
     }
 }
 

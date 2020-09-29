@@ -477,6 +477,62 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func checkChannelName(name: String, completion: @escaping (CheckChannelName?, NetworkResponse?)->()) {
+        router.request(.checkChannelName(name: name)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(CheckChannelName.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func subscribe(id: String, completion: @escaping (SubscribedResponse?, NetworkResponse?)->()) {
+        router.request(.subscribe(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(SubscribedResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     func removeCall(id: [String], completion: @escaping (NetworkResponse?)->()) {
            router.request(.removeCall(id: id)) { data, response, error in
                if error != nil {
@@ -709,8 +765,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChannelInfo(id: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-        router.request(.getChannelInfo(id: id)) { data, response, error in
+    func getChannelsInfo(ids: String, completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+        router.request(.getChannelInfo(ids: ids)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -724,7 +780,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
+                        let responseObject = try JSONDecoder().decode([Channel].self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)

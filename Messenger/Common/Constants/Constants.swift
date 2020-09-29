@@ -53,7 +53,8 @@ struct AUTHUrls {
     static let GetRequests       = "/contactRequests"
     static let GetAdminMessage   = "/adminmessages"
     static let CreateChannel     = "/channel"
-    static let GetChannelInfo    = "/channelInfo/"
+    static let GetChannelInfo    = "/channelsInfo"
+    static let CheckChannelName  = "/checkChannelName"
 }
 
 struct AppLangKeys {

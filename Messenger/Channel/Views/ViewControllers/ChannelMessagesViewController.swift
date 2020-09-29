@@ -16,7 +16,7 @@ class ChannelMessagesViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     //MARK: Properties
-    var channelRouter: ChannelRouter?
+    
     
     //MARK: LifeCycles
     override func viewDidLoad() {
