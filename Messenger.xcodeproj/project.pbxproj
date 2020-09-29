@@ -122,10 +122,12 @@
 		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
 		D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
-		D01A89E92522FEA000ACE2D8 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelTableViewCell.swift */; };
-		D01A89EA2522FEA000ACE2D8 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelTableViewCell.swift */; };
-		D01A89EC2522FF9200ACE2D8 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelViewController.swift */; };
-		D01A89ED2522FF9200ACE2D8 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelViewController.swift */; };
+		D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
+		D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
+		D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
+		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
+		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D0F664B5251B177D0018D9B7 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		D0F664B6251B177D0018D9B7 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		D0F664B7251B177D0018D9B7 /* RecentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */; };
@@ -435,8 +437,9 @@
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D0065B73251CCB0700EE880A /* Calls.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
-		D01A89E82522FEA000ACE2D8 /* ChannelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTableViewCell.swift; sourceTree = "<group>"; };
-		D01A89EB2522FF9200ACE2D8 /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
+		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
+		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
+		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
 		D0FA588A251DB776007CFC52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -550,7 +553,7 @@
 				CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */,
 				CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */,
 				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
-				D01A89E82522FEA000ACE2D8 /* ChannelTableViewCell.swift */,
+				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -603,7 +606,7 @@
 				CDB7D98C2511D73A00DBAD51 /* NotificationListViewController.swift */,
 				CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */,
 				CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */,
-				D01A89EB2522FF9200ACE2D8 /* ChannelViewController.swift */,
+				D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -680,6 +683,7 @@
 				CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */,
 				CD3E4C3F24E3DC4A0041A70C /* ChangeEmailViewModel.swift */,
 				CD3E4C4124E415F50041A70C /* AppDelegateViewModel.swift */,
+				D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1397,10 +1401,11 @@
 				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
+				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
-				D01A89EC2522FF9200ACE2D8 /* ChannelViewController.swift in Sources */,
+				D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */,
 				CDD864A724BDA47700E33E07 /* VideoViewController.swift in Sources */,
 				CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */,
 				CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */,
@@ -1415,7 +1420,7 @@
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
-				D01A89E92522FEA000ACE2D8 /* ChannelTableViewCell.swift in Sources */,
+				D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
 				CD3E4C4024E3DC4A0041A70C /* ChangeEmailViewModel.swift in Sources */,
@@ -1505,10 +1510,11 @@
 				D0F664F8251B177D0018D9B7 /* MainRouter.swift in Sources */,
 				D0F664F9251B177D0018D9B7 /* SignalingClient.swift in Sources */,
 				D0F664FA251B177D0018D9B7 /* TextField-Extension.swift in Sources */,
+				D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				D0F664FB251B177D0018D9B7 /* BeforeLoginViewModel.swift in Sources */,
 				D0F664FC251B177D0018D9B7 /* ProfileViewController.swift in Sources */,
 				D0F664FD251B177D0018D9B7 /* CallListViewController.swift in Sources */,
-				D01A89ED2522FF9200ACE2D8 /* ChannelViewController.swift in Sources */,
+				D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */,
 				D0F664FE251B177D0018D9B7 /* VideoViewController.swift in Sources */,
 				D0F664FF251B177D0018D9B7 /* View-Extension.swift in Sources */,
 				D0F66500251B177D0018D9B7 /* CustomAlertViewController.swift in Sources */,
@@ -1523,7 +1529,7 @@
 				D0F66509251B177D0018D9B7 /* ContactTableViewCell.swift in Sources */,
 				D0F6650A251B177D0018D9B7 /* NotificationDetailViewController.swift in Sources */,
 				D0F6650B251B177D0018D9B7 /* BodyURLParameterEncoding.swift in Sources */,
-				D01A89EA2522FEA000ACE2D8 /* ChannelTableViewCell.swift in Sources */,
+				D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */,
 				D0F6650C251B177D0018D9B7 /* JSONParameterEncoder.swift in Sources */,
 				D0F6650D251B177D0018D9B7 /* CallTableViewCell.swift in Sources */,
 				D0F6650E251B177D0018D9B7 /* ChangeEmailViewModel.swift in Sources */,

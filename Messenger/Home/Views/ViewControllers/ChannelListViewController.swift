@@ -14,8 +14,8 @@ class ChannelViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
 
@@ -29,4 +29,16 @@ class ChannelViewController: UIViewController {
     }
     */
 
+}
+
+extension ChannelViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        <#code#>
+    }
+    
+    
 }
