@@ -46,6 +46,9 @@ class RecentMessagesViewModel {
     func saveCalls(calls: [CallHistory], completion: @escaping ([CallHistory]?, NetworkResponse?)->()) {
         var count = 0
         deleteAllRecords()
+        if calls.count == 0 {
+            completion(nil, nil)
+        }
         for call in calls {
             let filteredCalls: [CallHistory] = calls.filter { (call) -> Bool in
                 return call.status != CallStatus.ongoing.rawValue
@@ -148,5 +151,10 @@ class RecentMessagesViewModel {
         completion()
         return
     }
+    func createChannel(name: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+             HomeNetworkManager().createChannel(name: name) { (channel, error) in
+                 completion(channel, error)
+             }
+         }
     
 }
