@@ -55,6 +55,7 @@ struct AUTHUrls {
     static let CreateChannel     = "/channel"
     static let GetChannelInfo    = "/channelsInfo"
     static let CheckChannelName  = "/checkChannelName"
+    static let FindChannels      = "/findChannels"
 }
 
 struct AppLangKeys {

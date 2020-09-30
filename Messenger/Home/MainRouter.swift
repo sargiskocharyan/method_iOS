@@ -23,6 +23,7 @@ class MainRouter {
     weak var changeEmailViewController: ChangeEmailViewController?
     weak var notificationListViewController: NotificationListViewController?
     weak var notificationDetailViewController: NotificationDetailViewController?
+    weak var channelListViewController: ChannelListViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -39,18 +40,27 @@ class MainRouter {
         videoVC.webRTCClient = router.mainTabBarController!.webRTCClient
         router.videoViewController = videoVC
         router.mainTabBarController?.videoVC = videoVC
+        
+        let channelListNC = router.mainTabBarController?.viewControllers![3] as! UINavigationController
+        router.channelListViewController = (channelListNC.viewControllers[0] as! ChannelListViewController)
+        router.channelListViewController?.mainRouter = router.mainTabBarController?.mainRouter
+        router.channelListViewController?.viewModel = ChannelListViewModel()
+        
         let callListNC = router.mainTabBarController?.viewControllers![0] as! UINavigationController
         router.callListViewController = (callListNC.viewControllers[0] as! CallListViewController)
         router.callListViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.callListViewController?.viewModel = RecentMessagesViewModel()
+        
         let recentMessagesNC = router.mainTabBarController?.viewControllers![1] as! UINavigationController
         router.recentMessagesViewController = (recentMessagesNC.viewControllers[0] as! RecentMessagesViewController)
         router.recentMessagesViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.recentMessagesViewController?.viewModel = RecentMessagesViewModel()
+        
         let profileNC = router.mainTabBarController?.viewControllers![2] as! UINavigationController
         router.profileViewController = (profileNC.viewControllers[0] as! ProfileViewController)
         router.profileViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.profileViewController?.viewModel = ProfileViewModel()
+        
         let window = AppDelegate.shared.window
         window?.rootViewController = router.mainTabBarController
         window?.makeKeyAndVisible()
@@ -255,5 +265,6 @@ class MainRouter {
          notificationDetailViewController?.navigationController?.pushViewController(vc, animated: false)
      }
      
+
     
 }

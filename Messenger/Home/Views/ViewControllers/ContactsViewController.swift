@@ -148,7 +148,7 @@ class ContactsViewController: UIViewController {
                         }
                     }
                     self.contactsMiniInformation = self.findedUsers.map({ (user) -> User in
-                        User(name: user.name, lastname: user.lastname, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender, missedCallHistory: user.missedCallHistory)
+                        User(name: user.name, lastname: user.lastname, _id: user._id!, username: user.username, avaterURL: user.avatarURL, email: nil, info: user.info, phoneNumber: user.phoneNumber, birthday: user.birthday, address: user.address, gender: user.gender, missedCallHistory: user.missedCallHistory, channels: user.channels)
                     })
                     DispatchQueue.main.async {
                         self.removeView()

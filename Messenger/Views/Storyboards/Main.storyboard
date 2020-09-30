@@ -153,11 +153,11 @@
             </objects>
             <point key="canvasLocation" x="-5287" y="-684"/>
         </scene>
-        <!--Item-->
+        <!--Navigation Controller-->
         <scene sceneID="msT-zb-Dus">
             <objects>
                 <navigationController id="oxA-sA-MDG" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" image="channel" selectedImage="channel" id="5zT-6b-AvA"/>
+                    <tabBarItem key="tabBarItem" title="" image="channel" selectedImage="channel" id="5zT-6b-AvA"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5tS-kI-O7j">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -170,10 +170,10 @@
             </objects>
             <point key="canvasLocation" x="-6862" y="771"/>
         </scene>
-        <!--Channel View Controller-->
+        <!--Channel List View Controller-->
         <scene sceneID="vvX-Sl-l6B">
             <objects>
-                <viewController storyboardIdentifier="ChannelViewController" id="fJr-xE-qZn" customClass="ChannelViewController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChannelViewController" id="fJr-xE-qZn" customClass="ChannelListViewController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8QW-e9-m2J">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -186,7 +186,7 @@
                                 <rect key="frame" x="0.0" y="144" width="414" height="669"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="channelCell" rowHeight="76" id="yuC-ah-lxe" customClass="ChannelTableViewCell" customModule="method" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="channelCell" rowHeight="76" id="yuC-ah-lxe" customClass="ChannelListTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="76"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yuC-ah-lxe" id="iSo-Nd-Wih">

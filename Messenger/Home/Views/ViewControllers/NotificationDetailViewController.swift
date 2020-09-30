@@ -45,7 +45,7 @@ class NotificationDetailViewController: UIViewController {
         mainRouter?.callListViewController?.viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: call, count: 0)
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil, channels: nil), call: call, count: 0)
                 } else if user != nil {
                     var newArray = self.mainRouter?.mainTabBarController?.contactsViewModel?.otherContacts
                     newArray?.append(user!)

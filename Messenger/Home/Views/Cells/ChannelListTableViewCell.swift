@@ -8,15 +8,20 @@
 
 import UIKit
 
-class ChannelTableViewCell: UITableViewCell {
+class ChannelListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var channelNameLabel: UILabel!
     @IBOutlet weak var channelLogoImageView: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
-
+    
+    func configureCell(avatar: String?, name: String, id: String) {
+        channelNameLabel.text = name
+        ImageCache.shared.getImage(url: avatar ?? "", id: id) { (image) in
+            self.channelLogoImageView.image = image
+        }
+    }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
