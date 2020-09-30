@@ -151,10 +151,5 @@ class RecentMessagesViewModel {
         completion()
         return
     }
-    func createChannel(name: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-             HomeNetworkManager().createChannel(name: name) { (channel, error) in
-                 completion(channel, error)
-             }
-         }
     
 }

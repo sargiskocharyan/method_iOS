@@ -30,6 +30,9 @@ class ChannelMessagesViewController: UIViewController {
         tableView.tableFooterView = UIView()
         getChannelMessages()
         nameOfChannelButton.setTitle(channel?.name, for: .normal)
+//        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #(addButtonTapped))
+        
+        joinButton.setTitle("join".localized(), for: .normal)
     }
     
     //MARK: Helper methods
@@ -38,6 +41,8 @@ class ChannelMessagesViewController: UIViewController {
             self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
         }
     }
+    
+
 
     @IBAction func joinChannelButtonAction(_ sender: Any) {
         viewModel?.subscribeToChannel(id: channel!._id, completion: { (subResponse, error) in

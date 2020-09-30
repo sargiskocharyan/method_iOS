@@ -273,7 +273,7 @@ class MainRouter {
         vc.channel = channel
         vc.viewModel = ChannelMessagesViewModel()
         self.channelMessagesViewController = vc
-        channelListViewController?.navigationController?.pushViewController(vc, animated: false)
+        channelListViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
     func showChannelInfoViewController(channel: Channel)  {
@@ -281,7 +281,7 @@ class MainRouter {
         vc.mainRouter = channelMessagesViewController?.mainRouter
         vc.channel = channel
         self.channelInfoViewController = vc
-        channelMessagesViewController?.navigationController?.pushViewController(vc, animated: false)
+        channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 class ChannelListViewController: UIViewController {
-
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     var channels: [Channel] = []
@@ -17,13 +17,44 @@ class ChannelListViewController: UIViewController {
     var mainRouter: MainRouter?
     var foundChannels: [Channel] = []
     var channelsInfo: [Channel] = []
+    var text = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.delegate = self
+        self.navigationItem.title = "channels".localized()
         getChannels()
+        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+    }
+    
+    @objc func handleAlertChange(sender: Any?) {
+         let textField = sender as! UITextField
+        text = textField.text!
+    }
+    
+    @objc func addButtonTapped() {
+        let alert = UIAlertController(title: "create_channel".localized()
+            , message: "enet_channel_name".localized(), preferredStyle: .alert)
+        alert.addTextField { (textField) in
+           textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
+        }
+        alert.addAction(UIAlertAction(title: "create".localized(), style: .default, handler: { (action) in
+            self.viewModel!.createChannel(name: self.text, completion: { (channel, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    print("Channel created")
+                    SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
+                    self.getChannels()
+                }
+            })
+            
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func getChannels() {

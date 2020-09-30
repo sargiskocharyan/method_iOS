@@ -120,16 +120,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     
     //MARK: Helper methods
     @objc func addButtonTapped() {
-        viewModel?.createChannel(name: "yelena41523", completion: { (channel, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                }
-            } else {
-                print("Channel created")
-            }
-        })
-//        mainRouter?.showContactsViewFromCallList()
+        mainRouter?.showContactsViewFromCallList()
     }
     
     @objc func refreshCallHistory() {
