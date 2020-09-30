@@ -25,6 +25,7 @@ class MainRouter {
     weak var notificationDetailViewController: NotificationDetailViewController?
     weak var channelListViewController: ChannelListViewController?
     weak var channelInfoViewController: ChannelInfoViewController?
+    weak var channelMessagesViewController: ChannelMessagesViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -266,6 +267,21 @@ class MainRouter {
          notificationDetailViewController?.navigationController?.pushViewController(vc, animated: false)
      }
      
-
+    func showChannelMessagesViewController(channel: Channel) {
+        let vc = ChannelMessagesViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = channelListViewController?.mainRouter
+        vc.channel = channel
+        vc.viewModel = ChannelMessagesViewModel()
+        self.channelMessagesViewController = vc
+        channelListViewController?.navigationController?.pushViewController(vc, animated: false)
+    }
+    
+    func showChannelInfoViewController(channel: Channel)  {
+        let vc = ChannelInfoViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = channelMessagesViewController?.mainRouter
+        vc.channel = channel
+        self.channelInfoViewController = vc
+        channelMessagesViewController?.navigationController?.pushViewController(vc, animated: false)
+    }
     
 }

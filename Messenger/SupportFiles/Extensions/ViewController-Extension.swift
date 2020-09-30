@@ -15,6 +15,7 @@ enum AppStoryboard: String {
     case calls = "Calls"
     case chats = "Chats"
     case profile = "Profile"
+    case channel = "Channel"
 }
 
 

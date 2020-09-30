@@ -10,6 +10,7 @@ import UIKit
 
 class ChannelInfoViewController: UIViewController {
 
+    //MARK: @IBOutlets
     @IBOutlet weak var urlView: UIView!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
@@ -19,11 +20,19 @@ class ChannelInfoViewController: UIViewController {
     @IBOutlet weak var descriptionTextLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var channelLogoImageView: UIImageView!
+    
+    //MARK: Properties
+    var mainRouter: MainRouter?
+    var channel: Channel?
+    
+    //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        nameLabel.text = channel?.name
     }
     
+    //Helper methods
     func configureView() {
         setBorder(view: urlView)
         setBorder(view: headerView)

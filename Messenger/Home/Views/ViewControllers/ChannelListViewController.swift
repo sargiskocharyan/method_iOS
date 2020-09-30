@@ -73,6 +73,15 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
         cell.configureCell(avatar: channelsInfo[indexPath.row].avatar, name: channelsInfo[indexPath.row].name, id: channelsInfo[indexPath.row]._id)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            self.mainRouter?.showChannelMessagesViewController(channel: self.channelsInfo[indexPath.row])
+        }
+        
+    }
+    
+    
 }
 
 extension ChannelListViewController: UISearchBarDelegate {

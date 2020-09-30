@@ -14,41 +14,71 @@ class ChannelMessagesViewController: UIViewController {
     @IBOutlet weak var nameOfChannelButton: UIButton!
     @IBOutlet weak var joinButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var headerView: UIView!
     
     //MARK: Properties
     var mainRouter: MainRouter?
     var viewModel: ChannelMessagesViewModel?
     var channelMessages: ChannelMessages?
-    var id: String?
-    
+    var channel: Channel?
     
     //MARK: LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-
+        tableView.tableFooterView = UIView()
+        getChannelMessages()
+        nameOfChannelButton.setTitle(channel?.name, for: .normal)
     }
     
     //MARK: Helper methods
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
-        
+        DispatchQueue.main.async {
+            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
+        }
     }
-    
+
     @IBAction func joinChannelButtonAction(_ sender: Any) {
-        viewModel?.subscribeToChannel(id: id!, completion: { (subResponse, error) in
+        viewModel?.subscribeToChannel(id: channel!._id, completion: { (subResponse, error) in
             if error != nil {
-                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
             } else {
                 self.joinButton.setTitle("", for: .normal)
             }
         })
     }
+//
+//    func setView(_ str: String) {
+//         DispatchQueue.main.async {
+//             let noResultView = UIView()
+//            self.view.addSubview(noResultView)
+//            noResultView.translatesAutoresizingMaskIntoConstraints = false
+//            noResultView.topAnchor.constraint(equalTo: self.headerView.bottomAnchor, constant: 100).isActive = true
+//            noResultView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+//            noResultView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+//            noResultView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+//             noResultView.tag = 24
+//             noResultView.backgroundColor = UIColor(named: "imputColor")
+//             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
+//             label.center = noResultView.center
+//             label.text = str
+//             label.textColor = .lightGray
+//             label.textAlignment = .center
+//             noResultView.addSubview(label)
+//
+//         }
+//     }
     
     func getChannelMessages() {
-        viewModel?.getChannelMessages(id: id!, dateUntil: "", completion: { (messages, error) in
+        viewModel?.getChannelMessages(id: channel!._id, dateUntil: "", completion: { (messages, error) in
             if error != nil {
-                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+                
             } else if messages != nil {
                 self.channelMessages = messages
             }
