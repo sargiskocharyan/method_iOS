@@ -24,6 +24,7 @@ class MainRouter {
     weak var notificationListViewController: NotificationListViewController?
     weak var notificationDetailViewController: NotificationDetailViewController?
     weak var channelListViewController: ChannelListViewController?
+    weak var channelInfoViewController: ChannelInfoViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)

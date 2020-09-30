@@ -73,8 +73,6 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
         cell.configureCell(avatar: channelsInfo[indexPath.row].avatar, name: channelsInfo[indexPath.row].name, id: channelsInfo[indexPath.row]._id)
         return cell
     }
-    
-    
 }
 
 extension ChannelListViewController: UISearchBarDelegate {
@@ -82,8 +80,7 @@ extension ChannelListViewController: UISearchBarDelegate {
         print("searchtext is \(searchText)")
         if searchText.count > 2 {
             findChannels(term: searchText)
-        }
-        if searchText.count == 0 {
+        } else if searchText.count == 0 {
             channelsInfo = channels
             DispatchQueue.main.async {
                 self.tableView.reloadData()

@@ -128,6 +128,8 @@
 		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */; };
+		D0EDEFF22524642F00016AF7 /* ChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */; };
 		D0F664B5251B177D0018D9B7 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		D0F664B6251B177D0018D9B7 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		D0F664B7251B177D0018D9B7 /* RecentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */; };
@@ -440,6 +442,7 @@
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
+		D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewController.swift; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
 		D0FA588A251DB776007CFC52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -607,6 +610,7 @@
 				CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */,
 				CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */,
 				D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */,
+				D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1373,6 +1377,7 @@
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
+				D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
 				CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */,
 				CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */,
@@ -1482,6 +1487,7 @@
 				D0F664DC251B177D0018D9B7 /* IceCandidate.swift in Sources */,
 				D0F664DD251B177D0018D9B7 /* CallManager.swift in Sources */,
 				D0F664DE251B177D0018D9B7 /* CustomCell.swift in Sources */,
+				D0EDEFF22524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				D0F664DF251B177D0018D9B7 /* NetworkLogger.swift in Sources */,
 				D0F664E0251B177D0018D9B7 /* HomeResponseModels.swift in Sources */,
 				D0F664E1251B177D0018D9B7 /* RemoteNotificationManager.swift in Sources */,
