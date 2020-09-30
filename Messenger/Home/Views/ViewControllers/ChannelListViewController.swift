@@ -140,15 +140,17 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as! ChannelListTableViewCell
+        if channelsInfo.count > indexPath.row {
         cell.configureCell(avatar: channelsInfo[indexPath.row].avatar, name: channelsInfo[indexPath.row].name, id: channelsInfo[indexPath.row]._id)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
+            print(self.channelsInfo[indexPath.row])
             self.mainRouter?.showChannelMessagesViewController(channel: self.channelsInfo[indexPath.row])
         }
-        
     }
 }
 

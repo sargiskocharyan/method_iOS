@@ -12,6 +12,7 @@ class ChannelInfoViewController: UIViewController {
 
     //MARK: @IBOutlets
     @IBOutlet weak var urlView: UIView!
+    @IBOutlet weak var leaveButton: UIButton!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var urlLabel: UILabel!
@@ -29,24 +30,42 @@ class ChannelInfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        nameLabel.text = channel?.name
     }
     
     override func viewWillAppear(_ animated: Bool) {
-         super.viewWillAppear(animated)
-         if (tabBarController?.tabBar.isHidden)! {
-             tabBarController?.tabBar.isHidden = false
-         }
-         if (navigationController?.navigationBar.isHidden)! {
-             navigationController?.navigationBar.isHidden = false
-         }
-     }
+        super.viewWillAppear(animated)
+        if (tabBarController?.tabBar.isHidden)! {
+            tabBarController?.tabBar.isHidden = false
+        }
+        if (navigationController?.navigationBar.isHidden)! {
+            navigationController?.navigationBar.isHidden = false
+        }
+        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
+            leaveButton.isHidden = false
+        } else {
+            leaveButton.isHidden = true
+        }
+        setInfo()
+    }
     
     //Helper methods
+    @IBAction func leaveButtonAction(_ sender: Any) {
+        
+    }
     func configureView() {
         setBorder(view: urlView)
         setBorder(view: headerView)
         setBorder(view: descriptionView)
+        channelLogoImageView.layer.cornerRadius = channelLogoImageView.frame.height / 2
+        channelLogoImageView.clipsToBounds = true
+    }
+    
+    func setInfo() {
+        nameLabel.text = channel?.name
+        descriptionLabel.text = channel?.description ?? "description_not_set".localized()
+        urlLabel.text = channel?.publicUrl
+        descriptionTextLabel.text = "description".localized()
+        urlTextLabel.text = "URL"
     }
     
     func setBorder(view: UIView) {

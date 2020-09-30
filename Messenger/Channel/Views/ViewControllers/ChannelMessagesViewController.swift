@@ -37,6 +37,9 @@ class ChannelMessagesViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
+        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
+            joinButton.isHidden = true
+        }
     }
     
     //MARK: Helper methods
@@ -57,7 +60,10 @@ class ChannelMessagesViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else {
-                self.joinButton.setTitle("", for: .normal)
+                DispatchQueue.main.async {
+                    self.joinButton.isHidden = true
+                }
+                SharedConfigs.shared.signedUser?.channels?.append(self.channel!._id)
             }
         })
     }

@@ -43,6 +43,7 @@ public enum HomeApi {
     case checkChannelName(name: String)
     case subscribe(id: String)
     case findChannels(term: String)
+    case leaveChannel(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -120,6 +121,8 @@ extension HomeApi: EndPointType {
             return "\(AUTHUrls.CreateChannel)/\(id)/subscribe"
         case .findChannels(_):
             return AUTHUrls.FindChannels
+        case .leaveChannel(let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)/leave"
         }
     }
     
@@ -192,6 +195,8 @@ extension HomeApi: EndPointType {
             return .post
         case .findChannels(_):
             return .post
+        case .leaveChannel(_):
+            return .post
         }
     }
     
@@ -260,7 +265,7 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .removeContact(id: let id):
-            let parameters:Parameters = ["userId": id ]
+            let parameters:Parameters = ["userId": id]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .onlineUsers(arrayOfId: let arrayOfId):
@@ -342,6 +347,9 @@ extension HomeApi: EndPointType {
             let parameters: Parameters = ["term": term]
             let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .leaveChannel(_):
+            let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     
