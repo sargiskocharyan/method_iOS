@@ -369,7 +369,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil, channels: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)

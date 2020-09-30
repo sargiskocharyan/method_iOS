@@ -38,10 +38,11 @@ public enum HomeApi {
     case getRequests
     case getAdminMessage
     case createChannel(name: String)
-    case getChannelInfo(ids: String)
+    case getChannelInfo(ids: [String])
     case getChannelMessages(id: String, dateUntil: String?)
     case checkChannelName(name: String)
     case subscribe(id: String)
+    case findChannels(term: String)
 }
 
 extension HomeApi: EndPointType {
@@ -117,6 +118,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.CheckChannelName
         case .subscribe(let id):
             return "\(AUTHUrls.CreateChannel)/\(id)/subscribe"
+        case .findChannels(_):
+            return AUTHUrls.FindChannels
         }
     }
     
@@ -186,6 +189,8 @@ extension HomeApi: EndPointType {
         case .checkChannelName(_):
             return .post
         case .subscribe(_):
+            return .post
+        case .findChannels(_):
             return .post
         }
     }
@@ -333,6 +338,10 @@ extension HomeApi: EndPointType {
         case .subscribe(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .findChannels(term: let term):
+            let parameters: Parameters = ["term": term]
+            let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

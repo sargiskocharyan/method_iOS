@@ -8,37 +8,86 @@
 
 import UIKit
 
-class ChannelViewController: UIViewController {
+class ChannelListViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    var channels: [Channel] = []
+    var viewModel: ChannelListViewModel?
+    var mainRouter: MainRouter?
+    var foundChannels: [Channel] = []
+    var channelsInfo: [Channel] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
+        searchBar.delegate = self
+        getChannels()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func getChannels() {
+        viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (channels, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if let channels = channels {
+                self.channels = channels
+                self.channelsInfo = channels
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        })
     }
-    */
-
+    
+    func findChannels(term: String) {
+        viewModel?.findChannels(term: term, completion: { (channels, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if let channels = channels {
+                self.foundChannels = channels
+                self.channelsInfo = channels
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        })
+    }
 }
 
-extension ChannelViewController: UITableViewDelegate, UITableViewDataSource {
+extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return channelsInfo.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as! ChannelListTableViewCell
+        cell.configureCell(avatar: channelsInfo[indexPath.row].avatar, name: channelsInfo[indexPath.row].name, id: channelsInfo[indexPath.row]._id)
+        return cell
     }
     
     
+}
+
+extension ChannelListViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print("searchtext is \(searchText)")
+        if searchText.count > 2 {
+            findChannels(term: searchText)
+        }
+        if searchText.count == 0 {
+            channelsInfo = channels
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
 }

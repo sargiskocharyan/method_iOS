@@ -765,8 +765,36 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChannelsInfo(ids: String, completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+    func getChannelsInfo(ids: [String], completion: @escaping ([Channel]?, NetworkResponse?)->()) {
         router.request(.getChannelInfo(ids: ids)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode([Channel].self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func findChannels(term: String, completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+        router.request(.findChannels(term: term)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
