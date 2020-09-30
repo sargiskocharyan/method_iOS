@@ -32,16 +32,26 @@
                                             <action selector="joinChannelButtonAction:" destination="CUz-oY-ahe" eventType="touchUpInside" id="NT1-io-Iyp"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xvH-Z0-Jej">
+                                        <rect key="frame" x="10" y="14.5" width="20" height="22"/>
+                                        <state key="normal" image="arrow.left" catalog="system"/>
+                                        <connections>
+                                            <action selector="backButtonAction:" destination="CUz-oY-ahe" eventType="touchUpInside" id="nq1-6b-ykA"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="Zgy-sh-cre" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="fBC-dg-8L0" secondAttribute="trailing" constant="10" id="3MJ-Jm-Cio"/>
+                                    <constraint firstItem="xvH-Z0-Jej" firstAttribute="leading" secondItem="wP5-YG-dGe" secondAttribute="leading" constant="10" id="5Wm-Dh-DjW"/>
+                                    <constraint firstItem="fBC-dg-8L0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xvH-Z0-Jej" secondAttribute="trailing" constant="10" id="C8P-1c-sSe"/>
                                     <constraint firstAttribute="height" constant="51" id="JfD-od-h1H"/>
                                     <constraint firstItem="Zgy-sh-cre" firstAttribute="top" secondItem="wP5-YG-dGe" secondAttribute="top" constant="10" id="NBC-ej-e3g"/>
                                     <constraint firstItem="fBC-dg-8L0" firstAttribute="centerY" secondItem="wP5-YG-dGe" secondAttribute="centerY" id="ULW-bq-VSQ"/>
                                     <constraint firstAttribute="trailing" secondItem="Zgy-sh-cre" secondAttribute="trailing" constant="10" id="Vai-0y-Q2A"/>
                                     <constraint firstItem="fBC-dg-8L0" firstAttribute="centerX" secondItem="wP5-YG-dGe" secondAttribute="centerX" id="exW-Bf-5A5"/>
                                     <constraint firstAttribute="bottom" secondItem="Zgy-sh-cre" secondAttribute="bottom" constant="10" id="qXy-rs-u6y"/>
+                                    <constraint firstItem="xvH-Z0-Jej" firstAttribute="centerY" secondItem="wP5-YG-dGe" secondAttribute="centerY" id="uNs-Iq-btk"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="A3M-fd-wUR">
@@ -153,7 +163,6 @@
         <!--Channel Info View Controller-->
         <scene sceneID="WlC-Us-525">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="g6j-p6-m38" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="ChannelInfoViewController" id="XZQ-fe-QD6" customClass="ChannelInfoViewController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="l67-k3-iQ9">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -302,11 +311,13 @@
                         <outlet property="urlView" destination="7PF-hJ-D4p" id="I04-94-W14"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g6j-p6-m38" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="603" y="142"/>
         </scene>
     </scenes>
     <resources>
         <image name="Armenian" width="128" height="128"/>
+        <image name="arrow.left" catalog="system" width="128" height="98"/>
     </resources>
 </document>

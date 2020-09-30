@@ -142,3 +142,6 @@
 "channels"                                     = "Channels";
 "description"                                  = "Description";
 "description_not_set"                          = "Description not set";
+"create_channel"                               = "Create channel";
+"enter_channel_name"                           = "Enter channel name";
+"create"                                       = "Create";

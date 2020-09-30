@@ -136,3 +136,6 @@
 "channels"                                     = "Channels";
 "description"                                  = "Նկարագրություն";
 "description_not_set"                          = "Նկարագիրը դրված չէ";
+"create_channel"                               = "Ստեղծել ալիք";
+"enter_channel_name"                           = "Մուտքագրեք ալիքի անունը";
+"create"                                       = "Ստեղծել";

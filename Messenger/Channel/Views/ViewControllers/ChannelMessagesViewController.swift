@@ -30,9 +30,13 @@ class ChannelMessagesViewController: UIViewController {
         tableView.tableFooterView = UIView()
         getChannelMessages()
         nameOfChannelButton.setTitle(channel?.name, for: .normal)
-//        self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #(addButtonTapped))
-        
         joinButton.setTitle("join".localized(), for: .normal)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.isHidden = true
     }
     
     //MARK: Helper methods
@@ -41,9 +45,11 @@ class ChannelMessagesViewController: UIViewController {
             self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
         }
     }
+
+    @IBAction func backButtonAction(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
+    }
     
-
-
     @IBAction func joinChannelButtonAction(_ sender: Any) {
         viewModel?.subscribeToChannel(id: channel!._id, completion: { (subResponse, error) in
             if error != nil {
@@ -55,28 +61,7 @@ class ChannelMessagesViewController: UIViewController {
             }
         })
     }
-//
-//    func setView(_ str: String) {
-//         DispatchQueue.main.async {
-//             let noResultView = UIView()
-//            self.view.addSubview(noResultView)
-//            noResultView.translatesAutoresizingMaskIntoConstraints = false
-//            noResultView.topAnchor.constraint(equalTo: self.headerView.bottomAnchor, constant: 100).isActive = true
-//            noResultView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
-//            noResultView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
-//            noResultView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
-//             noResultView.tag = 24
-//             noResultView.backgroundColor = UIColor(named: "imputColor")
-//             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
-//             label.center = noResultView.center
-//             label.text = str
-//             label.textColor = .lightGray
-//             label.textAlignment = .center
-//             noResultView.addSubview(label)
-//
-//         }
-//     }
-    
+
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: channel!._id, dateUntil: "", completion: { (messages, error) in
             if error != nil {
@@ -92,6 +77,7 @@ class ChannelMessagesViewController: UIViewController {
     
 }
 
+//MARK: Extensions
 extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if channelMessages != nil && channelMessages!.array != nil {

@@ -12,8 +12,12 @@ class ChannelListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var channelNameLabel: UILabel!
     @IBOutlet weak var channelLogoImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+        channelLogoImageView.contentMode = .scaleAspectFill
+        channelLogoImageView.layer.cornerRadius = 23
+        channelLogoImageView.clipsToBounds = true
     }
     
     func configureCell(avatar: String?, name: String, id: String) {

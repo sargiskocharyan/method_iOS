@@ -137,3 +137,6 @@
 "channels"                                     = "Каналы";
 "description"                                  = "Описание";
 "description_not_set"                          = "Описание не установлено";
+"create_channel"                               = "Создать канал";
+"enter_channel_name"                           = "Введите название канала";
+"create"                                       = "Создать";

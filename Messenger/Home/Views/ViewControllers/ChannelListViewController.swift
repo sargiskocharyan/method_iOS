@@ -10,37 +10,67 @@ import UIKit
 
 class ChannelListViewController: UIViewController {
     
+    //MARK: @IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    
+    //MARk: Properties
     var channels: [Channel] = []
     var viewModel: ChannelListViewModel?
     var mainRouter: MainRouter?
     var foundChannels: [Channel] = []
     var channelsInfo: [Channel] = []
     var text = ""
+    var activity = UIActivityIndicatorView(style: .medium)
     
+    //MARK: LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.tableFooterView = UIView()
         searchBar.delegate = self
         self.navigationItem.title = "channels".localized()
         getChannels()
+        setActivity()
+        activity.startAnimating()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if (tabBarController?.tabBar.isHidden)! {
+            tabBarController?.tabBar.isHidden = false
+        }
+        if (navigationController?.navigationBar.isHidden)! {
+            navigationController?.navigationBar.isHidden = false
+        }
+    }
+    
+    //MARK: Helper methods
     @objc func handleAlertChange(sender: Any?) {
          let textField = sender as! UITextField
         text = textField.text!
     }
     
+    func setActivity() {
+          self.tableView.addSubview(self.activity)
+          self.activity.tag = 33
+          self.activity.translatesAutoresizingMaskIntoConstraints = false
+          self.activity.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+          self.activity.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+          self.activity.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+          self.activity.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
+      }
+    
     @objc func addButtonTapped() {
         let alert = UIAlertController(title: "create_channel".localized()
-            , message: "enet_channel_name".localized(), preferredStyle: .alert)
+            , message: "enter_channel_name".localized(), preferredStyle: .alert)
         alert.addTextField { (textField) in
            textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
         }
         alert.addAction(UIAlertAction(title: "create".localized(), style: .default, handler: { (action) in
+            self.activity.startAnimating()
             self.viewModel!.createChannel(name: self.text, completion: { (channel, error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -49,11 +79,18 @@ class ChannelListViewController: UIViewController {
                 } else {
                     print("Channel created")
                     SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-                    self.getChannels()
+                   
+                    self.channels.insert(channel!, at: 0)
+                    self.channelsInfo = self.channels
+                    DispatchQueue.main.async {
+                        self.activity.stopAnimating()
+                        self.tableView.reloadData()
+                    }
                 }
             })
             
         }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -67,6 +104,7 @@ class ChannelListViewController: UIViewController {
                 self.channels = channels
                 self.channelsInfo = channels
                 DispatchQueue.main.async {
+                    self.activity.stopAnimating()
                     self.tableView.reloadData()
                 }
             }
@@ -90,6 +128,7 @@ class ChannelListViewController: UIViewController {
     }
 }
 
+//MARK: Extensions
 extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return channelsInfo.count
@@ -111,8 +150,6 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
         }
         
     }
-    
-    
 }
 
 extension ChannelListViewController: UISearchBarDelegate {

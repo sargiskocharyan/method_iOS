@@ -32,6 +32,16 @@ class ChannelInfoViewController: UIViewController {
         nameLabel.text = channel?.name
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+         super.viewWillAppear(animated)
+         if (tabBarController?.tabBar.isHidden)! {
+             tabBarController?.tabBar.isHidden = false
+         }
+         if (navigationController?.navigationBar.isHidden)! {
+             navigationController?.navigationBar.isHidden = false
+         }
+     }
+    
     //Helper methods
     func configureView() {
         setBorder(view: urlView)
