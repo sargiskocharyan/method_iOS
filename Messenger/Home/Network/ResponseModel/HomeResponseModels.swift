@@ -60,6 +60,11 @@ struct Channel: Codable {
     var publicUrl: String?
 }
 
+struct ChannelSubscriber: Codable {
+    var _id: String?
+    var user: User?
+}
+
 struct ChannelMessages: Codable {
     var array: [Message]?
     var statuses: [ChannelStatus]?

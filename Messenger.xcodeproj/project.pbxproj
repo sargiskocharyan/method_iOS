@@ -58,6 +58,8 @@
 		CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E71422486602B008D876E /* SharedConfigs.swift */; };
 		CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5E7144248661B2008D876E /* CallListViewController.swift */; };
 		CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
+		CD8B39782526F90C00C54D74 /* ModeratorInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8B39772526F90C00C54D74 /* ModeratorInfoViewController.swift */; };
+		CD8B397A252740D400C54D74 /* SubscribersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */; };
 		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
 		CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3F251A36D100BF34BF /* Chats.storyboard */; };
 		CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF41251A391000BF34BF /* Profile.storyboard */; };
@@ -380,6 +382,8 @@
 		CD5E71422486602B008D876E /* SharedConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfigs.swift; sourceTree = "<group>"; };
 		CD5E7144248661B2008D876E /* CallListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListViewController.swift; sourceTree = "<group>"; };
 		CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProfileViewController.swift; sourceTree = "<group>"; };
+		CD8B39772526F90C00C54D74 /* ModeratorInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeratorInfoViewController.swift; sourceTree = "<group>"; };
+		CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribersListViewController.swift; sourceTree = "<group>"; };
 		CD9ACF3F251A36D100BF34BF /* Chats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		CD9ACF41251A391000BF34BF /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
 		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
@@ -815,6 +819,8 @@
 			isa = PBXGroup;
 			children = (
 				CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */,
+				CD8B39772526F90C00C54D74 /* ModeratorInfoViewController.swift */,
+				CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1433,6 +1439,7 @@
 				D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
 				CD3F12D124BC26A500040D8E /* CallTableViewCell.swift in Sources */,
+				CD8B39782526F90C00C54D74 /* ModeratorInfoViewController.swift in Sources */,
 				CD3E4C4024E3DC4A0041A70C /* ChangeEmailViewModel.swift in Sources */,
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,
 				CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */,
@@ -1440,6 +1447,7 @@
 				CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */,
 				CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */,
 				CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */,
+				CD8B397A252740D400C54D74 /* SubscribersListViewController.swift in Sources */,
 				CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

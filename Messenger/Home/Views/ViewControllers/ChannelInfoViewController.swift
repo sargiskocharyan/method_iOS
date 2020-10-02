@@ -52,6 +52,7 @@ class ChannelInfoViewController: UIViewController {
     @IBAction func leaveButtonAction(_ sender: Any) {
         
     }
+    
     func configureView() {
         setBorder(view: urlView)
         setBorder(view: headerView)
@@ -61,7 +62,7 @@ class ChannelInfoViewController: UIViewController {
     }
     
     func setInfo() {
-        nameLabel.text = channel?.name
+        nameLabel.text = channel?._id
         descriptionLabel.text = channel?.description ?? "description_not_set".localized()
         urlLabel.text = channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
