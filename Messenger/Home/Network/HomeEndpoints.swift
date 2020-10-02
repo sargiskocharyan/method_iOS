@@ -44,6 +44,7 @@ public enum HomeApi {
     case subscribe(id: String)
     case findChannels(term: String)
     case leaveChannel(id: String)
+    case addModerator(id: String, userId: String)
 }
 
 extension HomeApi: EndPointType {
@@ -123,6 +124,8 @@ extension HomeApi: EndPointType {
             return AUTHUrls.FindChannels
         case .leaveChannel(let id):
             return "\(AUTHUrls.CreateChannel)/\(id)/leave"
+        case .addModerator(let id,_):
+            return "\(AUTHUrls.CreateChannel)/\(id)/addModerator"
         }
     }
     
@@ -196,6 +199,8 @@ extension HomeApi: EndPointType {
         case .findChannels(_):
             return .post
         case .leaveChannel(_):
+            return .post
+        case .addModerator(_,_):
             return .post
         }
     }
@@ -350,6 +355,10 @@ extension HomeApi: EndPointType {
         case .leaveChannel(_):
             let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .addModerator(_, userId: let userId):
+             let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

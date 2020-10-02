@@ -25,6 +25,6 @@ class ChannelListViewModel {
            HomeNetworkManager().createChannel(name: name) { (channel, error) in
                completion(channel, error)
            }
-       }
+       }    
 }
 

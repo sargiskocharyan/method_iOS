@@ -172,7 +172,7 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tac-n4-NHF">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="990.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="818"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="74z-aA-uO7">
                                                 <rect key="frame" x="-1" y="-1" width="416" height="200"/>
@@ -202,7 +202,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1bD-fB-r91">
-                                                <rect key="frame" x="-1" y="198" width="416" height="708.5"/>
+                                                <rect key="frame" x="-1" y="198" width="416" height="136"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wip-33-BtO">
                                                         <rect key="frame" x="15" y="10" width="119" height="29"/>
@@ -210,15 +210,8 @@
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAN-6q-3dt">
-                                                        <rect key="frame" x="15" y="49" width="385" height="644.5"/>
-                                                        <string key="text">LabelAs an iOS developer i saw many deAs an iOS developer i saw many developers are stuck on scrollView with dynamic width and height.A urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1 urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1LabelAs an iOS developer i saw many deAs an iOS developer i saw many developers are stuck on scrollView with dynamic width and height.A urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1 urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1LabelAs an iOS developer i saw many deAs an iOS developer i saw many developers are stuck on scrollView with dynamic width and height.A urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1 urlView.layer.borderColor = UIColor.lightGray.cgColor
-        urlView.layer.borderWidth = 1</string>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelAs an iOS developer i saw many deAs an iOS developer i saw many developers are stuck on " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAN-6q-3dt">
+                                                        <rect key="frame" x="15" y="49" width="385" height="72"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -236,7 +229,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7PF-hJ-D4p">
-                                                <rect key="frame" x="-1" y="905.5" width="416" height="86"/>
+                                                <rect key="frame" x="-1" y="333" width="416" height="86"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r6h-1o-xHX">
                                                         <rect key="frame" x="15" y="10" width="45" height="29"/>
@@ -253,6 +246,7 @@
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="oZJ-MG-d7B" secondAttribute="trailing" constant="15" id="4Vi-OR-sVN"/>
                                                     <constraint firstAttribute="bottom" secondItem="oZJ-MG-d7B" secondAttribute="bottom" constant="15" id="E7o-A1-6j7"/>
                                                     <constraint firstItem="r6h-1o-xHX" firstAttribute="top" secondItem="7PF-hJ-D4p" secondAttribute="top" constant="10" id="Eg9-Sm-WEB"/>
                                                     <constraint firstItem="r6h-1o-xHX" firstAttribute="leading" secondItem="7PF-hJ-D4p" secondAttribute="leading" constant="15" id="FdE-cQ-Tdv"/>

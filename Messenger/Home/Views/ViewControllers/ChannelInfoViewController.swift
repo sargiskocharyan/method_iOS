@@ -12,7 +12,7 @@ class ChannelInfoViewController: UIViewController {
 
     //MARK: @IBOutlets
     @IBOutlet weak var urlView: UIView!
-    @IBOutlet weak var leaveButton: UIButton!
+    //@IBOutlet weak var leaveButton: UIButton!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var urlLabel: UILabel!
@@ -40,11 +40,11 @@ class ChannelInfoViewController: UIViewController {
         if (navigationController?.navigationBar.isHidden)! {
             navigationController?.navigationBar.isHidden = false
         }
-        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
-            leaveButton.isHidden = false
-        } else {
-            leaveButton.isHidden = true
-        }
+//        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
+//            leaveButton.isHidden = false
+//        } else {
+//            leaveButton.isHidden = true
+//        }
         setInfo()
     }
     
