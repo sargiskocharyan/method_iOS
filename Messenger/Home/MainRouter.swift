@@ -28,6 +28,8 @@ class MainRouter {
     weak var channelMessagesViewController: ChannelMessagesViewController?
     weak var adminInfoViewController: AdminInfoViewController?
     weak var moderatorListViewController: ModeratorListViewController?
+    weak var moderatorInfoViewController: ModeratorInfoViewController?
+    weak var subscribersListViewController: SubscribersListViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -301,6 +303,24 @@ class MainRouter {
         vc.channel = channel
         self.channelInfoViewController = vc
         channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+   
+    func showModeratorInfoViewController(channel: Channel)  {
+        let vc = ModeratorInfoViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = channelMessagesViewController?.mainRouter
+        vc.channel = channel
+        vc.viewModel = ChannelInfoViewModel()
+        self.moderatorInfoViewController = vc
+        channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showSubscribersListViewController(id: String) {
+        let vc = SubscribersListViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = moderatorInfoViewController?.mainRouter
+        vc.viewModel = ChannelInfoViewModel()
+        vc.id = id
+        self.subscribersListViewController = vc
+        moderatorInfoViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
 }

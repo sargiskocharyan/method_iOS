@@ -46,6 +46,7 @@ public enum HomeApi {
     case leaveChannel(id: String)
     case addModerator(id: String, userId: String)
     case getModerators(id: String)
+    case getSubcribers(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -129,6 +130,8 @@ extension HomeApi: EndPointType {
             return "\(AUTHUrls.CreateChannel)/\(id)/addModerator"
         case .getModerators(id: let id):
             return "\(AUTHUrls.CreateChannel)/\(id)/moderators"
+        case .getSubcribers(let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)/subscribers"
         }
     }
     
@@ -206,6 +209,8 @@ extension HomeApi: EndPointType {
         case .addModerator(_,_):
             return .post
         case .getModerators(_):
+            return .get
+        case .getSubcribers(_):
             return .get
         }
     }
@@ -361,11 +366,14 @@ extension HomeApi: EndPointType {
             let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .addModerator(_, userId: let userId):
-             let parameters: Parameters = ["userId": userId]
+            let parameters: Parameters = ["userId": userId]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .getModerators(_):
             let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getSubcribers(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

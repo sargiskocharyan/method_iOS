@@ -30,10 +30,6 @@ struct Messages: Codable {
     var statuses: [MessageStatus]?
 }
 
-struct ChannelSubscriber: Codable {
-    var _id: String?
-    var user: User?
-}
 
 struct AdminMessage: Codable {
     var _id: String
@@ -63,6 +59,11 @@ struct Channel: Codable {
     var statuses: [ChannelStatus]?
     var description: String?
     var publicUrl: String?
+}
+
+struct ChannelSubscriber: Codable {
+    var _id: String?
+    var user: User?
 }
 
 struct ChannelMessages: Codable {

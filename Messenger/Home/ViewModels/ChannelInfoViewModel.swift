@@ -20,4 +20,10 @@ class ChannelInfoViewModel {
             completion(moderators, error)
         }
     }
+    
+    func getSubscribers(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?)->()) {
+        HomeNetworkManager().getSubscribers(id: id) { (user, error) in
+            completion(user, error)
+        }
+    }
 }
