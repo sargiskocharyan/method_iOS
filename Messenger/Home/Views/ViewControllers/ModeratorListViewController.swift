@@ -18,11 +18,20 @@ class ModeratorListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        getModerators()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
     }
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+    }
+       
+    @objc func addButtonTapped() {
+        mainRouter?.showSubscribersListViewControllerFromModeratorList(id: id!)
+    }
+    
     func getModerators() {
         viewModel?.getModerators(id: id!, completion: { (moderators, error) in
             if error != nil {
@@ -46,7 +55,9 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
-        cell.configure(contact: moderators[indexPath.row].user!)
+        if let user = moderators[indexPath.row].user {
+            cell.configure(contact: user)
+        }
         return cell
     }
     

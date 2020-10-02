@@ -18,6 +18,7 @@ class SubscribersListViewController: UIViewController {
     var viewModel: ChannelInfoViewModel?
     var subscribers: [ChannelSubscriber] = []
     var id: String?
+    var isFromModeratorList: Bool?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -35,7 +36,9 @@ class SubscribersListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if subscribers != nil {
-                self.subscribers = subscribers!
+                self.subscribers = subscribers!.filter({ (channelSubscriber) -> Bool in
+                    return true
+                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -58,6 +61,23 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if isFromModeratorList == true {
+            viewModel?.addModerator(id: id!, userId: subscribers[indexPath.row].user?._id ?? "", completion: { (channel, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.mainRouter?.moderatorListViewController?.moderators.append(self.subscribers[indexPath.row])
+                        self.mainRouter?.moderatorListViewController?.tableView.insertRows(at: [IndexPath(row: (self.mainRouter?.moderatorListViewController?.moderators.count)! - 1, section: 0)], with: .automatic)
+                    }
+                }
+            })
+        }
     }
     
 }

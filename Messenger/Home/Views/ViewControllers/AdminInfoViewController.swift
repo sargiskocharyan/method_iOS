@@ -64,7 +64,7 @@ class AdminInfoViewController: UIViewController {
     }
     
     @objc func handleSubscribersTap(_ sender: UITapGestureRecognizer? = nil) {
-        
+        mainRouter?.showSubscribersListViewControllerFromAdminInfo(id: channel?._id ?? "")
     }
     
     @objc func handleModeratorsTap(_ sender: UITapGestureRecognizer? = nil) {

@@ -115,6 +115,7 @@ class MainRouter {
     func showAdminInfoViewController(channel: Channel) {
         let vc = AdminInfoViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = channelMessagesViewController?.mainRouter
+        vc.channel = channel
         vc.viewModel = ChannelInfoViewModel()
         self.adminInfoViewController = vc
         channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
@@ -319,8 +320,29 @@ class MainRouter {
         vc.mainRouter = moderatorInfoViewController?.mainRouter
         vc.viewModel = ChannelInfoViewModel()
         vc.id = id
+        vc.isFromModeratorList = false
         self.subscribersListViewController = vc
         moderatorInfoViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showSubscribersListViewControllerFromModeratorList(id: String) {
+        let vc = SubscribersListViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = moderatorListViewController?.mainRouter
+        vc.viewModel = ChannelInfoViewModel()
+        vc.id = id
+        vc.isFromModeratorList = true
+        self.subscribersListViewController = vc
+        moderatorListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showSubscribersListViewControllerFromAdminInfo(id: String) {
+        let vc = SubscribersListViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = adminInfoViewController?.mainRouter
+        vc.viewModel = ChannelInfoViewModel()
+        vc.id = id
+        vc.isFromModeratorList = false
+        self.subscribersListViewController = vc
+        adminInfoViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
 }

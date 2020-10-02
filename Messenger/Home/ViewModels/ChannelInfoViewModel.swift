@@ -26,4 +26,10 @@ class ChannelInfoViewModel {
             completion(user, error)
         }
     }
+    
+    func addModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        HomeNetworkManager().addModerator(id: id, userId: userId) { (channel, error) in
+            completion(channel, error)
+        }
+    }
 }
