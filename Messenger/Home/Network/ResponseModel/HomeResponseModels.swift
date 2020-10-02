@@ -30,6 +30,11 @@ struct Messages: Codable {
     var statuses: [MessageStatus]?
 }
 
+struct ChannelSubscriber: Codable {
+    var _id: String?
+    var user: User?
+}
+
 struct AdminMessage: Codable {
     var _id: String
     var body: String

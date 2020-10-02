@@ -14,4 +14,10 @@ class ChannelInfoViewModel {
             completion(error)
         }
     }
+    
+    func getModerators(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?) -> ()) {
+        HomeNetworkManager().getModerators(id: id) { (moderators, error) in
+            completion(moderators, error)
+        }
+    }
 }

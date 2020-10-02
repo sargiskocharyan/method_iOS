@@ -26,6 +26,8 @@ class MainRouter {
     weak var channelListViewController: ChannelListViewController?
     weak var channelInfoViewController: ChannelInfoViewController?
     weak var channelMessagesViewController: ChannelMessagesViewController?
+    weak var adminInfoViewController: AdminInfoViewController?
+    weak var moderatorListViewController: ModeratorListViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -78,6 +80,15 @@ class MainRouter {
         }
     }
     
+    func showModeratorListViewController(id: String) {
+        let vc = ModeratorListViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = adminInfoViewController?.mainRouter
+        vc.viewModel = ChannelInfoViewModel()
+        vc.id = id
+        self.moderatorListViewController = vc
+        adminInfoViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func showCallDetailViewController(id: String, name: String, duration: String, time: Date?, callMode: CallStatus, avatarURL: String, isReceiverWe: Bool) {
         let vc = CallDetailViewController.instantiate(fromAppStoryboard: .calls)
         vc.mainRouter = callListViewController?.mainRouter
@@ -97,6 +108,14 @@ class MainRouter {
         }
         self.callDetailViewController = vc
         callListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showAdminInfoViewController(channel: Channel) {
+        let vc = AdminInfoViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = channelMessagesViewController?.mainRouter
+        vc.viewModel = ChannelInfoViewModel()
+        self.adminInfoViewController = vc
+        channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
     func showChatViewController(name: String?, id: String, avatarURL: String?, username: String?) {

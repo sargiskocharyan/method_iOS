@@ -45,7 +45,7 @@ class ChannelMessagesViewController: UIViewController {
     //MARK: Helper methods
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
+            self.mainRouter?.showAdminInfoViewController(channel: self.channel!)
         }
     }
 

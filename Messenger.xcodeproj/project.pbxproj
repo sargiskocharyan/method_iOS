@@ -126,6 +126,10 @@
 		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */; };
+		D0B806852526F938004E4DF0 /* AdminInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */; };
+		D0B8068725273F33004E4DF0 /* ModeratorListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */; };
+		D0B8068825273F33004E4DF0 /* ModeratorListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */; };
 		D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */; };
 		D0EDEFF22524642F00016AF7 /* ChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */; };
 		D0EDEFF4252495B000016AF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0EDEFF3252495B000016AF7 /* Main.storyboard */; };
@@ -443,6 +447,8 @@
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
+		D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminInfoViewController.swift; sourceTree = "<group>"; };
+		D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeratorListViewController.swift; sourceTree = "<group>"; };
 		D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewController.swift; sourceTree = "<group>"; };
 		D0EDEFF3252495B000016AF7 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewModel.swift; sourceTree = "<group>"; };
@@ -614,6 +620,8 @@
 				CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */,
 				D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */,
 				D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */,
+				D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */,
+				D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1349,6 +1357,7 @@
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
 				CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */,
+				D0B8068725273F33004E4DF0 /* ModeratorListViewController.swift in Sources */,
 				CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */,
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
@@ -1411,6 +1420,7 @@
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
+				D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
@@ -1460,6 +1470,7 @@
 				D0F664BE251B177D0018D9B7 /* SessionDescription.swift in Sources */,
 				D0F664BF251B177D0018D9B7 /* ProviderDelegate.swift in Sources */,
 				D0F664C0251B177D0018D9B7 /* AdminMessageTableViewCell.swift in Sources */,
+				D0B8068825273F33004E4DF0 /* ModeratorListViewController.swift in Sources */,
 				D0F664C1251B177D0018D9B7 /* ChatMessagesViewModel.swift in Sources */,
 				D0F664C2251B177D0018D9B7 /* RegisterViewModel.swift in Sources */,
 				D0F664C3251B177D0018D9B7 /* AppDelegateViewModel.swift in Sources */,
@@ -1522,6 +1533,7 @@
 				D0F664F9251B177D0018D9B7 /* SignalingClient.swift in Sources */,
 				D0F664FA251B177D0018D9B7 /* TextField-Extension.swift in Sources */,
 				D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
+				D0B806852526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
 				D0F664FB251B177D0018D9B7 /* BeforeLoginViewModel.swift in Sources */,
 				D0F664FC251B177D0018D9B7 /* ProfileViewController.swift in Sources */,
 				D0F664FD251B177D0018D9B7 /* CallListViewController.swift in Sources */,
