@@ -32,4 +32,10 @@ class ChannelInfoViewModel {
             completion(channel, error)
         }
     }
+    
+    func removeModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        HomeNetworkManager().removeModerator(id: id, userId: userId) { (channel, error) in
+            completion(channel, error)
+        }
+    }
 }

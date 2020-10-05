@@ -82,10 +82,11 @@ class MainRouter {
         }
     }
     
-    func showModeratorListViewController(id: String) {
+    func showModeratorListViewController(id: String, isChangeAdmin: Bool) {
         let vc = ModeratorListViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = adminInfoViewController?.mainRouter
         vc.viewModel = ChannelInfoViewModel()
+        vc.isChangeAdmin = isChangeAdmin
         vc.id = id
         self.moderatorListViewController = vc
         adminInfoViewController?.navigationController?.pushViewController(vc, animated: true)

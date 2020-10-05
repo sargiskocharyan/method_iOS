@@ -68,11 +68,11 @@ class AdminInfoViewController: UIViewController {
     }
     
     @objc func handleModeratorsTap(_ sender: UITapGestureRecognizer? = nil) {
-        mainRouter?.showModeratorListViewController(id: channel?._id ?? "")
+        mainRouter?.showModeratorListViewController(id: channel!._id, isChangeAdmin: false)
     }
     
     @objc func handleChangeAdminTab(_ sender: UITapGestureRecognizer? = nil) {
-        
+        mainRouter?.showModeratorListViewController(id: channel!._id, isChangeAdmin: true)
     }
     
     func configureView() {

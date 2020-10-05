@@ -47,6 +47,8 @@ public enum HomeApi {
     case addModerator(id: String, userId: String)
     case getModerators(id: String)
     case getSubcribers(id: String)
+    case removeModerator(id: String, userId: String)
+    case updateChannelInfo(id: String, name: String, description: String)
 }
 
 extension HomeApi: EndPointType {
@@ -132,6 +134,10 @@ extension HomeApi: EndPointType {
             return "\(AUTHUrls.CreateChannel)/\(id)/moderators"
         case .getSubcribers(let id):
             return "\(AUTHUrls.CreateChannel)/\(id)/subscribers"
+        case .removeModerator(id: let id, _):
+            return "\(AUTHUrls.CreateChannel)/\(id)/removeModerator"
+        case .updateChannelInfo(id: let id, _, _):
+            return "\(AUTHUrls.CreateChannel)/\(id)/update"
         }
     }
     
@@ -212,6 +218,10 @@ extension HomeApi: EndPointType {
             return .get
         case .getSubcribers(_):
             return .get
+        case .removeModerator(_,_):
+            return .post
+        case .updateChannelInfo(_,_,_):
+            return .post
         }
     }
     
@@ -375,6 +385,14 @@ extension HomeApi: EndPointType {
         case .getSubcribers(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .removeModerator(_, userId: let userId):
+            let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .updateChannelInfo(_, name: let name, description: let description):
+            let parameters: Parameters = ["name": name, "description": description]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

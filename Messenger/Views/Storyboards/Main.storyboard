@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YNK-Hv-VLn">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -1176,6 +1176,101 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YQB-at-C4y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2471.0144927536235" y="402.45535714285711"/>
+        </scene>
+        <!--Update Channel Info View Controller-->
+        <scene sceneID="1Gu-td-T4X">
+            <objects>
+                <viewController storyboardIdentifier="UpdateChannelInfoViewController" id="YNK-Hv-VLn" customClass="UpdateChannelInfoViewController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="55Z-IL-3f6">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IfP-TS-Nif" customClass="CustomTextField" customModule="method" customModuleProvider="target">
+                                <rect key="frame" x="40" y="220.33333333333337" width="334" height="100"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="k20-SR-gF8"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="info"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VeG-rA-HgS" customClass="CustomTextField" customModule="method" customModuleProvider="target">
+                                <rect key="frame" x="40" y="114" width="334" height="66.333333333333314"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="66.333333333333314" id="RQV-mY-OHa"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="name"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="errorMessage" value="incorrect_email"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="successMessage" value="correct_email"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i60-Hw-5NS" customClass="GradientView" customModule="method" customModuleProvider="target">
+                                <rect key="frame" x="40" y="727" width="334" height="35"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F13-Hn-dVI">
+                                        <rect key="frame" x="0.0" y="0.0" width="334" height="35"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <state key="normal" title="Create account">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="8"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="F13-Hn-dVI" firstAttribute="leading" secondItem="i60-Hw-5NS" secondAttribute="leading" id="0QT-Lv-xAH"/>
+                                    <constraint firstAttribute="bottom" secondItem="F13-Hn-dVI" secondAttribute="bottom" id="HZx-Y6-NYi"/>
+                                    <constraint firstAttribute="trailing" secondItem="F13-Hn-dVI" secondAttribute="trailing" id="boe-5f-hcc"/>
+                                    <constraint firstAttribute="height" constant="35" id="dbF-jO-cAG"/>
+                                    <constraint firstItem="F13-Hn-dVI" firstAttribute="top" secondItem="i60-Hw-5NS" secondAttribute="top" id="tp1-5e-eF4"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="firstColor">
+                                        <color key="value" red="0.2666666667" green="0.4941176471" blue="0.72941176470000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="secondColor">
+                                        <color key="value" red="0.40000000000000002" green="0.32156862749999998" blue="0.66274509800000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isHorizontal" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.clipsToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="VeG-rA-HgS" firstAttribute="width" secondItem="55Z-IL-3f6" secondAttribute="width" multiplier="0.806763" id="6HV-Rl-yNi"/>
+                            <constraint firstItem="i60-Hw-5NS" firstAttribute="width" secondItem="55Z-IL-3f6" secondAttribute="width" multiplier="0.806763" id="8y8-3O-cVj"/>
+                            <constraint firstItem="IfP-TS-Nif" firstAttribute="centerX" secondItem="piY-Vd-7eT" secondAttribute="centerX" id="CGv-W1-0YP"/>
+                            <constraint firstItem="IfP-TS-Nif" firstAttribute="leading" secondItem="VeG-rA-HgS" secondAttribute="leading" id="GGG-Bb-eAs"/>
+                            <constraint firstItem="piY-Vd-7eT" firstAttribute="bottom" secondItem="i60-Hw-5NS" secondAttribute="bottom" constant="100" id="Ztx-az-PHc"/>
+                            <constraint firstItem="IfP-TS-Nif" firstAttribute="trailing" secondItem="VeG-rA-HgS" secondAttribute="trailing" id="gy6-rb-Cxj"/>
+                            <constraint firstItem="i60-Hw-5NS" firstAttribute="centerX" secondItem="piY-Vd-7eT" secondAttribute="centerX" id="kyM-hu-fdc"/>
+                            <constraint firstItem="IfP-TS-Nif" firstAttribute="top" secondItem="VeG-rA-HgS" secondAttribute="bottom" constant="40" id="lUZ-iW-y5y"/>
+                            <constraint firstItem="VeG-rA-HgS" firstAttribute="top" secondItem="piY-Vd-7eT" secondAttribute="top" constant="70" id="wor-Eg-2ee"/>
+                            <constraint firstItem="VeG-rA-HgS" firstAttribute="centerX" secondItem="piY-Vd-7eT" secondAttribute="centerX" id="xcV-Ha-pR3"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="piY-Vd-7eT"/>
+                    </view>
+                    <connections>
+                        <outlet property="descriptionCustomView" destination="IfP-TS-Nif" id="qXe-nS-0AU"/>
+                        <outlet property="nameCustomView" destination="VeG-rA-HgS" id="Qwh-D5-fpc"/>
+                        <outlet property="updateInfoButton" destination="F13-Hn-dVI" id="94Q-z9-ppI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BqS-v9-dXA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-3307" y="-265"/>
         </scene>
     </scenes>
     <resources>

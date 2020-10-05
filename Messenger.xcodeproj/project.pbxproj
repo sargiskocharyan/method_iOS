@@ -122,6 +122,8 @@
 		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
 		D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
+		D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
+		D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
 		D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
@@ -448,6 +450,7 @@
 		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D0065B73251CCB0700EE880A /* Calls.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
+		D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewController.swift; sourceTree = "<group>"; };
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
@@ -626,6 +629,7 @@
 				D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */,
 				D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */,
 				D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */,
+				D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1443,6 +1447,7 @@
 				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
 				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
+				D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
@@ -1497,6 +1502,7 @@
 				D0F664CF251B177D0018D9B7 /* Button-Extension.swift in Sources */,
 				D0F664D0251B177D0018D9B7 /* Data-Extension.swift in Sources */,
 				D0F664D1251B177D0018D9B7 /* RecentMessagesViewController.swift in Sources */,
+				D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */,
 				D0F664D2251B177D0018D9B7 /* RecieveMessageTableViewCell.swift in Sources */,
 				D0F664D3251B177D0018D9B7 /* Contacts.swift in Sources */,
 				D0F664D4251B177D0018D9B7 /* HTTPMethod.swift in Sources */,

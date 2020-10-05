@@ -322,7 +322,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let nc = tabbar?.viewControllers?[2] as? UINavigationController
                 let profile = nc?.viewControllers[0] as? ProfileViewController
                 print(userInfo)
-                SharedConfigs.shared.missedCalls = userInfo["missedCalls"] as! [String]
+//                SharedConfigs.shared.missedCalls = userInfo["missedCalls"] as! [String]
                 tabbar?.mainRouter?.notificationListViewController?.reloadData()
                 profile?.changeNotificationNumber()
                 if tabbar?.selectedIndex == 0 {
@@ -354,7 +354,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func setInitialStoryboard() {
         defineMode()
-        defineStartController()
+//        defineStartController()
     }
     
     func defineStartController() {
