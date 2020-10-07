@@ -197,8 +197,8 @@ class MainTabBarController: UITabBarController {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
             let recentNC = self.viewControllers![1] as! UINavigationController
             if recentNC.viewControllers.count > 1 {
-                let chatVC = recentNC.viewControllers[1] as! ChatViewController
-                chatVC.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
+                let chatVC = recentNC.viewControllers[1] as? ChatViewController
+                chatVC?.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
             }
         }
     }
@@ -361,7 +361,31 @@ class MainTabBarController: UITabBarController {
                      }
                  }
              }
-         }
+    }
+    
+    func getNewChannelMessage() {
+        SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username) in
+            
+            let channelMessageNC = self.viewControllers?[3] as? UINavigationController
+            
+            switch self.selectedIndex {
+            case 3:
+                if channelMessageNC?.viewControllers.count != 2 {
+                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
+                    }
+                } else {
+                    if (channelMessageNC?.viewControllers.count)! > 0 {
+                        let channelMessageVC = channelMessageNC?.viewControllers[1] as? ChannelMessagesViewController
+                        channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    }
+                    
+                }
+            default:
+                self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
+            }
+        }
+    }
     
     func getNewMessage() {
         SocketTaskManager.shared.getChatMessage { (callHistory, message, name, lastname, username) in
@@ -458,8 +482,8 @@ class MainTabBarController: UITabBarController {
     
     func sessionExpires() {
         SocketTaskManager.shared.disconnect{}
-        UserDataController().logOutUser()
         DispatchQueue.main.async {
+            UserDataController().logOutUser()
             let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
                 AuthRouter().assemblyModule()

@@ -54,7 +54,7 @@
                                     <constraint firstItem="xvH-Z0-Jej" firstAttribute="centerY" secondItem="wP5-YG-dGe" secondAttribute="centerY" id="uNs-Iq-btk"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="A3M-fd-wUR">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="A3M-fd-wUR">
                                 <rect key="frame" x="0.0" y="95" width="414" height="767"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
@@ -66,31 +66,39 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Pc-OF-3c0">
-                                                    <rect key="frame" x="10" y="24" width="30" height="30"/>
+                                                    <rect key="frame" x="35" y="24" width="30" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="39T-oP-HPS"/>
                                                         <constraint firstAttribute="width" constant="30" id="cu5-Q7-ruG"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labelgfdgddgfdfdgfdfgdf" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EVp-39-A5A" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="55" y="10" width="174.5" height="44"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EVp-39-A5A" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
+                                                    <rect key="frame" x="80" y="10" width="37.5" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qC6-ED-GPS">
+                                                    <rect key="frame" x="5" y="16" width="20" height="22"/>
+                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="top" secondItem="1Mk-Cj-xT3" secondAttribute="top" constant="10" id="0JY-Kf-BeY"/>
                                                 <constraint firstAttribute="bottom" secondItem="1Pc-OF-3c0" secondAttribute="bottom" id="EPG-rG-56G"/>
+                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="5" id="FwU-Es-Ela"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="EVp-39-A5A" secondAttribute="trailing" constant="20" id="LjF-Ds-KFS"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="width" relation="lessThanOrEqual" secondItem="1Mk-Cj-xT3" secondAttribute="width" multiplier="0.61" id="TRW-VH-rbU"/>
-                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="10" id="gUp-gE-3mK"/>
-                                                <constraint firstAttribute="bottom" secondItem="EVp-39-A5A" secondAttribute="bottom" id="i3l-mt-gQd"/>
-                                                <constraint firstItem="EVp-39-A5A" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="moE-JQ-Ez7"/>
+                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="qC6-ED-GPS" secondAttribute="trailing" constant="10" id="iw7-aO-ShI"/>
+                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="rSa-lA-CRQ"/>
+                                                <constraint firstItem="EVp-39-A5A" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="zVg-FN-b90"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1500" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="button" destination="qC6-ED-GPS" id="DRR-Al-wwC"/>
+                                            <outlet property="leadingConstraintOfButton" destination="FwU-Es-Ela" id="8DL-on-x4Z"/>
+                                            <outlet property="leadingConstraintOfImageView" destination="iw7-aO-ShI" id="lS4-9z-jLp"/>
                                             <outlet property="messageLabel" destination="EVp-39-A5A" id="zfI-iE-uRm"/>
                                             <outlet property="userImageView" destination="1Pc-OF-3c0" id="964-PU-hDn"/>
                                         </connections>
@@ -102,12 +110,6 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelkjkkkSoc" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vx0-qt-hDk" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="295.5" y="10" width="98.5" height="18"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WKF-UR-aWR">
                                                     <rect key="frame" x="365" y="36" width="29" height="14"/>
                                                     <constraints>
@@ -117,19 +119,32 @@
                                                     <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelkjkkkSoc" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vx0-qt-hDk" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
+                                                    <rect key="frame" x="295.5" y="10" width="98.5" height="18"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEB-WS-ya8">
+                                                    <rect key="frame" x="7" y="20.5" width="20" height="22"/>
+                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="top" secondItem="K7H-d2-FSR" secondAttribute="top" constant="10" id="5oX-N8-Xqa"/>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" id="AKt-Hc-5IG"/>
                                                 <constraint firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" constant="20" id="IW5-0N-jVc"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" symbolic="YES" id="OQ7-ys-jRl"/>
+                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="centerY" secondItem="K7H-d2-FSR" secondAttribute="centerY" id="WKM-3W-nFb"/>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="width" relation="lessThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="width" multiplier="0.61" id="h0u-wQ-J1q"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="top" secondItem="Vx0-qt-hDk" secondAttribute="bottom" constant="8" id="jk3-WI-RFe"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" id="mDd-tb-mbT"/>
+                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="leading" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="7" id="xSJ-BS-5no"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="button" destination="DEB-WS-ya8" id="geM-W2-1RH"/>
                                             <outlet property="messageLabel" destination="Vx0-qt-hDk" id="WBL-Mg-KRG"/>
                                             <outlet property="readMessage" destination="WKF-UR-aWR" id="CIU-Ma-B3i"/>
                                         </connections>
@@ -154,6 +169,7 @@
                         <outlet property="joinButton" destination="Zgy-sh-cre" id="V3j-6U-fZW"/>
                         <outlet property="nameOfChannelButton" destination="fBC-dg-8L0" id="DSC-7e-Udu"/>
                         <outlet property="tableView" destination="A3M-fd-wUR" id="H8s-Y1-HVv"/>
+                        <outlet property="tableViewBottomConstraint" destination="E5c-LM-mML" id="ddN-Nf-me9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Af-8B-WwY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -615,6 +631,7 @@
     <resources>
         <image name="Armenian" width="128" height="128"/>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
+        <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="noPhoto" width="2200" height="2200"/>
     </resources>
 </document>

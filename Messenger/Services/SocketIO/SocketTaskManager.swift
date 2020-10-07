@@ -85,6 +85,7 @@ class SocketTaskManager {
                     self.tabbar?.handleNewContactRequest()
                     self.tabbar?.handleContactRequestRejected()
                     self.tabbar?.handleContactRemoved()
+                    self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
                 }
                 for compleion in self.completions {
@@ -266,6 +267,19 @@ class SocketTaskManager {
         })
     }
     
+    
+    
+//    func sendChanMessage(message: String, channelId: String, completionHandler: @escaping (_ roomname: String) -> ()) {
+//        socket?.emitWithAck("call", message, channelId).timingOut(after: 0.0) { (dataArray) in
+//            completionHandler(dataArray[0] as! String)
+//        }
+//    }
+//
+    
+    func sendChanMessage(message: String, channelId: String) {
+         socket!.emit("sendChnMessage", message, channelId)
+    }
+    
     func send(message: String, id: String) {
         socket!.emit("sendMessage", message, id)
     }
@@ -329,6 +343,47 @@ class SocketTaskManager {
                     }
                 }
                 return
+            }
+        }
+    }
+//    func addSendChannelMessageListener()  {
+//        socket?.on("sendChnMessage", callback: { (dataArray, socketAck) in
+//            print(dataArray)
+//        })
+//    }
+    
+    func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
+        socket!.on("sendChnMessage") { (dataArray, socketAck) -> Void in
+            let data = dataArray[0] as! NSDictionary
+            let chatId = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
+//            if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
+//                self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
+//                    print("messageReceived")
+//                }
+//            }
+            if let text = data["text"] as? String {
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                
+//                for i in 0..<vc.chats.count {
+//                    if vc.chats[i].id == data["senderId"] as? String {
+//                        if !vc.chats[i].unreadMessageExists {
+//                            SharedConfigs.shared.unreadMessages.append(vc.chats[i])
+//                            self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+//                            DispatchQueue.main.async {
+//                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+//                                let profile = nc.viewControllers[0] as! ProfileViewController
+//                                profile.changeNotificationNumber()
+//                            }
+//                            if let tabItems = self.tabbar?.tabBar.items  {
+//                                let tabItem = tabItems[1]
+//                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
+//                            }
+//                            break
+//                        }
+//                    }
+//                }
+//                return
             }
         }
     }

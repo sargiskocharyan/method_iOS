@@ -10,6 +10,7 @@ import UIKit
 
 class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var readMessage: UILabel!
+    @IBOutlet weak var button: UIButton?
     @IBOutlet weak var messageLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -18,7 +19,17 @@ class SendMessageTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        button?.isHidden = true
+        
+    }
+    
+    
+    func editPage(isPreview: Bool) {
+        if !isPreview {
+            button?.isHidden = true
+        } else {
+            button?.isHidden = false
+        }
     }
 
     func changeShapeOfImageView() {

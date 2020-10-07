@@ -24,4 +24,10 @@ class ChannelMessagesViewModel {
         }
     }
     
+    func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
+           HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+               completion(messages, error)
+           }
+       }
+    
 }

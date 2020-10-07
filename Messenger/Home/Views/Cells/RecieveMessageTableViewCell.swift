@@ -12,9 +12,32 @@ class RecieveMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     
+    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
+    @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
+    
+    @IBOutlet weak var button: UIButton!
+    var isPreview: Bool?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
+        userImageView.backgroundColor = .red
+        leadingConstraintOfButton?.constant -= 15
+        leadingConstraintOfImageView?.constant -= 15
+        button?.isHidden = true
+        
+    }
+    
+    func editPage(isPreview: Bool?) {
+        if isPreview == true {
+            leadingConstraintOfButton?.constant -= 20
+            leadingConstraintOfImageView?.constant -= 20
+            button.isHidden = true
+        } else if isPreview == false {
+            leadingConstraintOfButton?.constant += 20
+            leadingConstraintOfImageView?.constant += 20
+            button.isHidden = false
+        }
     }
     
     func changeShapeOfImageView() {

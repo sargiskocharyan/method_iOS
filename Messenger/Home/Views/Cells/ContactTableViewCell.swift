@@ -14,6 +14,7 @@ class ContactTableViewCell: UITableViewCell {
     @IBOutlet weak var lastnameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
