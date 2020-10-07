@@ -48,7 +48,10 @@ public enum HomeApi {
     case getModerators(id: String)
     case getSubcribers(id: String)
     case removeModerator(id: String, userId: String)
-    case updateChannelInfo(id: String, name: String, description: String)
+    case updateChannelInfo(id: String, name: String?, description: String?)
+    case changeAdmin(id: String, userId: String)
+    case deleteChannelLogo(id: String)
+    case deleteChannel(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -138,6 +141,12 @@ extension HomeApi: EndPointType {
             return "\(AUTHUrls.CreateChannel)/\(id)/removeModerator"
         case .updateChannelInfo(id: let id, _, _):
             return "\(AUTHUrls.CreateChannel)/\(id)/update"
+        case .changeAdmin(id: let id,_) :
+            return "\(AUTHUrls.CreateChannel)/\(id)/changeAdmin"
+        case .deleteChannelLogo(id: let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)/avatar"
+        case .deleteChannel(id: let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)"
         }
     }
     
@@ -222,6 +231,12 @@ extension HomeApi: EndPointType {
             return .post
         case .updateChannelInfo(_,_,_):
             return .post
+        case .changeAdmin(_,_):
+            return .post
+        case .deleteChannelLogo(_):
+            return .delete
+        case .deleteChannel(_):
+            return .delete
         }
     }
     
@@ -390,9 +405,21 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .updateChannelInfo(_, name: let name, description: let description):
-            let parameters: Parameters = ["name": name, "description": description]
+            var parameters: Parameters = [:]
+            parameters["name"] = name
+            parameters["description"] = description
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .changeAdmin(_, userId: let userId):
+            let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannelLogo(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannel(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

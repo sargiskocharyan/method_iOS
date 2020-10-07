@@ -9,13 +9,13 @@
 import Foundation
 
 class ChannelListViewModel {
-    func getChannels(ids: [String], completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+    func getChannels(ids: [String], completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
         HomeNetworkManager().getChannelsInfo(ids: ids) { (channels, error) in
             completion(channels, error)
         }
     }
     
-    func findChannels(term: String, completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+    func findChannels(term: String, completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
         HomeNetworkManager().findChannels(term: term) { (channels, error) in
             completion(channels, error)
         }

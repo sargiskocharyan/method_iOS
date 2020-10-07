@@ -23,7 +23,9 @@ class ChannelListTableViewCell: UITableViewCell {
     func configureCell(avatar: String?, name: String, id: String) {
         channelNameLabel.text = name
         ImageCache.shared.getImage(url: avatar ?? "", id: id) { (image) in
-            self.channelLogoImageView.image = image
+            DispatchQueue.main.async {
+                self.channelLogoImageView.image = image
+            }
         }
     }
     override func setSelected(_ selected: Bool, animated: Bool) {

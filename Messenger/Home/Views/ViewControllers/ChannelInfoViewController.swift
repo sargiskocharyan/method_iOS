@@ -56,7 +56,6 @@ class ChannelInfoViewController: UIViewController {
     
     func configureView() {
         setBorder(view: urlView)
-        setBorder(view: headerView)
         setBorder(view: descriptionView)
         channelLogoImageView.layer.cornerRadius = channelLogoImageView.frame.height / 2
         channelLogoImageView.clipsToBounds = true

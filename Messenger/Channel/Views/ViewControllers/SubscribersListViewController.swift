@@ -36,9 +36,30 @@ class SubscribersListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if subscribers != nil {
-                self.subscribers = subscribers!.filter({ (channelSubscriber) -> Bool in
+//                self.subscribers = subscribers!.filter({ (channelSubscriber) -> Bool in
+//                    return true
+//                })
+                self.subscribers = subscribers!.filter({ (subscriber) -> Bool in
                     return true
                 })
+                if self.isFromModeratorList == true {
+                    var i = 0
+                    var isModerator = false
+                    while i < self.subscribers.count {
+                        isModerator = false
+                        var j = 0
+                        while j < (self.mainRouter?.moderatorListViewController?.moderators.count)! {
+                            if i < self.subscribers.count && self.subscribers[i].user?._id == self.mainRouter?.moderatorListViewController?.moderators[j].user?._id {
+                                isModerator = true
+                                self.subscribers.remove(at: i)
+                            }
+                            j += 1
+                        }
+                        if !isModerator {
+                            i += 1
+                        }
+                    }
+                }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -65,7 +86,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isFromModeratorList == true {
-            viewModel?.addModerator(id: id!, userId: subscribers[indexPath.row].user?._id ?? "", completion: { (channel, error) in
+            viewModel?.addModerator(id: id!, userId: subscribers[indexPath.row].user?._id ?? "", completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -74,6 +95,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                     DispatchQueue.main.async {
                         self.mainRouter?.moderatorListViewController?.moderators.append(self.subscribers[indexPath.row])
                         self.mainRouter?.moderatorListViewController?.tableView.insertRows(at: [IndexPath(row: (self.mainRouter?.moderatorListViewController?.moderators.count)! - 1, section: 0)], with: .automatic)
+                        self.navigationController?.popViewController(animated: true)
                     }
                 }
             })

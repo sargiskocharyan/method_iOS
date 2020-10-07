@@ -20,7 +20,7 @@ class ChannelMessagesViewController: UIViewController {
     var mainRouter: MainRouter?
     var viewModel: ChannelMessagesViewModel?
     var channelMessages: ChannelMessages?
-    var channel: Channel?
+    var channelInfo: ChannelInfo?
     
     //MARK: LifeCycles
     override func viewDidLoad() {
@@ -29,7 +29,6 @@ class ChannelMessagesViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         getChannelMessages()
-        nameOfChannelButton.setTitle(channel?.name, for: .normal)
         joinButton.setTitle("join".localized(), for: .normal)
     }
     
@@ -37,7 +36,8 @@ class ChannelMessagesViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
-        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
+        nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
+        if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
             joinButton.isHidden = true
         }
     }
@@ -45,7 +45,7 @@ class ChannelMessagesViewController: UIViewController {
     //MARK: Helper methods
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            self.mainRouter?.showAdminInfoViewController(channel: self.channel!)
+            self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
         }
     }
 
@@ -54,7 +54,7 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @IBAction func joinChannelButtonAction(_ sender: Any) {
-        viewModel?.subscribeToChannel(id: channel!._id, completion: { (subResponse, error) in
+        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -63,13 +63,13 @@ class ChannelMessagesViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.joinButton.isHidden = true
                 }
-                SharedConfigs.shared.signedUser?.channels?.append(self.channel!._id)
+                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
             }
         })
     }
 
     func getChannelMessages() {
-        viewModel?.getChannelMessages(id: channel!._id, dateUntil: "", completion: { (messages, error) in
+        viewModel?.getChannelMessages(id: channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)

@@ -26,7 +26,9 @@ class ModeratorListViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        if isChangeAdmin == false {
+            self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        }
     }
        
     @objc func addButtonTapped() {
@@ -41,9 +43,6 @@ class ModeratorListViewController: UIViewController {
                 }
             } else if moderators != nil {
                 self.moderators = moderators!
-//                .filter({ (moderator) -> Bool in
-//                    return
-//                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -59,9 +58,21 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isChangeAdmin == true {
-            
+            viewModel?.changeAdmin(id: id!, userId: (moderators[indexPath.row].user?._id)!, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+//                    Channel
+                    DispatchQueue.main.async {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                }
+            })
         }
     }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
@@ -96,7 +107,7 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
 //                }
 //            }
 //        })
-        viewModel?.removeModerator(id: id!, userId: (moderators[indexPath.row].user?._id)!, completion: { (channel, error) in
+        viewModel?.removeModerator(id: id!, userId: (moderators[indexPath.row].user?._id)!, completion: { (error) in
             if error == nil {
                 DispatchQueue.main.async {
                     self.tableView.beginUpdates()

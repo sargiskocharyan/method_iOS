@@ -296,6 +296,39 @@ class HomeNetworkManager: NetworkManager {
         }.resume()
     }
     
+    func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
+        guard let image = tmpImage else { return }
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/channel/\(id)/avatar")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"avatar\"; filename=\"avatar.jpg\"\r\n")
+        body.appendString("Content-Type: image/jpg\r\n\r\n")
+        body.append(image.jpegData(compressionQuality: 1)!)
+        body.appendString("\r\n--\(boundary)--\r\n")
+        let session = URLSession.shared
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed, nil)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed, nil)
+            } else {
+                guard let responseData = data else {
+                    completion(NetworkResponse.noData, nil)
+                    return
+                }
+                completion(nil, String(data: responseData, encoding: .utf8))
+            }
+        }.resume()
+    }
+    
     func deleteAccount(completion: @escaping (NetworkResponse?)->()) {
            router.request(.deleteAccount) { data, response, error in
                if error != nil {
@@ -334,6 +367,42 @@ class HomeNetworkManager: NetworkManager {
     
     func deleteAvatar(completion: @escaping (NetworkResponse?)->()) {
         router.request(.deleteAvatar) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChannelLogo(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannelLogo(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannel(id: id)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(error)
@@ -784,7 +853,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func getChannelsInfo(ids: [String], completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+    func getChannelsInfo(ids: [String], completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
         router.request(.getChannelInfo(ids: ids)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -799,7 +868,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Channel].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode([ChannelInfo].self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -812,7 +881,7 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func findChannels(term: String, completion: @escaping ([Channel]?, NetworkResponse?)->()) {
+    func findChannels(term: String, completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
         router.request(.findChannels(term: term)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
@@ -827,7 +896,7 @@ class HomeNetworkManager: NetworkManager {
                         return
                     }
                     do {
-                        let responseObject = try JSONDecoder().decode([Channel].self, from: responseData)
+                        let responseObject = try JSONDecoder().decode([ChannelInfo].self, from: responseData)
                         completion(responseObject, nil)
                     } catch {
                         print(error)
@@ -868,63 +937,61 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func addModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+    func addModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.addModerator(id: id, userId: userId)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
-                completion(nil, error)
+                completion(error)
             }
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                    guard let responseData = data else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
-                        completion(responseObject, nil)
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil)
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(NetworkResponse.failed)
                 }
             }
         }
     }
     
-    func removeModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+    func removeModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.removeModerator(id: id, userId: userId)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
-                completion(nil, error)
+                completion(error)
             }
             if let response = response as? HTTPURLResponse {
                 let result = self.handleNetworkResponse(response)
                 switch result {
                 case .success:
-                    guard let responseData = data else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
-                        completion(responseObject, nil)
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
+                    completion(nil)
                 case .failure( _):
-                    completion(nil, NetworkResponse.failed)
+                    completion(NetworkResponse.failed)
                 }
             }
         }
     }
     
-    func updateChannelInfo(id: String, name: String, description: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
+    func changeAdmin(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.changeAdmin(id: id, userId: userId)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func updateChannelInfo(id: String, name: String?, description: String?, completion: @escaping (Channel?, NetworkResponse?)->()) {
         router.request(.updateChannelInfo(id: id, name: name, description: description)) { data, response, error in
                if error != nil {
                    print(error!.rawValue)

@@ -51,14 +51,19 @@ struct Channel: Codable {
     var _id: String
     var name: String
     var creator: String?
-    var admins: [Admin]?
+    var admin: String?
     var subscribers: [Subscriber]?
-    var avatar: String?
+    var avatarURL: String?
     var createdAt: String
     var subscribersCount: Int?
     var statuses: [ChannelStatus]?
     var description: String?
     var publicUrl: String?
+}
+
+struct ChannelInfo: Codable {
+    var channel: Channel?
+    var role: Int?
 }
 
 struct ChannelSubscriber: Codable {

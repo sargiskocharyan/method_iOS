@@ -30,6 +30,7 @@ class MainRouter {
     weak var moderatorListViewController: ModeratorListViewController?
     weak var moderatorInfoViewController: ModeratorInfoViewController?
     weak var subscribersListViewController: SubscribersListViewController?
+    weak var updateChannelInfoViewController: UpdateChannelInfoViewController?
     
     func assemblyModule() {
         let vc = MainTabBarController.instantiate(fromAppStoryboard: .main)
@@ -82,6 +83,15 @@ class MainRouter {
         }
     }
     
+    func showUpdateChannelInfoViewController(channelInfo: ChannelInfo) {
+        let vc = UpdateChannelInfoViewController.instantiate(fromAppStoryboard: .main)
+        vc.mainRouter = adminInfoViewController?.mainRouter
+        vc.viewModel = UpdateChannelInfoViewModel()
+        vc.channelInfo = channelInfo
+        self.updateChannelInfoViewController = vc
+        adminInfoViewController?.navigationController?.present(vc, animated: true, completion: nil)
+    }
+    
     func showModeratorListViewController(id: String, isChangeAdmin: Bool) {
         let vc = ModeratorListViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = adminInfoViewController?.mainRouter
@@ -113,10 +123,10 @@ class MainRouter {
         callListViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func showAdminInfoViewController(channel: Channel) {
+    func showAdminInfoViewController(channelInfo: ChannelInfo) {
         let vc = AdminInfoViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = channelMessagesViewController?.mainRouter
-        vc.channel = channel
+        vc.channelInfo = channelInfo
         vc.viewModel = ChannelInfoViewModel()
         self.adminInfoViewController = vc
         channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
@@ -290,10 +300,10 @@ class MainRouter {
          notificationDetailViewController?.navigationController?.pushViewController(vc, animated: false)
      }
      
-    func showChannelMessagesViewController(channel: Channel) {
+    func showChannelMessagesViewController(channelInfo: ChannelInfo) {
         let vc = ChannelMessagesViewController.instantiate(fromAppStoryboard: .channel)
         vc.mainRouter = channelListViewController?.mainRouter
-        vc.channel = channel
+        vc.channelInfo = channelInfo
         vc.viewModel = ChannelMessagesViewModel()
         self.channelMessagesViewController = vc
         channelListViewController?.navigationController?.pushViewController(vc, animated: true)

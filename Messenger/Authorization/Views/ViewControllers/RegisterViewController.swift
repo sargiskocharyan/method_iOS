@@ -267,8 +267,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     func checkFields() {
-        checkUsername(signedUser) { (isVsyoLav) in
-            if isVsyoLav != false && self.checkGender(self.signedUser) != false && self.checkName(self.signedUser) != false && self.checkLastname(self.signedUser) != false {
+        checkUsername(signedUser) { (isAllWell) in
+            if isAllWell != false && self.checkGender(self.signedUser) != false && self.checkName(self.signedUser) != false && self.checkLastname(self.signedUser) != false {
                 if self.name != nil || self.lastname != nil || self.username != nil || self.gender != nil {
                     self.enableUpdateInfoButton()
                 } else {

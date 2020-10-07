@@ -15,11 +15,11 @@ class ChannelListViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     
     //MARk: Properties
-    var channels: [Channel] = []
+    var channels: [ChannelInfo] = []
     var viewModel: ChannelListViewModel?
     var mainRouter: MainRouter?
-    var foundChannels: [Channel] = []
-    var channelsInfo: [Channel] = []
+    var foundChannels: [ChannelInfo] = []
+    var channelsInfo: [ChannelInfo] = []
     var text = ""
     var activity = UIActivityIndicatorView(style: .medium)
     
@@ -80,7 +80,7 @@ class ChannelListViewController: UIViewController {
                     print("Channel created")
                     SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
                    
-                    self.channels.insert(channel!, at: 0)
+                    self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
                     self.channelsInfo = self.channels
                     DispatchQueue.main.async {
                         self.activity.stopAnimating()
@@ -141,7 +141,7 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as! ChannelListTableViewCell
         if channelsInfo.count > indexPath.row {
-        cell.configureCell(avatar: channelsInfo[indexPath.row].avatar, name: channelsInfo[indexPath.row].name, id: channelsInfo[indexPath.row]._id)
+            cell.configureCell(avatar: channelsInfo[indexPath.row].channel?.avatarURL, name: channelsInfo[indexPath.row].channel!.name, id: channelsInfo[indexPath.row].channel!._id)
         }
         return cell
     }
@@ -149,7 +149,7 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             print(self.channelsInfo[indexPath.row])
-            self.mainRouter?.showChannelMessagesViewController(channel: self.channelsInfo[indexPath.row])
+            self.mainRouter?.showChannelMessagesViewController(channelInfo: self.channelsInfo[indexPath.row])
         }
     }
 }

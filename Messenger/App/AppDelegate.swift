@@ -354,7 +354,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func setInitialStoryboard() {
         defineMode()
-//        defineStartController()
+        defineStartController()
     }
     
     func defineStartController() {

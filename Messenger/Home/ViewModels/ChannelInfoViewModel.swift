@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit.UIImage
 
 class ChannelInfoViewModel {
     func leaveChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
@@ -27,15 +28,39 @@ class ChannelInfoViewModel {
         }
     }
     
-    func addModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-        HomeNetworkManager().addModerator(id: id, userId: userId) { (channel, error) in
-            completion(channel, error)
+    func addModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().addModerator(id: id, userId: userId) { (error) in
+            completion(error)
         }
     }
     
-    func removeModerator(id: String, userId: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-        HomeNetworkManager().removeModerator(id: id, userId: userId) { (channel, error) in
-            completion(channel, error)
+    func removeModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().removeModerator(id: id, userId: userId) { (error) in
+            completion(error)
+        }
+    }
+    
+    func uploadImage(image: UIImage, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
+        HomeNetworkManager().uploadChannelImage(tmpImage: image, id: id) { (error, avatarUrl) in
+            completion(error, avatarUrl)
+        }
+    }
+    
+    func changeAdmin(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().changeAdmin(id: id, userId: userId) { (error) in
+            completion(error)
+        }
+    }
+    
+    func deleteChannelLogo(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().deleteChannelLogo(id: id) { (error) in
+            completion(error)
+        }
+    }
+    
+    func deleteChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().deleteChannel(id: id) { (error) in
+            completion(error)
         }
     }
 }
