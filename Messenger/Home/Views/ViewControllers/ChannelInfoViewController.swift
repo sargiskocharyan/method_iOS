@@ -24,8 +24,9 @@ class ChannelInfoViewController: UIViewController {
     @IBOutlet weak var channelLogoImageView: UIImageView!
     
     //MARK: Properties
+    var viewModel: ChannelInfoViewModel?
     var mainRouter: MainRouter?
-    var channel: Channel?
+    var channelInfo: ChannelInfo?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -41,7 +42,7 @@ class ChannelInfoViewController: UIViewController {
         if (navigationController?.navigationBar.isHidden)! {
             navigationController?.navigationBar.isHidden = false
         }
-        if SharedConfigs.shared.signedUser?.channels?.contains(channel!._id) == true {
+        if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
 //            leaveButton.isHidden = false
         } else {
 //            leaveButton.isHidden = true
@@ -62,9 +63,9 @@ class ChannelInfoViewController: UIViewController {
     }
     
     func setInfo() {
-        nameLabel.text = channel?._id
-        descriptionLabel.text = channel?.description ?? "description_not_set".localized()
-        urlLabel.text = channel?.publicUrl
+        nameLabel.text = channelInfo?.channel?._id
+        descriptionLabel.text = channelInfo?.channel?.description ?? "description_not_set".localized()
+        urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
     }

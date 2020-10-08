@@ -12,7 +12,7 @@ class ChannelMessagesViewController: UIViewController {
     
     //MARK: @IBOutlets
     @IBOutlet weak var nameOfChannelButton: UIButton!
-    @IBOutlet weak var joinButton: UIButton!
+    @IBOutlet weak var universalButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
@@ -55,7 +55,7 @@ class ChannelMessagesViewController: UIViewController {
         addConstraints()
         setupInputComponents()
         check = true
-        joinButton.setTitle("join".localized(), for: .normal)
+        universalButton.setTitle("join".localized(), for: .normal)
         
     }
     
@@ -66,6 +66,9 @@ class ChannelMessagesViewController: UIViewController {
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
         if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
             //joinButton.isHidden = true
+        if channelInfo?.role == 0 || channelInfo?.role == 1 {
+            
+        }
         }
     }
     
@@ -130,8 +133,6 @@ class ChannelMessagesViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    
-    
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
@@ -156,6 +157,15 @@ class ChannelMessagesViewController: UIViewController {
             self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
             //            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
             //            self.mainRouter?.showModeratorInfoViewController(channel: self.channel!)
+            print(self.channelInfo?.role)
+            switch self.channelInfo?.role {
+            case 0:
+                self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
+            case 1:
+                self.mainRouter?.showModeratorInfoViewController(channelInfo: self.channelInfo!)
+            default:
+                self.mainRouter?.showChannelInfoViewController(channelInfo: self.channelInfo!)
+            }
         }
     }
     
@@ -164,9 +174,60 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @IBAction func joinChannelButtonAction(_ sender: Any) {
-//        check = !check
-        isPreview = !isPreview!
+        
+   
+        }
 //        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
+    @IBAction func universalButtonAction(_ sender: Any) {
+        if channelInfo?.role == 3 {
+            viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.universalButton.isHidden = true
+                    }
+                    SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
+                }
+            })
+        } else if channelInfo?.role == 0 || channelInfo?.role == 1 {
+            check = !check
+            isPreview = check
+            DispatchQueue.main.async {
+                       UIView.setAnimationsEnabled(false)
+                       //self.tableView.reloadRows(at: arrayOfIndexPath, with: .automatic)
+                       self.tableView.beginUpdates()
+                       self.tableView.reloadData()
+                       self.tableView.endUpdates()
+                   }
+        }
+    }
+    
+//    func getChannelMessages() {
+//        viewModel?.getChannelMessages(id: channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
+//            //
+//            //        check = !check
+//            //        isPreview = check
+//            DispatchQueue.main.async {
+//                if !self.joinButton.isHidden {
+//                    self.viewModel?.subscribeToChannel(id: self.channelInfo!.channel!._id, completion: { (subResponse, error) in
+//                        if error != nil {
+//                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                        } else {
+//                            self.joinButton.isHidden = true
+//                            SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
+//                        }
+//                    })
+//                }
+//            }
+//
+//        })
+//    }
+    
+//    func getMessages(completion: @escaping () -> ()) {
+//        viewModel?.getChatMessages(id: "5f3a7cb9e6d394087cb701e7", dateUntil: nil, completion: { (messages, error) in
 //            if error != nil {
 //                DispatchQueue.main.async {
 //                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -178,22 +239,12 @@ class ChannelMessagesViewController: UIViewController {
 //                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
 //            }
 //        })
-        var arrayOfIndexPath: [IndexPath] = []
-        for i in 0..<channelMessages.array!.count - 1 {
-            arrayOfIndexPath.append(IndexPath(row: i, section: 0))
-        }
 //        for i in arrayOfIndexPath {
 //          let cell = tableView.cellForRow(at: i) as? RecieveMessageTableViewCell
 //            cell?.editPage(isPreview: !isPreview!)
 //        }
-        DispatchQueue.main.async {
-            UIView.setAnimationsEnabled(false)
-            //self.tableView.reloadRows(at: arrayOfIndexPath, with: .automatic)
-            self.tableView.beginUpdates()
-            self.tableView.reloadData()
-            self.tableView.endUpdates()
-        }
-    }
+       
+    
     
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: self.channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
@@ -207,7 +258,9 @@ class ChannelMessagesViewController: UIViewController {
                 self.channelMessages.array!.reverse()
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
+                    if self.channelMessages.array!.count > 0 {
+                        self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
+                    }
                 }
             }
         })
@@ -244,10 +297,10 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.messageLabel.sizeToFit()
             if check! {
                 if isPreview == true {
-                    cell.leadingConstraintOfButton!.constant = -10
+                    cell.leadingConstraintOfButton!.constant = 10
                     cell.button?.isHidden = true
                 } else if isPreview == false {
-                    cell.leadingConstraintOfButton!.constant = 10
+                    cell.leadingConstraintOfButton!.constant = -10
                     cell.button?.isHidden = false
                 }
             }

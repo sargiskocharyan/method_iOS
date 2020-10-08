@@ -29,9 +29,9 @@ class ModeratorInfoViewController: UIViewController {
     
     //MARK: Properties
     var mainRouter: MainRouter?
-    var channel: Channel?
+    var channelInfo: ChannelInfo?
     var viewModel: ChannelInfoViewModel?
-    var subscribers: [ChannelSubscriber]?
+    var subscribers: [ChannelSubscriber] = []
     
     // MARK: Lifecycles
     override func viewDidLoad() {
@@ -39,11 +39,7 @@ class ModeratorInfoViewController: UIViewController {
         configureView()
         setInfo()
         addGestures()
-        setBorder(view: rejectView)
-        setBorder(view: subscribersView)
-        setBorder(view: headerView)
-        setBorder(view: urlView)
-        setBorder(view: leaveView)
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,19 +50,20 @@ class ModeratorInfoViewController: UIViewController {
 
     //MARK: Helper methods
     func configureView() {
-           setBorder(view: urlView)
-           setBorder(view: headerView)
-           setBorder(view: descriptionView)
-           channelLogoImageView.layer.cornerRadius = channelLogoImageView.frame.height / 2
-           channelLogoImageView.clipsToBounds = true
-       }
+        setBorder(view: subscribersView)
+        setBorder(view: urlView)
+        setBorder(view: rejectView)
+        setBorder(view: descriptionView)
+        channelLogoImageView.layer.cornerRadius = channelLogoImageView.frame.height / 2
+        channelLogoImageView.clipsToBounds = true
+    }
     
     func setInfo() {
-        nameLabel.text = channel?.name
-        descriptionLabel.text = channel?.description ?? "description_not_set".localized()
+        nameLabel.text = channelInfo?.channel?.name
+        descriptionLabel.text = channelInfo?.channel?.description ?? "description_not_set".localized()
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
-        urlTextLabel.text = channel?.publicUrl
+        urlTextLabel.text = channelInfo?.channel?.publicUrl
     }
     
     func addGestures() {
@@ -82,7 +79,7 @@ class ModeratorInfoViewController: UIViewController {
     
     @objc func handleSubscribersTap(_ sender: UITapGestureRecognizer? = nil) {
         DispatchQueue.main.async {
-            self.mainRouter?.showSubscribersListViewController(id: self.channel?._id ?? "")
+            self.mainRouter?.showSubscribersListViewController(id: self.channelInfo?.channel?._id ?? "")
         }
     }
    

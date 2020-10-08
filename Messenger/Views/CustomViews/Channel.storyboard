@@ -145,6 +145,7 @@
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="button" destination="DEB-WS-ya8" id="geM-W2-1RH"/>
+                                            <outlet property="leadingConstraintOfButton" destination="xSJ-BS-5no" id="YH6-y3-eiE"/>
                                             <outlet property="messageLabel" destination="Vx0-qt-hDk" id="WBL-Mg-KRG"/>
                                             <outlet property="readMessage" destination="WKF-UR-aWR" id="CIU-Ma-B3i"/>
                                         </connections>
