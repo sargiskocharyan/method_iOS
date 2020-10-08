@@ -156,7 +156,6 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
 
 extension ChannelListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("searchtext is \(searchText)")
         if searchText.count > 2 {
             findChannels(term: searchText)
         } else if searchText.count == 0 {

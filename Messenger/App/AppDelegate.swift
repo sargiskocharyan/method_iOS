@@ -21,7 +21,6 @@ protocol AppDelegateD : class {
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
-    //    let nc = NotificationCenter.default
     weak var delegate: AppDelegateD?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()

@@ -12,7 +12,7 @@ class ChannelMessagesViewController: UIViewController {
     
     //MARK: @IBOutlets
     @IBOutlet weak var nameOfChannelButton: UIButton!
-    @IBOutlet weak var joinButton: UIButton!
+    @IBOutlet weak var universalButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
@@ -54,7 +54,7 @@ class ChannelMessagesViewController: UIViewController {
         addConstraints()
         setupInputComponents()
         check = true
-        joinButton.setTitle("join".localized(), for: .normal)
+        universalButton.setTitle("join".localized(), for: .normal)
         
     }
     
@@ -63,8 +63,8 @@ class ChannelMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
-        if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
-            joinButton.isHidden = true
+        if channelInfo?.role == 0 || channelInfo?.role == 1 {
+            
         }
     }
     
@@ -166,8 +166,6 @@ class ChannelMessagesViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    
-    
     @objc func handleKeyboardNotification(notification: NSNotification) {
           if let userInfo = notification.userInfo {
               let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
@@ -189,9 +187,15 @@ class ChannelMessagesViewController: UIViewController {
     
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
-            //            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
-//            self.mainRouter?.showModeratorInfoViewController(channel: self.channel!)
+            print(self.channelInfo?.role)
+            switch self.channelInfo?.role {
+            case 0:
+                self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
+            case 1:
+                self.mainRouter?.showModeratorInfoViewController(channelInfo: self.channelInfo!)
+            default:
+                self.mainRouter?.showChannelInfoViewController(channelInfo: self.channelInfo!)
+            }
         }
     }
     
@@ -199,19 +203,23 @@ class ChannelMessagesViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func joinChannelButtonAction(_ sender: Any) {
-        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+    @IBAction func universalButtonAction(_ sender: Any) {
+        if channelInfo?.role == 3 {
+            viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.universalButton.isHidden = true
+                    }
+                    SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
                 }
-            } else {
-                DispatchQueue.main.async {
-                    self.joinButton.isHidden = true
-                }
-                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
-            }
-        })
+            })
+        } else if channelInfo?.role == 0 || channelInfo?.role == 1 {
+            // edit or preview modes
+        }
     }
     
 //    func getChannelMessages() {

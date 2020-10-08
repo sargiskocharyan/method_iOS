@@ -47,8 +47,10 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     func setImage() {
         activityIndicator.startAnimating()
         ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo!.channel!._id) { (image) in
-            self.activityIndicator.stopAnimating()
-            self.channelLogoImageView.image = image
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.channelLogoImageView.image = image
+            }
         }
     }
     

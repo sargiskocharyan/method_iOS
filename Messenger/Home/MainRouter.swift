@@ -309,18 +309,19 @@ class MainRouter {
         channelListViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func showChannelInfoViewController(channel: Channel)  {
+    func showChannelInfoViewController(channelInfo: ChannelInfo)  {
         let vc = ChannelInfoViewController.instantiate(fromAppStoryboard: .channel)
         vc.mainRouter = channelMessagesViewController?.mainRouter
-        vc.channel = channel
+        vc.channelInfo = channelInfo
+        vc.viewModel = ChannelInfoViewModel()
         self.channelInfoViewController = vc
         channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
     }
    
-    func showModeratorInfoViewController(channel: Channel)  {
+    func showModeratorInfoViewController(channelInfo: ChannelInfo)  {
         let vc = ModeratorInfoViewController.instantiate(fromAppStoryboard: .channel)
         vc.mainRouter = channelMessagesViewController?.mainRouter
-        vc.channel = channel
+        vc.channelInfo = channelInfo
         vc.viewModel = ChannelInfoViewModel()
         self.moderatorInfoViewController = vc
         channelMessagesViewController?.navigationController?.pushViewController(vc, animated: true)
