@@ -209,15 +209,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userinfo = response.notification.request.content.userInfo
-        let request = userinfo["request"] as! NSDictionary
+        let request = userinfo["request"] as? NSDictionary
         switch response.actionIdentifier {
         case "first":
             print("first")
-            viewModel.confirmRequest(id: request["sender"] as! String, confirm: true) { (error) in
+            viewModel.confirmRequest(id: request?["sender"] as! String, confirm: true) { (error) in
                 if error == nil {
                     print("confirmed")
                     SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
-                        return req._id != request["_id"] as! String
+                        return req._id != request?["_id"] as! String
                     })
                     DispatchQueue.main.async {
                         self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
@@ -226,11 +226,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         case "second":
             print("second")
-            viewModel.confirmRequest(id: request["sender"] as! String, confirm: false) { (error) in
+            viewModel.confirmRequest(id: request?["sender"] as! String, confirm: false) { (error) in
                 if error == nil {
                     print("merjec")
                     SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
-                        return req._id != request["_id"] as! String
+                        return req._id != request?["_id"] as! String
                     })
                     DispatchQueue.main.async {
                         self.tabbar?.mainRouter?.notificationListViewController?.reloadData()

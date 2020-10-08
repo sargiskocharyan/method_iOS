@@ -12,6 +12,7 @@ class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var readMessage: UILabel!
     @IBOutlet weak var button: UIButton?
     @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint!
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
@@ -19,7 +20,6 @@ class SendMessageTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        button?.isHidden = true
         
     }
     

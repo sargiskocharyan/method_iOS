@@ -51,6 +51,7 @@ class ChannelMessagesViewController: UIViewController {
         tableView.tableFooterView = UIView()
         self.getChannelMessages()
         setObservers()
+        isPreview = true
         addConstraints()
         setupInputComponents()
         check = true
@@ -64,7 +65,7 @@ class ChannelMessagesViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
         if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
-            joinButton.isHidden = true
+            //joinButton.isHidden = true
         }
     }
     
@@ -76,7 +77,7 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
-        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 30).isActive = true
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
@@ -98,68 +99,31 @@ class ChannelMessagesViewController: UIViewController {
         bottomConstraint?.isActive = true
         messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        //        messageInputContainerView.addConstraint(bottomConstraint!)
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
-        
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         tableViewBottomConstraint.constant = 55
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        //        view.addConstraint(bottomConstraint!)
     }
     
     func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
-//        if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
-//            if message.senderId != SharedConfigs.shared.signedUser?.id {
-//        if isSenderMe != false {
-//                self.channelMessages?.array!.append(message)
-//        }
-//                if navigationController?.viewControllers.count == 2 {
-//                    SocketTaskManager.shared.messageRead(chatId: channel?._id!, messageId: message._id!)
-//                }
-//            } else {
-//                for i in 0..<channelMessages!.array!.count {
-//                    if message.text  == allMessages!.array![i].text {
-//                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
-//                        self.allMessages!.array![i] = message
-//                    }
-//                }
-            //            }
-            DispatchQueue.main.async {
-              //  self.tableView.reloadData()
-                self.channelMessages.array!.append(message)
-                self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
-                let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-            }
-//        }
-         if message.senderId == SharedConfigs.shared.signedUser?.id  {
-//            DispatchQueue.main.async {
-//                self.inputTextField.text = ""
-//            }
-            
-//            self.channelMessages?.array!.append(message)
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//                let indexPath = IndexPath(item: (self.channelMessages?.array!.count)! - 1, section: 0)
-//                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-//            }
-//        } else {
-//            if message.senderId != SharedConfigs.shared.signedUser?.id {
-//                self.scheduleNotification(center: MainTabBarController.center, nil, message: message, name, lastname, username)
-//            }
+        DispatchQueue.main.async {
+            self.channelMessages.array!.append(message)
+            self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
+            let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
+            self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
     
     @objc func sendMessage() {
-         if inputTextField.text != "" {
-             let text = inputTextField.text
-             inputTextField.text = ""
+        if inputTextField.text != "" {
+            let text = inputTextField.text
+            inputTextField.text = ""
             SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
-             
-         }
-     }
+            
+        }
+    }
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -169,29 +133,29 @@ class ChannelMessagesViewController: UIViewController {
     
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
-          if let userInfo = notification.userInfo {
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-              let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-              bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
-              tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
-              UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                  self.view.layoutIfNeeded()
-              }, completion: { (completed) in
-//                  if isKeyboardShowing {
-//                      if (self.allMessages?.array != nil && (self.allMessages?.array!.count)! > 1) {
-//                          let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
-//                          self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-//                      }
-//                  }
-              })
-          }
-      }
+        if let userInfo = notification.userInfo {
+            let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
+            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
+            tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
+            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: { (completed) in
+                //                  if isKeyboardShowing {
+                //                      if (self.allMessages?.array != nil && (self.allMessages?.array!.count)! > 1) {
+                //                          let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
+                //                          self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                //                      }
+                //                  }
+            })
+        }
+    }
     
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
             self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
             //            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
-//            self.mainRouter?.showModeratorInfoViewController(channel: self.channel!)
+            //            self.mainRouter?.showModeratorInfoViewController(channel: self.channel!)
         }
     }
     
@@ -200,55 +164,36 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @IBAction func joinChannelButtonAction(_ sender: Any) {
-        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.joinButton.isHidden = true
-                }
-                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
-            }
-        })
-    }
-    
-//    func getChannelMessages() {
-//        viewModel?.getChannelMessages(id: channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
-//            //
-//            //        check = !check
-//            //        isPreview = check
-//            DispatchQueue.main.async {
-//                if !self.joinButton.isHidden {
-//                    self.viewModel?.subscribeToChannel(id: self.channelInfo!.channel!._id, completion: { (subResponse, error) in
-//                        if error != nil {
-//                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                        } else {
-//                            self.joinButton.isHidden = true
-//                            SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
-//                        }
-//                    })
-//                }
-//            }
-//
-//        })
-//    }
-    
-//    func getMessages(completion: @escaping () -> ()) {
-//        viewModel?.getChatMessages(id: "5f3a7cb9e6d394087cb701e7", dateUntil: nil, completion: { (messages, error) in
+//        check = !check
+        isPreview = !isPreview!
+//        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
 //            if error != nil {
 //                DispatchQueue.main.async {
 //                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                    completion()
 //                }
-//            } else if messages != nil {
-//                //                self.channelMessages?.array = messages?.array
-//                self.messages = messages!
-//                completion()
+//            } else {
+//                DispatchQueue.main.async {
+//                    self.joinButton.isHidden = true
+//                }
+//                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
 //            }
 //        })
-//    }
+        var arrayOfIndexPath: [IndexPath] = []
+        for i in 0..<channelMessages.array!.count - 1 {
+            arrayOfIndexPath.append(IndexPath(row: i, section: 0))
+        }
+//        for i in arrayOfIndexPath {
+//          let cell = tableView.cellForRow(at: i) as? RecieveMessageTableViewCell
+//            cell?.editPage(isPreview: !isPreview!)
+//        }
+        DispatchQueue.main.async {
+            UIView.setAnimationsEnabled(false)
+            //self.tableView.reloadRows(at: arrayOfIndexPath, with: .automatic)
+            self.tableView.beginUpdates()
+            self.tableView.reloadData()
+            self.tableView.endUpdates()
+        }
+    }
     
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: self.channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
@@ -256,12 +201,13 @@ class ChannelMessagesViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-
+                
             } else if messages != nil {
                 self.channelMessages = messages!
                 self.channelMessages.array!.reverse()
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
+                    self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
                 }
             }
         })
@@ -281,39 +227,49 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+          var size: CGSize?
+         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+        let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+        return frame.height + 30
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             // cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
-            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+            cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
+//            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
+            if check! {
+                if isPreview == true {
+                    cell.leadingConstraintOfButton!.constant = -10
+                    cell.button?.isHidden = true
+                } else if isPreview == false {
+                    cell.leadingConstraintOfButton!.constant = 10
+                    cell.button?.isHidden = false
+                }
+            }
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             // cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+            
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
-            //            if check! {
-            //            cell.editPage(isPreview: isPreview)
-            //            if isPreview == true {
-            //                cell.leadingConstraintOfButton.constant = -10
-            //                cell.leadingConstraintOfImageView.constant = -5
-            //                cell.button.isHidden = true
-            //            } else if isPreview == false {
-            //                cell.leadingConstraintOfButton.constant = 10
-            //                cell.leadingConstraintOfImageView.constant = 15
-            //                cell.button.isHidden = false
-            //            }
-            //            if indexPath.row == self.messages!.array!.count - 1 {
-            //                isPreview = nil
-            //            }
-            //              print("isperview:------   \(self.isPreview)")
-            //            }
+            if check! {
+                if isPreview == true {
+                    cell.leadingConstraintOfButton!.constant = -10
+                    cell.leadingConstraintOfImageView!.constant = -5
+                    cell.button.isHidden = true
+                } else if isPreview == false {
+                    cell.leadingConstraintOfButton!.constant = 10
+                    cell.leadingConstraintOfImageView!.constant = 15
+                    cell.button.isHidden = false
+                }
+            }
             return cell
         }
     }
