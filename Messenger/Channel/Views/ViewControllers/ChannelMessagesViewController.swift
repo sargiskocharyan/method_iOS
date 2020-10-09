@@ -24,8 +24,14 @@ class ChannelMessagesViewController: UIViewController {
     var channelInfo: ChannelInfo?
     var isPreview: Bool?
     var check: Bool!
-    var arrayOfSelectedMesssgae: [Message] = []
+    var arrayOfSelectedMesssgae: [String] = []
     var bottomConstraint: NSLayoutConstraint?
+    let deleteMessageButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor(named: "imputColor")
+        return button
+    }()
+    
     let messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "imputColor")
@@ -55,6 +61,9 @@ class ChannelMessagesViewController: UIViewController {
         isPreview = true
         addConstraints()
         setupInputComponents()
+        setLineOnHeaderView()
+        headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        tableView.allowsMultipleSelection = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,18 +71,17 @@ class ChannelMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
-        if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
-            //joinButton.isHidden = true
-            if channelInfo?.role == 0 || channelInfo?.role == 1 {
-                check = true
-                universalButton.isHidden = false
-                universalButton.setTitle("edit".localized(), for: .normal)
-                
-            } else {
-                check = false
-                universalButton.isHidden = true
-            }
+        if channelInfo?.role == 0 || channelInfo?.role == 1 {
+            check = true
+            universalButton.isHidden = false
+            universalButton.setTitle("edit".localized(), for: .normal)
+            
+        } else if channelInfo?.role == 2 {
+            check = false
+            universalButton.isHidden = true
         } else {
+            check = false
+            universalButton.isHidden = false
             universalButton.setTitle("join".localized(), for: .normal)
         }
     }
@@ -101,6 +109,18 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
     }
     
+    func setLineOnHeaderView()  {
+        let line = UIView()
+        headerView.addSubview(line)
+        line.translatesAutoresizingMaskIntoConstraints = false
+        line.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        line.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 0).isActive = true
+        line.widthAnchor.constraint(equalToConstant: self.view.frame.width).isActive = true
+        line.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        line.backgroundColor = UIColor(red: 209/255, green: 209/255, blue: 209/255, alpha: 1)
+        
+    }
+    
     func addConstraints() {
         view.addSubview(messageInputContainerView)
         messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -114,6 +134,57 @@ class ChannelMessagesViewController: UIViewController {
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         tableViewBottomConstraint.constant = 55
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+    }
+    
+    func setDeleteMessageButton()  {
+        inputTextField.addSubview(deleteMessageButton)
+        deleteMessageButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteMessageButton.setTitle("delete".localized(), for: .normal)
+        deleteMessageButton.setTitleColor(.white, for: .normal)
+        deleteMessageButton.tag = 333
+        deleteMessageButton.titleLabel?.font = UIFont.systemFont(ofSize: 20.0)
+        deleteMessageButton.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
+        deleteMessageButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        deleteMessageButton.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 0).isActive = true
+        deleteMessageButton.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
+        deleteMessageButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        deleteMessageButton.addTarget(self, action: #selector(deleteMessages), for: .touchUpInside)
+    }
+    
+    @objc func deleteMessages() {
+        viewModel?.deleteChannelMessages(id: (channelInfo?.channel!._id)!, ids: arrayOfSelectedMesssgae, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                self.channelMessages.array = self.channelMessages.array?.filter({ (message) -> Bool in
+                    return !(self.arrayOfSelectedMesssgae.contains(message._id!))
+                })
+                DispatchQueue.main.async {
+                    UIView.setAnimationsEnabled(false)
+                    self.tableView.reloadData()
+                }
+            }
+            self.check = !self.check
+            self.isPreview = self.check
+            DispatchQueue.main.async {
+                UIView.setAnimationsEnabled(false)
+                self.tableView.beginUpdates()
+                self.tableView.reloadData()
+                self.tableView.endUpdates()
+                self.universalButton.setTitle("edit".localized(), for: .normal)
+                self.removeDeleteButton()
+            }
+            
+            self.arrayOfSelectedMesssgae = []
+        })
+    }
+    
+    func removeDeleteButton()  {
+        DispatchQueue.main.async {
+            self.view.viewWithTag(333)?.removeFromSuperview()
+        }
     }
     
     func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
@@ -175,8 +246,8 @@ class ChannelMessagesViewController: UIViewController {
     @IBAction func backButtonAction(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
-
-//        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
+    
+    //        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
     @IBAction func universalButtonAction(_ sender: Any) {
         if channelInfo?.role == 3 {
             viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
@@ -197,12 +268,19 @@ class ChannelMessagesViewController: UIViewController {
             check = !check
             isPreview = check
             DispatchQueue.main.async {
-                       UIView.setAnimationsEnabled(false)
-                       //self.tableView.reloadRows(at: arrayOfIndexPath, with: .automatic)
-                       self.tableView.beginUpdates()
-                       self.tableView.reloadData()
-                       self.tableView.endUpdates()
-                   }
+                self.tableView.allowsMultipleSelection = true
+                UIView.setAnimationsEnabled(false)
+                self.tableView.beginUpdates()
+                self.tableView.reloadData()
+                self.tableView.endUpdates()
+                if !self.isPreview! {
+                    self.setDeleteMessageButton()
+                    self.universalButton.setTitle("cancel".localized(), for: .normal)
+                } else {
+                    self.universalButton.setTitle("edit".localized(), for: .normal)
+                    self.removeDeleteButton()
+                }
+            }
         }
     }
     
@@ -280,6 +358,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         return channelMessages.array!.count
     }
     
+    
+    //MARK: HeightForRowAt indexPath
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
           var size: CGSize?
          let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
@@ -288,78 +368,85 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         return frame.height + 30
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+    //MARK: WillDeselectRowAt indexPath
+    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-            if cell!.isSelected {
-                arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row])
-                cell!.button?.setImage(UIImage.init(systemName: "heckmark.circle.fill"), for: .normal)
-            } else {
-                arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (message) -> Bool in
-                    return  message._id != channelMessages.array![indexPath.row]._id
-                })
-                 cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
-            }
+            arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
+                return  id != channelMessages.array![indexPath.row]._id
+            })//checkmark.circle.fill
+            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+        } else {
+             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+            arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
+                return  id != channelMessages.array![indexPath.row]._id
+            })
+             cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+        }
+         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
+        return indexPath
+    }
+    
+    
+    //MARK: DidSelectRowAt indexPath
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row]._id!)
+        let image = UIImage.init(systemName: "checkmark.circle.fill")
+        if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+            cell!.button!.setImage(image, for: .normal)
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
-            if cell!.isSelected {
-                 arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row])
-                 cell!.button?.setImage(UIImage.init(systemName: "heckmark.circle.fill"), for: .normal)
-            } else {
-                arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (message) -> Bool in
-                    return  message._id != channelMessages.array![indexPath.row]._id
-                })
-                 cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
-            }
+            cell!.button?.setImage(image, for: .normal)
+            
         }
         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
     }
     
+    
+    
+    
+    //MARK: CellForRowAt indexPath
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
-            // cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
-//            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2) checkmark.circle.fill
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
+            cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                if isPreview == true {
-                    cell.leadingConstraintOfButton!.constant = -10
-                    tableView.allowsMultipleSelection = false
-                    cell.button?.isHidden = true
-                } else if isPreview == false {
-                    cell.leadingConstraintOfButton!.constant = 10
-                    tableView.allowsMultipleSelection = true
-                    cell.button?.isHidden = false
-                }
+                cell.setCheckImage()
+//                if isPreview == true {
+//                    cell.leadingConstraintOfButton!.constant = -10
+//                    tableView.allowsMultipleSelection = false
+//                    cell.button?.isHidden = true
+//                } else if isPreview == false {
+//                    cell.leadingConstraintOfButton!.constant = 10
+//                    tableView.allowsMultipleSelection = true
+//                    cell.button?.isHidden = false
+//                }
+                cell.setCheckButton(isPreview: isPreview!)
             } else {
                  cell.button?.isHidden = true
             }
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
-            // cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-            
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
             if (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                if isPreview == true {
-                    cell.leadingConstraintOfButton!.constant = -10
-                    cell.leadingConstraintOfImageView!.constant = -5
-                    cell.button.isHidden = true
-                } else if isPreview == false {
-                    cell.leadingConstraintOfButton!.constant = 10
-                    cell.leadingConstraintOfImageView!.constant = 15
-                    cell.button.isHidden = false
-                }
+                cell.setCheckImage()
+                cell.setCheckButton(isPreview: isPreview!)
             } else {
                 cell.button.isHidden = true
             }
             return cell
         }
     }
+    
+    
 }
 
 extension UITableView {

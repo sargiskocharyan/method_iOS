@@ -14,7 +14,6 @@ class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
     
-//    var isPreview: Bool?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -29,6 +28,10 @@ class SendMessageTableViewCell: UITableViewCell {
         
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        button?.setImage(nil, for: .normal)
+    }
     
 //    func editPage(isPreview: Bool) {
 //        if !isPreview {
@@ -37,6 +40,24 @@ class SendMessageTableViewCell: UITableViewCell {
 //            button?.isHidden = false
 //        }
 //    }
+    
+    func setCheckButton(isPreview: Bool) {
+        if isPreview {
+            leadingConstraintOfButton?.constant = -10
+            button?.isHidden = true
+        } else if !isPreview {
+            leadingConstraintOfButton?.constant = 10
+            button?.isHidden = false
+        }
+    }
+    
+    func setCheckImage() {
+        if isSelected  {
+            button?.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+        } else {
+            button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+        }
+    }
 
     func changeShapeOfImageView() {
            messageLabel.clipsToBounds = true

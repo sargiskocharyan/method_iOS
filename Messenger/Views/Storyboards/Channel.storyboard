@@ -66,21 +66,25 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Pc-OF-3c0">
-                                                    <rect key="frame" x="143" y="24" width="30" height="30"/>
+                                                    <rect key="frame" x="35" y="24" width="30" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="39T-oP-HPS"/>
                                                         <constraint firstAttribute="width" constant="30" id="cu5-Q7-ruG"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EVp-39-A5A" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="188" y="10" width="37.5" height="18"/>
+                                                    <rect key="frame" x="80" y="10" width="37.5" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qC6-ED-GPS">
-                                                    <rect key="frame" x="5" y="-33.5" width="128" height="121"/>
-                                                    <state key="normal" image="checkmark.circle"/>
+                                                    <rect key="frame" x="5" y="17" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="TOk-U0-PRI"/>
+                                                        <constraint firstAttribute="width" constant="20" id="j4T-3y-NJd"/>
+                                                    </constraints>
+                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -126,7 +130,11 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEB-WS-ya8">
-                                                    <rect key="frame" x="7" y="20.5" width="20" height="22"/>
+                                                    <rect key="frame" x="7" y="21.5" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="bYw-dJ-9KH"/>
+                                                        <constraint firstAttribute="width" constant="20" id="pdB-7v-Jhl"/>
+                                                    </constraints>
                                                     <state key="normal" image="checkmark.circle" catalog="system"/>
                                                 </button>
                                             </subviews>
@@ -265,7 +273,6 @@
     </scenes>
     <resources>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
-        <image name="checkmark.circle" width="128" height="121"/>
         <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="noPhoto" width="2200" height="2200"/>
     </resources>
