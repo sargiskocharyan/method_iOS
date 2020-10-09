@@ -54,7 +54,7 @@
                                     <constraint firstItem="xvH-Z0-Jej" firstAttribute="centerY" secondItem="wP5-YG-dGe" secondAttribute="centerY" id="uNs-Iq-btk"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="A3M-fd-wUR">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="A3M-fd-wUR">
                                 <rect key="frame" x="0.0" y="95" width="414" height="767"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
@@ -80,7 +80,7 @@
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qC6-ED-GPS">
                                                     <rect key="frame" x="5" y="16" width="20" height="22"/>
-                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
+                                                    <state key="normal" image="checkmark.circle"/>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -145,7 +145,7 @@
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="button" destination="DEB-WS-ya8" id="geM-W2-1RH"/>
-                                            <outlet property="leadingConstraintOfButton" destination="xSJ-BS-5no" id="YH6-y3-eiE"/>
+                                            <outlet property="leadingConstraintOfButton" destination="xSJ-BS-5no" id="tID-0c-j1o"/>
                                             <outlet property="messageLabel" destination="Vx0-qt-hDk" id="WBL-Mg-KRG"/>
                                             <outlet property="readMessage" destination="WKF-UR-aWR" id="CIU-Ma-B3i"/>
                                         </connections>
@@ -633,6 +633,7 @@
         <image name="Armenian" width="128" height="128"/>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
         <image name="checkmark.circle" catalog="system" width="128" height="121"/>
+        <image name="checkmark.circle" width="128" height="121"/>
         <image name="noPhoto" width="2200" height="2200"/>
     </resources>
 </document>

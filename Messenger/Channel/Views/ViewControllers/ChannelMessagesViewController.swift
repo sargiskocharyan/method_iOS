@@ -24,6 +24,7 @@ class ChannelMessagesViewController: UIViewController {
     var channelInfo: ChannelInfo?
     var isPreview: Bool?
     var check: Bool!
+    var arrayOfSelectedMesssgae: [Message] = []
     var bottomConstraint: NSLayoutConstraint?
     let messageInputContainerView: UIView = {
         let view = UIView()
@@ -54,9 +55,6 @@ class ChannelMessagesViewController: UIViewController {
         isPreview = true
         addConstraints()
         setupInputComponents()
-        check = true
-        universalButton.setTitle("join".localized(), for: .normal)
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,9 +64,17 @@ class ChannelMessagesViewController: UIViewController {
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
         if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
             //joinButton.isHidden = true
-        if channelInfo?.role == 0 || channelInfo?.role == 1 {
-            
-        }
+            if channelInfo?.role == 0 || channelInfo?.role == 1 {
+                check = true
+                universalButton.isHidden = false
+                universalButton.setTitle("edit".localized(), for: .normal)
+                
+            } else {
+                check = false
+                universalButton.isHidden = true
+            }
+        } else {
+            universalButton.setTitle("join".localized(), for: .normal)
         }
     }
     
@@ -172,11 +178,7 @@ class ChannelMessagesViewController: UIViewController {
     @IBAction func backButtonAction(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    @IBAction func joinChannelButtonAction(_ sender: Any) {
-        
-   
-        }
+
 //        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
     @IBAction func universalButtonAction(_ sender: Any) {
         if channelInfo?.role == 3 {
@@ -287,22 +289,53 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         return frame.height + 30
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+            if cell!.isSelected {
+                arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row])
+                cell!.button?.setImage(UIImage.init(systemName: "heckmark.circle.fill"), for: .normal)
+            } else {
+                arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (message) -> Bool in
+                    return  message._id != channelMessages.array![indexPath.row]._id
+                })
+                 cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            }
+        } else {
+            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+            if cell!.isSelected {
+                 arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row])
+                 cell!.button?.setImage(UIImage.init(systemName: "heckmark.circle.fill"), for: .normal)
+            } else {
+                arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (message) -> Bool in
+                    return  message._id != channelMessages.array![indexPath.row]._id
+                })
+                 cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            }
+        }
+        print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             // cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
             cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
-//            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+//            cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2) checkmark.circle.fill
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
-            if check! {
+            if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 if isPreview == true {
-                    cell.leadingConstraintOfButton!.constant = 10
+                    cell.leadingConstraintOfButton!.constant = -10
+                    tableView.allowsMultipleSelection = false
                     cell.button?.isHidden = true
                 } else if isPreview == false {
-                    cell.leadingConstraintOfButton!.constant = -10
+                    cell.leadingConstraintOfButton!.constant = 10
+                    tableView.allowsMultipleSelection = true
                     cell.button?.isHidden = false
                 }
+            } else {
+                 cell.button?.isHidden = true
             }
             return cell
         } else {
@@ -312,7 +345,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
-            if check! {
+            if (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 if isPreview == true {
                     cell.leadingConstraintOfButton!.constant = -10
                     cell.leadingConstraintOfImageView!.constant = -5
@@ -322,6 +355,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                     cell.leadingConstraintOfImageView!.constant = 15
                     cell.button.isHidden = false
                 }
+            } else {
+                cell.button.isHidden = true
             }
             return cell
         }

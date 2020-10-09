@@ -370,7 +370,7 @@ class MainTabBarController: UITabBarController {
             
             switch self.selectedIndex {
             case 3:
-                if channelMessageNC?.viewControllers.count != 2 {
+                if (channelMessageNC?.viewControllers.count)! < 2 {
                     if message.senderId != SharedConfigs.shared.signedUser?.id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
