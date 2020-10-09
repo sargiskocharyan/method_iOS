@@ -69,4 +69,10 @@ class ChannelInfoViewModel {
             completion(error)
         }
     }
+    
+    func subscribeToChannel(id: String, completion: @escaping (SubscribedResponse?, NetworkResponse?)->())  {
+        HomeNetworkManager().subscribe(id: id) { (subresponse, error) in
+            completion(subresponse, error)
+        }
+    }
 }

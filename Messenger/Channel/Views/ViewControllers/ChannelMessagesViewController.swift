@@ -21,7 +21,7 @@ class ChannelMessagesViewController: UIViewController {
     var mainRouter: MainRouter?
     var viewModel: ChannelMessagesViewModel?
     var channelMessages: ChannelMessages = ChannelMessages(array: [], statuses: [])
-    var channelInfo: ChannelInfo?
+    var channelInfo: ChannelInfo!
     var isPreview: Bool?
     var check: Bool!
     var arrayOfSelectedMesssgae: [String] = []
@@ -71,12 +71,14 @@ class ChannelMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
-        if channelInfo?.role == 0 || channelInfo?.role == 1 {
+        //joinButton.isHidden = true
+        print(channelInfo)
+        if channelInfo.role == 0 || channelInfo.role == 1 {
             check = true
             universalButton.isHidden = false
             universalButton.setTitle("edit".localized(), for: .normal)
             
-        } else if channelInfo?.role == 2 {
+        } else if channelInfo.role == 2 {
             check = false
             universalButton.isHidden = true
         } else {
@@ -256,12 +258,70 @@ class ChannelMessagesViewController: UIViewController {
                         self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
-                    DispatchQueue.main.async {
-                        self.universalButton.isHidden = true
+                   self.channelInfo?.role = 2
+                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        }
+                    } else {
+                        self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
+                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.foundChannels[i].role = 2
+                                break
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        }
+                    }
+                    DispatchQueue.main.async {
                         self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        self.universalButton.isHidden = true
                     }
                     
+                }
+            })
+        } else if channelInfo.role == 2 {
+            viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.channelInfo?.role = 3
+                    if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
+                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
+                        })
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        }
+                    } else {
+                         self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                                                   return channelInfo.channel?._id != self.channelInfo?.channel?._id
+                                               })
+                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
+                                break
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        //                        self.navigationController?.popToRootViewController(animated: true)
+                        self.universalButton.setTitle("join".localized(), for: .normal)
+                        self.universalButton.isHidden = false
+                    }
                 }
             })
         } else if channelInfo?.role == 0 || channelInfo?.role == 1 {

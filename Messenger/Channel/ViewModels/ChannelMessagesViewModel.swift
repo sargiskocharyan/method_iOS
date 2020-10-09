@@ -36,4 +36,9 @@ class ChannelMessagesViewModel {
         }
     }
     
+    func leaveChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().leaveChannel(id: id) { (error) in
+            completion(error)
+        }
+    }
 }

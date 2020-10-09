@@ -136,15 +136,20 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         self.activityIndicator.stopAnimating()
                     }
                 }
-                for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-                    if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel?._id {
-                        self.mainRouter?.channelListViewController?.channelsInfo[i].channel?.avatarURL = avatarURL
+               for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
+                    if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
+                        self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = avatarURL
                         break
                     }
                 }
-                self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+                    if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+                        self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = avatarURL
+                        break
+                    }
+                }
                 DispatchQueue.main.async {
-                     self.mainRouter?.channelListViewController?.tableView.reloadData()
+                    self.mainRouter?.channelListViewController?.tableView.reloadData()
                 }
             }
         }
@@ -202,16 +207,19 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
                     self.channelLogoImageView.image = UIImage(named: "noPhoto")
+                    for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
+                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
+                            self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = nil
+                            break
+                        }
+                    }
                     for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
                         if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
                             self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = nil
                             break
                         }
                     }
-                    self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    }
+                    self.mainRouter?.channelListViewController?.tableView.reloadData()
                 }
             }
         }
@@ -263,7 +271,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     
     func setInfo() {
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description ?? "description_not_set".localized()
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"

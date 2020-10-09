@@ -303,7 +303,7 @@ class MainRouter {
     func showChannelMessagesViewController(channelInfo: ChannelInfo) {
         let vc = ChannelMessagesViewController.instantiate(fromAppStoryboard: .channel)
         vc.mainRouter = channelListViewController?.mainRouter
-        vc.channelInfo = channelInfo
+        vc.channelInfo = ChannelInfo(channel: channelInfo.channel, role: channelInfo.role)
         vc.viewModel = ChannelMessagesViewModel()
         self.channelMessagesViewController = vc
         channelListViewController?.navigationController?.pushViewController(vc, animated: true)

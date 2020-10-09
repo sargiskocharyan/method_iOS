@@ -61,7 +61,10 @@ struct Channel: Codable {
     var publicUrl: String?
 }
 
-struct ChannelInfo: Codable {
+struct ChannelInfo: Codable, Equatable {
+    static func == (lhs: ChannelInfo, rhs: ChannelInfo) -> Bool {
+        return lhs.channel?._id == rhs.channel?._id
+    }
     var channel: Channel?
     var role: Int?
 }

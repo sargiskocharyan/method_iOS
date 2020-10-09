@@ -60,7 +60,7 @@ class ModeratorInfoViewController: UIViewController {
     
     func setInfo() {
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description ?? "description_not_set".localized()
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = channelInfo?.channel?.publicUrl
@@ -85,27 +85,32 @@ class ModeratorInfoViewController: UIViewController {
             self.mainRouter?.showSubscribersListViewController(id: self.channelInfo?.channel?._id ?? "")
         }
     }
-   
+    
     @objc func handleRejectViewTap(_ sender: UITapGestureRecognizer? = nil) {
-        viewModel?.rejectBeModerator(id: channelInfo!.channel!._id, completion: { (error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.navigationController?.popToRootViewController(animated: true)
-                    for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
-                            self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
-                            break
-                        }
+        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_reject_be_moderator".localized(), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+            self.viewModel?.rejectBeModerator(id: self.channelInfo!.channel!._id, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                     }
-                    self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                } else {
+                    DispatchQueue.main.async {
+                        self.navigationController?.popToRootViewController(animated: true)
+                        for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+                            if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+                                self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
+                                break
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                    }
                 }
-            }
-        })
-       }
+            })
+        }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+        self.present(alert, animated: true)
+    }
     
     @objc func handleLeaveViewTap(_ sender: UITapGestureRecognizer? = nil) {
         viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in

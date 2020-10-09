@@ -1288,7 +1288,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YHd-JS-Q46">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YHd-JS-Q46">
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osr-ct-mui">
@@ -1344,7 +1344,7 @@
                                                     <constraint firstAttribute="bottom" secondItem="oan-EJ-dDO" secondAttribute="bottom" constant="15" id="YpN-qL-3Uw"/>
                                                     <constraint firstItem="YBc-Qg-RcP" firstAttribute="leading" secondItem="s1j-3W-HC5" secondAttribute="leading" constant="15" id="ays-5Y-8Ae"/>
                                                     <constraint firstItem="YBc-Qg-RcP" firstAttribute="top" secondItem="s1j-3W-HC5" secondAttribute="top" constant="10" id="uEq-sU-8wP"/>
-                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="uaA-0Z-Eaf"/>
+                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="uaA-0Z-Eaf"/>
                                                     <constraint firstItem="oan-EJ-dDO" firstAttribute="top" secondItem="YBc-Qg-RcP" secondAttribute="bottom" constant="10" id="uev-Gz-P2Z"/>
                                                 </constraints>
                                             </view>
@@ -1375,22 +1375,43 @@
                                                     <constraint firstAttribute="bottom" secondItem="VSp-h1-gb0" secondAttribute="bottom" constant="15" id="zcK-ei-oHL"/>
                                                 </constraints>
                                             </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HSc-ey-24N">
+                                                <rect key="frame" x="-1" y="370" width="416" height="66"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Nu-Ne-VvI">
+                                                        <rect key="frame" x="14.999999999999996" y="22.333333333333314" width="47.666666666666657" height="21.333333333333329"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                        <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="5Nu-Ne-VvI" firstAttribute="leading" secondItem="HSc-ey-24N" secondAttribute="leading" constant="14.999999999999996" id="9Ou-fh-HJy"/>
+                                                    <constraint firstItem="5Nu-Ne-VvI" firstAttribute="centerY" secondItem="HSc-ey-24N" secondAttribute="centerY" id="heb-ST-KoY"/>
+                                                    <constraint firstAttribute="height" constant="66" id="maq-9Q-2uh"/>
+                                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="5Nu-Ne-VvI" secondAttribute="trailing" constant="15" id="oKn-K0-fBq"/>
+                                                </constraints>
+                                            </view>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="ril-8d-W5L" secondAttribute="trailing" constant="-1" id="0o2-Iq-tay"/>
                                             <constraint firstAttribute="trailing" secondItem="s1j-3W-HC5" secondAttribute="trailing" constant="-1" id="1PO-Q0-7NO"/>
+                                            <constraint firstItem="HSc-ey-24N" firstAttribute="leading" secondItem="osr-ct-mui" secondAttribute="leading" constant="-1" id="2jH-cf-rOp"/>
                                             <constraint firstItem="UJS-58-f1X" firstAttribute="top" secondItem="cOy-TH-abb" secondAttribute="bottom" constant="20" id="6S6-wz-ysQ"/>
+                                            <constraint firstAttribute="trailing" secondItem="HSc-ey-24N" secondAttribute="trailing" constant="-1" id="7Jo-hr-nMu"/>
                                             <constraint firstItem="UJS-58-f1X" firstAttribute="centerX" secondItem="cOy-TH-abb" secondAttribute="centerX" id="ECd-wc-Bni"/>
                                             <constraint firstItem="ril-8d-W5L" firstAttribute="top" secondItem="osr-ct-mui" secondAttribute="top" constant="-1" id="FLd-CN-tkd"/>
                                             <constraint firstAttribute="trailing" secondItem="seM-Ru-VgJ" secondAttribute="trailing" constant="-1" id="Ffi-CZ-wCb"/>
                                             <constraint firstItem="seM-Ru-VgJ" firstAttribute="leading" secondItem="osr-ct-mui" secondAttribute="leading" constant="-1" id="GcW-qA-Ezj"/>
                                             <constraint firstItem="ril-8d-W5L" firstAttribute="leading" secondItem="osr-ct-mui" secondAttribute="leading" constant="-1" id="ISX-oT-ypF"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="HSc-ey-24N" secondAttribute="bottom" constant="-1" id="Ulj-wb-Bkc"/>
                                             <constraint firstItem="ril-8d-W5L" firstAttribute="centerX" secondItem="osr-ct-mui" secondAttribute="centerX" id="ZUn-3V-fPO"/>
                                             <constraint firstItem="seM-Ru-VgJ" firstAttribute="top" secondItem="s1j-3W-HC5" secondAttribute="bottom" constant="-1" id="bqM-mf-Rn6"/>
                                             <constraint firstItem="s1j-3W-HC5" firstAttribute="leading" secondItem="osr-ct-mui" secondAttribute="leading" constant="-1" id="eba-DU-Evh"/>
                                             <constraint firstItem="s1j-3W-HC5" firstAttribute="top" secondItem="ril-8d-W5L" secondAttribute="bottom" id="lI7-sq-5FQ"/>
-                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="seM-Ru-VgJ" secondAttribute="bottom" constant="-1" id="sZF-1L-t7q"/>
+                                            <constraint firstItem="HSc-ey-24N" firstAttribute="top" secondItem="seM-Ru-VgJ" secondAttribute="bottom" id="nOT-kw-ZI8"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -1419,6 +1440,8 @@
                         <outlet property="descriptionTextLabel" destination="YBc-Qg-RcP" id="rLv-6p-O6U"/>
                         <outlet property="descriptionView" destination="s1j-3W-HC5" id="8ba-dz-Gif"/>
                         <outlet property="headerView" destination="ril-8d-W5L" id="n6z-Op-FT2"/>
+                        <outlet property="leaveOrJoinTextLabel" destination="5Nu-Ne-VvI" id="9JC-Y4-p7N"/>
+                        <outlet property="leaveOrJoinView" destination="HSc-ey-24N" id="fy2-0x-S2k"/>
                         <outlet property="nameLabel" destination="UJS-58-f1X" id="rpS-wi-acS"/>
                         <outlet property="urlLabel" destination="VSp-h1-gb0" id="fta-KI-WPF"/>
                         <outlet property="urlTextLabel" destination="CTp-nb-if6" id="dG7-wD-61g"/>
@@ -1427,7 +1450,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FuT-QW-fw1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="765" y="151"/>
+            <point key="canvasLocation" x="-1632" y="7"/>
         </scene>
         <!--Moderator Info View Controller-->
         <scene sceneID="H7c-ER-yRd">
@@ -1628,8 +1651,8 @@
                     </view>
                     <connections>
                         <outlet property="channelLogoImageView" destination="5sH-7R-6xe" id="ubH-FS-Kv9"/>
-                        <outlet property="descriptionLabel" destination="dzA-Y1-xET" id="88L-0g-GNI"/>
-                        <outlet property="descriptionTextLabel" destination="Gbp-ce-sT9" id="bjp-HQ-t9B"/>
+                        <outlet property="descriptionLabel" destination="Gbp-ce-sT9" id="r3A-VD-GWj"/>
+                        <outlet property="descriptionTextLabel" destination="dzA-Y1-xET" id="6DZ-Sh-brW"/>
                         <outlet property="descriptionView" destination="K5b-EH-gpI" id="1MC-VE-0Ni"/>
                         <outlet property="headerView" destination="HqQ-Nb-gt9" id="Mri-nt-kv6"/>
                         <outlet property="leaveLabel" destination="OZI-cV-n1c" id="k1h-kg-EqS"/>
@@ -1644,7 +1667,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYN-8T-hUr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1633" y="151"/>
+            <point key="canvasLocation" x="-670" y="7"/>
         </scene>
     </scenes>
     <resources>
