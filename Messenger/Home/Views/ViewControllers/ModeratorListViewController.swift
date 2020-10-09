@@ -42,7 +42,9 @@ class ModeratorListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if moderators != nil {
-                self.moderators = moderators!
+                self.moderators = moderators!.filter({ (channelSubscriber) -> Bool in
+                    return channelSubscriber.user?._id != SharedConfigs.shared.signedUser?.id
+                })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -58,18 +60,29 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isChangeAdmin == true {
-            viewModel?.changeAdmin(id: id!, userId: (moderators[indexPath.row].user?._id)!, completion: { (error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+            let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_to_change_admin", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+                self.viewModel?.changeAdmin(id: self.id!, userId: (self.moderators[indexPath.row].user?._id)!, completion: { (error) in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.navigationController?.popToRootViewController(animated: true)
+                            for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+                                if self.id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+                                    self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
+                                    break
+                                }
+                            }
+                            self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                        }
                     }
-                } else {
-//                    Channel
-                    DispatchQueue.main.async {
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
-                }
-            })
+                })
+            }))
+            self.present(alert, animated: true)
         }
     }
     

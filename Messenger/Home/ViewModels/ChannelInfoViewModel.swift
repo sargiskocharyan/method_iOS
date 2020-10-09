@@ -63,4 +63,10 @@ class ChannelInfoViewModel {
             completion(error)
         }
     }
+    
+    func rejectBeModerator(id: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().rejectBeModerator(id: id) { (error) in
+            completion(error)
+        }
+    }
 }

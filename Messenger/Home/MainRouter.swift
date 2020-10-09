@@ -310,7 +310,7 @@ class MainRouter {
     }
     
     func showChannelInfoViewController(channelInfo: ChannelInfo)  {
-        let vc = ChannelInfoViewController.instantiate(fromAppStoryboard: .channel)
+        let vc = ChannelInfoViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = channelMessagesViewController?.mainRouter
         vc.channelInfo = channelInfo
         vc.viewModel = ChannelInfoViewModel()
@@ -319,7 +319,7 @@ class MainRouter {
     }
    
     func showModeratorInfoViewController(channelInfo: ChannelInfo)  {
-        let vc = ModeratorInfoViewController.instantiate(fromAppStoryboard: .channel)
+        let vc = ModeratorInfoViewController.instantiate(fromAppStoryboard: .main)
         vc.mainRouter = channelMessagesViewController?.mainRouter
         vc.channelInfo = channelInfo
         vc.viewModel = ChannelInfoViewModel()

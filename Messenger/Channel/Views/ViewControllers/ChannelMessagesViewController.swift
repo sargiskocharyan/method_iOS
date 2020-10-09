@@ -160,9 +160,6 @@ class ChannelMessagesViewController: UIViewController {
     
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
-            //            self.mainRouter?.showChannelInfoViewController(channel: self.channel!)
-            //            self.mainRouter?.showModeratorInfoViewController(channel: self.channel!)
             print(self.channelInfo?.role)
             switch self.channelInfo?.role {
             case 0:
@@ -190,8 +187,10 @@ class ChannelMessagesViewController: UIViewController {
                 } else {
                     DispatchQueue.main.async {
                         self.universalButton.isHidden = true
+                        self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
                     }
-                    SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
+                    
                 }
             })
         } else if channelInfo?.role == 0 || channelInfo?.role == 1 {

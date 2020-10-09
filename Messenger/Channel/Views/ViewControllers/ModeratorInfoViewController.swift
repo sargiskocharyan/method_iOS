@@ -64,6 +64,11 @@ class ModeratorInfoViewController: UIViewController {
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = channelInfo?.channel?.publicUrl
+        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "") { (image) in
+            DispatchQueue.main.async {
+                self.channelLogoImageView.image = image
+            }
+        }
     }
     
     func addGestures() {
@@ -73,8 +78,6 @@ class ModeratorInfoViewController: UIViewController {
         rejectView.addGestureRecognizer(tapRejectView)
         let tapLeaveView = UITapGestureRecognizer(target: self, action: #selector(self.handleLeaveViewTap(_:)))
         leaveView.addGestureRecognizer(tapLeaveView)
-        let tapUrlView = UITapGestureRecognizer(target: self, action: #selector(self.handleUrlViewTap(_:)))
-        urlView.addGestureRecognizer(tapUrlView)
     }
     
     @objc func handleSubscribersTap(_ sender: UITapGestureRecognizer? = nil) {
@@ -84,16 +87,44 @@ class ModeratorInfoViewController: UIViewController {
     }
    
     @objc func handleRejectViewTap(_ sender: UITapGestureRecognizer? = nil) {
-            print("Reject tapped")
+        viewModel?.rejectBeModerator(id: channelInfo!.channel!._id, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.navigationController?.popToRootViewController(animated: true)
+                    for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+                            self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
+                            break
+                        }
+                    }
+                    self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                }
+            }
+        })
        }
     
     @objc func handleLeaveViewTap(_ sender: UITapGestureRecognizer? = nil) {
-           print("Leave tapped")
-       }
-    
-    @objc func handleUrlViewTap(_ sender: UITapGestureRecognizer? = nil) {
-              print("Url tapped")
-          }
+        viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.mainRouter?.channelListViewController?.channelsInfo = self.mainRouter!.channelListViewController!.channelsInfo.filter({ (channelInfo) -> Bool in
+                        return self.channelInfo?.channel?._id != channelInfo.channel?._id
+                    })
+                    self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+                    self.mainRouter?.channelListViewController?.tableView.reloadData()
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            }
+        })
+    }
     
        func setBorder(view: UIView) {
            view.layer.borderColor = UIColor.lightGray.cgColor

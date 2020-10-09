@@ -52,6 +52,7 @@ public enum HomeApi {
     case changeAdmin(id: String, userId: String)
     case deleteChannelLogo(id: String)
     case deleteChannel(id: String)
+    case rejectBeModerator(id: String)
 }
 
 extension HomeApi: EndPointType {
@@ -147,6 +148,8 @@ extension HomeApi: EndPointType {
             return "\(AUTHUrls.CreateChannel)/\(id)/avatar"
         case .deleteChannel(id: let id):
             return "\(AUTHUrls.CreateChannel)/\(id)"
+        case .rejectBeModerator(id: let id):
+            return "\(AUTHUrls.CreateChannel)/\(id)/moderator/me"
         }
     }
     
@@ -236,6 +239,8 @@ extension HomeApi: EndPointType {
         case .deleteChannelLogo(_):
             return .delete
         case .deleteChannel(_):
+            return .delete
+        case .rejectBeModerator(_):
             return .delete
         }
     }
@@ -418,6 +423,9 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .deleteChannel(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .rejectBeModerator(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

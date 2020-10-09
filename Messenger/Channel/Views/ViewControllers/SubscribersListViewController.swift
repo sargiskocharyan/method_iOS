@@ -36,13 +36,11 @@ class SubscribersListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if subscribers != nil {
-//                self.subscribers = subscribers!.filter({ (channelSubscriber) -> Bool in
-//                    return true
-//                })
-                self.subscribers = subscribers!.filter({ (subscriber) -> Bool in
-                    return true
-                })
+                self.subscribers = subscribers!
                 if self.isFromModeratorList == true {
+                    self.subscribers = self.subscribers.filter { (channelSubscriber) -> Bool in
+                        return channelSubscriber.user?._id != SharedConfigs.shared.signedUser?.id
+                    }
                     var i = 0
                     var isModerator = false
                     while i < self.subscribers.count {

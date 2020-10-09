@@ -991,6 +991,24 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func rejectBeModerator(id: String, completion: @escaping (NetworkResponse?)->()) {
+           router.request(.rejectBeModerator(id: id)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       completion(nil)
+                   case .failure( _):
+                       completion(NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
     func updateChannelInfo(id: String, name: String?, description: String?, completion: @escaping (Channel?, NetworkResponse?)->()) {
         router.request(.updateChannelInfo(id: id, name: name, description: description)) { data, response, error in
                if error != nil {

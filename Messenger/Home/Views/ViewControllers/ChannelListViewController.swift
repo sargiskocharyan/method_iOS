@@ -88,7 +88,6 @@ class ChannelListViewController: UIViewController {
                     }
                 }
             })
-            
         }))
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
