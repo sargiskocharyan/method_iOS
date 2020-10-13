@@ -59,8 +59,10 @@ class ChannelMessagesViewController: UIViewController {
         self.getChannelMessages()
         setObservers()
         isPreview = true
-        addConstraints()
-        setupInputComponents()
+        if channelInfo.channel?.openMode == true {
+            addConstraints()
+            setupInputComponents()
+        }
         setLineOnHeaderView()
         headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         tableView.allowsMultipleSelection = false
@@ -72,12 +74,13 @@ class ChannelMessagesViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
         //joinButton.isHidden = true
-        print(channelInfo)
-        if channelInfo.role == 0 || channelInfo.role == 1 {
+        print("openMode: \(channelInfo.channel?.openMode)")
+        tableView.allowsMultipleSelection = false
+        self.tableView.allowsSelection = false
+        if (channelInfo.role == 0 || channelInfo.role == 1) {
             check = true
             universalButton.isHidden = false
             universalButton.setTitle("edit".localized(), for: .normal)
-            
         } else if channelInfo.role == 2 {
             check = false
             universalButton.isHidden = true
@@ -87,6 +90,7 @@ class ChannelMessagesViewController: UIViewController {
             universalButton.setTitle("join".localized(), for: .normal)
         }
     }
+    
     
     //MARK: Helper methods
     private func setupInputComponents() {
@@ -109,6 +113,37 @@ class ChannelMessagesViewController: UIViewController {
         sendButton.isUserInteractionEnabled = true
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
+    }
+    
+    func setView(_ str: String) {
+        if channelMessages.array?.count == 0 {
+            DispatchQueue.main.async {
+                let noResultView = UIView(frame: self.view.frame)
+                self.tableView.addSubview(noResultView)
+                noResultView.tag = 26
+                noResultView.backgroundColor = UIColor(named: "imputColor")
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: 50))
+                noResultView.addSubview(label)
+                label.translatesAutoresizingMaskIntoConstraints = false
+                label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
+                label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+                label.center = self.view.center
+                label.text = str
+                label.textColor = .lightGray
+                label.textAlignment = .center
+                
+                
+            }
+        } else {
+            removeView()
+        }
+    }
+    
+    func removeView() {
+        DispatchQueue.main.async {
+            let resultView = self.view.viewWithTag(26)
+            resultView?.removeFromSuperview()
+        }
     }
     
     func setLineOnHeaderView()  {
@@ -154,33 +189,41 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @objc func deleteMessages() {
-        viewModel?.deleteChannelMessages(id: (channelInfo?.channel!._id)!, ids: arrayOfSelectedMesssgae, completion: { (error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                }
-            } else {
-                self.channelMessages.array = self.channelMessages.array?.filter({ (message) -> Bool in
-                    return !(self.arrayOfSelectedMesssgae.contains(message._id!))
-                })
-                DispatchQueue.main.async {
-                    UIView.setAnimationsEnabled(false)
-                    self.tableView.reloadData()
-                }
-            }
-            self.check = !self.check
-            self.isPreview = self.check
-            DispatchQueue.main.async {
-                UIView.setAnimationsEnabled(false)
-                self.tableView.beginUpdates()
-                self.tableView.reloadData()
-                self.tableView.endUpdates()
-                self.universalButton.setTitle("edit".localized(), for: .normal)
-                self.removeDeleteButton()
-            }
-            
-            self.arrayOfSelectedMesssgae = []
-        })
+        //        if arrayOfSelectedMesssgae.count == 0 {
+        //            deleteMessageButton.isEnabled = false
+        //        } else {
+        //            deleteMessageButton.isEnabled = true
+        //        }
+        //        viewModel?.deleteChannelMessages(id: (channelInfo?.channel!._id)!, ids: arrayOfSelectedMesssgae, completion: { (error) in
+        //            if error != nil {
+        //                DispatchQueue.main.async {
+        //                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+        //                }
+        //            } else {
+        //                self.channelMessages.array = self.channelMessages.array?.filter({ (message) -> Bool in
+        //                    return !(self.arrayOfSelectedMesssgae.contains(message._id!))
+        //                })
+        //                DispatchQueue.main.async {
+        //                    UIView.setAnimationsEnabled(false)
+        //                    self.tableView.reloadData()
+        //                }
+        //            }
+        //            self.check = !self.check
+        //            self.isPreview = self.check
+        //            DispatchQueue.main.async {
+        //                UIView.setAnimationsEnabled(false)
+        //                self.tableView.beginUpdates()
+        //                self.tableView.reloadData()
+        //                self.tableView.endUpdates()
+        //                self.universalButton.setTitle("edit".localized(), for: .normal)
+        //                self.tableView.allowsMultipleSelection = false
+        //                self.tableView.allowsSelection = false
+        //                self.sendButton.isHidden = false
+        //                self.removeDeleteButton()
+        //            }
+        //            self.arrayOfSelectedMesssgae = []
+        //        })
+        showAlertBeforeDeleteMessage()
     }
     
     func removeDeleteButton()  {
@@ -190,11 +233,13 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
-        DispatchQueue.main.async {
-            self.channelMessages.array!.append(message)
-            self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
-            let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
-            self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        if message.owner == channelInfo.channel?._id {
+            DispatchQueue.main.async {
+                self.channelMessages.array!.append(message)
+                self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
+                let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
         }
     }
     
@@ -203,13 +248,63 @@ class ChannelMessagesViewController: UIViewController {
             let text = inputTextField.text
             inputTextField.text = ""
             SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
-            
+            removeView()
+            self.universalButton.isHidden = false
         }
     }
     
     func setObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func showAlertBeforeDeleteMessage() {
+        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_want_to_delete_selected_messages".localized(), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (_) in
+            if self.arrayOfSelectedMesssgae.count == 0 {
+                self.deleteMessageButton.isEnabled = false
+            } else {
+                self.deleteMessageButton.isEnabled = true
+            }
+            self.viewModel?.deleteChannelMessages(id: (self.channelInfo?.channel!._id)!, ids: self.arrayOfSelectedMesssgae, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.channelMessages.array = self.channelMessages.array?.filter({ (message) -> Bool in
+                        return !(self.arrayOfSelectedMesssgae.contains(message._id!))
+                    })
+                    DispatchQueue.main.async {
+                        UIView.setAnimationsEnabled(false)
+                        self.tableView.reloadData()
+                    }
+                }
+                self.check = !self.check
+                self.isPreview = self.check
+                DispatchQueue.main.async {
+                    UIView.setAnimationsEnabled(false)
+                    self.tableView.beginUpdates()
+                    self.tableView.reloadData()
+                    self.tableView.endUpdates()
+                    self.universalButton.setTitle("edit".localized(), for: .normal)
+                    self.tableView.allowsMultipleSelection = false
+                    self.tableView.allowsSelection = false
+                    self.sendButton.isHidden = false
+                    self.removeDeleteButton()
+                }
+                self.arrayOfSelectedMesssgae = []
+                if self.channelMessages.array?.count == 0 {
+                    self.setView("there_is_no_messages")
+                    DispatchQueue.main.async {
+                        self.universalButton.isHidden = true
+                    }
+                    
+                }
+            })
+        }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+        self.present(alert, animated: true)
     }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
@@ -258,7 +353,7 @@ class ChannelMessagesViewController: UIViewController {
                         self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
-                   self.channelInfo?.role = 2
+                    self.channelInfo?.role = 2
                     if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
                         self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
@@ -302,9 +397,9 @@ class ChannelMessagesViewController: UIViewController {
                             self.mainRouter?.channelListViewController?.tableView.reloadData()
                         }
                     } else {
-                         self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
-                                                   return channelInfo.channel?._id != self.channelInfo?.channel?._id
-                                               })
+                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
+                        })
                         for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
                             if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
                                 self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
@@ -336,54 +431,18 @@ class ChannelMessagesViewController: UIViewController {
                 if !self.isPreview! {
                     self.setDeleteMessageButton()
                     self.universalButton.setTitle("cancel".localized(), for: .normal)
+                    self.tableView.allowsMultipleSelection = true
+                    self.sendButton.isHidden = true
                 } else {
+                    self.sendButton.isHidden = false
+                    self.tableView.allowsMultipleSelection = false
+                    self.tableView.allowsSelection = false
                     self.universalButton.setTitle("edit".localized(), for: .normal)
                     self.removeDeleteButton()
                 }
             }
         }
     }
-    
-//    func getChannelMessages() {
-//        viewModel?.getChannelMessages(id: channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
-//            //
-//            //        check = !check
-//            //        isPreview = check
-//            DispatchQueue.main.async {
-//                if !self.joinButton.isHidden {
-//                    self.viewModel?.subscribeToChannel(id: self.channelInfo!.channel!._id, completion: { (subResponse, error) in
-//                        if error != nil {
-//                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                        } else {
-//                            self.joinButton.isHidden = true
-//                            SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
-//                        }
-//                    })
-//                }
-//            }
-//
-//        })
-//    }
-    
-//    func getMessages(completion: @escaping () -> ()) {
-//        viewModel?.getChatMessages(id: "5f3a7cb9e6d394087cb701e7", dateUntil: nil, completion: { (messages, error) in
-//            if error != nil {
-//                DispatchQueue.main.async {
-//                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                }
-//            } else {
-//                DispatchQueue.main.async {
-//                    self.joinButton.isHidden = true
-//                }
-//                SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
-//            }
-//        })
-//        for i in arrayOfIndexPath {
-//          let cell = tableView.cellForRow(at: i) as? RecieveMessageTableViewCell
-//            cell?.editPage(isPreview: !isPreview!)
-//        }
-       
-    
     
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: self.channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
@@ -394,11 +453,18 @@ class ChannelMessagesViewController: UIViewController {
                 
             } else if messages != nil {
                 self.channelMessages = messages!
-                self.channelMessages.array!.reverse()
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    if self.channelMessages.array!.count > 0 {
-                        self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
+                if messages?.array?.count != 0 {
+                    self.channelMessages.array!.reverse()
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        if self.channelMessages.array!.count > 0 {
+                            self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
+                        }
+                    }
+                } else {
+                    self.setView("there_is_no_messages".localized())
+                    DispatchQueue.main.async {
+                        self.universalButton.isHidden = true
                     }
                 }
             }
@@ -421,8 +487,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
     
     //MARK: HeightForRowAt indexPath
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-          var size: CGSize?
-         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        var size: CGSize?
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
         let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
         return frame.height + 30
@@ -438,13 +504,13 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             })//checkmark.circle.fill
             cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
         } else {
-             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-             cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
         }
-         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
+        print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
         return indexPath
     }
     
@@ -477,18 +543,18 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
-//                if isPreview == true {
-//                    cell.leadingConstraintOfButton!.constant = -10
-//                    tableView.allowsMultipleSelection = false
-//                    cell.button?.isHidden = true
-//                } else if isPreview == false {
-//                    cell.leadingConstraintOfButton!.constant = 10
-//                    tableView.allowsMultipleSelection = true
-//                    cell.button?.isHidden = false
-//                }
+                //                if isPreview == true {
+                //                    cell.leadingConstraintOfButton!.constant = -10
+                //                    tableView.allowsMultipleSelection = false
+                //                    cell.button?.isHidden = true
+                //                } else if isPreview == false {
+                //                    cell.leadingConstraintOfButton!.constant = 10
+                //                    tableView.allowsMultipleSelection = true
+                //                    cell.button?.isHidden = false
+                //                }
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
-                 cell.button?.isHidden = true
+                cell.button?.isHidden = true
             }
             return cell
         } else {

@@ -366,19 +366,26 @@ class MainTabBarController: UITabBarController {
     func getNewChannelMessage() {
         SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username) in
             
-            let channelMessageNC = self.viewControllers?[3] as? UINavigationController
+            let channelMessageNC = self.viewControllers?[2] as? UINavigationController
             
             switch self.selectedIndex {
-            case 3:
-                if (channelMessageNC?.viewControllers.count)! < 2 {
+            case 2:
+                if (channelMessageNC?.viewControllers.count)! == 1 {
                     if message.senderId != SharedConfigs.shared.signedUser?.id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
-                } else {
-                    if (channelMessageNC?.viewControllers.count)! > 0 {
+                } else if (channelMessageNC?.viewControllers.count)! == 2 {
                         let channelMessageVC = channelMessageNC?.viewControllers[1] as? ChannelMessagesViewController
-                        channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    if message.owner != channelMessageVC?.channelInfo.channel?._id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                } else {
+                    if message.senderId != SharedConfigs.shared.signedUser?.id {
+                        self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
+                    }
+                    let channelMessageVC = channelMessageNC?.viewControllers[1] as? ChannelMessagesViewController
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
                     
                 }
             default:
@@ -456,7 +463,7 @@ class MainTabBarController: UITabBarController {
                     }
                 }
                 break
-            case 2:
+            case 3:
                 let profileNC = self.viewControllers![2] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
                     if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {

@@ -21,10 +21,16 @@ class ChannelListViewModel {
         }
     }
     
-    func createChannel(name: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-           HomeNetworkManager().createChannel(name: name) { (channel, error) in
+    func createChannel(name: String, openMode: Bool, completion: @escaping (Channel?, NetworkResponse?)->()) {
+           HomeNetworkManager().createChannel(name: name, openMode: openMode) { (channel, error) in
                completion(channel, error)
            }
-       }    
+       }
+    
+    func checkChannelName(name: String, completion: @escaping(CheckChannelName?, NetworkResponse?)->()) {
+           HomeNetworkManager().checkChannelName(name: name) { (response, error) in
+               completion(response, error)
+           }
+       }
 }
 
