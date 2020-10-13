@@ -151,12 +151,6 @@ final class WebRTCClient: NSObject {
                }
         localVideoTrack?.isEnabled = false
         capturer.stopCapture {
-//            self.localVideoTrack?.remove(renderer)
-//            self.stream?.removeVideoTrack(self.localVideoTrack!)
-//            self.peerConnection?.remove(self.stream!)
-//            self.peerConnection?.removeTrack(<#T##sender: RTCRtpSender##RTCRtpSender#>)
-//            self.localVideoTrack = nil
-//            self.videoCapturer = nil
             completion()
             return
         }

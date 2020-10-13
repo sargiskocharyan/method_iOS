@@ -107,10 +107,10 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                             }
                         }
                         self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
-                             self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
                         self.navigationController?.popToRootViewController(animated: true)
-                        }
                     }
+                }
                 
             })
         }))
@@ -130,26 +130,39 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                     self.activityIndicator.stopAnimating()
                 }
             } else {
+                self.channelInfo?.channel?.avatarURL = avatarURL
                 ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
                     DispatchQueue.main.async {
                         self.channelLogoImageView.image = image
                         self.activityIndicator.stopAnimating()
                     }
                 }
-               for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
-                    if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
-                        self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = avatarURL
-                        break
+                if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
+                        }
                     }
-                }
-                for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-                    if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
-                        self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = avatarURL
-                        break
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
                     }
-                }
-                DispatchQueue.main.async {
-                    self.mainRouter?.channelListViewController?.tableView.reloadData()
+                } else {
+                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
+                        }
+                    }
+                    for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                        if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = avatarURL
+                            break
+                        }
+                    }
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
+                    }
                 }
             }
         }
@@ -204,22 +217,52 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 }
                 return
             } else {
+//                DispatchQueue.main.async {
+//                    for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
+//                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
+//                            self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = nil
+//                            break
+//                        }
+//                    }
+//                    for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+//                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+//                            self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = nil
+//                            break
+//                        }
+//                    }
+//                    self.mainRouter?.channelListViewController?.tableView.reloadData()
+//                }
+                self.channelInfo?.channel?.avatarURL = nil
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
                     self.channelLogoImageView.image = UIImage(named: "noPhoto")
-                    for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
-                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
-                            self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = nil
+                }
+                if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
+                        }
+                    }
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
+                    }
+                } else {
+                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
+                        }
+                    }
+                    for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                        if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = nil
                             break
                         }
                     }
-                    for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
-                            self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = nil
-                            break
-                        }
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
                     }
-                    self.mainRouter?.channelListViewController?.tableView.reloadData()
                 }
             }
         }

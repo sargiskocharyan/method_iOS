@@ -1111,6 +1111,24 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
+    func blockSubscribers(id: String, subscribers: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.blockSubscribers(id: id, subscribers: subscribers)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
 }
 
 extension NSMutableData {

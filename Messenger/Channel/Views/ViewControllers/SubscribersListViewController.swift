@@ -9,7 +9,7 @@
 import UIKit
 
 class SubscribersListViewController: UIViewController {
-
+    
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
     
@@ -66,7 +66,7 @@ class SubscribersListViewController: UIViewController {
     }
 }
 
-     //MARK: Extensions
+//MARK: Extensions
 extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return subscribers.count
@@ -81,7 +81,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isFromModeratorList == true {
             viewModel?.addModerator(id: id!, userId: subscribers[indexPath.row].user?._id ?? "", completion: { (error) in
@@ -98,6 +98,59 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                 }
             })
         }
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_to_block_subscriber".localized(), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+//            self.viewModel?.rejectBeModerator(id: self.channelInfo!.channel!._id, completion: { (error) in
+//                if error != nil {
+//                    DispatchQueue.main.async {
+//                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        self.navigationController?.popToRootViewController(animated: true)
+//                        for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
+//                            if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
+//                                self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
+//                                break
+//                            }
+//                        }
+//                        self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
+//                    }
+//                }
+//            })
+            self.viewModel?.blockSubscribers(id: self.id!, subscribers: [self.subscribers[indexPath.row].user?._id ?? ""], completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.subscribers.remove(at: indexPath.row)
+                    DispatchQueue.main.async {
+                        self.tableView.beginUpdates()
+                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                        self.tableView.endUpdates()
+                    }
+                }
+            })
+        }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let deleteButton = UITableViewRowAction(style: .default, title: "block".localized()) { (action, indexPath) in
+            self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
+            return
+        }
+        deleteButton.backgroundColor = UIColor.red
+        return [deleteButton]
     }
     
 }

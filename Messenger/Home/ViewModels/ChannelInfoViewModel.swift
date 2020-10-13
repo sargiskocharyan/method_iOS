@@ -75,4 +75,10 @@ class ChannelInfoViewModel {
             completion(subresponse, error)
         }
     }
+    
+    func blockSubscribers(id: String, subscribers: [String], completion: @escaping (NetworkResponse?)->())  {
+        HomeNetworkManager().blockSubscribers(id: id, subscribers: subscribers) { (error) in
+            completion(error)
+        }
+    }
 }

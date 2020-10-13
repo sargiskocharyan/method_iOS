@@ -59,14 +59,34 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
                     self.dismiss(animated: true, completion: nil)
                     self.mainRouter?.adminInfoViewController?.channelInfo = self.channelInfo
                     self.mainRouter?.adminInfoViewController?.setInfo()
-                    self.mainRouter?.channelMessagesViewController?.channelInfo = ChannelInfo(channel: channel, role: 1)
-                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
+                    self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
+                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        }
+                    } else {
+                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
+                            }
+                        }
+                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.foundChannels[i] = self.channelInfo!
+                                break
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
                         }
                     }
-                    self.mainRouter!.channelListViewController!.channelsInfo = self.mainRouter!.channelListViewController!.channels
-                    self.mainRouter?.channelListViewController?.tableView.reloadData()
                 }
             }
         }
