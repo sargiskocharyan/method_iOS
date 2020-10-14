@@ -519,8 +519,8 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
-    func createChannel(name: String, completion: @escaping (Channel?, NetworkResponse?)->()) {
-        router.request(.createChannel(name: name)) { data, response, error in
+    func createChannel(name: String, openMode: Bool, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        router.request(.createChannel(name: name, openMode: openMode)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)

@@ -48,7 +48,7 @@ class MainRouter {
         router.videoViewController = videoVC
         router.mainTabBarController?.videoVC = videoVC
         
-        let channelListNC = router.mainTabBarController?.viewControllers![3] as! UINavigationController
+        let channelListNC = router.mainTabBarController?.viewControllers![2] as! UINavigationController
         router.channelListViewController = (channelListNC.viewControllers[0] as! ChannelListViewController)
         router.channelListViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.channelListViewController?.viewModel = ChannelListViewModel()
@@ -63,7 +63,7 @@ class MainRouter {
         router.recentMessagesViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.recentMessagesViewController?.viewModel = RecentMessagesViewModel()
         
-        let profileNC = router.mainTabBarController?.viewControllers![2] as! UINavigationController
+        let profileNC = router.mainTabBarController?.viewControllers![3] as! UINavigationController
         router.profileViewController = (profileNC.viewControllers[0] as! ProfileViewController)
         router.profileViewController?.mainRouter = router.mainTabBarController?.mainRouter
         router.profileViewController?.viewModel = ProfileViewModel()

@@ -100,7 +100,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-        let vc = tabbar!.viewControllers![2] as! UINavigationController
+        let vc = tabbar!.viewControllers![3] as! UINavigationController
         let profileVC = vc.viewControllers[0] as! ProfileViewController
         profileVC.delegate = self
         tableView.tableFooterView = UIView()

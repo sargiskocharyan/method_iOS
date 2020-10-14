@@ -169,7 +169,6 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     }
     
     func checkFields() {
-        
         let checkDescription = self.checkDescription()
         checkName() { (isAllWell) in
             if isAllWell == true && checkDescription == true {

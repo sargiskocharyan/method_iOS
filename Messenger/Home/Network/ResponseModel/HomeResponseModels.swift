@@ -59,6 +59,7 @@ struct Channel: Codable {
     var statuses: [ChannelStatus]?
     var description: String?
     var publicUrl: String?
+    var openMode: Bool?
 }
 
 struct ChannelInfo: Codable, Equatable {

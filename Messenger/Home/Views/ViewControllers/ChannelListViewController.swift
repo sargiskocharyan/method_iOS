@@ -22,6 +22,7 @@ class ChannelListViewController: UIViewController {
     var channelsInfo: [ChannelInfo] = []
     var text = ""
     var activity = UIActivityIndicatorView(style: .medium)
+    let refreshControl = UIRefreshControl()
     
     //MARK: LifeCycles
     override func viewDidLoad() {
@@ -31,7 +32,8 @@ class ChannelListViewController: UIViewController {
         tableView.tableFooterView = UIView()
         searchBar.delegate = self
         self.navigationItem.title = "channels".localized()
-        getChannels()
+        getChannels{ }
+        addResfreshControl()
         setActivity()
         activity.startAnimating()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
@@ -49,12 +51,29 @@ class ChannelListViewController: UIViewController {
     
     //MARK: Helper methods
     @objc func handleAlertChange(sender: Any?) {
-         let textField = sender as! UITextField
+        let textField = sender as! UITextField
         text = textField.text!
     }
     
+    @objc func refreshCallHistory() {
+        getChannels {
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
+        }
+    }
+    
+    func addResfreshControl() {
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        refreshControl.addTarget(self, action: #selector(refreshCallHistory), for: .valueChanged)
+    }
+    
     func setActivity() {
-          self.tableView.addSubview(self.activity)
+        self.tableView.addSubview(self.activity)
           self.activity.tag = 33
           self.activity.translatesAutoresizingMaskIntoConstraints = false
           self.activity.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
@@ -63,42 +82,77 @@ class ChannelListViewController: UIViewController {
           self.activity.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
       }
     
-    @objc func addButtonTapped() {
-        let alert = UIAlertController(title: "create_channel".localized()
-            , message: "enter_channel_name".localized(), preferredStyle: .alert)
-        alert.addTextField { (textField) in
-           textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
-        }
-        alert.addAction(UIAlertAction(title: "create".localized(), style: .default, handler: { (action) in
-            self.activity.startAnimating()
-            self.viewModel!.createChannel(name: self.text, completion: { (channel, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                    }
-                } else {
-                    print("Channel created")
-                    SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-                   
-                    self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
-                    self.channelsInfo = self.channels
-                    DispatchQueue.main.async {
-                        self.activity.stopAnimating()
-                        self.tableView.reloadData()
-                    }
+    func createChannel(name: String, mode: Bool, completion: @escaping () -> ()) {
+        self.activity.startAnimating()
+        self.viewModel!.createChannel(name: name, openMode: true, completion: { (channel, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-            })
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+                completion()
+            } else {
+                print("Channel created")
+                SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
+                self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
+                self.channelsInfo = self.channels
+                DispatchQueue.main.async {
+                    self.activity.stopAnimating()
+                    self.tableView.reloadData()
+                }
+                completion()
+            }
+        })
     }
     
-    func getChannels() {
+
+    
+    @objc func addButtonTapped() {
+//        let alert = UIAlertController(title: "create_channel".localized()
+//            , message: "enter_channel_name".localized(), preferredStyle: .alert)
+//        alert.addTextField { (textField) in
+//           textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
+//        }
+//
+//        alert.addAction(UIAlertAction(title: "create".localized(), style: .default, handler: { (action) in
+//            self.activity.startAnimating()
+//            self.viewModel!.createChannel(name: self.text, openMode: true, completion: { (channel, error) in
+//                if error != nil {
+//                    DispatchQueue.main.async {
+//                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                    }
+//                } else {
+//                    print("Channel created")
+//                    SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
+//
+//                    self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
+//                    self.channelsInfo = self.channels
+//                    DispatchQueue.main.async {
+//                        self.activity.stopAnimating()
+//                        self.tableView.reloadData()
+//                    }
+//                }
+//            })
+//        }))
+//        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+//        self.present(alert, animated: true, completion: nil)
+//
+        /////////////
+        let vc = CreateAccountAlertViewController.instantiate(fromAppStoryboard: .channel)
+        vc.mainRouter = mainRouter
+        vc.viewModel = viewModel
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alertController.setValue(vc, forKey: "contentViewController")
+        self.present(alertController, animated: true, completion: nil)
+   
+    }
+    
+    func getChannels(completion: @escaping () -> ()) {
         viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (channels, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
+                completion()
             } else if let channels = channels {
                 self.channels = channels
                 self.channelsInfo = channels
@@ -106,6 +160,7 @@ class ChannelListViewController: UIViewController {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
                 }
+                completion()
             }
         })
     }

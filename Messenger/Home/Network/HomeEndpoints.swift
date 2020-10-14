@@ -37,7 +37,7 @@ public enum HomeApi {
     case deleteRequest(id: String)
     case getRequests
     case getAdminMessage
-    case createChannel(name: String)
+    case createChannel(name: String, openMode: Bool)
     case getChannelInfo(ids: [String])
     case getChannelMessages(id: String, dateUntil: String?)
     case checkChannelName(name: String)
@@ -120,7 +120,7 @@ extension HomeApi: EndPointType {
             return AUTHUrls.GetRequests
         case .getAdminMessage:
             return AUTHUrls.GetAdminMessage
-        case .createChannel(_):
+        case .createChannel(_,_):
             return AUTHUrls.CreateChannel
         case .getChannelInfo(_):
             return "\(AUTHUrls.GetChannelInfo)"
@@ -216,7 +216,7 @@ extension HomeApi: EndPointType {
             return .get
         case .getAdminMessage:
             return .get
-        case .createChannel(_):
+        case .createChannel(_,_):
             return .post
         case .getChannelInfo(_):
             return .post
@@ -376,8 +376,8 @@ extension HomeApi: EndPointType {
         case .getAdminMessage:
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .createChannel(name: let name):
-            let parameters:Parameters = ["name": name]
+        case .createChannel(name: let name, openMode: let openMode):
+            let parameters:Parameters = ["name": name, "openMode": openMode]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .getChannelInfo(ids: let ids):
