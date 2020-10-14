@@ -57,9 +57,10 @@ class ChannelMessagesViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         self.getChannelMessages()
+        
         setObservers()
         isPreview = true
-        if channelInfo.channel?.openMode == true {
+        if channelInfo.channel?.openMode == true || channelInfo.channel?.creator == SharedConfigs.shared.signedUser?.id {
             addConstraints()
             setupInputComponents()
         }
@@ -471,6 +472,32 @@ class ChannelMessagesViewController: UIViewController {
         })
     }
     
+//    func addGesturesOnTableViewCell(indexPath: IndexPath)  {
+//        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
+//         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+//            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+//            tap.minimumPressDuration = 0.5
+//            cell?.contentView.addGestureRecognizer(tap)
+//         } else {
+//            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+//            cell?.contentView.addGestureRecognizer(tap)
+//        }
+////        logoutView.addGestureRecognizer(tapLogOut)
+//    }
+    
+    @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
+        if gestureReconizer.state == UIGestureRecognizer.State.ended {
+            //When lognpress is start or running
+            print("Cell tapp")
+            let touchPoint = gestureReconizer.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+                print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                inputTextField.text = cell!.messageLabel.text
+            }
+            
+        }
+    }
 }
 
 //MARK: Extensions
@@ -535,11 +562,13 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
     
     //MARK: CellForRowAt indexPath
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+          let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
             cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
+            cell.contentView.addGestureRecognizer(tap)
             cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
@@ -561,6 +590,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
+            
             cell.messageLabel.sizeToFit()
             if (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()

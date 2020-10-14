@@ -31,6 +31,7 @@ class SendMessageTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         button?.setImage(nil, for: .normal)
+        
     }
     
 //    func editPage(isPreview: Bool) {
