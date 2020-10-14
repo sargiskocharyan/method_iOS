@@ -101,7 +101,11 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
+            return true
+        } else {
+            return false
+        }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -145,12 +149,16 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
         let deleteButton = UITableViewRowAction(style: .default, title: "block".localized()) { (action, indexPath) in
             self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
             return
         }
         deleteButton.backgroundColor = UIColor.red
         return [deleteButton]
+        } else {
+            return nil
+        }
     }
     
 }
