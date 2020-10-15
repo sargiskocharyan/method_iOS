@@ -99,7 +99,10 @@ class ChannelListViewController: UIViewController {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
                 }
-                completion()
+                DispatchQueue.main.async {
+                    self.mainRouter?.showChannelMessagesViewController(channelInfo: ChannelInfo(channel: channel, role: 0))
+                    completion()
+                }
             }
         })
     }

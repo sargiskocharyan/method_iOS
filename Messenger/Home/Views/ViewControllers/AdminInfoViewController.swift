@@ -235,7 +235,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 self.channelInfo?.channel?.avatarURL = nil
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
-                    self.channelLogoImageView.image = UIImage(named: "channel")
+                    self.channelLogoImageView.image = UIImage(named: "groupPeople")
                 }
                 if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                     for i in 0..<self.mainRouter!.channelListViewController!.channels.count {

@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "channelIcon.png",
+      "filename" : "Group-of-People.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "channelIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "channelIcon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

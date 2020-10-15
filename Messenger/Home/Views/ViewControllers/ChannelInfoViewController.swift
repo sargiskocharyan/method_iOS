@@ -91,6 +91,7 @@ class ChannelInfoViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.mainRouter?.channelListViewController?.tableView.reloadData()
                         self.leaveOrJoinTextLabel.text = "join".localized()
+                        self.leaveOrJoinTextLabel.textColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
                     }
                 }
             })
@@ -145,7 +146,14 @@ class ChannelInfoViewController: UIViewController {
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
-        leaveOrJoinTextLabel.text = channelInfo?.role == 2 ? "leave".localized() : "join".localized()
+//        leaveOrJoinTextLabel.text = channelInfo?.role == 2 ? "leave".localized() : "join".localized()
+        if channelInfo?.role == 2 {
+            leaveOrJoinTextLabel.text = "leave".localized()
+            leaveOrJoinTextLabel.textColor = .red
+        } else {
+            leaveOrJoinTextLabel.text = "join".localized()
+            leaveOrJoinTextLabel.textColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
+        }
         ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "", isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image

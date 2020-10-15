@@ -67,6 +67,7 @@ class ChannelMessagesViewController: UIViewController {
             addConstraints()
             setupInputComponents()
         }
+        self.hideKeyboardWhenTappedAround()
         setLineOnHeaderView()
         headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         tableView.allowsMultipleSelection = false
@@ -121,6 +122,7 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
     }
     
+  
     func setView(_ str: String) {
         if channelMessages.array?.count == 0 {
             DispatchQueue.main.async {
@@ -175,7 +177,7 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.isUserInteractionEnabled = true
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
-        tableViewBottomConstraint.constant = 55
+        tableViewBottomConstraint.constant = 48
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
     }
     
@@ -322,16 +324,16 @@ class ChannelMessagesViewController: UIViewController {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
             bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
-            tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
+            tableViewBottomConstraint.constant = isKeyboardShowing ? keyboardFrame!.height + 48 : 48
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
-                //                  if isKeyboardShowing {
-                //                      if (self.allMessages?.array != nil && (self.allMessages?.array!.count)! > 1) {
-                //                          let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
-                //                          self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                //                      }
-                //                  }
+                if isKeyboardShowing {
+                    if (self.channelMessages.array != nil && (self.channelMessages.array?.count)! > 1) {
+                        let indexPath1 = IndexPath(item: (self.channelMessages.array?.count)! - 1, section: 0)
+                        self.tableView?.scrollToRow(at: indexPath1, at: .bottom, animated: true)
+                    }
+                }
             })
         }
     }

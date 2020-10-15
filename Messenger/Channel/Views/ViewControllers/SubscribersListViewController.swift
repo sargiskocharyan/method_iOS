@@ -64,6 +64,15 @@ class SubscribersListViewController: UIViewController {
             }
         })
     }
+    
+    func showAlertWhenModeratorAdded() {
+        let alert = UIAlertController(title: nil, message: "Successfully added!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action) in
+            self.navigationController?.popViewController(animated: true)
+        }))
+                 self.present(alert, animated: true)
+    }
+    
 }
 
 //MARK: Extensions
@@ -93,7 +102,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                     DispatchQueue.main.async {
                         self.mainRouter?.moderatorListViewController?.moderators.append(self.subscribers[indexPath.row])
                         self.mainRouter?.moderatorListViewController?.tableView.insertRows(at: [IndexPath(row: (self.mainRouter?.moderatorListViewController?.moderators.count)! - 1, section: 0)], with: .automatic)
-                        self.navigationController?.popViewController(animated: true)
+                        self.showAlertWhenModeratorAdded()
                     }
                 }
             })
