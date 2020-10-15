@@ -15,6 +15,7 @@ class ModeratorListViewController: UIViewController {
     var id: String?
     var moderators: [ChannelSubscriber] = []
     var isChangeAdmin: Bool?
+    var isLoaded = false
     
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
@@ -29,6 +30,9 @@ class ModeratorListViewController: UIViewController {
         if isChangeAdmin == false {
             self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         }
+        if self.moderators.count > 0 && self.isLoaded {
+            self.removeLabel()
+        }
     }
        
     @objc func addButtonTapped() {
@@ -42,14 +46,37 @@ class ModeratorListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if moderators != nil {
+                self.isLoaded = true
                 self.moderators = moderators!.filter({ (channelSubscriber) -> Bool in
                     return channelSubscriber.user?._id != SharedConfigs.shared.signedUser?.id
                 })
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
+                    if self.moderators.count == 0 {
+                        self.setLabel(text: "no_moderator".localized())
+                    } else {
+                        self.tableView.reloadData()
+                    }
                 }
             }
         })
+    }
+    
+    func setLabel(text: String) {
+        let label = UILabel()
+        label.text = text
+        label.tag = 12
+        label.textAlignment = .center
+        label.textColor = .darkGray
+        self.tableView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func removeLabel() {
+        self.view.viewWithTag(12)?.removeFromSuperview()
     }
 }
 
@@ -85,7 +112,6 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
             self.present(alert, animated: true)
         }
     }
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
@@ -127,6 +153,9 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
                     self.moderators.remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                     self.tableView.endUpdates()
+                    if self.moderators.count == 0 {
+                        self.setLabel(text: "no_moderator".localized())
+                    }
                 }
             }
         })

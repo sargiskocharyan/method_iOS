@@ -46,6 +46,10 @@ class MainTabBarController: UITabBarController {
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tabBar.items?[2].image = UIImage(named: "channelIcon")?.withRenderingMode(.automatic)
+        ((self.tabBar.items?[2].value(forKey: "view") as? UIView)?.subviews[0] as? UIImageView)?.frame = CGRect(x: 0, y: 0, width: 20, height: 10)
+        ((self.tabBar.items?[2].value(forKey: "view") as? UIView)?.subviews[0] as? UIImageView)?.clipsToBounds = true
+        ((self.tabBar.items?[2].value(forKey: "view") as? UIView)?.subviews[0] as? UIImageView)?.contentMode = .scaleAspectFit
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
         self.retrieveCoreDataObjects()

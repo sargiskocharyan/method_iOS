@@ -34,6 +34,7 @@ class ChannelInfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        addGestures()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,17 +45,24 @@ class ChannelInfoViewController: UIViewController {
         if (navigationController?.navigationBar.isHidden)! {
             navigationController?.navigationBar.isHidden = false
         }
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLeaveOrJoinTap))
-        leaveOrJoinView.addGestureRecognizer(tapGesture)
-        if SharedConfigs.shared.signedUser?.channels?.contains(channelInfo!.channel!._id) == true {
-            //            leaveButton.isHidden = false
-        } else {
-            //            leaveButton.isHidden = true
-        }
         setInfo()
     }
     
     //Helper methods
+    func addGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLeaveOrJoinTap))
+        leaveOrJoinView.addGestureRecognizer(tapGesture)
+        let tapUrlView = UILongPressGestureRecognizer(target: self, action: #selector(self.handleUrlViewTap(_:)))
+        urlView.addGestureRecognizer(tapUrlView)
+    }
+    
+    @objc func handleUrlViewTap(_ sender: UILongPressGestureRecognizer? = nil) {
+        if sender?.state == UIGestureRecognizer.State.began {
+            UIPasteboard.general.string = channelInfo?.channel?.publicUrl
+            self.showToast(message: "url_copied_in_clipboard", font: .systemFont(ofSize: 15.0))
+        }
+    }
+
     @objc func handleLeaveOrJoinTap() {
         if channelInfo?.role == 2 {
             viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in
@@ -64,6 +72,9 @@ class ChannelInfoViewController: UIViewController {
                     }
                 } else {
                     self.channelInfo?.role = 3
+                    SharedConfigs.shared.signedUser?.channels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
+                        return channelId != self.channelInfo?.channel?._id
+                    })
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
                     if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
                         self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
@@ -102,6 +113,7 @@ class ChannelInfoViewController: UIViewController {
                     }
                 } else if response != nil && response!.subscribed! {
                     self.channelInfo?.role = 2
+                    SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
                     if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)

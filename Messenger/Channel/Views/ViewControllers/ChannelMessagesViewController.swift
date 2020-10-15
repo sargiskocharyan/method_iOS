@@ -363,6 +363,7 @@ class ChannelMessagesViewController: UIViewController {
                         self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                     }
                 } else {
+                    SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo.channel!._id)
                     self.channelInfo?.role = 2
                     if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)

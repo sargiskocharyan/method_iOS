@@ -19,13 +19,22 @@ class SubscribersListViewController: UIViewController {
     var subscribers: [ChannelSubscriber] = []
     var id: String?
     var isFromModeratorList: Bool?
+    var isLoaded = false
     
     //MARK: Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableFooterView = UIView()
         getSubscribers()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if self.isLoaded && self.subscribers.count > 0 {
+            self.removeLabel()
+        }
     }
     
     //MARK: Helper methods
@@ -59,10 +68,32 @@ class SubscribersListViewController: UIViewController {
                     }
                 }
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
+                    if self.subscribers.count == 0 {
+                        self.setLabel(text: "no_subscriber".localized())
+                    } else {
+                        self.tableView.reloadData()
+                    }
                 }
             }
         })
+    }
+    
+    func setLabel(text: String) {
+        let label = UILabel()
+        label.text = text
+        label.tag = 12
+        label.textAlignment = .center
+        label.textColor = .darkGray
+        self.tableView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func removeLabel() {
+        self.view.viewWithTag(12)?.removeFromSuperview()
     }
 }
 
@@ -140,6 +171,9 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                         self.tableView.beginUpdates()
                         self.tableView.deleteRows(at: [indexPath], with: .automatic)
                         self.tableView.endUpdates()
+                        if self.subscribers.count == 0 {
+                            self.setLabel(text: "no_subscriber".localized())
+                        }
                     }
                 }
             })

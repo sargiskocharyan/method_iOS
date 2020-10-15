@@ -87,14 +87,26 @@ class ChannelListViewController: UIViewController {
         self.viewModel!.createChannel(name: name, openMode: true, completion: { (channel, error) in
             if error != nil {
                 DispatchQueue.main.async {
+                    self.activity.startAnimating()
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
                 completion()
             } else {
-                print("Channel created")
                 SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
                 self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
-                self.channelsInfo = self.channels
+                if (self.channelsInfo.elementsEqual((self.channels))) == true {
+                    self.channels.append(ChannelInfo(channel: channel, role: 0))
+                    self.channelsInfo = self.channels
+                } else {
+                    self.channels.append(ChannelInfo(channel: channel, role: 0))
+                    for i in 0..<self.foundChannels.count {
+                        if self.foundChannels[i].channel?._id == channel?._id {
+                            self.foundChannels[i].role = 2
+                            break
+                        }
+                    }
+                    self.channelsInfo = self.foundChannels
+                }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
@@ -210,7 +222,7 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
 
 extension ChannelListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.count > 2 {
+        if searchText.count > 0 {
             findChannels(term: searchText)
         } else if searchText.count == 0 {
             channelsInfo = channels
