@@ -26,6 +26,8 @@ class ChannelMessagesViewController: UIViewController {
     var check: Bool!
     var arrayOfSelectedMesssgae: [String] = []
     var bottomConstraint: NSLayoutConstraint?
+    var messageId: String?
+    var indexPath: IndexPath?
     var isLoadedMessages = false
     let deleteMessageButton: UIButton = {
         let button = UIButton()
