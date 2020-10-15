@@ -10,17 +10,17 @@ import UIKit
 
 class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var readMessage: UILabel!
-    @IBOutlet weak var button: UIButton?
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
+    @IBOutlet weak var leadingConstraintOfMarkImageView: NSLayoutConstraint?
     
+    @IBOutlet weak var markImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
         isSelected = false
-        leadingConstraintOfButton?.constant = -10
-        button?.isHidden = false
+        leadingConstraintOfMarkImageView?.constant = -10
+        markImageView?.isHidden = false
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -30,8 +30,7 @@ class SendMessageTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        button?.setImage(nil, for: .normal)
-        
+        markImageView.image = nil
     }
     
 //    func editPage(isPreview: Bool) {
@@ -44,19 +43,21 @@ class SendMessageTableViewCell: UITableViewCell {
     
     func setCheckButton(isPreview: Bool) {
         if isPreview {
-            leadingConstraintOfButton?.constant = -10
-            button?.isHidden = true
+            leadingConstraintOfMarkImageView?.constant = -10
+            markImageView?.isHidden = true
         } else if !isPreview {
-            leadingConstraintOfButton?.constant = 10
-            button?.isHidden = false
+            leadingConstraintOfMarkImageView?.constant = 10
+            markImageView?.isHidden = false
         }
     }
     
     func setCheckImage() {
         if isSelected  {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+//            markImageView?.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+            markImageView.image = UIImage(systemName: "checkmark.circle.fill")
         } else {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+//            markImageView?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            markImageView.image = UIImage(systemName: "checkmark.circle")
         }
     }
 

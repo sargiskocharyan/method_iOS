@@ -41,4 +41,10 @@ class ChannelMessagesViewModel {
             completion(error)
         }
     }
+    
+    func editChannelMessage(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().editChannelMessages(messageId: messageId, text: text) { (error) in
+            completion(error)
+        }
+    }
 }

@@ -27,7 +27,6 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zgy-sh-cre">
                                         <rect key="frame" x="374" y="10" width="30" height="31"/>
-                                        <state key="normal" title="Join"/>
                                         <connections>
                                             <action selector="universalButtonAction:" destination="CUz-oY-ahe" eventType="touchUpInside" id="cd9-4T-Gou"/>
                                         </connections>
@@ -78,31 +77,30 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qC6-ED-GPS">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lVF-ig-iWb">
                                                     <rect key="frame" x="5" y="17" width="20" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="TOk-U0-PRI"/>
-                                                        <constraint firstAttribute="width" constant="20" id="j4T-3y-NJd"/>
+                                                        <constraint firstAttribute="height" constant="20" id="CVF-IV-Zso"/>
+                                                        <constraint firstAttribute="width" constant="20" id="dFq-8z-cs3"/>
                                                     </constraints>
-                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
-                                                </button>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="top" secondItem="1Mk-Cj-xT3" secondAttribute="top" constant="10" id="0JY-Kf-BeY"/>
                                                 <constraint firstAttribute="bottom" secondItem="1Pc-OF-3c0" secondAttribute="bottom" id="EPG-rG-56G"/>
-                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="5" id="FwU-Es-Ela"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="EVp-39-A5A" secondAttribute="trailing" constant="20" id="LjF-Ds-KFS"/>
+                                                <constraint firstItem="lVF-ig-iWb" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="5" id="Rdh-BO-pbU"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="width" relation="lessThanOrEqual" secondItem="1Mk-Cj-xT3" secondAttribute="width" multiplier="0.61" id="TRW-VH-rbU"/>
-                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="qC6-ED-GPS" secondAttribute="trailing" constant="10" id="iw7-aO-ShI"/>
-                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="rSa-lA-CRQ"/>
+                                                <constraint firstItem="lVF-ig-iWb" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="e2A-i5-fb6"/>
+                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="lVF-ig-iWb" secondAttribute="trailing" constant="10" id="sit-9r-Lot"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="zVg-FN-b90"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1500" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
-                                            <outlet property="button" destination="qC6-ED-GPS" id="DRR-Al-wwC"/>
-                                            <outlet property="leadingConstraintOfButton" destination="FwU-Es-Ela" id="8DL-on-x4Z"/>
-                                            <outlet property="leadingConstraintOfImageView" destination="iw7-aO-ShI" id="lS4-9z-jLp"/>
+                                            <outlet property="leadingConstraintOfImageView" destination="sit-9r-Lot" id="gbu-5F-XMk"/>
+                                            <outlet property="leadingConstraintOfMarkImageView" destination="Rdh-BO-pbU" id="Co0-eX-m90"/>
+                                            <outlet property="markImageView" destination="lVF-ig-iWb" id="D0b-OJ-o8Y"/>
                                             <outlet property="messageLabel" destination="EVp-39-A5A" id="zfI-iE-uRm"/>
                                             <outlet property="userImageView" destination="1Pc-OF-3c0" id="964-PU-hDn"/>
                                         </connections>
@@ -129,31 +127,30 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEB-WS-ya8">
-                                                    <rect key="frame" x="7" y="21.5" width="20" height="20"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GBF-6H-Czc">
+                                                    <rect key="frame" x="5" y="21.5" width="20" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="bYw-dJ-9KH"/>
-                                                        <constraint firstAttribute="width" constant="20" id="pdB-7v-Jhl"/>
+                                                        <constraint firstAttribute="width" constant="20" id="18B-gK-nXX"/>
+                                                        <constraint firstAttribute="height" constant="20" id="nw7-Zq-0dk"/>
                                                     </constraints>
-                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
-                                                </button>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="top" secondItem="K7H-d2-FSR" secondAttribute="top" constant="10" id="5oX-N8-Xqa"/>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" id="AKt-Hc-5IG"/>
                                                 <constraint firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" constant="20" id="IW5-0N-jVc"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" symbolic="YES" id="OQ7-ys-jRl"/>
-                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="centerY" secondItem="K7H-d2-FSR" secondAttribute="centerY" id="WKM-3W-nFb"/>
+                                                <constraint firstItem="GBF-6H-Czc" firstAttribute="centerY" secondItem="K7H-d2-FSR" secondAttribute="centerY" id="dqt-co-pig"/>
+                                                <constraint firstItem="GBF-6H-Czc" firstAttribute="leading" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="5" id="fli-EQ-L8B"/>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="width" relation="lessThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="width" multiplier="0.61" id="h0u-wQ-J1q"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="top" secondItem="Vx0-qt-hDk" secondAttribute="bottom" constant="8" id="jk3-WI-RFe"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" id="mDd-tb-mbT"/>
-                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="leading" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="7" id="xSJ-BS-5no"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
-                                            <outlet property="button" destination="DEB-WS-ya8" id="geM-W2-1RH"/>
-                                            <outlet property="leadingConstraintOfButton" destination="xSJ-BS-5no" id="tID-0c-j1o"/>
+                                            <outlet property="leadingConstraintOfMarkImageView" destination="fli-EQ-L8B" id="l9Z-jt-lLB"/>
+                                            <outlet property="markImageView" destination="GBF-6H-Czc" id="XaK-mp-qdW"/>
                                             <outlet property="messageLabel" destination="Vx0-qt-hDk" id="WBL-Mg-KRG"/>
                                             <outlet property="readMessage" destination="WKF-UR-aWR" id="CIU-Ma-B3i"/>
                                         </connections>
@@ -292,6 +289,7 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVh-bh-Zrk">
                                 <rect key="frame" x="0.0" y="187.5" width="175" height="42.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <state key="normal" title="Cancel"/>
                                 <connections>
                                     <action selector="cancelButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="d7M-mV-V7q"/>
@@ -299,6 +297,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvL-hj-mz7">
                                 <rect key="frame" x="175" y="187.5" width="175" height="42.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <state key="normal" title="Create"/>
                                 <connections>
                                     <action selector="createButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="Ap4-S2-q8a"/>
@@ -372,7 +371,6 @@
     </scenes>
     <resources>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
-        <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="noPhoto" width="2200" height="2200"/>
     </resources>
 </document>

@@ -1129,6 +1129,24 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
+    func editChannelMessages(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.editChannelMessage(messageId: messageId, text: text)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
 }
 
 extension NSMutableData {

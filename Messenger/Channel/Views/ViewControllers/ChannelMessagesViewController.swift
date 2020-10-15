@@ -26,6 +26,8 @@ class ChannelMessagesViewController: UIViewController {
     var check: Bool!
     var arrayOfSelectedMesssgae: [String] = []
     var bottomConstraint: NSLayoutConstraint?
+    var messageId: String?
+    var indexPath: IndexPath?
     let deleteMessageButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(named: "imputColor")
@@ -80,8 +82,11 @@ class ChannelMessagesViewController: UIViewController {
         self.tableView.allowsSelection = false
         if (channelInfo.role == 0 || channelInfo.role == 1) {
             check = true
-            universalButton.isHidden = false
-            universalButton.setTitle("edit".localized(), for: .normal)
+            
+            if channelMessages.array != nil && channelMessages.array!.count > 0 {
+                universalButton.isHidden = false
+                universalButton.setTitle("edit".localized(), for: .normal)
+            }
         } else if channelInfo.role == 2 {
             check = false
             universalButton.isHidden = true
@@ -245,6 +250,27 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @objc func sendMessage() {
+        if messageId != nil && indexPath != nil {
+            let text = inputTextField.text
+            inputTextField.text = ""
+            viewModel?.editChannelMessage(messageId: messageId!, text: text!, completion: { (error) in
+                if error != nil {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                    }
+                } else {
+                    self.channelMessages.array![self.indexPath!.row].text = text
+                    DispatchQueue.main.async {
+                        let cell = self.tableView.cellForRow(at: self.indexPath!) as? SendMessageTableViewCell
+                        cell?.messageLabel.text = text
+                        print("Edited")
+                        
+                    }
+                }
+                self.messageId = nil
+                self.indexPath = nil
+            })
+        } else {
         if inputTextField.text != "" {
             let text = inputTextField.text
             inputTextField.text = ""
@@ -252,6 +278,7 @@ class ChannelMessagesViewController: UIViewController {
             removeView()
             self.universalButton.isHidden = false
         }
+      }
     }
     
     func setObservers() {
@@ -493,6 +520,8 @@ class ChannelMessagesViewController: UIViewController {
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
                 let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
                 print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                self.indexPath = indexPath
+                messageId = channelMessages.array![indexPath.row]._id
                 inputTextField.text = cell!.messageLabel.text
             }
             
@@ -529,13 +558,15 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })//checkmark.circle.fill
-            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+//            cell!.markImageView?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell!.markImageView?.image = UIImage.init(systemName: "checkmark.circle")
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+//            cell!.markImageView?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell?.markImageView?.image = UIImage(systemName: "checkmark.circle")
         }
         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
         return indexPath
@@ -548,16 +579,15 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let image = UIImage.init(systemName: "checkmark.circle.fill")
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-            cell!.button!.setImage(image, for: .normal)
+//            cell!.markImageView!.setImage(image, for: .normal)
+            cell!.markImageView!.image = image
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
-            cell!.button?.setImage(image, for: .normal)
-            
+//            cell!.markImageView?.setImage(image, for: .normal)
+            cell?.markImageView?.image = image
         }
         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
     }
-    
-    
     
     
     //MARK: CellForRowAt indexPath
@@ -569,7 +599,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
             cell.contentView.addGestureRecognizer(tap)
-            cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+//            cell.markImageView?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell.markImageView.image = UIImage(systemName: "checkmark.circle")
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
                 //                if isPreview == true {
@@ -583,7 +614,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 //                }
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
-                cell.button?.isHidden = true
+                cell.markImageView?.isHidden = true
             }
             return cell
         } else {
@@ -596,7 +627,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 cell.setCheckImage()
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
-                cell.button.isHidden = true
+                cell.markImageView?.isHidden = true
             }
             return cell
         }
