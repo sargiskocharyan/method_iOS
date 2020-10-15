@@ -46,7 +46,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     
     func setImage() {
         activityIndicator.startAnimating()
-        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo!.channel!._id) { (image) in
+        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo!.channel!._id, isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.channelLogoImageView.image = image
@@ -131,7 +131,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 }
             } else {
                 self.channelInfo?.channel?.avatarURL = avatarURL
-                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
+                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "", isChannel: true) { (image) in
                     DispatchQueue.main.async {
                         self.channelLogoImageView.image = image
                         self.activityIndicator.stopAnimating()
@@ -235,7 +235,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 self.channelInfo?.channel?.avatarURL = nil
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
-                    self.channelLogoImageView.image = UIImage(named: "noPhoto")
+                    self.channelLogoImageView.image = UIImage(named: "channel")
                 }
                 if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
                     for i in 0..<self.mainRouter!.channelListViewController!.channels.count {

@@ -64,7 +64,7 @@ class RecentMessageTableViewCell: UITableViewCell {
            removeOnlineView()
         }
         userImageView.image = UIImage(named: "noPhoto")
-        ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "", id: chat.id) { (image) in
+        ImageCache.shared.getImage(url: chat.recipientAvatarURL ?? "", id: chat.id, isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }

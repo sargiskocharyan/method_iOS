@@ -35,6 +35,11 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
         descriptionCustomView.textField.addTarget(self, action: #selector(descriptionTextFieldAction), for: .editingChanged)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateInfoButton.setTitle("update_information".localized(), for: .normal)
+    }
+    
     @objc func nameTextFieldAction() {
         nameCustomView.errorLabel.isHidden = (nameCustomView.textField.text == "")
         isChangingName = true
@@ -97,20 +102,20 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
             if nameCustomView.textField.text!.count >= 3 {
                 if isChangingName {
                     self.nameCustomView.errorLabel.text = ""
-                    self.nameCustomView.borderColor = .red
+                    self.nameCustomView.errorLabel.textColor = .red
                     viewModel?.checkChannelName(name: nameCustomView.textField.text!, completion: { (response, error) in
                         if error == nil && response != nil {
                             if response!.channelNameExists == true {
                                 DispatchQueue.main.async {
                                     self.name = nil
-                                    self.nameCustomView.borderColor = .red
-                                    self.nameCustomView.errorLabel.text = "arden ka tenc anun"
+                                    self.nameCustomView.errorLabel.textColor = .red
+                                    self.nameCustomView.errorLabel.text = "this_name_of_channel_is_taken".localized()
                                     completion(false)
                                 }
                             } else {
                                 DispatchQueue.main.async {
-                                    self.nameCustomView.errorLabel.text = "narmalny"
-                                    self.nameCustomView.borderColor = .blue
+                                    self.nameCustomView.errorLabel.text = "correct_name".localized()
+                                    self.nameCustomView.errorLabel.textColor = .blue
                                     self.name = self.nameCustomView.textField.text
                                     completion(true)
                                 }
@@ -121,8 +126,8 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
                     completion(true)
                 }
             } else {
-                self.nameCustomView.errorLabel.text = "sxal anun es grel"
-                self.nameCustomView.borderColor = .red
+                self.nameCustomView.errorLabel.text = "incorrect_name".localized()
+                self.nameCustomView.errorLabel.textColor = .red
                 name = nil
                 completion(false)
             }
@@ -147,8 +152,8 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     func checkDescription() -> Bool? {
         if channelInfo?.channel?.description != descriptionCustomView.textField.text {
             if descriptionCustomView.textField.text!.count > 3 && descriptionCustomView.textField.text!.count < 100 {
-                descriptionCustomView.borderColor = .blue
-                descriptionCustomView.errorLabel.text = "lav descrip"
+                self.descriptionCustomView.errorLabel.textColor = .blue
+                descriptionCustomView.errorLabel.text = ""
                 descriptionch = descriptionCustomView.textField.text
                 return true
             } else if descriptionCustomView.textField.text?.count == 0 {
@@ -156,8 +161,8 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
                 descriptionch = descriptionCustomView.textField.text
                 return true
             } else {
-                descriptionCustomView.borderColor = .red
-                descriptionCustomView.errorLabel.text = "vat description"
+                self.descriptionCustomView.errorLabel.textColor = .red
+                descriptionCustomView.errorLabel.text = "must_contain_4_letters".localized()
                 descriptionch = nil
                 return false
             }
