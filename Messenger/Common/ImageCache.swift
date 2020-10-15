@@ -30,18 +30,18 @@ class ImageCache {
     }
     
     func getImage(url: String, id: String, isChannel: Bool, completion: @escaping (UIImage) -> ()) {
-        if let avatar = cache.object(forKey: id as AnyObject) {
+       if let avatar = cache.object(forKey: id as AnyObject) {
             if avatar.url == url {
                 completion(avatar.image)
                 return
             } else {
                 self.removeForKey(id: id)
                 guard let imageURL = URL(string: url) else {
-                   completion(isChannel ? UIImage(named: "groupPeople")! : UIImage(named: "noPhoto")!)
+                   completion(isChannel ? UIImage(named: "channelPlaceholder")! : UIImage(named: "noPhoto")!)
                     return }
                 self.downloadImage(from: imageURL) { (image) in
                     if image == nil {
-                        completion(isChannel ? UIImage(named: "groupPeople")! : UIImage(named: "noPhoto")!)
+                        completion(isChannel ? UIImage(named: "channelPlaceholder")! : UIImage(named: "noPhoto")!)
                         return
                     } else {
                         self.setImage(image: image!, url: url, id: id)
@@ -52,11 +52,11 @@ class ImageCache {
             }
         } else {
             guard let imageURL = URL(string: url) else {
-                completion(isChannel ? UIImage(named: "groupPeople")! : UIImage(named: "noPhoto")!)
+                completion(isChannel ? UIImage(named: "channelPlaceholder")! : UIImage(named: "noPhoto")!)
                 return }
             downloadImage(from: imageURL) { (image) in
                 if image == nil {
-                    completion(isChannel ? UIImage(named: "groupPeople")! : UIImage(named: "noPhoto")!)
+                    completion(isChannel ? UIImage(named: "channelPlaceholder")! : UIImage(named: "noPhoto")!)
                     return
                 } else {
                     self.setImage(image: image!, url: url, id: id)
@@ -79,6 +79,4 @@ class ImageCache {
             completion(image)
         }.resume()
     }
-
-    
 }

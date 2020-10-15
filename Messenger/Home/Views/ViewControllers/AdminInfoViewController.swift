@@ -99,16 +99,40 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         self.showErrorAlert(title: "error".localized(), errorMessage: "esim")
                     }
                 } else {
-                    DispatchQueue.main.async {
-                        for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-                            if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel?._id {
-                                self.mainRouter?.channelListViewController?.channelsInfo.remove(at: i)
+                    let filteredChannels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
+                        return self.channelInfo?.channel?._id != channelId
+                    })
+                    SharedConfigs.shared.signedUser?.channels = filteredChannels
+                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.channels.remove(at: i)
                                 break
                             }
                         }
-                        self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        self.navigationController?.popToRootViewController(animated: true)
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                             self.navigationController?.popToRootViewController(animated: true)
+                        }
+                    } else {
+                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.channels.remove(at: i)
+                                break
+                            }
+                        }
+                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                                self.mainRouter!.channelListViewController!.foundChannels.remove(at: i)
+                                break
+                            }
+                        }
+                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                        DispatchQueue.main.async {
+                            self.mainRouter?.channelListViewController?.tableView.reloadData()
+                            self.navigationController?.popToRootViewController(animated: true)
+                        }
                     }
                 }
                 
@@ -285,9 +309,18 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         moderatorsView.addGestureRecognizer(tapModerators)
         let tapChangeAdmin = UITapGestureRecognizer(target: self, action: #selector(self.handleChangeAdminTab(_:)))
         changeAdminView.addGestureRecognizer(tapChangeAdmin)
+        let tapUrlView = UILongPressGestureRecognizer(target: self, action: #selector(self.handleUrlViewTap(_:)))
+        urlView.addGestureRecognizer(tapUrlView)
         let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.handleImageTap(_:)))
         channelLogoImageView.isUserInteractionEnabled = true
         channelLogoImageView.addGestureRecognizer(tapImage)
+    }
+    
+    @objc func handleUrlViewTap(_ sender: UILongPressGestureRecognizer? = nil) {
+        if sender?.state == UIGestureRecognizer.State.began {
+            UIPasteboard.general.string = channelInfo?.channel?.publicUrl
+            self.showToast(message: "url_copied_in_clipboard", font: .systemFont(ofSize: 15.0))
+        }
     }
     
     @objc func handleSubscribersTap(_ sender: UITapGestureRecognizer? = nil) {

@@ -27,7 +27,6 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zgy-sh-cre">
                                         <rect key="frame" x="374" y="10" width="30" height="31"/>
-                                        <state key="normal" title="Join"/>
                                         <connections>
                                             <action selector="universalButtonAction:" destination="CUz-oY-ahe" eventType="touchUpInside" id="cd9-4T-Gou"/>
                                         </connections>

@@ -44,10 +44,6 @@ class CreateAccountAlertViewController: UIViewController {
         }
     }
     
-    
-    
-
-    
     @IBAction func `switch`(_ sender: UISwitch) {
         channelMode = sender.isOn
     }
@@ -55,7 +51,6 @@ class CreateAccountAlertViewController: UIViewController {
     @IBAction func cancelButtonAction(_ sender: Any) {
         parent?.dismiss(animated: true, completion: nil)
     }
-    
     
     @IBAction func createButtonAction(_ sender: Any) {
         mainRouter?.channelListViewController?.createChannel(name: enterChannelNameView.textField.text!, mode: !channelMode!, completion: {
@@ -65,14 +60,12 @@ class CreateAccountAlertViewController: UIViewController {
         })
     }
     
-    
     func checkName(completion: @escaping (Bool?)->()) {
         if enterChannelNameView.textField.text!.count >= 3 {
             viewModel?.checkChannelName(name: enterChannelNameView.textField.text!, completion: { (response, error) in
                 if error == nil && response != nil {
                     if response!.channelNameExists == true {
                         DispatchQueue.main.async {
-//                            self.name = nil
                             self.enterChannelNameView.borderColor = .red
                             self.enterChannelNameView.errorLabel.text = "this_name_of_channel_is_taken".localized()
                             completion(false)
@@ -81,7 +74,6 @@ class CreateAccountAlertViewController: UIViewController {
                         DispatchQueue.main.async {
                             self.enterChannelNameView.errorLabel.text = "currect_name".localized()
                             self.enterChannelNameView.borderColor = .blue
-                            //                                self.name = self.enterNameView.textField.text
                             completion(true)
                         }
                     }
@@ -91,7 +83,6 @@ class CreateAccountAlertViewController: UIViewController {
         } else {
             enterChannelNameView.errorLabel.text = "incorrect_name".localized()
             enterChannelNameView.borderColor = .red
-            //            name = nil
             completion(false)
         }
     }
