@@ -29,7 +29,7 @@ class ImageCache {
         cache.removeObject(forKey: id as AnyObject)
     }
     
-    func getImage(url: String, id: String, completion: @escaping (UIImage) -> ()) {
+    func getImage(url: String, id: String, isChannel: Bool, completion: @escaping (UIImage) -> ()) {
         if let avatar = cache.object(forKey: id as AnyObject) {
             if avatar.url == url {
                 completion(avatar.image)
@@ -37,11 +37,11 @@ class ImageCache {
             } else {
                 self.removeForKey(id: id)
                 guard let imageURL = URL(string: url) else {
-                    completion(UIImage(named: "noPhoto")!)
+                   completion(isChannel ? UIImage(named: "channel")! : UIImage(named: "noPhoto")!)
                     return }
                 self.downloadImage(from: imageURL) { (image) in
                     if image == nil {
-                        completion(UIImage(named: "noPhoto")!)
+                        completion(isChannel ? UIImage(named: "channel")! : UIImage(named: "noPhoto")!)
                         return
                     } else {
                         self.setImage(image: image!, url: url, id: id)
@@ -52,11 +52,11 @@ class ImageCache {
             }
         } else {
             guard let imageURL = URL(string: url) else {
-                completion(UIImage(named: "noPhoto")!)
+                completion(isChannel ? UIImage(named: "channel")! : UIImage(named: "noPhoto")!)
                 return }
             downloadImage(from: imageURL) { (image) in
                 if image == nil {
-                    completion(UIImage(named: "noPhoto")!)
+                    completion(isChannel ? UIImage(named: "channel")! : UIImage(named: "noPhoto")!)
                     return
                 } else {
                     self.setImage(image: image!, url: url, id: id)

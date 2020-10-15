@@ -146,7 +146,7 @@ class ChannelInfoViewController: UIViewController {
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
         leaveOrJoinTextLabel.text = channelInfo?.role == 2 ? "leave".localized() : "join".localized()
-        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "") { (image) in
+        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "", isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image
             }

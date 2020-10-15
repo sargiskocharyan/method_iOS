@@ -64,7 +64,7 @@ class ModeratorInfoViewController: UIViewController {
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = channelInfo?.channel?.publicUrl
-        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "") { (image) in
+        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "", isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image
             }
@@ -78,11 +78,20 @@ class ModeratorInfoViewController: UIViewController {
         rejectView.addGestureRecognizer(tapRejectView)
         let tapLeaveView = UITapGestureRecognizer(target: self, action: #selector(self.handleLeaveViewTap(_:)))
         leaveView.addGestureRecognizer(tapLeaveView)
+        let tapUrlView = UILongPressGestureRecognizer(target: self, action: #selector(self.handleUrlViewTap(_:)))
+        urlView.addGestureRecognizer(tapUrlView)
     }
     
     @objc func handleSubscribersTap(_ sender: UITapGestureRecognizer? = nil) {
         DispatchQueue.main.async {
             self.mainRouter?.showSubscribersListViewController(id: self.channelInfo?.channel?._id ?? "")
+        }
+    }
+    
+    @objc func handleUrlViewTap(_ sender: UILongPressGestureRecognizer? = nil) {
+        if sender?.state == UIGestureRecognizer.State.began {
+            UIPasteboard.general.string = channelInfo?.channel?.publicUrl
+            self.showToast(message: "url_copied_in_clipboard", font: .systemFont(ofSize: 15.0))
         }
     }
     
@@ -138,3 +147,25 @@ class ModeratorInfoViewController: UIViewController {
     
     
 }
+
+extension UIViewController {
+    func showToast(message : String, font: UIFont) {
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 125, y: self.view.frame.size.height-100, width: 250, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textColor = UIColor.white
+        toastLabel.font = font
+        toastLabel.textAlignment = .center;
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 15;
+        toastLabel.clipsToBounds  =  true
+        self.view.addSubview(toastLabel)
+        UIView.animate(withDuration: 1.0, delay: 0.5, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
+}
+
+

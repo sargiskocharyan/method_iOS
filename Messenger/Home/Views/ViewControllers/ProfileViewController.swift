@@ -98,7 +98,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setImage() {
-        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -319,7 +319,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.activityIndicator.stopAnimating()
                 }
             } else {
-                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
+                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
                         self.activityIndicator.stopAnimating()

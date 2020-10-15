@@ -80,7 +80,7 @@ class ContactRequestTableViewCell: UITableViewCell {
         } else {
             nameLabel.text = user.username
         }
-        ImageCache.shared.getImage(url: user.avatarURL ?? "", id: user._id!) { (image) in
+        ImageCache.shared.getImage(url: user.avatarURL ?? "", id: user._id!, isChannel: false) { (image) in
             self.userImageView.image = image
         }
     }

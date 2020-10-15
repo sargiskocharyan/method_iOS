@@ -82,7 +82,7 @@ class CallDetailViewController: UIViewController {
         nc = tabBar?.viewControllers?[0] as? UINavigationController
         callListViewController = nc?.viewControllers[0] as? CallListViewController
         getCalls()
-        ImageCache.shared.getImage(url: avatarURL ?? "", id: id!) { (image) in
+        ImageCache.shared.getImage(url: avatarURL ?? "", id: id!, isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }

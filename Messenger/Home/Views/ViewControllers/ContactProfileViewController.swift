@@ -421,7 +421,7 @@ class ContactProfileViewController: UIViewController {
         }
         
         if contact?.avatarURL != nil {
-            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!) { (image) in
+            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!, isChannel: false) { (image) in
                 DispatchQueue.main.async {
                     self.userImageView.image = image
                 }

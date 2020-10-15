@@ -26,6 +26,7 @@ class ChannelMessagesViewController: UIViewController {
     var check: Bool!
     var arrayOfSelectedMesssgae: [String] = []
     var bottomConstraint: NSLayoutConstraint?
+    var isLoadedMessages = false
     let deleteMessageButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(named: "imputColor")
@@ -74,14 +75,16 @@ class ChannelMessagesViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
-        //joinButton.isHidden = true
-        print("openMode: \(channelInfo.channel?.openMode)")
         tableView.allowsMultipleSelection = false
         self.tableView.allowsSelection = false
         if (channelInfo.role == 0 || channelInfo.role == 1) {
-            check = true
-            universalButton.isHidden = false
-            universalButton.setTitle("edit".localized(), for: .normal)
+            if isLoadedMessages {
+                if channelMessages.array?.count != nil && channelMessages.array!.count > 0 {
+                    check = true
+                    universalButton.isHidden = false
+                    universalButton.setTitle("edit".localized(), for: .normal)
+                }
+            }
         } else if channelInfo.role == 2 {
             check = false
             universalButton.isHidden = true
@@ -240,6 +243,10 @@ class ChannelMessagesViewController: UIViewController {
                 self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
                 let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                if self.channelInfo.role == 0 || self.channelInfo.role == 1 {
+                    self.universalButton.isHidden = false
+                    self.universalButton.setTitle("edit".localized(), for: .normal)
+                }
             }
         }
     }
@@ -447,17 +454,24 @@ class ChannelMessagesViewController: UIViewController {
     
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: self.channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
+            
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
                 
             } else if messages != nil {
+                self.isLoadedMessages = true
                 self.channelMessages = messages!
                 if messages?.array?.count != 0 {
                     self.channelMessages.array!.reverse()
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
+                        if self.channelInfo.role == 0 || self.channelInfo.role == 1 {
+                            self.check = true
+                            self.universalButton.isHidden = false
+                            self.universalButton.setTitle("edit".localized(), for: .normal)
+                        }
                         if self.channelMessages.array!.count > 0 {
                             self.tableView.scrollToRow(at: IndexPath(row: self.channelMessages.array!.count - 1, section: 0), at: .top, animated: false)
                         }
@@ -465,7 +479,9 @@ class ChannelMessagesViewController: UIViewController {
                 } else {
                     self.setView("there_is_no_messages".localized())
                     DispatchQueue.main.async {
-                        self.universalButton.isHidden = true
+                        if self.channelInfo.role == 0 || self.channelInfo.role == 1 {
+                            self.universalButton.isHidden = true
+                        }
                     }
                 }
             }

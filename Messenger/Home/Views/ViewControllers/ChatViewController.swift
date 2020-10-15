@@ -350,7 +350,7 @@ class ChatViewController: UIViewController {
     }
     
     func getImage() {
-        ImageCache.shared.getImage(url: avatar ?? "", id: id!) { (userImage) in
+        ImageCache.shared.getImage(url: avatar ?? "", id: id!, isChannel: false) { (userImage) in
             self.image = userImage
         }
     }

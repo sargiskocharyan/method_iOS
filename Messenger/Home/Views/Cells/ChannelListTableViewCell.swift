@@ -22,7 +22,7 @@ class ChannelListTableViewCell: UITableViewCell {
     
     func configureCell(avatar: String?, name: String, id: String) {
         channelNameLabel.text = name
-        ImageCache.shared.getImage(url: avatar ?? "", id: id) { (image) in
+        ImageCache.shared.getImage(url: avatar ?? "", id: id, isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image
             }
