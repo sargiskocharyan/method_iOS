@@ -72,9 +72,10 @@ class ChannelInfoViewController: UIViewController {
                     }
                 } else {
                     self.channelInfo?.role = 3
-                    SharedConfigs.shared.signedUser?.channels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
+                    let filterChannels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
                         return channelId != self.channelInfo?.channel?._id
                     })
+                    SharedConfigs.shared.signedUser?.channels = filterChannels
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
                     if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
                         self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in

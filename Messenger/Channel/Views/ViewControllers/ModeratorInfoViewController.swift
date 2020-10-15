@@ -128,17 +128,34 @@ class ModeratorInfoViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else {
-                SharedConfigs.shared.signedUser?.channels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
+                let filteredChannels = SharedConfigs.shared.signedUser?.channels?.filter({ (channelId) -> Bool in
                     return self.channelInfo?.channel?._id != channelId
                 })
-                DispatchQueue.main.async {
-//                    self.mainRouter?.channelListViewController?.channelsInfo = self.mainRouter!.channelListViewController!.channelsInfo.filter({ (channelInfo) -> Bool in
-//                        return self.channelInfo?.channel?._id != channelInfo.channel?._id
-//                    })
-//                    self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
-                    
-                    self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    self.navigationController?.popToRootViewController(animated: true)
+                SharedConfigs.shared.signedUser?.channels = filteredChannels
+                if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
+                    self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                        return channelInfo.channel?._id != self.channelInfo?.channel?._id
+                    })
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                } else {
+                    self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                        return channelInfo.channel?._id != self.channelInfo?.channel?._id
+                    })
+                    for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                        if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                            self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
+                            break
+                        }
+                    }
+                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+                    DispatchQueue.main.async {
+                        self.mainRouter?.channelListViewController?.tableView.reloadData()
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
                 }
             }
         })
