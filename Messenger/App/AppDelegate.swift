@@ -14,14 +14,14 @@ import CoreData
 import UserNotifications
 import PushKit
 
-protocol AppDelegateD : class {
+protocol AppDelegateProtocol : class {
     func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
-    weak var delegate: AppDelegateD?
+    weak var delegate: AppDelegateProtocol?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     var tabbar: MainTabBarController?

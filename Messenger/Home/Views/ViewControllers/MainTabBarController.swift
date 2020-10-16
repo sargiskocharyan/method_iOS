@@ -703,7 +703,7 @@ extension MainTabBarController: CallListViewDelegate {
     }
 }
 
-extension MainTabBarController: AppDelegateD {
+extension MainTabBarController: AppDelegateProtocol {
     func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ()) {
         self.startCall(id, roomName, name, type) {
             completionHandler()
