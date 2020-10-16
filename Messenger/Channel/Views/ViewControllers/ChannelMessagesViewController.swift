@@ -482,7 +482,7 @@ class ChannelMessagesViewController: UIViewController {
                         }
                     }
                 } else {
-                    self.setView("there_is_no_messages".localized())
+                    self.setView("there_is_no_publication_yet".localized())
                     DispatchQueue.main.async {
                         if self.channelInfo.role == 0 || self.channelInfo.role == 1 {
                             self.universalButton.isHidden = true

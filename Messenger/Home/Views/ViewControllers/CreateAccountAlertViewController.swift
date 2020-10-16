@@ -72,7 +72,7 @@ class CreateAccountAlertViewController: UIViewController {
                         }
                     } else {
                         DispatchQueue.main.async {
-                            self.enterChannelNameView.errorLabel.text = "currect_name".localized()
+                            self.enterChannelNameView.errorLabel.text = ""
                             self.enterChannelNameView.borderColor = .blue
                             completion(true)
                         }

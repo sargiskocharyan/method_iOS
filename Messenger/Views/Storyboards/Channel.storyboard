@@ -290,14 +290,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVh-bh-Zrk">
-                                <rect key="frame" x="0.0" y="187.5" width="175" height="42.5"/>
+                                <rect key="frame" x="0.0" y="187.5" width="175" height="32.5"/>
                                 <state key="normal" title="Cancel"/>
                                 <connections>
                                     <action selector="cancelButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="d7M-mV-V7q"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvL-hj-mz7">
-                                <rect key="frame" x="175" y="187.5" width="175" height="42.5"/>
+                                <rect key="frame" x="175" y="187.5" width="175" height="32.5"/>
                                 <state key="normal" title="Create"/>
                                 <connections>
                                     <action selector="createButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="Ap4-S2-q8a"/>
@@ -332,7 +332,7 @@
                             <constraint firstItem="NvS-Bu-drd" firstAttribute="centerY" secondItem="pAh-UQ-QZh" secondAttribute="centerY" id="1FE-Jg-zlZ"/>
                             <constraint firstItem="NvS-Bu-drd" firstAttribute="leading" secondItem="eeg-cC-Fpv" secondAttribute="leading" id="280-QY-rlZ"/>
                             <constraint firstItem="NvS-Bu-drd" firstAttribute="top" secondItem="eeg-cC-Fpv" secondAttribute="bottom" constant="15" id="4Qv-c4-UBR"/>
-                            <constraint firstItem="9H2-eb-tit" firstAttribute="bottom" secondItem="HvL-hj-mz7" secondAttribute="bottom" id="5De-7V-O69"/>
+                            <constraint firstItem="9H2-eb-tit" firstAttribute="bottom" secondItem="HvL-hj-mz7" secondAttribute="bottom" constant="10" id="5De-7V-O69"/>
                             <constraint firstItem="g7D-wf-kdZ" firstAttribute="centerX" secondItem="9H2-eb-tit" secondAttribute="centerX" id="8Ev-d3-Hx0"/>
                             <constraint firstItem="gVh-bh-Zrk" firstAttribute="leading" secondItem="9H2-eb-tit" secondAttribute="leading" id="9VI-hw-6pV"/>
                             <constraint firstItem="HvL-hj-mz7" firstAttribute="width" secondItem="jxj-HT-Taz" secondAttribute="width" multiplier="0.5" id="Bwg-Cm-D4F"/>
@@ -344,10 +344,9 @@
                             <constraint firstItem="eeg-cC-Fpv" firstAttribute="centerX" secondItem="9H2-eb-tit" secondAttribute="centerX" id="e8S-tc-3eO"/>
                             <constraint firstItem="pAh-UQ-QZh" firstAttribute="trailing" secondItem="eeg-cC-Fpv" secondAttribute="trailing" id="iOl-bP-nIm"/>
                             <constraint firstItem="F1y-GW-iyV" firstAttribute="centerX" secondItem="g7D-wf-kdZ" secondAttribute="centerX" id="mAe-dV-tT3"/>
-                            <constraint firstItem="gVh-bh-Zrk" firstAttribute="centerY" secondItem="HvL-hj-mz7" secondAttribute="centerY" id="oUP-rJ-AoJ"/>
                             <constraint firstItem="gVh-bh-Zrk" firstAttribute="width" secondItem="jxj-HT-Taz" secondAttribute="width" multiplier="0.5" id="rPF-JU-aQ4"/>
                             <constraint firstItem="HvL-hj-mz7" firstAttribute="top" secondItem="gVh-bh-Zrk" secondAttribute="top" id="uiO-DD-26I"/>
-                            <constraint firstItem="9H2-eb-tit" firstAttribute="bottom" secondItem="gVh-bh-Zrk" secondAttribute="bottom" id="vav-Kg-JBZ"/>
+                            <constraint firstItem="9H2-eb-tit" firstAttribute="bottom" secondItem="gVh-bh-Zrk" secondAttribute="bottom" constant="10" id="vav-Kg-JBZ"/>
                             <constraint firstItem="eeg-cC-Fpv" firstAttribute="top" secondItem="F1y-GW-iyV" secondAttribute="bottom" constant="8" id="vho-XG-9a0"/>
                             <constraint firstItem="F1y-GW-iyV" firstAttribute="top" secondItem="g7D-wf-kdZ" secondAttribute="bottom" constant="9" id="ysG-Qc-msj"/>
                             <constraint firstItem="9H2-eb-tit" firstAttribute="trailing" secondItem="HvL-hj-mz7" secondAttribute="trailing" id="zNe-EO-iJG"/>
