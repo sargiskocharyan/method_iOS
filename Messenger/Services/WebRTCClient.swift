@@ -20,9 +20,6 @@ protocol WebRTCDelegate {
 }
 
 final class WebRTCClient: NSObject {
-    
-    // The `RTCPeerConnectionFactory` is in charge of creating new RTCPeerConnection instances.
-    // A new RTCPeerConnection should be created every new call, but the factory is shared.
      static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
         let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
@@ -156,8 +153,6 @@ final class WebRTCClient: NSObject {
         }
     }
 
-    
-    
     func renderRemoteVideo(to renderer: RTCVideoRenderer) {
         self.remoteVideoTrack?.add(renderer)
         webRTCCDelegate?.removeView()

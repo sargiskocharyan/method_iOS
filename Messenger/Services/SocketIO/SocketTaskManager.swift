@@ -163,7 +163,6 @@ class SocketTaskManager {
     
     func checkCallState(roomname: String) {
         socket!.emitWithAck("checkCallState", roomname).timingOut(after: 0.0) { (dataArray) in
-            //            completionHandler(dataArray[0] as! String)
             if dataArray[0] as! String != CallStatus.ongoing.rawValue {
                 for call in AppDelegate.shared.callManager.calls {
                     AppDelegate.shared.callManager.end(call: call)

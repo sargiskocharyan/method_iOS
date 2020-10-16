@@ -37,14 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        //print("\n\n++++++++changed! \(change), \(object)")
-    }
-    
-    
-    
-    func subscribeForChangesObservation() {
-        defaults = UserDefaults(suiteName: "group.am.dynamic.method")
-        defaults!.addObserver(self, forKeyPath: "Last", options: [.initial], context: nil)
     }
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -68,27 +60,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: NSNotification.Name("confirm"), object: nil)
-        UserDataController().loadUserInfo()
-        subscribeForChangesObservation()
-        DropDown.startListeningToKeyboard()
-        FirebaseApp.configure()
-        providerDelegate = ProviderDelegate(callManager: callManager)
-        UNUserNotificationCenter.current().delegate = self
-        self.voipRegistration()
+    func getNotificationBody(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any]
         if remoteNotif != nil {
             let aps = remoteNotif!["aps"] as? [String:AnyObject]
             NSLog("\n Custom: \(String(describing: aps))")
-            
             if remoteNotif!["chatId"] != nil && remoteNotif!["messageId"] != nil {
                 backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "backgroundTask") {
-                    print("kokoaPods")
                     self.endBackgroundTask(task: &self.backgroundTask)
                 }
                 SocketTaskManager.shared.connect {
-                    print(remoteNotif!["chatId"] as! String)
                     SocketTaskManager.shared.messageReceived(chatId: remoteNotif!["chatId"] as! String, messageId: remoteNotif!["messageId"] as! String) {
                         SocketTaskManager.shared.disconnect{
                             self.endBackgroundTask(task: &self.backgroundTask)
@@ -97,9 +78,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
                 }
             }
         } else {
-            NSLog("//////////////////////////Normal launch")
             setInitialStoryboard()
         }
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        UserDataController().loadUserInfo()
+        DropDown.startListeningToKeyboard()
+        FirebaseApp.configure()
+        providerDelegate = ProviderDelegate(callManager: callManager)
+        UNUserNotificationCenter.current().delegate = self
+        self.voipRegistration()
+        getNotificationBody(launchOptions)
         return true
     }
     
@@ -111,19 +101,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
-            print("Permission granted: \(granted)")
             guard granted else { return }
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
             }
             UNUserNotificationCenter.current().delegate = self
         }
-        print(UIApplication.shared.applicationState.rawValue)
         return false
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: deviceToken))
         if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
             SharedConfigs.shared.isRegistered = true
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
@@ -142,13 +129,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
-        print(RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token))
         SharedConfigs.shared.voIPToken = RemoteNotificationManager.didReceiveVoiDeviceToken(token: pushCredentials.token)
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
-        print("payload: ", payload.dictionaryPayload)
-        print(payload.dictionaryPayload["username"] as! String)
         self.delegate?.startCallD(id: payload.dictionaryPayload["id"] as! String, roomName: payload.dictionaryPayload["roomName"] as! String, name: payload.dictionaryPayload["username"] as! String, type: payload.dictionaryPayload["type"] as! String, completionHandler: {
             self.displayIncomingCall(
             id: payload.dictionaryPayload["id"] as! String, uuid: UUID(), handle: payload.dictionaryPayload["username"] as! String, hasVideo: true, roomName: payload.dictionaryPayload["roomName"] as! String) { _ in
@@ -163,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
-        print("pushRegistry:didInvalidatePushTokenForType:")
+        print("pushRegistry:didInvalidatePushTokenForType: \(type.rawValue)")
     }
     
     func voipRegistration() {
@@ -183,12 +167,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
 
 // MARK: Extension
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    func registerForPushNotifications() {
-        //RemoteNotificationManager.requestPermissions()
-    }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        //        UNUserNotificationCenter.current().delegate = self
         if notification.request.content.categoryIdentifier == "local" || notification.request.content.categoryIdentifier == "contactRequest" {
             completionHandler([.alert, .badge, .sound])
         } else {
@@ -199,10 +179,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication,
               continue userActivity: NSUserActivity,
               restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-
-        if userActivity.activityType == "INStartVideoCallIntent" {
-            // treat start video
-        }
+        if userActivity.activityType == "INStartVideoCallIntent" {}
         return true
     }
     
@@ -211,10 +188,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let request = userinfo["request"] as? NSDictionary
         switch response.actionIdentifier {
         case "first":
-            print("first")
             viewModel.confirmRequest(id: request?["sender"] as! String, confirm: true) { (error) in
                 if error == nil {
-                    print("confirmed")
                     SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
                         return req._id != request?["_id"] as! String
                     })
@@ -224,10 +199,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
             }
         case "second":
-            print("second")
             viewModel.confirmRequest(id: request?["sender"] as! String, confirm: false) { (error) in
                 if error == nil {
-                    print("merjec")
                     SharedConfigs.shared.contactRequests = SharedConfigs.shared.contactRequests.filter({ (req) -> Bool in
                         return req._id != request?["_id"] as! String
                     })
@@ -237,7 +210,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
             }
         default:
-            print("default")
+            break
         }
         completionHandler()
     }
@@ -261,9 +234,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         }
         if SharedConfigs.shared.signedUser != nil {
-            SocketTaskManager.shared.connect {
-                print("scene page connect")
-            }
+            SocketTaskManager.shared.connect {}
         }
     }
     
@@ -303,9 +274,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         }
                     }
                 }
-
-                
-                print(userInfo["chatId"] as! String)
                 SocketTaskManager.shared.messageReceived(chatId: userInfo["chatId"] as! String, messageId: userInfo["messageId"] as! String) {
                     
                     SocketTaskManager.shared.disconnect {
@@ -317,11 +285,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         if userInfo["type"] as? String == "missedCallHistory" {
             if let badge = aps["badge"] as? Int {
-                
                 let nc = tabbar?.viewControllers?[2] as? UINavigationController
                 let profile = nc?.viewControllers[0] as? ProfileViewController
-                print(userInfo)
-//                SharedConfigs.shared.missedCalls = userInfo["missedCalls"] as! [String]
                 tabbar?.mainRouter?.notificationListViewController?.reloadData()
                 profile?.changeNotificationNumber()
                 if tabbar?.selectedIndex == 0 {
@@ -350,7 +315,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     //MARK:- Helper
-    
     func setInitialStoryboard() {
         defineMode()
         defineStartController()
