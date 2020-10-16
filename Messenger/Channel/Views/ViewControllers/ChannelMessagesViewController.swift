@@ -539,7 +539,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
         let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-        return frame.height + 30
+        return channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id ?  frame.height + 30 : frame.height + 30 + 20
     }
     
     
@@ -611,7 +611,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
-            
+            cell.nameLabel.text = "Vanine Ghazaryan"
             cell.messageLabel.sizeToFit()
             if (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()

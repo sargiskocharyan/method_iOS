@@ -1196,9 +1196,6 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="k20-SR-gF8"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="info"/>
-                                </userDefinedRuntimeAttributes>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VeG-rA-HgS" customClass="CustomTextField" customModule="method" customModuleProvider="target">
                                 <rect key="frame" x="40" y="114" width="334" height="66.333333333333314"/>
@@ -1378,8 +1375,8 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HSc-ey-24N">
                                                 <rect key="frame" x="-1" y="370" width="416" height="66"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Nu-Ne-VvI">
-                                                        <rect key="frame" x="14.999999999999996" y="22.333333333333314" width="47.666666666666657" height="21.333333333333329"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Nu-Ne-VvI">
+                                                        <rect key="frame" x="15" y="22.333333333333314" width="386" height="21.333333333333329"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                         <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -1390,7 +1387,7 @@
                                                     <constraint firstItem="5Nu-Ne-VvI" firstAttribute="leading" secondItem="HSc-ey-24N" secondAttribute="leading" constant="14.999999999999996" id="9Ou-fh-HJy"/>
                                                     <constraint firstItem="5Nu-Ne-VvI" firstAttribute="centerY" secondItem="HSc-ey-24N" secondAttribute="centerY" id="heb-ST-KoY"/>
                                                     <constraint firstAttribute="height" constant="66" id="maq-9Q-2uh"/>
-                                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="5Nu-Ne-VvI" secondAttribute="trailing" constant="15" id="oKn-K0-fBq"/>
+                                                    <constraint firstAttribute="trailing" secondItem="5Nu-Ne-VvI" secondAttribute="trailing" constant="15" id="oKn-K0-fBq"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -1674,7 +1671,7 @@
         <image name="Armenian" width="128" height="128"/>
         <image name="call" width="30" height="30"/>
         <image name="camera.fill" catalog="system" width="128" height="96"/>
-        <image name="channelIcon" width="90" height="63"/>
+        <image name="channelIcon" width="30" height="21"/>
         <image name="chatIcon" width="30" height="30"/>
         <image name="detail" width="100" height="100"/>
         <image name="info.circle" catalog="system" width="128" height="121"/>

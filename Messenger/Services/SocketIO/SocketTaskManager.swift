@@ -125,8 +125,6 @@ class SocketTaskManager {
         }
     }
     
-    
-    
     func messageTyping(chatId: String) {
         socket?.emit("messageTyping", chatId)
     }

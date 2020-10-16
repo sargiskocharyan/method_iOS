@@ -357,4 +357,38 @@ class MainRouter {
         adminInfoViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func showUserProfileFromModeratorList(id: String) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .profile)
+        vc.onContactPage = false
+        vc.fromChat = false
+        vc.id = id
+        vc.viewModel = mainTabBarController?.contactsViewModel
+        vc.mainRouter = moderatorListViewController?.mainRouter
+        for i in 0..<mainTabBarController!.contactsViewModel!.contacts.count {
+            if mainTabBarController!.contactsViewModel!.contacts[i]._id == id {
+                vc.onContactPage = true
+                break
+            }
+        }
+        self.contactProfileViewController = vc
+        moderatorListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showUserProfileFromSubscriberList(id: String) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .profile)
+        vc.onContactPage = false
+        vc.fromChat = false
+        vc.id = id
+        vc.viewModel = mainTabBarController?.contactsViewModel
+        vc.mainRouter = subscribersListViewController?.mainRouter
+        for i in 0..<mainTabBarController!.contactsViewModel!.contacts.count {
+            if mainTabBarController!.contactsViewModel!.contacts[i]._id == id {
+                vc.onContactPage = true
+                break
+            }
+        }
+        self.contactProfileViewController = vc
+        subscribersListViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
 }

@@ -189,31 +189,35 @@ class MainTabBarController: UITabBarController {
     
     func handleReadMessage()  {
         SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
-            let recentNC = self.viewControllers![1] as! UINavigationController
-            if recentNC.viewControllers.count > 1 {
-                let chatVC = recentNC.viewControllers[1] as! ChatViewController
-                chatVC.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
-            }
+//            let recentNC = self.viewControllers![1] as! UINavigationController
+//            let channelNC = self.viewControllers[2] as! UINavigationController
+//            if recentNC.viewControllers.count > 1 {
+//                let chatVC = recentNC.viewControllers[1] as! ChatViewController
+//                chatVC.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
+//            }
+            self.mainRouter?.chatViewController?.handleMessageReadFromTabbar(createdAt: createdAt, userId: userId)
         }
     }
     
     func handleReceiveMessage()  {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
-            let recentNC = self.viewControllers![1] as! UINavigationController
-            if recentNC.viewControllers.count > 1 {
-                let chatVC = recentNC.viewControllers[1] as? ChatViewController
-                chatVC?.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
-            }
+//            let recentNC = self.viewControllers![1] as! UINavigationController
+//            if recentNC.viewControllers.count > 1 {
+//                let chatVC = recentNC.viewControllers[1] as? ChatViewController
+//                chatVC?.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
+//            }
+            self.mainRouter?.chatViewController?.handleMessageReceiveFromTabbar(createdAt: createdAt, userId: userId)
         }
     }
     
     func handleMessageTyping()  {
         SocketTaskManager.shared.addMessageTypingListener { (userId) in
-            let recentNC = self.viewControllers![1] as! UINavigationController
-            if recentNC.viewControllers.count > 1 {
-                let chatVC = recentNC.viewControllers[1] as? ChatViewController
-                chatVC?.handleMessageTypingFromTabbar(userId: userId)
-            }
+//            let recentNC = self.viewControllers![1] as! UINavigationController
+//            if recentNC.viewControllers.count > 1 {
+//                let chatVC = recentNC.viewControllers[1] as? ChatViewController
+//                chatVC?.handleMessageTypingFromTabbar(userId: userId)
+//            }
+            self.mainRouter?.chatViewController?.handleMessageTypingFromTabbar(userId: userId)
         }
     }
     
@@ -406,6 +410,7 @@ class MainTabBarController: UITabBarController {
                 SharedConfigs.shared.missedCalls.append(callHistory!._id!)
                 self.mainRouter?.notificationListViewController?.reloadData()
             }
+//            self.mainRouter?.chatViewController?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             if chatsVC.isLoaded {
                 chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             }
@@ -428,6 +433,7 @@ class MainTabBarController: UITabBarController {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                     }
                 } else {
+                    
                     if let chatVC = callNc.viewControllers[2] as? ChatViewController {
                         chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     } else if let videoVC = callNc.viewControllers[2] as? VideoViewController {
@@ -467,8 +473,15 @@ class MainTabBarController: UITabBarController {
                     }
                 }
                 break
+            case 2:
+                let channelNC = self.viewControllers![2] as! UINavigationController
+                if channelNC.viewControllers.count >= 5 {
+                    if let chatVC = channelNC.viewControllers[4] as? ChatViewController  {
+                        chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    }
+                }
             case 3:
-                let profileNC = self.viewControllers![2] as! UINavigationController
+                let profileNC = self.viewControllers![3] as! UINavigationController
                 if profileNC.viewControllers.count < 4 {
                     if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
                         self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)

@@ -12,6 +12,7 @@ class RecieveMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     
+    @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
     @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
     

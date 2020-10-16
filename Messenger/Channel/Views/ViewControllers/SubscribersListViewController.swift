@@ -136,6 +136,12 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                     }
                 }
             })
+        } else {
+            if subscribers[indexPath.row].user?._id == SharedConfigs.shared.signedUser?.id {
+                self.tabBarController?.selectedIndex = 3
+            } else {
+                self.mainRouter?.showUserProfileFromSubscriberList(id: (self.subscribers[indexPath.row].user?._id)!)
+            }
         }
     }
     

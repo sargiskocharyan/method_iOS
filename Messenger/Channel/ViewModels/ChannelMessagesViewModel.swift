@@ -10,8 +10,6 @@ import Foundation
 
 class ChannelMessagesViewModel {
     
-   
-    
     func getChannelMessages(id: String, dateUntil: String?, completion: @escaping (ChannelMessages?, NetworkResponse?)->()) {
         HomeNetworkManager().getChannelMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)

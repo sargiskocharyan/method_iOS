@@ -175,7 +175,9 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
+                            self.tableView.beginUpdates()
                             (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
+                            self.tableView.endUpdates()
                         }
                     }
                 } else {

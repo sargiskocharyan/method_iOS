@@ -38,6 +38,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateInfoButton.setTitle("update_information".localized(), for: .normal)
+        descriptionCustomView.placeholder = "description".localized()
     }
     
     @objc func nameTextFieldAction() {
