@@ -181,32 +181,4 @@ class AuthorizationNetworkManager: NetworkManager {
             }
         }
     }
-    
-    func getUniversities(token: String, completion: @escaping ([University]?, NetworkResponse?)->()) {
-        router.request(.getUniversities(token: token)) { data, response, error in
-            if error != nil {
-                print(error!.rawValue)
-                completion(nil, error)
-            }
-            if let response = response as? HTTPURLResponse {
-                let result = self.handleNetworkResponse(response)
-                switch result {
-                case .success:
-                    guard let responseData = data else {
-                        completion(nil, error)
-                        return
-                    }
-                    do {
-                        let responseObject = try JSONDecoder().decode([University].self, from: responseData)
-                        completion(responseObject, nil)
-                    } catch {
-                        print(error)
-                        completion(nil, NetworkResponse.unableToDecode)
-                    }
-                case .failure( _):
-                    completion(nil, NetworkResponse.failed)
-                }
-            }
-        }
-    }
 }

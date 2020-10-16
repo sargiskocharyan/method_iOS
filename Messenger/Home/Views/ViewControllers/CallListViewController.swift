@@ -49,7 +49,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     var otherContactsCount = 0
     static let callCellIdentifier = "callCell"
     var mainRouter: MainRouter?
-    var networkCheck = NetworkCheck.sharedInstance()
     var badge: Int?
     var sortedDictionary: [(CallHistory, Int)] = []
     var activity = UIActivityIndicatorView(style: .medium)
@@ -97,7 +96,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
-        //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
         let vc = tabbar!.viewControllers![3] as! UINavigationController
@@ -106,15 +104,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         tableView.tableFooterView = UIView()
         addResfreshControl()
         setActivity()
-        //        if networkCheck.currentStatus == .satisfied {
-        getCallHistory {
-            
-        }
-        //            }
-        //        } else {
-        //            getCallHistoryFromDB()
-        //        }
-        networkCheck.addObserver(observer: self)
+        getCallHistory {}
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
     
@@ -483,12 +473,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
                 self.delegate?.handleClickOnSamePerson()
             }
         }
-    }
-}
-
-extension CallListViewController: NetworkCheckObserver {
-    func statusDidChange(status: NWPath.Status) {
-        print("status did change \(status)")
     }
 }
 

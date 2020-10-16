@@ -24,7 +24,11 @@ struct AUTHUrls {
     static let Register          = "/register"
     static let UpdateUser        = "/updateuser"
     static let VerifyToken       = "/tokenExists"
-    static let GetUniversities   = "/university/all"
+    static let RegisterDevice    = "/registerdevice"
+    static let CheckUsername     = "/usernameExists"
+}
+
+struct HomeUrls {
     static let GetUserContacts   = "/contacts"
     static let FindUsers         = "/findusers"
     static let AddContact        = "/addcontact"
@@ -39,14 +43,12 @@ struct AUTHUrls {
     static let RemoveContact     = "/removecontact"
     static let OnlineUsers       = "/onlineusers"
     static let HideData          = "/hidedata"
-    static let CheckUsername     = "/usernameExists"
     static let GetCallHistory    = "/callhistory"
     static let RemoveCall        = "/call"
     static let ChangeEmail       = "/updatemail"
     static let VerifyEmail       = "/verifyemail"
     static let ChangePhone       = "/updatephonenumber"
     static let VerifyPhone       = "/verifyphonenumber"
-    static let RegisterDevice    = "/registerdevice"
     static let ReadCalls         = "/readcallhistory"
     static let confirmRequest    = "/confirmContactRequest"
     static let DeleteRequest     = "/deleteContactRequest"

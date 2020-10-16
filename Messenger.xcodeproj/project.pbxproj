@@ -44,7 +44,6 @@
 		CD3F12D524BC28C900040D8E /* Call.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D424BC28C900040D8E /* Call.swift */; };
 		CD3F12D724BC290200040D8E /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D624BC290200040D8E /* CallManager.swift */; };
 		CD3F12D924BC29EB00040D8E /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D824BC29EB00040D8E /* Audio.swift */; };
-		CD3F12E824BC558B00040D8E /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E124BC558B00040D8E /* Message.swift */; };
 		CD3F12EC24BC558B00040D8E /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E624BC558B00040D8E /* WebRTCClient.swift */; };
 		CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E724BC558B00040D8E /* SignalingClient.swift */; };
 		CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EE24BC55C100040D8E /* RTCStates.swift */; };
@@ -68,7 +67,6 @@
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9F63CC25348F01004CF9CB /* CreateAccountAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */; };
 		CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */; };
-		CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA04E2924E522070055A412 /* NetworkChecker.swift */; };
 		CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A045250B6EFD0067B245 /* ringback.mp3 */; };
 		CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A047250B72FE0067B245 /* karch.mp3 */; };
 		CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */; };
@@ -223,11 +221,9 @@
 		D0F66501251B177D0018D9B7 /* ChangeEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */; };
 		D0F66502251B177D0018D9B7 /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C663247BC4AE0048A9A1 /* ParameterEncoding.swift */; };
 		D0F66503251B177D0018D9B7 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
-		D0F66504251B177D0018D9B7 /* NetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA04E2924E522070055A412 /* NetworkChecker.swift */; };
 		D0F66505251B177D0018D9B7 /* ViewController-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F29247D1B0800AD437D /* ViewController-Extension.swift */; };
 		D0F66506251B177D0018D9B7 /* RTCStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12EE24BC55C100040D8E /* RTCStates.swift */; };
 		D0F66507251B177D0018D9B7 /* LanguagelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3713BF248680150088A0CC /* LanguagelTableViewCell.swift */; };
-		D0F66508251B177D0018D9B7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12E124BC558B00040D8E /* Message.swift */; };
 		D0F66509251B177D0018D9B7 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */; };
 		D0F6650A251B177D0018D9B7 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
 		D0F6650B251B177D0018D9B7 /* BodyURLParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C666247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift */; };
@@ -376,7 +372,6 @@
 		CD3F12D424BC28C900040D8E /* Call.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Call.swift; sourceTree = "<group>"; };
 		CD3F12D624BC290200040D8E /* CallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CD3F12D824BC29EB00040D8E /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
-		CD3F12E124BC558B00040D8E /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		CD3F12E624BC558B00040D8E /* WebRTCClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
 		CD3F12E724BC558B00040D8E /* SignalingClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
 		CD3F12EE24BC55C100040D8E /* RTCStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCStates.swift; sourceTree = "<group>"; };
@@ -399,7 +394,6 @@
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountAlertViewController.swift; sourceTree = "<group>"; };
 		CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNotificationManager.swift; sourceTree = "<group>"; };
-		CDA04E2924E522070055A412 /* NetworkChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkChecker.swift; sourceTree = "<group>"; };
 		CDA1A045250B6EFD0067B245 /* ringback.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringback.mp3; sourceTree = "<group>"; };
 		CDA1A047250B72FE0067B245 /* karch.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = karch.mp3; sourceTree = "<group>"; };
 		CDA56E6A2488E5E50027AA4E /* HomeEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEndpoints.swift; sourceTree = "<group>"; };
@@ -661,12 +655,10 @@
 		CD3F12E024BC558B00040D8E /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				CD3F12E124BC558B00040D8E /* Message.swift */,
 				CD3F12E624BC558B00040D8E /* WebRTCClient.swift */,
 				CD3F12E724BC558B00040D8E /* SignalingClient.swift */,
 				CD3F12E224BC558B00040D8E /* SocketIO */,
 				CD9FE2EB24E2ADEB002A27CC /* RemoteNotificationManager.swift */,
-				CDA04E2924E522070055A412 /* NetworkChecker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1449,11 +1441,9 @@
 				CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */,
 				CDD9C66F247BC4AE0048A9A1 /* ParameterEncoding.swift in Sources */,
 				CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */,
-				CDA04E2A24E522070055A412 /* NetworkChecker.swift in Sources */,
 				CD382F2A247D1B0800AD437D /* ViewController-Extension.swift in Sources */,
 				CD3F12F124BC55C200040D8E /* RTCStates.swift in Sources */,
 				CD3713C0248680150088A0CC /* LanguagelTableViewCell.swift in Sources */,
-				CD3F12E824BC558B00040D8E /* Message.swift in Sources */,
 				D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */,
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
@@ -1567,11 +1557,9 @@
 				D0F66501251B177D0018D9B7 /* ChangeEmailViewController.swift in Sources */,
 				D0F66502251B177D0018D9B7 /* ParameterEncoding.swift in Sources */,
 				D0F66503251B177D0018D9B7 /* SocketTaskManager.swift in Sources */,
-				D0F66504251B177D0018D9B7 /* NetworkChecker.swift in Sources */,
 				D0F66505251B177D0018D9B7 /* ViewController-Extension.swift in Sources */,
 				D0F66506251B177D0018D9B7 /* RTCStates.swift in Sources */,
 				D0F66507251B177D0018D9B7 /* LanguagelTableViewCell.swift in Sources */,
-				D0F66508251B177D0018D9B7 /* Message.swift in Sources */,
 				D0F66509251B177D0018D9B7 /* ContactTableViewCell.swift in Sources */,
 				D0F6650A251B177D0018D9B7 /* NotificationDetailViewController.swift in Sources */,
 				D0F6650B251B177D0018D9B7 /* BodyURLParameterEncoding.swift in Sources */,

@@ -25,8 +25,6 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         disableUpdateInfoButton()
         hideKeyboardWhenTappedAround()
-        nameCustomView.delagate = self
-        descriptionCustomView.delagate = self
         nameCustomView.textField.delegate = self
         descriptionCustomView.textField.delegate = self
         descriptionCustomView.textField.text = channelInfo?.channel?.description
@@ -53,6 +51,36 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
         checkFields()
     }
     
+    func checkChanges() {
+        if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        } else {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
+                }
+            }
+            for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.foundChannels[i] = self.channelInfo!
+                    break
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        }
+    }
+    
     @IBAction func updateButtonAction(_ sender: Any) {
         viewModel?.updateChannelInfo(id: channelInfo!.channel!._id, name: name, description: descriptionch) { (channel, error) in
             if error != nil {
@@ -66,36 +94,34 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
                     self.mainRouter?.adminInfoViewController?.channelInfo = self.channelInfo
                     self.mainRouter?.adminInfoViewController?.setInfo()
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
-                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
-                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
-                            }
-                        }
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    } else {
-                        for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                            if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!
-                            }
-                        }
-                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.foundChannels[i] = self.channelInfo!
-                                break
-                            }
-                        }
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    }
+                    self.checkChanges()
                 }
             }
         }
+    }
+    
+    fileprivate func setText(name: String? , color: UIColor, text: String) {
+        self.name = name
+        self.nameCustomView.errorLabel.textColor = color
+        self.nameCustomView.errorLabel.text = text.localized()
+    }
+    
+    func checkChannelName(_ completion: @escaping (Bool?) -> ()) {
+        viewModel?.checkChannelName(name: nameCustomView.textField.text!, completion: { (response, error) in
+            if error == nil && response != nil {
+                if response!.channelNameExists == true {
+                    DispatchQueue.main.async {
+                        self.setText(name: nil, color: .red, text: "this_name_of_channel_is_taken")
+                        completion(false)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.setText(name: self.nameCustomView.textField.text, color: .blue, text: "correct_name")
+                        completion(true)
+                    }
+                }
+            }
+        })
     }
     
     func checkName(completion: @escaping (Bool?)->()) {
@@ -104,37 +130,16 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
                 if isChangingName {
                     self.nameCustomView.errorLabel.text = ""
                     self.nameCustomView.errorLabel.textColor = .red
-                    viewModel?.checkChannelName(name: nameCustomView.textField.text!, completion: { (response, error) in
-                        if error == nil && response != nil {
-                            if response!.channelNameExists == true {
-                                DispatchQueue.main.async {
-                                    self.name = nil
-                                    self.nameCustomView.errorLabel.textColor = .red
-                                    self.nameCustomView.errorLabel.text = "this_name_of_channel_is_taken".localized()
-                                    completion(false)
-                                }
-                            } else {
-                                DispatchQueue.main.async {
-                                    self.nameCustomView.errorLabel.text = "correct_name".localized()
-                                    self.nameCustomView.errorLabel.textColor = .blue
-                                    self.name = self.nameCustomView.textField.text
-                                    completion(true)
-                                }
-                            }
-                        }
-                    })
+                    self.checkChannelName(completion)
                 } else {
                     completion(true)
                 }
             } else {
-                self.nameCustomView.errorLabel.text = "incorrect_name".localized()
-                self.nameCustomView.errorLabel.textColor = .red
-                name = nil
+                self.setText(name: nil, color: .red, text: "incorrect_name")
                 completion(false)
             }
         } else {
-            self.nameCustomView.errorLabel.text = ""
-            name = nil
+            self.setText(name: nil, color: .red, text: "")
             completion(nil)
         }
     }
@@ -186,37 +191,6 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
             } else {
                 self.disableUpdateInfoButton()
             }
-        }
-    }
-}
-
-
-extension UpdateChannelInfoViewController: CustomTextFieldDelegate {
-    func texfFieldDidChange(placeholder: String) {
-        
-        if placeholder == "name".localized() {
-            
-            //            if !nameView.textField.text!.isValidNameOrLastname() {
-            //                nameView.errorLabel.text = nameView.errorMessage
-            //                nameView.errorLabel.textColor = .red
-            //                nameView.border.backgroundColor = .red
-            //            } else {
-            //                nameView.border.backgroundColor = .blue
-            //                nameView.errorLabel.textColor = .blue
-            //                nameView.errorLabel.text = nameView.successMessage
-            //            }
-        }
-        if placeholder == "info" {
-            
-            //            if !lastnameView.textField.text!.isValidNameOrLastname() {
-            //                lastnameView.errorLabel.text = lastnameView.errorMessage
-            //                lastnameView.errorLabel.textColor = .red
-            //                lastnameView.border.backgroundColor = .red
-            //            } else {
-            //                lastnameView.border.backgroundColor = .blue
-            //                lastnameView.errorLabel.textColor = .blue
-            //                lastnameView.errorLabel.text = lastnameView.successMessage
-            //            }
         }
     }
 }

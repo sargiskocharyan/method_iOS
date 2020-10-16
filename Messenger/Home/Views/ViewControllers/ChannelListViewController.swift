@@ -122,36 +122,6 @@ class ChannelListViewController: UIViewController {
 
     
     @objc func addButtonTapped() {
-//        let alert = UIAlertController(title: "create_channel".localized()
-//            , message: "enter_channel_name".localized(), preferredStyle: .alert)
-//        alert.addTextField { (textField) in
-//           textField.addTarget(self, action: #selector(self.handleAlertChange(sender:)), for: .editingChanged)
-//        }
-//
-//        alert.addAction(UIAlertAction(title: "create".localized(), style: .default, handler: { (action) in
-//            self.activity.startAnimating()
-//            self.viewModel!.createChannel(name: self.text, openMode: true, completion: { (channel, error) in
-//                if error != nil {
-//                    DispatchQueue.main.async {
-//                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                    }
-//                } else {
-//                    print("Channel created")
-//                    SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-//
-//                    self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
-//                    self.channelsInfo = self.channels
-//                    DispatchQueue.main.async {
-//                        self.activity.stopAnimating()
-//                        self.tableView.reloadData()
-//                    }
-//                }
-//            })
-//        }))
-//        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-//        self.present(alert, animated: true, completion: nil)
-//
-        /////////////
         let vc = CreateAccountAlertViewController.instantiate(fromAppStoryboard: .channel)
         vc.mainRouter = mainRouter
         vc.viewModel = viewModel

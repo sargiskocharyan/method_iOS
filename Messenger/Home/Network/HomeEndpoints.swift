@@ -67,95 +67,95 @@ extension HomeApi: EndPointType {
     var path: String {
         switch self {
         case .getUserContacts:
-            return AUTHUrls.GetUserContacts
+            return HomeUrls.GetUserContacts
         case .findUsers(_):
-            return AUTHUrls.FindUsers
+            return HomeUrls.FindUsers
         case .addContact(_):
-            return AUTHUrls.AddContact
+            return HomeUrls.AddContact
         case .logout(_):
-            return AUTHUrls.Logout
+            return HomeUrls.Logout
         case .getChats:
-            return AUTHUrls.GetChats
+            return HomeUrls.GetChats
         case .getChatMessages(let id,_):
-            return  "\(AUTHUrls.GetChatMessages)\(id)"
+            return  "\(HomeUrls.GetChatMessages)\(id)"
         case .getUserById(let id):
-            return  "\(AUTHUrls.GetUserById)\(id)"
+            return  "\(HomeUrls.GetUserById)\(id)"
         case .getImage(let avatar):
-            return "\(AUTHUrls.GetImage)/\(avatar)"
+            return "\(HomeUrls.GetImage)/\(avatar)"
         case .deleteAccount:
-            return AUTHUrls.DeleteAccount
+            return HomeUrls.DeleteAccount
         case .deactivateAccount:
-            return AUTHUrls.DeactivateAccount
+            return HomeUrls.DeactivateAccount
         case .deleteAvatar:
-            return AUTHUrls.DeleteAvatar
+            return HomeUrls.DeleteAvatar
         case .editInformation(_, _, _, _, _, _):
             return AUTHUrls.UpdateUser
         case .removeContact(_):
-            return AUTHUrls.RemoveContact
+            return HomeUrls.RemoveContact
         case .onlineUsers(_):
-            return AUTHUrls.OnlineUsers
+            return HomeUrls.OnlineUsers
         case .hideData(_):
-            return AUTHUrls.HideData
+            return HomeUrls.HideData
         case .getCallHistory:
-            return AUTHUrls.GetCallHistory
+            return HomeUrls.GetCallHistory
         case .removeCall(_):
-            return AUTHUrls.RemoveCall
+            return HomeUrls.RemoveCall
         case .changeEmail(_):
-            return AUTHUrls.ChangeEmail
+            return HomeUrls.ChangeEmail
         case .verifyEmail(_,_):
-            return AUTHUrls.VerifyEmail
+            return HomeUrls.VerifyEmail
         case .changePhone(_):
-            return AUTHUrls.ChangePhone
+            return HomeUrls.ChangePhone
         case .verifyPhone(_,_):
-            return AUTHUrls.VerifyPhone
+            return HomeUrls.VerifyPhone
         case .registerDevice(_,_):
             return AUTHUrls.RegisterDevice
         case .readCalls(_,_):
-            return AUTHUrls.ReadCalls
+            return HomeUrls.ReadCalls
         case .confirmRequest(_, _):
-            return AUTHUrls.confirmRequest
+            return HomeUrls.confirmRequest
         case .deleteRequest(_):
-            return AUTHUrls.DeleteRequest
+            return HomeUrls.DeleteRequest
         case .getRequests:
-            return AUTHUrls.GetRequests
+            return HomeUrls.GetRequests
         case .getAdminMessage:
-            return AUTHUrls.GetAdminMessage
+            return HomeUrls.GetAdminMessage
         case .createChannel(_,_):
-            return AUTHUrls.CreateChannel
+            return HomeUrls.CreateChannel
         case .getChannelInfo(_):
-            return "\(AUTHUrls.GetChannelInfo)"
+            return "\(HomeUrls.GetChannelInfo)"
         case .getChannelMessages(let id, _):
-            return "\(AUTHUrls.CreateChannel)/\(id)/messages"
+            return "\(HomeUrls.CreateChannel)/\(id)/messages"
         case .checkChannelName(_):
-            return AUTHUrls.CheckChannelName
+            return HomeUrls.CheckChannelName
         case .subscribe(let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/subscribe"
+            return "\(HomeUrls.CreateChannel)/\(id)/subscribe"
         case .findChannels(_):
-            return AUTHUrls.FindChannels
+            return HomeUrls.FindChannels
         case .leaveChannel(let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/leave"
+            return "\(HomeUrls.CreateChannel)/\(id)/leave"
         case .addModerator(let id,_):
-            return "\(AUTHUrls.CreateChannel)/\(id)/addModerator"
+            return "\(HomeUrls.CreateChannel)/\(id)/addModerator"
         case .getModerators(id: let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/moderators"
+            return "\(HomeUrls.CreateChannel)/\(id)/moderators"
         case .getSubcribers(let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/subscribers"
+            return "\(HomeUrls.CreateChannel)/\(id)/subscribers"
         case .removeModerator(id: let id, _):
-            return "\(AUTHUrls.CreateChannel)/\(id)/removeModerator"
+            return "\(HomeUrls.CreateChannel)/\(id)/removeModerator"
         case .updateChannelInfo(id: let id, _, _):
-            return "\(AUTHUrls.CreateChannel)/\(id)/update"
+            return "\(HomeUrls.CreateChannel)/\(id)/update"
         case .changeAdmin(id: let id,_) :
-            return "\(AUTHUrls.CreateChannel)/\(id)/changeAdmin"
+            return "\(HomeUrls.CreateChannel)/\(id)/changeAdmin"
         case .deleteChannelLogo(id: let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/avatar"
+            return "\(HomeUrls.CreateChannel)/\(id)/avatar"
         case .deleteChannel(id: let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)"
+            return "\(HomeUrls.CreateChannel)/\(id)"
         case .rejectBeModerator(id: let id):
-            return "\(AUTHUrls.CreateChannel)/\(id)/moderator/me"
+            return "\(HomeUrls.CreateChannel)/\(id)/moderator/me"
         case .deleteChannelMessages(id: let id,_):
-            return "\(AUTHUrls.CreateChannel)/\(id)/deleteMessages"
+            return "\(HomeUrls.CreateChannel)/\(id)/deleteMessages"
         case .blockSubscribers(id: let id, _):
-            return "\(AUTHUrls.CreateChannel)/\(id)/blockSubscribers"
+            return "\(HomeUrls.CreateChannel)/\(id)/blockSubscribers"
         }
     }
     

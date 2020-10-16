@@ -80,20 +80,6 @@ struct ChannelMessages: Codable {
     var statuses: [ChannelStatus]?
 }
 
-struct ChannelMessage: Codable {
-    var call: MessageCall?
-    var type: String?
-    let _id: String?
-    let reciever: String?
-    var text: String?
-    let createdAt: String?
-    let updatedAt: String?
-    let owner: String?
-    let senderId: String?
-    let senderName: String?
-    let avatarUrl: String?
-}
-
 struct ChannelStatus: Codable {
     var userId: String?
     var receivedMessageDate: String?
