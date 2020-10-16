@@ -351,6 +351,11 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
+        subscribersTextLabel.text = "subscribers".localized()
+        moderatorsTextLabel.text = "moderators".localized()
+        changeAdminTextLabel.text = "change_admin".localized()
+        deleteButton.setTitle("delete_channel".localized(), for: .normal)
+        
     }
     
     func setCornerRadius(view: UIView) {

@@ -328,7 +328,7 @@ class SocketTaskManager {
                             SharedConfigs.shared.unreadMessages.append(vc.chats[i])
                             self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
                             DispatchQueue.main.async {
-                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                                let nc = self.tabbar!.viewControllers![3] as! UINavigationController
                                 let profile = nc.viewControllers[0] as! ProfileViewController
                                 profile.changeNotificationNumber()
                             }

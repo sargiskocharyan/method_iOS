@@ -84,7 +84,7 @@ class ChannelListViewController: UIViewController {
     
     func createChannel(name: String, mode: Bool, completion: @escaping () -> ()) {
         self.activity.startAnimating()
-        self.viewModel!.createChannel(name: name, openMode: true, completion: { (channel, error) in
+        self.viewModel!.createChannel(name: name, openMode: mode, completion: { (channel, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.activity.startAnimating()

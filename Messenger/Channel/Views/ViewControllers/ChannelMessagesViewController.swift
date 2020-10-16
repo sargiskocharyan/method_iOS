@@ -67,7 +67,6 @@ class ChannelMessagesViewController: UIViewController {
             addConstraints()
             setupInputComponents()
         }
-        self.hideKeyboardWhenTappedAround()
         setLineOnHeaderView()
         headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         tableView.allowsMultipleSelection = false

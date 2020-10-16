@@ -303,28 +303,29 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVh-bh-Zrk">
-                                <rect key="frame" x="0.0" y="187.5" width="175" height="32.5"/>
+                                <rect key="frame" x="0.0" y="185.5" width="175" height="34.5"/>
                                 <state key="normal" title="Cancel"/>
                                 <connections>
                                     <action selector="cancelButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="d7M-mV-V7q"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvL-hj-mz7">
-                                <rect key="frame" x="175" y="187.5" width="175" height="32.5"/>
+                                <rect key="frame" x="175" y="185.5" width="175" height="34.5"/>
                                 <state key="normal" title="Create"/>
                                 <connections>
                                     <action selector="createButtonAction:" destination="Q5y-5v-bbH" eventType="touchUpInside" id="Ap4-S2-q8a"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="private" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NvS-Bu-drd">
-                                <rect key="frame" x="75" y="150" width="141" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="private" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NvS-Bu-drd">
+                                <rect key="frame" x="40" y="150" width="211" height="16"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pAh-UQ-QZh">
-                                <rect key="frame" x="226" y="145" width="51" height="28"/>
+                                <rect key="frame" x="261" y="144" width="51" height="28"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="49" id="K2g-Lf-e2A"/>
                                     <constraint firstAttribute="height" constant="28" id="n4t-bu-SZz"/>
                                 </constraints>
                                 <connections>
@@ -332,7 +333,7 @@
                                 </connections>
                             </switch>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eeg-cC-Fpv" customClass="CustomTextField" customModule="method" customModuleProvider="target">
-                                <rect key="frame" x="75" y="70" width="200" height="65"/>
+                                <rect key="frame" x="40" y="70" width="270" height="65"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="RdN-Vf-gHU"/>
@@ -352,8 +353,8 @@
                             <constraint firstItem="g7D-wf-kdZ" firstAttribute="top" secondItem="jxj-HT-Taz" secondAttribute="top" constant="15" id="Cne-Vd-CMn"/>
                             <constraint firstItem="pAh-UQ-QZh" firstAttribute="leading" secondItem="NvS-Bu-drd" secondAttribute="trailing" constant="10" id="HWN-O1-JYC"/>
                             <constraint firstItem="gVh-bh-Zrk" firstAttribute="top" secondItem="NvS-Bu-drd" secondAttribute="bottom" constant="19.5" id="VvO-XT-Pxe"/>
-                            <constraint firstItem="eeg-cC-Fpv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9H2-eb-tit" secondAttribute="leading" constant="5" id="arH-GR-bEF"/>
-                            <constraint firstItem="9H2-eb-tit" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="eeg-cC-Fpv" secondAttribute="trailing" constant="5" id="bxU-fq-9fL"/>
+                            <constraint firstItem="eeg-cC-Fpv" firstAttribute="leading" secondItem="9H2-eb-tit" secondAttribute="leading" constant="40" id="arH-GR-bEF"/>
+                            <constraint firstItem="9H2-eb-tit" firstAttribute="trailing" secondItem="eeg-cC-Fpv" secondAttribute="trailing" constant="40" id="cHo-F2-Q0C"/>
                             <constraint firstItem="eeg-cC-Fpv" firstAttribute="centerX" secondItem="9H2-eb-tit" secondAttribute="centerX" id="e8S-tc-3eO"/>
                             <constraint firstItem="pAh-UQ-QZh" firstAttribute="trailing" secondItem="eeg-cC-Fpv" secondAttribute="trailing" id="iOl-bP-nIm"/>
                             <constraint firstItem="F1y-GW-iyV" firstAttribute="centerX" secondItem="g7D-wf-kdZ" secondAttribute="centerX" id="mAe-dV-tT3"/>

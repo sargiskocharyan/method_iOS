@@ -285,6 +285,7 @@ class ChatViewController: UIViewController {
                     }
                 }
             }
+            
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
@@ -532,7 +533,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
