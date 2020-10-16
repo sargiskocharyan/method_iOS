@@ -475,8 +475,8 @@ class MainTabBarController: UITabBarController {
                 break
             case 2:
                 let channelNC = self.viewControllers![2] as! UINavigationController
-                if channelNC.viewControllers.count >= 5 {
-                    if let chatVC = channelNC.viewControllers[4] as? ChatViewController  {
+                if channelNC.viewControllers.count >= 6 {
+                    if let chatVC = channelNC.viewControllers[5] as? ChatViewController  {
                         chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
                     }
                 }

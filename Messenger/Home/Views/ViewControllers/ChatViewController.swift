@@ -83,7 +83,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-        if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
+        if (SocketTaskManager.shared.socket?.handlers.count)! < 12 {
             self.handleReadMessage()
             self.handleMessageTyping()
             self.handleReceiveMessage()
@@ -122,7 +122,6 @@ class ChatViewController: UIViewController {
             inputTextField.text = ""
             SocketTaskManager.shared.send(message: text!, id: id!)
             self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
-            
             self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
         }
     }
@@ -154,7 +153,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell?.readMessage.text != "seen".localized() {
+                                cell?.readMessage.text = "seen".localized()
+                            }
                         }
                     }
                 }
@@ -175,9 +177,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            self.tableView.beginUpdates()
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
-                            self.tableView.endUpdates()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
+                                cell?.readMessage.text = "delivered".localized()
+                            }
                         }
                     }
                 } else {
@@ -210,7 +213,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell?.readMessage.text != "seen".localized() {
+                                cell?.readMessage.text = "seen".localized()
+                            }
                         }
                     }
                 }
@@ -231,7 +237,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
+                           let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
+                                cell?.readMessage.text = "delivered".localized()
+                            }
                         }
                     }
                 }
@@ -274,7 +283,7 @@ class ChatViewController: UIViewController {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.allMessages?.array!.append(message)
-                if navigationController?.viewControllers.count == 2 {
+                if (navigationController?.viewControllers.count == 2) || (tabBarController?.selectedIndex == 2 && navigationController?.viewControllers.count == 6)  {
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
