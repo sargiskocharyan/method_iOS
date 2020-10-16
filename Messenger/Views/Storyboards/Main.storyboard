@@ -1655,7 +1655,9 @@
                         <outlet property="leaveLabel" destination="OZI-cV-n1c" id="k1h-kg-EqS"/>
                         <outlet property="leaveView" destination="2D4-D6-id7" id="ui0-gy-r1Z"/>
                         <outlet property="nameLabel" destination="NE0-Qi-Hax" id="ke2-Ub-m9X"/>
+                        <outlet property="rejectLabel" destination="yvf-vO-5Ra" id="YH5-ZX-Wgj"/>
                         <outlet property="rejectView" destination="6eN-4K-WJa" id="iEo-Lu-nTW"/>
+                        <outlet property="subscribersLabel" destination="7U2-Gt-Yrx" id="Occ-K1-1QL"/>
                         <outlet property="subscribersView" destination="8Xb-EM-BCB" id="0wS-uY-OLr"/>
                         <outlet property="urlLabel" destination="FCP-Ru-m26" id="ngt-TB-dlO"/>
                         <outlet property="urlTextLabel" destination="FpL-nL-w9g" id="WMN-Iv-z4A"/>

@@ -11,6 +11,8 @@ import UIKit
 class ModeratorInfoViewController: UIViewController {
 
     //MARK: IBOutlets
+    @IBOutlet weak var subscribersLabel: UILabel!
+    @IBOutlet weak var rejectLabel: UILabel!
     @IBOutlet weak var leaveView: UIView!
     @IBOutlet weak var leaveLabel: UILabel!
     @IBOutlet weak var rejectView: UIView!
@@ -46,6 +48,9 @@ class ModeratorInfoViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
+        subscribersLabel.text = "subscribers".localized()
+        rejectLabel.text = "reject".localized()
+        leaveLabel.text = "leave".localized()
     }
 
     //MARK: Helper methods

@@ -53,7 +53,7 @@ class CreateAccountAlertViewController: UIViewController {
     }
     
     @IBAction func createButtonAction(_ sender: Any) {
-        mainRouter?.channelListViewController?.createChannel(name: enterChannelNameView.textField.text!, mode: !channelMode!, completion: {
+        mainRouter?.channelListViewController?.createChannel(name: enterChannelNameView.textField.text!, mode: channelMode!, completion: {
             DispatchQueue.main.async {
                 self.parent?.dismiss(animated: true, completion: nil)
             }

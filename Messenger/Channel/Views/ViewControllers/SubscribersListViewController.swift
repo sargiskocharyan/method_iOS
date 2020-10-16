@@ -79,7 +79,8 @@ class SubscribersListViewController: UIViewController {
     }
     
     func showAlertWhenModeratorAdded(name: String) {
-        let alert = UIAlertController(title: nil, message: "\(name) Successfully added!", preferredStyle: .alert)
+        let text = "is_a_moderator_now".localized()
+        let alert = UIAlertController(title: nil, message: "\(name)\(text)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action) in
             self.navigationController?.popViewController(animated: true)
         }))
