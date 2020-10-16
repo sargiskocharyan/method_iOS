@@ -15,10 +15,6 @@ protocol SocketIODelegate: class {
     func receiveCandidate(remoteCandidate: RTCIceCandidate)
 }
 
-protocol Subscriber {
-    func didHandleConnectionEvent()
-}
-
 enum Status {
     case connected
     case connecting
@@ -32,7 +28,6 @@ class SocketTaskManager {
     static let shared = SocketTaskManager()
     weak var delegate: SocketIODelegate?
     private var lock: NSLock = NSLock()
-    private var subscribers: [Subscriber] = []
     private var status: SocketIOStatus = .notConnected
     let queue = DispatchQueue(label: "queue", qos: .default, attributes: [], autoreleaseFrequency: .inherit, target: nil)
     var socket: SocketIOClient? {
@@ -51,7 +46,6 @@ class SocketTaskManager {
     
     func connect(completionHandler: @escaping () -> ()) {
         if status == .disconnected || status == .notConnected {
-            print(SharedConfigs.shared.signedUser?.token as Any)
             manager = SocketManager(socketURL: URL(string: Environment.baseURL)!, config: [.log(false), .connectParams(["token": SharedConfigs.shared.signedUser?.token ?? ""]), .forceNew(true), .compress])
         }
         if status == .connected {
@@ -75,7 +69,6 @@ class SocketTaskManager {
             self.addAuthenticatedListener {
                 self.manager?.reconnects = true
                 self.changeSocketStatus(status: .connected)
-                print(self.socket!.handlers)
                 if self.socket!.handlers.count <= 2 {
                     self.tabbar?.handleCallAccepted()
                     self.tabbar?.handleCall()
@@ -92,6 +85,7 @@ class SocketTaskManager {
                     self.tabbar?.handleNewContactRequest()
                     self.tabbar?.handleContactRequestRejected()
                     self.tabbar?.handleContactRemoved()
+                    self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
                 }
                 for compleion in self.completions {
@@ -126,12 +120,10 @@ class SocketTaskManager {
     }
     
     func messageRead(chatId: String, messageId: String) {
-           socket?.emit("messageRead", chatId, messageId) {
-               print("message Read")
-           }
-       }
-    
-    
+        socket?.emit("messageRead", chatId, messageId) {
+            print("message Read")
+        }
+    }
     
     func messageTyping(chatId: String) {
         socket?.emit("messageTyping", chatId)
@@ -168,17 +160,16 @@ class SocketTaskManager {
             completionHandler(dataArray[0] as! String)
         }
     }
-
+    
     func checkCallState(roomname: String) {
         socket!.emitWithAck("checkCallState", roomname).timingOut(after: 0.0) { (dataArray) in
-//            completionHandler(dataArray[0] as! String)
-        if dataArray[0] as! String != CallStatus.ongoing.rawValue {
-            for call in AppDelegate.shared.callManager.calls {
-                AppDelegate.shared.callManager.end(call: call)
+            if dataArray[0] as! String != CallStatus.ongoing.rawValue {
+                for call in AppDelegate.shared.callManager.calls {
+                    AppDelegate.shared.callManager.end(call: call)
+                }
+                AppDelegate.shared.callManager.removeAllCalls()
             }
-            AppDelegate.shared.callManager.removeAllCalls()
         }
-     }
     }
     
     func callStarted(roomname: String) {
@@ -207,7 +198,7 @@ class SocketTaskManager {
             completionHandler(dataArray[0] as! String)
         }
     }
-  
+    
     func addOfferListener(completionHandler: @escaping (_ roomName: String, _ answer: Dictionary<String, String>) -> Void) {
         socket!.on("offer") { (dataArray, socketAck) in
             let dic = dataArray[1] as! Dictionary<String, String>
@@ -221,7 +212,7 @@ class SocketTaskManager {
             print("answered")
         }
     }
-
+    
     func addCallAcceptedLister(completionHandler: @escaping (_ accepted: Bool, _ roomName: String) -> Void) {
         socket!.on("callAccepted") { (dataArray, socketAck) in
             completionHandler(Bool(exactly: dataArray[0] as! NSNumber) ?? false, dataArray[1] as! String)
@@ -233,12 +224,12 @@ class SocketTaskManager {
     }
     
     func addAnswerListener(completionHandler: @escaping (_ answer: Dictionary<String, String>) -> Void) {
-            socket!.on("answer") { (dataArray, socketAck) in
-                let data = dataArray[0] as! Dictionary<String, String>
-                self.delegate?.receiveData(sdp: data["sdp"] ?? "")
-                completionHandler(data)
-            }
+        socket!.on("answer") { (dataArray, socketAck) in
+            let data = dataArray[0] as! Dictionary<String, String>
+            self.delegate?.receiveData(sdp: data["sdp"] ?? "")
+            completionHandler(data)
         }
+    }
     
     func addCandidatesListener(completionHandler: @escaping (_ answer: Dictionary<String, Any>) -> Void) {
         socket!.on("candidates") { (dataArray, socketAck) in
@@ -256,10 +247,10 @@ class SocketTaskManager {
     }
     
     func addNewContactListener(completionHandler: @escaping (_ userId: String) -> Void) {
-           socket?.on("newContact", callback: { (dataArray, socketAck) in
-               completionHandler(dataArray[0] as! String)
-           })
-       }
+        socket?.on("newContact", callback: { (dataArray, socketAck) in
+            completionHandler(dataArray[0] as! String)
+        })
+    }
     
     func addContactRequestRejectedListener(completionHandler: @escaping (_ userId: String) -> Void) {
         socket?.on("contactRequestRejected", callback: { (dataArray, socketAck) in
@@ -271,6 +262,19 @@ class SocketTaskManager {
         socket?.on("contactRemoved", callback: { (dataArray, socketAck) in
             completionHandler(dataArray[0] as! String)
         })
+    }
+    
+    
+    
+//    func sendChanMessage(message: String, channelId: String, completionHandler: @escaping (_ roomname: String) -> ()) {
+//        socket?.emitWithAck("call", message, channelId).timingOut(after: 0.0) { (dataArray) in
+//            completionHandler(dataArray[0] as! String)
+//        }
+//    }
+//
+    
+    func sendChanMessage(message: String, channelId: String) {
+         socket!.emit("sendChnMessage", message, channelId)
     }
     
     func send(message: String, id: String) {
@@ -285,15 +289,16 @@ class SocketTaskManager {
     
     func disconnect(completion: @escaping () -> ()) {
         socket?.disconnect()
+        print("disconnected!!!")
         manager?.reconnects = false
         changeSocketStatus(status: .disconnected)
     }
-        
+    
     func addCallEndListener(completionHandler: @escaping (_ roomName: String) -> Void) {
-           socket!.on("callEnded") { (dataArray, socketAck) -> Void in
-               completionHandler(dataArray[0] as! String)
-           }
-       }
+        socket!.on("callEnded") { (dataArray, socketAck) -> Void in
+            completionHandler(dataArray[0] as! String)
+        }
+    }
     
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
@@ -309,7 +314,7 @@ class SocketTaskManager {
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
                 let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-            completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
             if let text = data["text"] as? String {
@@ -322,11 +327,11 @@ class SocketTaskManager {
                             SharedConfigs.shared.unreadMessages.append(vc.chats[i])
                             self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
                             DispatchQueue.main.async {
-                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+                                let nc = self.tabbar!.viewControllers![3] as! UINavigationController
                                 let profile = nc.viewControllers[0] as! ProfileViewController
                                 profile.changeNotificationNumber()
                             }
-                            if let tabItems = self.tabbar?.tabBar.items {
+                            if let tabItems = self.tabbar?.tabBar.items  {
                                 let tabItem = tabItems[1]
                                 tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
                             }
@@ -335,6 +340,47 @@ class SocketTaskManager {
                     }
                 }
                 return
+            }
+        }
+    }
+//    func addSendChannelMessageListener()  {
+//        socket?.on("sendChnMessage", callback: { (dataArray, socketAck) in
+//            print(dataArray)
+//        })
+//    }
+    
+    func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
+        socket!.on("sendChnMessage") { (dataArray, socketAck) -> Void in
+            let data = dataArray[0] as! NSDictionary
+            let chatId = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
+//            if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
+//                self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
+//                    print("messageReceived")
+//                }
+//            }
+            if let text = data["text"] as? String {
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                
+//                for i in 0..<vc.chats.count {
+//                    if vc.chats[i].id == data["senderId"] as? String {
+//                        if !vc.chats[i].unreadMessageExists {
+//                            SharedConfigs.shared.unreadMessages.append(vc.chats[i])
+//                            self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+//                            DispatchQueue.main.async {
+//                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
+//                                let profile = nc.viewControllers[0] as! ProfileViewController
+//                                profile.changeNotificationNumber()
+//                            }
+//                            if let tabItems = self.tabbar?.tabBar.items  {
+//                                let tabItem = tabItems[1]
+//                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
+//                            }
+//                            break
+//                        }
+//                    }
+//                }
+//                return
             }
         }
     }

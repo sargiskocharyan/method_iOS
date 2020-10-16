@@ -78,7 +78,6 @@ class ContactsViewModel {
            } catch {
             self.contacts = []
                completion(nil)
-               print("Failed")
            }
        }
     
@@ -98,7 +97,6 @@ class ContactsViewModel {
               } catch {
                self.contacts = []
                   completion(nil)
-                  print("Failed")
               }
           }
     
@@ -124,11 +122,9 @@ class ContactsViewModel {
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
         let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
-        print(contacts.count)
         contacts = contacts.filter { (contact) -> Bool in
             return contact._id != id
         }
-        print(contacts.count)
         let mContacts = Contacts(contacts: contacts)
         cmsg.setValue(mContacts, forKeyPath: "contacts")
         do {

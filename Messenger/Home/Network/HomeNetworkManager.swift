@@ -18,6 +18,7 @@ class HomeNetworkManager: NetworkManager {
         router.request(.getUserContacts) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
+                
                 completion(nil, error)
             }
             if let response = response as? HTTPURLResponse {
@@ -41,7 +42,7 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
-    
+ 
     func findUsers(term: String, completion: @escaping (Users?, NetworkResponse?)->()) {
         router.request(.findUsers(term: term)) { data, response, error in
             if error != nil {
@@ -295,6 +296,39 @@ class HomeNetworkManager: NetworkManager {
         }.resume()
     }
     
+    func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
+        guard let image = tmpImage else { return }
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/channel/\(id)/avatar")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"avatar\"; filename=\"avatar.jpg\"\r\n")
+        body.appendString("Content-Type: image/jpg\r\n\r\n")
+        body.append(image.jpegData(compressionQuality: 1)!)
+        body.appendString("\r\n--\(boundary)--\r\n")
+        let session = URLSession.shared
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed, nil)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed, nil)
+            } else {
+                guard let responseData = data else {
+                    completion(NetworkResponse.noData, nil)
+                    return
+                }
+                completion(nil, String(data: responseData, encoding: .utf8))
+            }
+        }.resume()
+    }
+    
     func deleteAccount(completion: @escaping (NetworkResponse?)->()) {
            router.request(.deleteAccount) { data, response, error in
                if error != nil {
@@ -349,6 +383,42 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func deleteChannelLogo(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannelLogo(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannel(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     func deleteRequest(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.deleteRequest(id: id)) { data, response, error in
             if error != nil {
@@ -387,21 +457,21 @@ class HomeNetworkManager: NetworkManager {
     
     func readCalls(id: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
         router.request(.readCalls(id: id, readOne: readOne)) { data, response, error in
-                  if error != nil {
-                      print(error!.rawValue)
-                      completion(error)
-                  }
-                  if let response = response as? HTTPURLResponse {
-                      let result = self.handleNetworkResponse(response)
-                      switch result {
-                      case .success:
-                          completion(nil)
-                      case .failure( _):
-                          completion(NetworkResponse.failed)
-                      }
-                  }
-              }
-          }
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
     
     func editInformation(name: String?, lastname: String?, username: String?, info: String?, gender: String?, birthDate: String?, completion: @escaping (UserModel?, NetworkResponse?)->()) {
         router.request(.editInformation(name: name, lastname: lastname, username: username, info: info, gender: gender, birthDate: birthDate)) { data, response, error in
@@ -433,6 +503,108 @@ class HomeNetworkManager: NetworkManager {
     
     func removeContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.removeContact(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func createChannel(name: String, openMode: Bool, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        router.request(.createChannel(name: name, openMode: openMode)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func checkChannelName(name: String, completion: @escaping (CheckChannelName?, NetworkResponse?)->()) {
+        router.request(.checkChannelName(name: name)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(CheckChannelName.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func subscribe(id: String, completion: @escaping (SubscribedResponse?, NetworkResponse?)->()) {
+        router.request(.subscribe(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(SubscribedResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func leaveChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.leaveChannel(id: id)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(error)
@@ -681,7 +853,282 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func getChannelsInfo(ids: [String], completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
+        router.request(.getChannelInfo(ids: ids)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode([ChannelInfo].self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
     
+    func findChannels(term: String, completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
+        router.request(.findChannels(term: term)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode([ChannelInfo].self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func getChannelMessages(id: String, dateUntil: String?, completion: @escaping (ChannelMessages?, NetworkResponse?)->()) {
+        router.request(.getChannelMessages(id: id, dateUntil: dateUntil)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(ChannelMessages.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func addModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.addModerator(id: id, userId: userId)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func removeModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.removeModerator(id: id, userId: userId)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func changeAdmin(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.changeAdmin(id: id, userId: userId)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func rejectBeModerator(id: String, completion: @escaping (NetworkResponse?)->()) {
+           router.request(.rejectBeModerator(id: id)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       completion(nil)
+                   case .failure( _):
+                       completion(NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
+    func updateChannelInfo(id: String, name: String?, description: String?, completion: @escaping (Channel?, NetworkResponse?)->()) {
+        router.request(.updateChannelInfo(id: id, name: name, description: description)) { data, response, error in
+               if error != nil {
+                   print(error!.rawValue)
+                   completion(nil, error)
+               }
+               if let response = response as? HTTPURLResponse {
+                   let result = self.handleNetworkResponse(response)
+                   switch result {
+                   case .success:
+                       guard let responseData = data else {
+                           completion(nil, error)
+                           return
+                       }
+                       do {
+                           let responseObject = try JSONDecoder().decode(Channel.self, from: responseData)
+                           completion(responseObject, nil)
+                       } catch {
+                           print(error)
+                           completion(nil, NetworkResponse.unableToDecode)
+                       }
+                   case .failure( _):
+                       completion(nil, NetworkResponse.failed)
+                   }
+               }
+           }
+       }
+    
+     func getModerators(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?)->()) {
+         router.request(.getModerators(id: id)) { data, response, error in
+             if error != nil {
+                 print(error!.rawValue)
+                 
+                 completion(nil, error)
+             }
+             if let response = response as? HTTPURLResponse {
+                 let result = self.handleNetworkResponse(response)
+                 switch result {
+                 case .success:
+                     guard let responseData = data else {
+                         completion(nil, error)
+                         return
+                     }
+                     do {
+                         let responseObject = try JSONDecoder().decode([ChannelSubscriber].self, from: responseData)
+                         completion(responseObject, nil)
+                     } catch {
+                         print(error)
+                         completion(nil, NetworkResponse.unableToDecode)
+                     }
+                 case .failure(_):
+                     completion(nil, NetworkResponse.failed)
+                 }
+             }
+         }
+     }
+
+    func getSubscribers(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?)->()) {
+        router.request(.getSubcribers(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode([ChannelSubscriber].self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChannelMessages(id: String, ids: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannelMessages(id: id, ids: ids)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func blockSubscribers(id: String, subscribers: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.blockSubscribers(id: id, subscribers: subscribers)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
 }
 
 extension NSMutableData {

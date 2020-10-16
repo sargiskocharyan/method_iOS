@@ -83,7 +83,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-        if (SocketTaskManager.shared.socket?.handlers.count)! < 11 {
+        if (SocketTaskManager.shared.socket?.handlers.count)! < 12 {
             self.handleReadMessage()
             self.handleMessageTyping()
             self.handleReceiveMessage()
@@ -122,7 +122,6 @@ class ChatViewController: UIViewController {
             inputTextField.text = ""
             SocketTaskManager.shared.send(message: text!, id: id!)
             self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
-            
             self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
         }
     }
@@ -154,7 +153,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell?.readMessage.text != "seen".localized() {
+                                cell?.readMessage.text = "seen".localized()
+                            }
                         }
                     }
                 }
@@ -175,7 +177,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
+                                cell?.readMessage.text = "delivered".localized()
+                            }
                         }
                     }
                 } else {
@@ -208,7 +213,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "seen".localized()
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell?.readMessage.text != "seen".localized() {
+                                cell?.readMessage.text = "seen".localized()
+                            }
                         }
                     }
                 }
@@ -229,7 +237,10 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "delivered".localized()
+                           let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
+                                cell?.readMessage.text = "delivered".localized()
+                            }
                         }
                     }
                 }
@@ -272,7 +283,7 @@ class ChatViewController: UIViewController {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.allMessages?.array!.append(message)
-                if navigationController?.viewControllers.count == 2 {
+                if (navigationController?.viewControllers.count == 2) || (tabBarController?.selectedIndex == 2 && navigationController?.viewControllers.count == 6)  {
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
@@ -313,17 +324,18 @@ class ChatViewController: UIViewController {
     
     func addConstraints() {
         view.addSubview(messageInputContainerView)
+        messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
+        bottomConstraint = messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        bottomConstraint?.isActive = true
         messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+//        messageInputContainerView.addConstraint(bottomConstraint!)
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
-        messageInputContainerView.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        bottomConstraint = NSLayoutConstraint(item: messageInputContainerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
-        view.addConstraint(bottomConstraint!)
+//        view.addConstraint(bottomConstraint!)
     }
     
     private func setupInputComponents() {
@@ -332,26 +344,24 @@ class ChatViewController: UIViewController {
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
-        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 10).isActive = true
+        inputTextField.translatesAutoresizingMaskIntoConstraints = false
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 30).isActive = true
+        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
-        inputTextField.anchor(top: messageInputContainerView.topAnchor, paddingTop: 0, bottom: messageInputContainerView.bottomAnchor, paddingBottom: 0, left: messageInputContainerView.leftAnchor, paddingLeft: 5, right: view.rightAnchor, paddingRight: 30, width: 25, height: 48)
-        sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: 0).isActive = true
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        sendButton.rightAnchor.constraint(equalTo: messageInputContainerView.rightAnchor, constant: -10).isActive = true
         sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 14).isActive = true
+        sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 10).isActive = true
+        sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.isUserInteractionEnabled = true
-        sendButton.anchor(top: messageInputContainerView.topAnchor, paddingTop: 10, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: messageInputContainerView.rightAnchor, paddingRight: 0, width: 25, height:
-            25)
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
-        view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .trailing, relatedBy: .equal, toItem: messageInputContainerView, attribute: .trailing, multiplier: 1, constant: -10))
-        view.addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: messageInputContainerView, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
     func getImage() {
-        ImageCache.shared.getImage(url: avatar ?? "", id: id!) { (userImage) in
+        ImageCache.shared.getImage(url: avatar ?? "", id: id!, isChannel: false) { (userImage) in
             self.image = userImage
         }
     }
@@ -479,11 +489,19 @@ class ChatViewController: UIViewController {
                         UIView.setAnimationsEnabled(false)
                         self.tableView.insertRows(at: arrayOfIndexPaths, with: .none)
                         self.tableView.endUpdates()
-                        self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                           
                         UIView.setAnimationsEnabled(true)
                         self.tableView.contentOffset.y += initialOffset
                     } else {
-                        self.tableView.reloadData()
+                       
+                        DispatchQueue.main.async {
+                             self.tableView.reloadData()
+                            if arrayOfIndexPaths.count > 1 {
+                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
+                            }
+                        }
+                        
                     }
                     self.checkAndSendReadEvent()
                 }
@@ -554,11 +572,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.readMessage.text = "waiting".localized()
                     }
                 }
-//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                    if check == false {
-//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                    }
-//                }
                 return cell
             } else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
@@ -567,29 +580,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
                     cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
                     cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else {
                     cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 }
             } 
@@ -601,11 +599,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.userImageView.image = image
                 cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.sizeToFit()
-//                if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                    if check == false {
-//                        self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                    }
-//                }
                 return cell
             }  else if allMessages?.array![indexPath.row].type == "call" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
@@ -616,31 +609,16 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
                     cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 } else  {
                     cell.arrowImageView.tintColor = .red
                     cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-//                    if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//                        if check == false {
-//                            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//                        }
-//                    }
                     return cell
                 }
                 
@@ -651,9 +629,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
-//            if check == false {
                 self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
-//            }
         }
     }
 }

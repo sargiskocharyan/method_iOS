@@ -37,6 +37,24 @@ public enum HomeApi {
     case deleteRequest(id: String)
     case getRequests
     case getAdminMessage
+    case createChannel(name: String, openMode: Bool)
+    case getChannelInfo(ids: [String])
+    case getChannelMessages(id: String, dateUntil: String?)
+    case checkChannelName(name: String)
+    case subscribe(id: String)
+    case findChannels(term: String)
+    case leaveChannel(id: String)
+    case addModerator(id: String, userId: String)
+    case getModerators(id: String)
+    case getSubcribers(id: String)
+    case removeModerator(id: String, userId: String)
+    case updateChannelInfo(id: String, name: String?, description: String?)
+    case changeAdmin(id: String, userId: String)
+    case deleteChannelLogo(id: String)
+    case deleteChannel(id: String)
+    case rejectBeModerator(id: String)
+    case deleteChannelMessages(id: String, ids: [String])
+    case blockSubscribers(id: String, subscribers: [String])
 }
 
 extension HomeApi: EndPointType {
@@ -49,59 +67,95 @@ extension HomeApi: EndPointType {
     var path: String {
         switch self {
         case .getUserContacts:
-            return AUTHUrls.GetUserContacts
+            return HomeUrls.GetUserContacts
         case .findUsers(_):
-            return AUTHUrls.FindUsers
+            return HomeUrls.FindUsers
         case .addContact(_):
-            return AUTHUrls.AddContact
+            return HomeUrls.AddContact
         case .logout(_):
-            return AUTHUrls.Logout
+            return HomeUrls.Logout
         case .getChats:
-            return AUTHUrls.GetChats
+            return HomeUrls.GetChats
         case .getChatMessages(let id,_):
-            return  "\(AUTHUrls.GetChatMessages)\(id)"
+            return  "\(HomeUrls.GetChatMessages)\(id)"
         case .getUserById(let id):
-            return  "\(AUTHUrls.GetUserById)\(id)"
+            return  "\(HomeUrls.GetUserById)\(id)"
         case .getImage(let avatar):
-            return "\(AUTHUrls.GetImage)/\(avatar)"
+            return "\(HomeUrls.GetImage)/\(avatar)"
         case .deleteAccount:
-            return AUTHUrls.DeleteAccount
+            return HomeUrls.DeleteAccount
         case .deactivateAccount:
-            return AUTHUrls.DeactivateAccount
+            return HomeUrls.DeactivateAccount
         case .deleteAvatar:
-            return AUTHUrls.DeleteAvatar
+            return HomeUrls.DeleteAvatar
         case .editInformation(_, _, _, _, _, _):
             return AUTHUrls.UpdateUser
         case .removeContact(_):
-            return AUTHUrls.RemoveContact
+            return HomeUrls.RemoveContact
         case .onlineUsers(_):
-            return AUTHUrls.OnlineUsers
+            return HomeUrls.OnlineUsers
         case .hideData(_):
-            return AUTHUrls.HideData
+            return HomeUrls.HideData
         case .getCallHistory:
-            return AUTHUrls.GetCallHistory
+            return HomeUrls.GetCallHistory
         case .removeCall(_):
-            return AUTHUrls.RemoveCall
+            return HomeUrls.RemoveCall
         case .changeEmail(_):
-            return AUTHUrls.ChangeEmail
+            return HomeUrls.ChangeEmail
         case .verifyEmail(_,_):
-            return AUTHUrls.VerifyEmail
+            return HomeUrls.VerifyEmail
         case .changePhone(_):
-            return AUTHUrls.ChangePhone
+            return HomeUrls.ChangePhone
         case .verifyPhone(_,_):
-            return AUTHUrls.VerifyPhone
+            return HomeUrls.VerifyPhone
         case .registerDevice(_,_):
             return AUTHUrls.RegisterDevice
         case .readCalls(_,_):
-            return AUTHUrls.ReadCalls
+            return HomeUrls.ReadCalls
         case .confirmRequest(_, _):
-            return AUTHUrls.confirmRequest
+            return HomeUrls.confirmRequest
         case .deleteRequest(_):
-            return AUTHUrls.DeleteRequest
+            return HomeUrls.DeleteRequest
         case .getRequests:
-            return AUTHUrls.GetRequests
+            return HomeUrls.GetRequests
         case .getAdminMessage:
-            return AUTHUrls.GetAdminMessage
+            return HomeUrls.GetAdminMessage
+        case .createChannel(_,_):
+            return HomeUrls.CreateChannel
+        case .getChannelInfo(_):
+            return "\(HomeUrls.GetChannelInfo)"
+        case .getChannelMessages(let id, _):
+            return "\(HomeUrls.CreateChannel)/\(id)/messages"
+        case .checkChannelName(_):
+            return HomeUrls.CheckChannelName
+        case .subscribe(let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/subscribe"
+        case .findChannels(_):
+            return HomeUrls.FindChannels
+        case .leaveChannel(let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/leave"
+        case .addModerator(let id,_):
+            return "\(HomeUrls.CreateChannel)/\(id)/addModerator"
+        case .getModerators(id: let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/moderators"
+        case .getSubcribers(let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/subscribers"
+        case .removeModerator(id: let id, _):
+            return "\(HomeUrls.CreateChannel)/\(id)/removeModerator"
+        case .updateChannelInfo(id: let id, _, _):
+            return "\(HomeUrls.CreateChannel)/\(id)/update"
+        case .changeAdmin(id: let id,_) :
+            return "\(HomeUrls.CreateChannel)/\(id)/changeAdmin"
+        case .deleteChannelLogo(id: let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/avatar"
+        case .deleteChannel(id: let id):
+            return "\(HomeUrls.CreateChannel)/\(id)"
+        case .rejectBeModerator(id: let id):
+            return "\(HomeUrls.CreateChannel)/\(id)/moderator/me"
+        case .deleteChannelMessages(id: let id,_):
+            return "\(HomeUrls.CreateChannel)/\(id)/deleteMessages"
+        case .blockSubscribers(id: let id, _):
+            return "\(HomeUrls.CreateChannel)/\(id)/blockSubscribers"
         }
     }
     
@@ -161,7 +215,43 @@ extension HomeApi: EndPointType {
         case .getRequests:
             return .get
         case .getAdminMessage:
-        return .get
+            return .get
+        case .createChannel(_,_):
+            return .post
+        case .getChannelInfo(_):
+            return .post
+        case .getChannelMessages(_,_):
+            return .post
+        case .checkChannelName(_):
+            return .post
+        case .subscribe(_):
+            return .post
+        case .findChannels(_):
+            return .post
+        case .leaveChannel(_):
+            return .post
+        case .addModerator(_,_):
+            return .post
+        case .getModerators(_):
+            return .get
+        case .getSubcribers(_):
+            return .get
+        case .removeModerator(_,_):
+            return .post
+        case .updateChannelInfo(_,_,_):
+            return .post
+        case .changeAdmin(_,_):
+            return .post
+        case .deleteChannelLogo(_):
+            return .delete
+        case .deleteChannel(_):
+            return .delete
+        case .rejectBeModerator(_):
+            return .delete
+        case .deleteChannelMessages(_,_):
+            return .post
+        case .blockSubscribers(_,_):
+            return .post
         }
     }
     
@@ -230,7 +320,7 @@ extension HomeApi: EndPointType {
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .removeContact(id: let id):
-            let parameters:Parameters = ["userId": id ]
+            let parameters:Parameters = ["userId": id]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .onlineUsers(arrayOfId: let arrayOfId):
@@ -286,6 +376,76 @@ extension HomeApi: EndPointType {
         case .getAdminMessage:
             let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .createChannel(name: let name, openMode: let openMode):
+            let parameters:Parameters = ["name": name, "openMode": openMode]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getChannelInfo(ids: let ids):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            let parameters:Parameters = ["ids": ids]
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getChannelMessages(_, let dateUntil):
+            var parameters: Parameters? = ["dateUntil" : dateUntil]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            if dateUntil == nil {
+                parameters = nil
+            }
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .checkChannelName(name: let name):
+            let parameters:Parameters = ["name": name]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .subscribe(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .findChannels(term: let term):
+            let parameters: Parameters = ["term": term]
+            let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .leaveChannel(_):
+            let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .addModerator(_, userId: let userId):
+            let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getModerators(_):
+            let headers: HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .getSubcribers(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .removeModerator(_, userId: let userId):
+            let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .updateChannelInfo(_, name: let name, description: let description):
+            var parameters: Parameters = [:]
+            parameters["name"] = name
+            parameters["description"] = description
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .changeAdmin(_, userId: let userId):
+            let parameters: Parameters = ["userId": userId]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannelLogo(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannel(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .rejectBeModerator(_):
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannelMessages(_,ids: let arrayMessageIds):
+              let parameters: Parameters = ["arrayMessageIds": arrayMessageIds]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .blockSubscribers(_, subscribers: let subscribers):
+            let parameters: Parameters = ["subscribers": subscribers]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "channel.png",
+      "filename" : "channelIcon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "channel@2x.png",
+      "filename" : "channelIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "channel@3x.png",
+      "filename" : "channelIcon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -48,6 +48,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         UIApplication.shared.isIdleTimerDisabled = true
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
@@ -63,7 +64,9 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
             (localRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
             (remoteRenderer! as! RTCMTLVideoView).videoContentMode = .scaleAspectFill
-            ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            if cameraPosition == .front {
+                ourView.transform = CGAffineTransform(scaleX: -1, y: 1);
+            }
             #else
             localRenderer = RTCEAGLVideoView(frame: self.ourView?.frame ?? CGRect.zero)
             remoteRenderer = RTCEAGLVideoView(frame: self.view.frame)
@@ -78,11 +81,13 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             }
             self.embedView(remoteRenderer!, into: self.view)
             self.view.sendSubviewToBack(remoteRenderer!)
+            cameraSwitchButton.isEnabled = true
         } else {
             DispatchQueue.main.async {
                 self.cameraOffButton.setImage(UIImage(named: "cameraOn"), for: .normal)
             }
             isSpeakerOn = false
+            cameraSwitchButton.isEnabled = false
             speakerOnOffButton.setImage(UIImage(named: "speakerOff"), for: .normal)
             webRTCClient?.speakerOff()
             ourView.backgroundColor = .clear
@@ -124,7 +129,6 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
                     sender.setImage(UIImage(named: "cameraOff"), for: .normal)
                     self.cameraSwitchButton.isEnabled = true
                 }
-                
                 self.webRTCClient?.sendData("turn camera on".data(using: .utf8)!)
             }
         } else {
@@ -154,7 +158,10 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
             webRTCClient?.speakerOff()
         }
     }
+    
     func endCall() {
+        let tabbar = self.tabBarController as? MainTabBarController
+        tabbar?.timer?.invalidate()
         player?.stop()
         for call in callManager.calls {
             callManager.end(call: call)
@@ -210,24 +217,24 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         localRenderer!.tag = 11
         localRenderer?.backgroundColor = .clear
         ourView.backgroundColor = .clear
+      //  webRTCClient?.stopCaptureLocalVideo(renderer: localRenderer as! RTCVideoRenderer, completion: {})
         self.view.viewWithTag(11)?.removeFromSuperview()
         if cameraPosition == .front {
             webRTCClient?.sendData("turn camera to back".data(using: .utf8)!)
             cameraPosition = .back
+            self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
-                DispatchQueue.main.async {
-                    self.ourView.transform = CGAffineTransform(scaleX: 1, y: 1)
                     self.embedView(self.localRenderer!, into: self.ourView)
-                }
             })
         } else {
             webRTCClient?.sendData("turn camera to front".data(using: .utf8)!)
             cameraPosition = .front
+            self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
             self.webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {
-                DispatchQueue.main.async {
-                    self.ourView.transform = CGAffineTransform(scaleX: -1, y: 1)
+//                DispatchQueue.main.async {
+                    
                     self.embedView(self.localRenderer!, into: self.ourView)
-                }
+//                }
             })
         }
     }
@@ -274,13 +281,13 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         label.tag = 6
         label.text = callText
         label.textColor = UIColor(named: "color")
-        label.translatesAutoresizingMaskIntoConstraints = true
         view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        label.widthAnchor.constraint(equalToConstant: 200).isActive = true
         label.centerYAnchor.constraint(equalToSystemSpacingBelow: view.centerYAnchor, multiplier: 1).isActive = true
         label.centerXAnchor.constraint(equalToSystemSpacingAfter: view.centerXAnchor, multiplier: 1).isActive = true
         label.isUserInteractionEnabled = true
-        label.anchor(top: nil, paddingTop: 0, bottom: nil, paddingBottom: 0, left: nil, paddingLeft: 0, right: nil, paddingRight: 0, width: 0, height: 100)
     }
     
     func handleAnswer() {

@@ -14,6 +14,7 @@ class ContactTableViewCell: UITableViewCell {
     @IBOutlet weak var lastnameLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
@@ -30,7 +31,7 @@ class ContactTableViewCell: UITableViewCell {
     
     func configure(contact: User) {
         contactImageView.image = UIImage(named: "noPhoto")
-        ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!) { (image) in
+        ImageCache.shared.getImage(url: contact.avatarURL ?? "", id: contact._id!, isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.contactImageView.image = image
             }

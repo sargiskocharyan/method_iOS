@@ -37,7 +37,6 @@ class ChangeEmailViewController: UIViewController  {
     override func viewDidLoad() {
         super.viewDidLoad()
         emailCustomView.delagate = self
-        print(changingSubject as Any)
         disableUpdateInfoButton()
         isVerifedEmail = false
         isVerifiedPhone = false

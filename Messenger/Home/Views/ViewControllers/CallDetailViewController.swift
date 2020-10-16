@@ -36,7 +36,7 @@ class CallDetailViewController: UIViewController {
     var name: String?
     var avatarURL: String?
     var id: String?
-    var isReceiverWe: Bool?
+    var isHandledCall: Bool?
     var calls: [CallHistory] = []
     var callListViewController: CallListViewController?
     var tabBar: MainTabBarController?
@@ -82,7 +82,7 @@ class CallDetailViewController: UIViewController {
         nc = tabBar?.viewControllers?[0] as? UINavigationController
         callListViewController = nc?.viewControllers[0] as? CallListViewController
         getCalls()
-        ImageCache.shared.getImage(url: avatarURL ?? "", id: id!) { (image) in
+        ImageCache.shared.getImage(url: avatarURL ?? "", id: id!, isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -130,7 +130,7 @@ class CallDetailViewController: UIViewController {
     }
     
     func getCalls() {
-        if isReceiverWe! {
+        if isHandledCall! {
             for i in 0..<(callListViewController?.viewModel?.calls.count)! {
                 if callListViewController?.viewModel?.calls[i].caller == id && callListViewController?.viewModel?.calls[i].status == callMode?.rawValue && callListViewController?.viewModel?.calls[i].status == CallStatus.missed.rawValue {
                     calls.append((callListViewController?.viewModel?.calls[i])!)
@@ -144,7 +144,6 @@ class CallDetailViewController: UIViewController {
                 return (call.caller == SharedConfigs.shared.signedUser?.id && call.receiver == id)
             })
         }
-        print(calls)
         tableView.reloadData()
     }
     

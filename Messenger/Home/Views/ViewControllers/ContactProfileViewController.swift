@@ -280,7 +280,6 @@ class ContactProfileViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.addToContactButton.setImage(UIImage(systemName: "person.crop.circle.badge.xmark"), for: .normal)
                     }
-                    print("fsyo narmalny")
                 }
             }
         } else if isRequestSent! == .sent {
@@ -421,17 +420,8 @@ class ContactProfileViewController: UIViewController {
             infoLabel.textColor = UIColor(named: "color")
         }
         
-//        genderTextLabel.text = "gender:".localized()
-//        phoneTextLabel.text = "phone:".localized()
-//        emailTextLabel.text = "email:".localized()
-//        nameTextLabel.text = "name:".localized()
-//        lastnameTextLabel.text = "lastname:".localized()
-//        usernameTextLabel.text = "username:".localized()
-//        birthDateTextLabel.text = "birth_date:".localized()
-//        emailTextLabel.text = "email:".localized()
-//        infoTextLabel.text = "info".localized()
         if contact?.avatarURL != nil {
-            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!) { (image) in
+            ImageCache.shared.getImage(url: (contact?.avatarURL!)!, id: contact!._id!, isChannel: false) { (image) in
                 DispatchQueue.main.async {
                     self.userImageView.image = image
                 }

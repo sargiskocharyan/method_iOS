@@ -29,18 +29,18 @@ class CustomTextField: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        self.addSubview(self.textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         self.addConstraint(NSLayoutConstraint(item: textField, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0))
-               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
-               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 35))
-               self.addConstraint(NSLayoutConstraint(item: textField, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 10))
-               self.addSubview(self.textField)
+        self.addConstraint(NSLayoutConstraint(item: textField, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
+        self.addConstraint(NSLayoutConstraint(item: textField, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 35))
+        self.addConstraint(NSLayoutConstraint(item: textField, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 10))
+        self.addSubview(self.border)
         border.translatesAutoresizingMaskIntoConstraints = false
         self.addConstraint(NSLayoutConstraint(item: border, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0))
-               self.addConstraint(NSLayoutConstraint(item: border, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
-               self.addConstraint(NSLayoutConstraint(item: border, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 1))
-               self.addConstraint(NSLayoutConstraint(item: border, attribute: .top, relatedBy: .equal, toItem: textField, attribute: .bottom, multiplier: 1, constant: -7))
-               self.addSubview(self.border)
+        self.addConstraint(NSLayoutConstraint(item: border, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
+        self.addConstraint(NSLayoutConstraint(item: border, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 1))
+        self.addConstraint(NSLayoutConstraint(item: border, attribute: .top, relatedBy: .equal, toItem: textField, attribute: .bottom, multiplier: 1, constant: -7))
         DispatchQueue.main.async {
             self.configureViews()
             self.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)

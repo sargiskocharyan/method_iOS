@@ -49,18 +49,18 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     var otherContactsCount = 0
     static let callCellIdentifier = "callCell"
     var mainRouter: MainRouter?
-    var networkCheck = NetworkCheck.sharedInstance()
     var badge: Int?
     var sortedDictionary: [(CallHistory, Int)] = []
+    var activity = UIActivityIndicatorView(style: .medium)
+    let refreshControl = UIRefreshControl()
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    //    @IBOutlet weak var activity: UIActivityIndicatorView!
+//    @IBOutlet weak var activity: UIActivityIndicatorView!
     
     //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         DispatchQueue.main.async {
             if let tabItems = self.tabbar?.tabBar.items {
                 let tabItem = tabItems[0]
@@ -89,28 +89,22 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 }
             })
         }
-        
     }
+    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tabbar = tabBarController as? MainTabBarController
-        //    MainTabBarController.center.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-        
-        let vc = tabbar!.viewControllers![2] as! UINavigationController
+        let vc = tabbar!.viewControllers![3] as! UINavigationController
         let profileVC = vc.viewControllers[0] as! ProfileViewController
         profileVC.delegate = self
-        //        if networkCheck.currentStatus == .satisfied {
-        getCallHistory {
-            
-        }
-        //            }
-        //        } else {
-        //            getCallHistoryFromDB()
-        //        }
-        networkCheck.addObserver(observer: self)
+        tableView.tableFooterView = UIView()
+        addResfreshControl()
+        setActivity()
+        getCallHistory {}
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
     
@@ -119,16 +113,20 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         mainRouter?.showContactsViewFromCallList()
     }
     
-    func getHistory() {
-        //        activity.startAnimating()
-        viewModel!.getHistory { (calls) in
-            //            self.activity.stopAnimating()
-            self.viewModel!.calls = calls
-            if self.viewModel!.calls.count == 0 {
-                self.addNoCallView()
-            }
+    @objc func refreshCallHistory() {
+        getCallHistory {
+            self.refreshControl.endRefreshing()
         }
     }
+    
+    func addResfreshControl() {
+           if #available(iOS 10.0, *) {
+               tableView.refreshControl = refreshControl
+           } else {
+               tableView.addSubview(refreshControl)
+           }
+           refreshControl.addTarget(self, action: #selector(refreshCallHistory), for: .valueChanged)
+       }
     
     func stringToDate(date:String) -> Date? {
         let formatter = DateFormatter()
@@ -139,6 +137,16 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         } else {
             return parsedDate
         }
+    }
+    
+    func setActivity() {
+        self.view.addSubview(self.activity)
+        self.activity.tag = 200
+        self.activity.translatesAutoresizingMaskIntoConstraints = false
+        self.activity.topAnchor.constraint(equalTo: self.tableView.topAnchor, constant: 0).isActive = true
+        self.activity.rightAnchor.constraint(equalTo: self.tableView.rightAnchor, constant: 0).isActive = true
+        self.activity.widthAnchor.constraint(equalTo: self.tableView.widthAnchor, multiplier: 1).isActive = true
+        self.activity.heightAnchor.constraint(equalTo: self.tableView.heightAnchor, multiplier: 1).isActive = true
     }
     
     func sort() {
@@ -175,7 +183,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 }
             }
         }
-        print(removedCalls)
       }
     
     func addNoCallView() {
@@ -185,25 +192,24 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         label.textAlignment = .center
         label.textColor = .lightGray
         self.tableView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        
-        label.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 48)
     }
     
     func handleCall(id: String) {
         self.id = id
-        //        if viewModel!.calls.count >= 15 {
-        //            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-        //        }
         DispatchQueue.main.async {
             self.view.viewWithTag(20)?.removeFromSuperview()   
         }
     }
     
     func getCallHistory(completion: @escaping (()->())) {
+        DispatchQueue.main.async {
+            self.activity.startAnimating()
+        }
         self.tabbar?.viewModel?.getCallHistory(completion: { (calls, error) in
             if error != nil {
                 DispatchQueue.main.async {
@@ -211,14 +217,15 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 }
             } else if calls != nil {
                 DispatchQueue.main.async {
+                    self.view.viewWithTag(200)?.removeFromSuperview()
                     self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
-                        if calls != nil {
+                        if calls != nil || calls?.count == 0 {
                             self.viewModel!.calls = calls!
                             self.sort()
                             self.groupCalls()
                             self.tableView.reloadData()
-                            completion()
                         }
+                         completion()
                     })
                 }
             }
@@ -352,7 +359,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         viewModel!.getuserById(id: cell.calleId!) { (user, error) in
             DispatchQueue.main.async {
                 if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil, channels: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
                 } else if user != nil {
                     var newArray = self.tabbar?.contactsViewModel?.otherContacts
                     newArray?.append(user!)
@@ -466,12 +473,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
                 self.delegate?.handleClickOnSamePerson()
             }
         }
-    }
-}
-
-extension CallListViewController: NetworkCheckObserver {
-    func statusDidChange(status: NWPath.Status) {
-        print("status did change \(status)")
     }
 }
 

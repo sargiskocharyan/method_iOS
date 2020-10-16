@@ -29,7 +29,7 @@ class RecentMessagesViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        let nc = (self.tabBarController?.viewControllers?[2]) as? UINavigationController
+        let nc = (self.tabBarController?.viewControllers?[3]) as? UINavigationController
         let vc = nc?.viewControllers[0] as! ProfileViewController
         vc.delegate = self
         vc.profileDelegate = self
@@ -211,7 +211,7 @@ class RecentMessagesViewController: UIViewController {
                 }
                 DispatchQueue.main.async {
                     let tabbar = self.tabBarController as? MainTabBarController
-                    let nc = tabbar!.viewControllers![2] as! UINavigationController
+                    let nc = tabbar!.viewControllers![3] as! UINavigationController
                     let profile = nc.viewControllers[0] as! ProfileViewController
                     profile.changeNotificationNumber()
                     if let tabItems = tabbar?.tabBar.items {

@@ -31,7 +31,6 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
                 } else {
                     completion(data, response, nil)
                 }
-                
             })
         } catch {
             completion(nil, nil, NetworkResponse.badRequest)

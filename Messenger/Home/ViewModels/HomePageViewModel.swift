@@ -50,7 +50,6 @@ class HomePageViewModel {
         do {
             try managedContext.save()
             completion(mContacts.contacts, nil)
-            print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
             
         } catch let error as NSError {
             completion(nil, NetworkResponse.noData)
@@ -67,9 +66,7 @@ class HomePageViewModel {
            cmsg.setValue(mOtherContacts, forKeyPath: "otherContacts")
            do {
                try managedContext.save()
-               completion(mOtherContacts.contacts, nil)
-               print("DATA SAVED!!!!!!!!!!!!!!!!!!!!!")
-               
+               completion(mOtherContacts.contacts, nil)               
            } catch let error as NSError {
                completion(nil, NetworkResponse.noData)
                print("Could not save. \(error), \(error.userInfo)")

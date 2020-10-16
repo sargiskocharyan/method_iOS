@@ -20,9 +20,6 @@ protocol WebRTCDelegate {
 }
 
 final class WebRTCClient: NSObject {
-    
-    // The `RTCPeerConnectionFactory` is in charge of creating new RTCPeerConnection instances.
-    // A new RTCPeerConnection should be created every new call, but the factory is shared.
      static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
         let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
@@ -40,7 +37,6 @@ final class WebRTCClient: NSObject {
     var localVideoTrack: RTCVideoTrack?
     var remoteVideoTrack: RTCVideoTrack?
     private var localDataChannel: RTCDataChannel?
-    //    private var remoteDataChannel: RTCDataChannel?
     private var audioTrackGlobal: RTCAudioTrack?
     var webRTCCDelegate: WebRTCDelegate?
     var stream: RTCMediaStream?
@@ -120,7 +116,6 @@ final class WebRTCClient: NSObject {
     }
     
     // MARK: Media
-    
     func addRenderer(renderer: RTCVideoRenderer) {
         localVideoTrack?.add(renderer)
     }
@@ -129,19 +124,22 @@ final class WebRTCClient: NSObject {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
             return
         }
+        localVideoTrack?.isEnabled = true
         if cameraPosition == .back {
-                capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
-                    completion()
-                    return
-            }
-            
-        } else if cameraPosition == .front {
-                capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
+            capturer.startCapture(with: self.backCamera!, format: self.backFormat!, fps: Int(self.backFps!.maxFrameRate)) { (error) in
+                DispatchQueue.main.async {
                     completion()
                     return
                 }
+            }
+        } else if cameraPosition == .front {
+            capturer.startCapture(with: self.frontCamera!, format: self.frontFormat!, fps: Int(self.frontFps!.maxFrameRate)) { (error) in
+                DispatchQueue.main.async {
+                    completion()
+                    return
+                }
+            }
         }
-        
     }
     
     func stopCaptureLocalVideo(renderer: RTCVideoRenderer, completion: @escaping () -> ()) {
@@ -150,18 +148,11 @@ final class WebRTCClient: NSObject {
                }
         localVideoTrack?.isEnabled = false
         capturer.stopCapture {
-//            self.localVideoTrack?.remove(renderer)
-//            self.stream?.removeVideoTrack(self.localVideoTrack!)
-//            self.peerConnection?.remove(self.stream!)
-//            self.localVideoTrack = nil
-//            self.videoCapturer = nil
             completion()
             return
         }
     }
 
-    
-    
     func renderRemoteVideo(to renderer: RTCVideoRenderer) {
         self.remoteVideoTrack?.add(renderer)
         webRTCCDelegate?.removeView()
@@ -245,7 +236,6 @@ final class WebRTCClient: NSObject {
     
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
-//        print("\n\nsendData \(self.localDataChannel)")
         self.localDataChannel!.sendData(buffer)
     }
 }

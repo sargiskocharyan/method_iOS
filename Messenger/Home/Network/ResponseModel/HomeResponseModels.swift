@@ -30,6 +30,7 @@ struct Messages: Codable {
     var statuses: [MessageStatus]?
 }
 
+
 struct AdminMessage: Codable {
     var _id: String
     var body: String
@@ -44,6 +45,61 @@ struct Request: Codable {
     var receiver: String
     var createdAt: String
     var updatedAt: String
+}
+
+struct Channel: Codable {
+    var _id: String
+    var name: String
+    var creator: String?
+    var admin: String?
+    var subscribers: [Subscriber]?
+    var avatarURL: String?
+    var createdAt: String
+    var subscribersCount: Int?
+    var statuses: [ChannelStatus]?
+    var description: String?
+    var publicUrl: String?
+    var openMode: Bool?
+}
+
+struct ChannelInfo: Codable, Equatable {
+    static func == (lhs: ChannelInfo, rhs: ChannelInfo) -> Bool {
+        return lhs.channel?._id == rhs.channel?._id
+    }
+    var channel: Channel?
+    var role: Int?
+}
+
+struct ChannelSubscriber: Codable {
+    var _id: String?
+    var user: User?
+}
+
+struct ChannelMessages: Codable {
+    var array: [Message]?
+    var statuses: [ChannelStatus]?
+}
+
+struct ChannelStatus: Codable {
+    var userId: String?
+    var receivedMessageDate: String?
+    var readMessageDate: String?
+}
+
+struct CheckChannelName: Codable {
+    var channelNameExists: Bool?
+}
+
+struct SubscribedResponse: Codable {
+    var subscribed: Bool?
+}
+
+struct Admin: Codable {
+    var admin: String
+}
+
+struct Subscriber: Codable {
+    var user: String
 }
 
 struct Message: Codable {

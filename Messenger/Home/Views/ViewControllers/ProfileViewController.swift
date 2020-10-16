@@ -98,7 +98,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setImage() {
-        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
+        ImageCache.shared.getImage(url: SharedConfigs.shared.signedUser?.avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
                 self.userImageView.image = image
             }
@@ -162,26 +162,26 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let cameraView = UIView()
         view.addSubview(cameraView)
         userImageView.backgroundColor = .clear
+        cameraView.translatesAutoresizingMaskIntoConstraints = false
         cameraView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
         cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
         cameraView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
         cameraView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         cameraView.isUserInteractionEnabled = true
-        cameraView.anchor(top: nil, paddingTop: 20, bottom: userImageView.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: userImageView.rightAnchor, paddingRight: 0, width: 30, height: 30)
         cameraView.contentMode = . scaleAspectFill
         cameraView.layer.cornerRadius = 15
         cameraView.clipsToBounds = true
         let cameraImageView = UIImageView()
         cameraImageView.image = UIImage(named: "camera")
         cameraView.addSubview(cameraImageView)
+        cameraImageView.translatesAutoresizingMaskIntoConstraints = false
         cameraImageView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
-        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: 5).isActive = true
-        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: 5).isActive = true
+        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: -5).isActive = true
+        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: -5).isActive = true
         cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: 5).isActive = true
         cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
         cameraImageView.isUserInteractionEnabled = true
-        cameraImageView.anchor(top: cameraView.topAnchor, paddingTop: 5, bottom: cameraView.bottomAnchor, paddingBottom: 5, left: cameraView.leftAnchor, paddingLeft: 5, right: cameraView.rightAnchor, paddingRight: 5, width: 30, height: 30)
         let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
         cameraImageView.addGestureRecognizer(tapCamera)
         userImageView.contentMode = . scaleAspectFill
@@ -245,23 +245,23 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let imageView = UIImageView(image: userImageView.image)
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 20).isActive = true
-        closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: 20).isActive = true
+        closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: -10).isActive = true
         closeButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
-        closeButton.anchor(top: imageView.topAnchor, paddingTop: 20, bottom: nil, paddingBottom: 15, left: nil, paddingLeft: 0, right: imageView.rightAnchor, paddingRight: 10, width: 25, height: 25)
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
         imageView.backgroundColor = UIColor(named: "imputColor")
         
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
-        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40).isActive = true
-        deleteImageButton.leftAnchor.constraint(equalTo: imageView.leftAnchor, constant: self.view.frame.width / 2 - 15).isActive = true
+        deleteImageButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -40).isActive = true
+        deleteImageButton.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
         deleteImageButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         deleteImageButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         deleteImageButton.isUserInteractionEnabled = true
-        deleteImageButton.anchor(top: nil, paddingTop: 0, bottom: imageView.bottomAnchor, paddingBottom: 40, left: imageView.leftAnchor, paddingLeft: self.view.frame.width / 2 - 15, right: nil, paddingRight: 0, width: 30, height: 30)
         deleteImageButton.setImage(UIImage(named: "trash"), for: .normal)
         deleteImageButton.addTarget(self, action: #selector(deleteAvatar), for: .touchUpInside)
         
@@ -271,12 +271,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageView.tag = 3
         closeButton.addTarget(self, action: #selector(dismissFullscreenImage), for: .touchUpInside)
         self.view.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
         imageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         imageView.isUserInteractionEnabled = true
-        imageView.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 25, height: 25)
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
     }
@@ -319,7 +319,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.activityIndicator.stopAnimating()
                 }
             } else {
-                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "") { (image) in
+                ImageCache.shared.getImage(url: avatarURL ?? "", id: SharedConfigs.shared.signedUser?.id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
                         self.activityIndicator.stopAnimating()
