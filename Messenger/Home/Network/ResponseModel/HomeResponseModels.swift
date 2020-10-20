@@ -69,7 +69,7 @@ struct ChannelInfo: Codable, Equatable {
     var channel: Channel?
     var role: Int?
 }
-
+ 
 struct ChannelSubscriber: Codable {
     var _id: String?
     var user: User?
@@ -99,7 +99,10 @@ struct Admin: Codable {
 }
 
 struct Subscriber: Codable {
-    var user: String
+    var _id: String?
+    var user: String?
+    var avatarURL: String?
+    var name: String?
 }
 
 struct Message: Codable {

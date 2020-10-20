@@ -437,6 +437,24 @@ class HomeNetworkManager: NetworkManager {
         }
     }
     
+    func editChannelMessageBySender(id: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.editChannelMessageBySender(id: id, text: text)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
     func deleteRequest(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.deleteRequest(id: id)) { data, response, error in
             if error != nil {

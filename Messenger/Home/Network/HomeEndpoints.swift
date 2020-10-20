@@ -56,6 +56,7 @@ public enum HomeApi {
     case deleteChannelMessages(id: String, ids: [String])
     case blockSubscribers(id: String, subscribers: [String])
     case deleteChannelMessageBySender(ids: [String])
+    case editChannelMessageBySender(id: String, text: String)
 }
 
 extension HomeApi: EndPointType {
@@ -159,6 +160,8 @@ extension HomeApi: EndPointType {
             return "\(HomeUrls.CreateChannel)/\(id)/blockSubscribers"
         case .deleteChannelMessageBySender(_):
             return HomeUrls.DeleteChannelMessageBySender
+        case .editChannelMessageBySender(_,_):
+            return HomeUrls.EditChannelMessageBySender
         }
     }
     
@@ -256,6 +259,8 @@ extension HomeApi: EndPointType {
         case .blockSubscribers(_,_):
             return .post
         case .deleteChannelMessageBySender(_):
+            return .post
+        case .editChannelMessageBySender(_,_):
             return .post
         }
     }
@@ -453,6 +458,10 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .deleteChannelMessageBySender(ids: let ids):
             let parameters:Parameters = ["arrayMessageIds": ids]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .editChannelMessageBySender(id: let id, text: let text):
+            let parameters:Parameters = ["messageId": id, "text": text]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
