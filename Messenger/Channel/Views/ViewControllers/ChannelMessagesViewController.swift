@@ -518,19 +518,6 @@ class ChannelMessagesViewController: UIViewController {
         })
     }
     
-//    func addGesturesOnTableViewCell(indexPath: IndexPath)  {
-//        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
-//         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
-//            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-//            tap.minimumPressDuration = 0.5
-//            cell?.contentView.addGestureRecognizer(tap)
-//         } else {
-//            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
-//            cell?.contentView.addGestureRecognizer(tap)
-//        }
-////        logoutView.addGestureRecognizer(tapLogOut)
-//    }
-    
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
         if gestureReconizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureReconizer.location(in: tableView)
