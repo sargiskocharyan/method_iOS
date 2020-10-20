@@ -113,12 +113,44 @@ class ChannelListViewController: UIViewController {
                     self.tableView.reloadData()
                 }
                 DispatchQueue.main.async {
+                    self.removeView()
                     self.mainRouter?.showChannelMessagesViewController(channelInfo: ChannelInfo(channel: channel, role: 0))
                     completion()
                 }
             }
         })
     }
+    
+ func setView(_ str: String) {
+        if channels.count == 0 {
+            DispatchQueue.main.async {
+                let noResultView = UIView(frame: self.view.frame)
+                self.tableView.addSubview(noResultView)
+                noResultView.tag = 26
+                noResultView.backgroundColor = UIColor(named: "imputColor")
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: 50))
+                noResultView.addSubview(label)
+                label.translatesAutoresizingMaskIntoConstraints = false
+                label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
+                label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+                label.center = self.view.center
+                label.text = str
+                label.textColor = .lightGray
+                label.textAlignment = .center
+                
+                
+            }
+        } else {
+            removeView()
+        }
+    }
+    
+    func removeView() {
+          DispatchQueue.main.async {
+              let resultView = self.view.viewWithTag(26)
+              resultView?.removeFromSuperview()
+          }
+      }
     
     @objc func addButtonTapped() {
         let vc = CreateAccountAlertViewController.instantiate(fromAppStoryboard: .channel)
@@ -138,13 +170,20 @@ class ChannelListViewController: UIViewController {
                 }
                 completion()
             } else if let channels = channels {
-                self.channels = channels
-                self.channelsInfo = channels
-                DispatchQueue.main.async {
-                    self.activity.stopAnimating()
-                    self.tableView.reloadData()
+                if channels.count != 0 {
+                    self.channels = channels
+                    self.channelsInfo = channels
+                    DispatchQueue.main.async {
+                        self.activity.stopAnimating()
+                        self.tableView.reloadData()
+                    }
+                    completion()
+                } else {
+                    DispatchQueue.main.async {
+                        self.setView("no_channels".localized())
+                        self.activity.stopAnimating()
+                    }
                 }
-                completion()
             }
         })
     }

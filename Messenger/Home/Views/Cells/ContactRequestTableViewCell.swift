@@ -81,8 +81,9 @@ class ContactRequestTableViewCell: UITableViewCell {
             nameLabel.text = user.username
         }
         ImageCache.shared.getImage(url: user.avatarURL ?? "", id: user._id!, isChannel: false) { (image) in
-            self.userImageView.image = image
+            DispatchQueue.main.async {
+                self.userImageView.image = image
+            }
         }
     }
-    
 }

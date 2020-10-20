@@ -175,8 +175,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                     removedCalls.append((viewModel?.calls[i]._id)!)
                   }
               }
-          }
-          else {
+          } else {
             for call in viewModel!.calls {
                 if call.caller == SharedConfigs.shared.signedUser?.id && call.receiver == id {
                     removedCalls.append(call._id!)
@@ -217,16 +216,22 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 }
             } else if calls != nil {
                 DispatchQueue.main.async {
-                    self.view.viewWithTag(200)?.removeFromSuperview()
-                    self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
-                        if calls != nil || calls?.count == 0 {
-                            self.viewModel!.calls = calls!
-                            self.sort()
-                            self.groupCalls()
-                            self.tableView.reloadData()
-                        }
-                         completion()
-                    })
+                    if calls?.count == 0 {
+                        self.addNoCallView()
+                        self.activity.stopAnimating()
+                        completion()
+                    } else {
+                        self.view.viewWithTag(200)?.removeFromSuperview()
+                        self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
+                            if calls != nil || calls?.count == 0 {
+                                self.viewModel!.calls = calls!
+                                self.sort()
+                                self.groupCalls()
+                                self.tableView.reloadData()
+                            }
+                            completion()
+                        })
+                    }
                 }
             }
         })

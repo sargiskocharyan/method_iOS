@@ -157,3 +157,5 @@
 "back"                                            = "Հետ";
 "no_moderator"                                    = "Չկան մոդերատորներ";
 "is_a_moderator_now"                              = "-ն այժմ մոդերատոր է";
+"are_you_sure_you_want_to_block_subscriber"       = "Վստա՞հ եք, որ ցանկանում եք արգելափակել բաժանորդին";
+"block"                                           = "Արգելափակել";

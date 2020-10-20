@@ -87,6 +87,7 @@ class SocketTaskManager {
                     self.tabbar?.handleContactRemoved()
                     self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
+                    self.addChannelSubscriberInfo()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -279,6 +280,12 @@ class SocketTaskManager {
     
     func send(message: String, id: String) {
         socket!.emit("sendMessage", message, id)
+    }
+    
+    func addChannelSubscriberInfo() {
+        socket!.on("channelSubscriberInfo") { (dataArray, socketAck) in
+            print(dataArray)
+        }
     }
     
     func addErrorListener() {

@@ -197,17 +197,29 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
         self.present(alert, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
-        let deleteButton = UITableViewRowAction(style: .default, title: "block".localized()) { (action, indexPath) in
-            self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
-            return
-        }
-        deleteButton.backgroundColor = UIColor.red
-        return [deleteButton]
-        } else {
-            return nil
-        }
-    }
+//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
+//        let deleteButton = UITableViewRowAction(style: .default, title: "block".localized()) { (action, indexPath) in
+//            self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
+//            return
+//        }
+//        deleteButton.backgroundColor = UIColor.red
+//        return [deleteButton]
+//        } else {
+//            return nil
+//        }
+//    }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
+            let contextItem = UIContextualAction(style: .destructive, title: "block".localized()) {  (action, view, boolValue) in
+                self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
+                return
+            }
+             let swipeActions = UISwipeActionsConfiguration(actions: [contextItem])
+            return swipeActions
+        }
+       
+        return nil
+    }
 }
