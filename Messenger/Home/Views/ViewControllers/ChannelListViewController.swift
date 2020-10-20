@@ -43,7 +43,7 @@ class ChannelListViewController: UIViewController {
         setActivity()
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Candies"
+        searchController.searchBar.placeholder = "search".localized()
         navigationItem.searchController = searchController
         definesPresentationContext = true
         activity.startAnimating()

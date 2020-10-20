@@ -157,6 +157,7 @@
 "are_you_sure"                                    = "Вы уверены?";
 "back"                                            = "Назад";
 "no_moderator"                                    = "Нет модераторов";
-"is_a_moderator_now"                              = "сейчас модератор";
+"is_a_moderator_now"                              = " сейчас модератор";
 "are_you_sure_you_want_to_block_subscriber"       = "Вы уверены, что хотите заблокировать подписчика";
 "block"                                           = "Заблокировать";
+"search"                                          = "Поиск";

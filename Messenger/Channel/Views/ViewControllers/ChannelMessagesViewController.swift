@@ -63,6 +63,7 @@ class ChannelMessagesViewController: UIViewController {
         
         setObservers()
         isPreview = true
+        check = true
         if channelInfo.channel?.openMode == true || channelInfo.channel?.creator == SharedConfigs.shared.signedUser?.id {
             addConstraints()
             setupInputComponents()
@@ -549,13 +550,13 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell!.checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-            cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell!.checkImage?.image = UIImage.init(systemName: "checkmark.circle")
         }
         return indexPath
     }
@@ -567,10 +568,10 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let image = UIImage.init(systemName: "checkmark.circle.fill")
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-            cell!.button!.setImage(image, for: .normal)
+            cell?.checkImageView?.image = image
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
-            cell!.button?.setImage(image, for: .normal)
+            cell!.checkImage.image = image
         }
         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
     }
@@ -587,12 +588,12 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
             cell.contentView.addGestureRecognizer(tap)
-            cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            cell.checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
-                cell.button?.isHidden = true
+                cell.checkImageView?.isHidden = true
             }
             return cell
         } else {
@@ -605,7 +606,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 cell.setCheckImage()
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
-                cell.button.isHidden = true
+                cell.checkImage.isHidden = true
             }
             return cell
         }

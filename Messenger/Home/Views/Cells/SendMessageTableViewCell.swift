@@ -10,16 +10,16 @@ import UIKit
 
 class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var readMessage: UILabel!
-    @IBOutlet weak var button: UIButton?
+    @IBOutlet weak var checkImageView: UIImageView?
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
+    @IBOutlet weak var leadingConstraintOfChaeckImage: NSLayoutConstraint?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
         isSelected = false
-        leadingConstraintOfButton?.constant = -10
-        button?.isHidden = false
+        leadingConstraintOfChaeckImage?.constant = -10
+        checkImageView?.isHidden = false
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -29,7 +29,7 @@ class SendMessageTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        button?.setImage(nil, for: .normal)
+        checkImageView?.image = nil
         
     }
     
@@ -43,19 +43,19 @@ class SendMessageTableViewCell: UITableViewCell {
     
     func setCheckButton(isPreview: Bool) {
         if isPreview {
-            leadingConstraintOfButton?.constant = -10
-            button?.isHidden = true
+            leadingConstraintOfChaeckImage?.constant = -10
+            checkImageView?.isHidden = true
         } else if !isPreview {
-            leadingConstraintOfButton?.constant = 10
-            button?.isHidden = false
+            leadingConstraintOfChaeckImage?.constant = 10
+            checkImageView?.isHidden = false
         }
     }
     
     func setCheckImage() {
         if isSelected  {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+            checkImageView?.image = UIImage.init(systemName: "checkmark.circle.fill")
         } else {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
         }
     }
 

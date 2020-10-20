@@ -346,7 +346,7 @@ class ChatViewController: UIViewController {
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
-        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 30).isActive = true
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -32).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
@@ -628,7 +628,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil  {
+        if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil && (self.allMessages?.array!.count)! > 1 {
                 self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
         }
     }

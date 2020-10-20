@@ -162,6 +162,7 @@
 "are_you_sure"                                    = "Are you sure?";
 "back"                                            = "Back";
 "no_moderator"                                    = "No moderators";
-"ia_a_moderator_now"                              = "is a moderator now";
+"is_a_moderator_now"                              = " is a moderator now";
 "are_you_sure_you_want_to_block_subscriber"       = "Are you sure want to block this subscriber";
 "block"                                           = "Block";
+"search"                                          = "Search";

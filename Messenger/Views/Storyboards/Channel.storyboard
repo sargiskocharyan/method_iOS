@@ -67,28 +67,20 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Pc-OF-3c0">
-                                                    <rect key="frame" x="35" y="14" width="30" height="30"/>
+                                                    <rect key="frame" x="50" y="14" width="30" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="39T-oP-HPS"/>
                                                         <constraint firstAttribute="width" constant="30" id="cu5-Q7-ruG"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labeljhgjhgjhgjhgbjhbhjbvhjvhjvh" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EVp-39-A5A" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="80" y="10" width="228.5" height="18"/>
+                                                    <rect key="frame" x="95" y="10" width="228.5" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qC6-ED-GPS">
-                                                    <rect key="frame" x="5" y="22.5" width="20" height="20"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="TOk-U0-PRI"/>
-                                                        <constraint firstAttribute="width" constant="20" id="j4T-3y-NJd"/>
-                                                    </constraints>
-                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
-                                                </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label djfhgdjg" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pv2-xm-kHt">
-                                                    <rect key="frame" x="80" y="49" width="86.5" height="16"/>
+                                                    <rect key="frame" x="95" y="49" width="86.5" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="16" id="Wzx-pI-xll"/>
                                                     </constraints>
@@ -96,26 +88,33 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tTA-nh-eJo">
+                                                    <rect key="frame" x="20" y="22.5" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="I6A-V1-DGO"/>
+                                                        <constraint firstAttribute="width" constant="20" id="nhl-xS-Egy"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="top" secondItem="1Mk-Cj-xT3" secondAttribute="top" constant="10" id="0JY-Kf-BeY"/>
-                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="5" id="FwU-Es-Ela"/>
+                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="tTA-nh-eJo" secondAttribute="trailing" constant="10" id="1qZ-ec-0Pp"/>
+                                                <constraint firstItem="tTA-nh-eJo" firstAttribute="leading" secondItem="1Mk-Cj-xT3" secondAttribute="leading" constant="20" id="EN0-Rv-Fu5"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="EVp-39-A5A" secondAttribute="trailing" constant="20" id="LjF-Ds-KFS"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="width" relation="lessThanOrEqual" secondItem="1Mk-Cj-xT3" secondAttribute="width" multiplier="0.61" id="TRW-VH-rbU"/>
                                                 <constraint firstAttribute="bottom" secondItem="Pv2-xm-kHt" secondAttribute="bottom" id="bw0-F7-KDS"/>
+                                                <constraint firstItem="tTA-nh-eJo" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="ctr-LW-Ibm"/>
                                                 <constraint firstItem="Pv2-xm-kHt" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="h3x-Fa-J7G"/>
-                                                <constraint firstItem="1Pc-OF-3c0" firstAttribute="leading" secondItem="qC6-ED-GPS" secondAttribute="trailing" constant="10" id="iw7-aO-ShI"/>
                                                 <constraint firstItem="Pv2-xm-kHt" firstAttribute="top" secondItem="1Pc-OF-3c0" secondAttribute="bottom" constant="5" id="lkl-VE-AI0"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Pv2-xm-kHt" secondAttribute="top" id="pki-mi-KEl"/>
-                                                <constraint firstItem="qC6-ED-GPS" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="rSa-lA-CRQ"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="zVg-FN-b90"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1500" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
-                                            <outlet property="button" destination="qC6-ED-GPS" id="DRR-Al-wwC"/>
-                                            <outlet property="leadingConstraintOfButton" destination="FwU-Es-Ela" id="8DL-on-x4Z"/>
-                                            <outlet property="leadingConstraintOfImageView" destination="iw7-aO-ShI" id="lS4-9z-jLp"/>
+                                            <outlet property="checkImage" destination="tTA-nh-eJo" id="sTM-5F-Aks"/>
+                                            <outlet property="leadingConstraintOfCheckImage" destination="EN0-Rv-Fu5" id="Lpx-RY-0cS"/>
+                                            <outlet property="leadingConstraintOfImageView" destination="1qZ-ec-0Pp" id="vOS-lO-sfi"/>
                                             <outlet property="messageLabel" destination="EVp-39-A5A" id="zfI-iE-uRm"/>
                                             <outlet property="nameLabel" destination="Pv2-xm-kHt" id="PUH-Ul-efF"/>
                                             <outlet property="userImageView" destination="1Pc-OF-3c0" id="964-PU-hDn"/>
@@ -143,31 +142,30 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEB-WS-ya8">
-                                                    <rect key="frame" x="7" y="21.5" width="20" height="20"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checkmark.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2mo-xs-1aA">
+                                                    <rect key="frame" x="20" y="22" width="20" height="19"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="bYw-dJ-9KH"/>
-                                                        <constraint firstAttribute="width" constant="20" id="pdB-7v-Jhl"/>
+                                                        <constraint firstAttribute="width" constant="20" id="kfA-96-Dch"/>
+                                                        <constraint firstAttribute="height" constant="20" id="uwO-4C-kaa"/>
                                                     </constraints>
-                                                    <state key="normal" image="checkmark.circle" catalog="system"/>
-                                                </button>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="top" secondItem="K7H-d2-FSR" secondAttribute="top" constant="10" id="5oX-N8-Xqa"/>
-                                                <constraint firstItem="Vx0-qt-hDk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" id="AKt-Hc-5IG"/>
+                                                <constraint firstItem="Vx0-qt-hDk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="60" id="AKt-Hc-5IG"/>
+                                                <constraint firstItem="2mo-xs-1aA" firstAttribute="centerY" secondItem="K7H-d2-FSR" secondAttribute="centerY" id="Apv-4g-etg"/>
                                                 <constraint firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" constant="20" id="IW5-0N-jVc"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" symbolic="YES" id="OQ7-ys-jRl"/>
-                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="centerY" secondItem="K7H-d2-FSR" secondAttribute="centerY" id="WKM-3W-nFb"/>
                                                 <constraint firstItem="Vx0-qt-hDk" firstAttribute="width" relation="lessThanOrEqual" secondItem="K7H-d2-FSR" secondAttribute="width" multiplier="0.61" id="h0u-wQ-J1q"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="top" secondItem="Vx0-qt-hDk" secondAttribute="bottom" constant="8" id="jk3-WI-RFe"/>
                                                 <constraint firstItem="WKF-UR-aWR" firstAttribute="trailing" secondItem="Vx0-qt-hDk" secondAttribute="trailing" id="mDd-tb-mbT"/>
-                                                <constraint firstItem="DEB-WS-ya8" firstAttribute="leading" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="7" id="xSJ-BS-5no"/>
+                                                <constraint firstItem="2mo-xs-1aA" firstAttribute="leading" secondItem="K7H-d2-FSR" secondAttribute="leading" constant="20" id="wai-3x-Y01"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
-                                            <outlet property="button" destination="DEB-WS-ya8" id="geM-W2-1RH"/>
-                                            <outlet property="leadingConstraintOfButton" destination="xSJ-BS-5no" id="tID-0c-j1o"/>
+                                            <outlet property="checkImageView" destination="2mo-xs-1aA" id="nch-yS-ddX"/>
+                                            <outlet property="leadingConstraintOfChaeckImage" destination="wai-3x-Y01" id="xjH-o3-OPS"/>
                                             <outlet property="messageLabel" destination="Vx0-qt-hDk" id="WBL-Mg-KRG"/>
                                             <outlet property="readMessage" destination="WKF-UR-aWR" id="CIU-Ma-B3i"/>
                                         </connections>
