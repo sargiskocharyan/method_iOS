@@ -52,7 +52,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     }
     
     func checkChanges() {
-        if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+        if self.mainRouter?.channelListViewController?.mode == .main {
             for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
                 if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
                     self.mainRouter!.channelListViewController!.channels[i] = self.channelInfo!

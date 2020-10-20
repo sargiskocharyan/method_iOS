@@ -14,7 +14,6 @@ class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()

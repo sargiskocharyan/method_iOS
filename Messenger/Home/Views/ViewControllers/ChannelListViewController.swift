@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum ChannelListMode {
+    case search
+    case main
+}
+
 class ChannelListViewController: UIViewController {
     
     //MARK: @IBOutlets
@@ -21,6 +26,7 @@ class ChannelListViewController: UIViewController {
     var foundChannels: [ChannelInfo] = []
     var channelsInfo: [ChannelInfo] = []
     var text = ""
+    var mode = ChannelListMode.main
     var activity = UIActivityIndicatorView(style: .medium)
     let refreshControl = UIRefreshControl()
     let searchController = UISearchController(searchResultsController: nil)
@@ -61,10 +67,14 @@ class ChannelListViewController: UIViewController {
     }
     
     @objc func refreshCallHistory() {
-        getChannels {
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
+        if self.mode == .main {
+            getChannels {
+                DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
+                }
             }
+        } else {
+            refreshControl.endRefreshing()
         }
     }
     
@@ -94,20 +104,20 @@ class ChannelListViewController: UIViewController {
                 completion()
             } else {
                 SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-                self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
-                if (self.channelsInfo.elementsEqual((self.channels))) == true {
+               
+                if self.mode == .main {
                     self.channels.append(ChannelInfo(channel: channel, role: 0))
                     self.channelsInfo = self.channels
-                } else {
-                    self.channels.append(ChannelInfo(channel: channel, role: 0))
-                    for i in 0..<self.foundChannels.count {
-                        if self.foundChannels[i].channel?._id == channel?._id {
-                            self.foundChannels[i].role = 2
-                            break
-                        }
-                    }
-                    self.channelsInfo = self.foundChannels
-                }
+                } //else {
+//                    self.channels.append(ChannelInfo(channel: channel, role: 0))
+//                    for i in 0..<self.foundChannels.count {
+//                        if self.foundChannels[i].channel?._id == channel?._id {
+//                            self.foundChannels[i].role = 2
+//                            break
+//                        }
+//                    }
+//                    self.channelsInfo = self.foundChannels
+                
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
@@ -197,6 +207,7 @@ class ChannelListViewController: UIViewController {
             } else if let foundchannels = channels {
                 DispatchQueue.main.async {
                     if self.searchController.searchBar.text!.count > 0 {
+                        self.mode = .search
                         self.foundChannels = foundchannels
                         self.channelsInfo = foundchannels
                         if self.channelsInfo.elementsEqual(self.foundChannels) {
@@ -240,6 +251,7 @@ extension ChannelListViewController: UISearchResultsUpdating {
         if searchController.searchBar.text!.count > 0 {
             findChannels(term: searchController.searchBar.text!)
         } else if searchController.searchBar.text!.count == 0 {
+            self.mode = .main
             channelsInfo = channels
             DispatchQueue.main.async {
                 self.tableView.reloadData()

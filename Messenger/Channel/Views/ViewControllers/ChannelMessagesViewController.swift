@@ -366,7 +366,7 @@ class ChannelMessagesViewController: UIViewController {
                 } else {
                     SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo.channel!._id)
                     self.channelInfo?.role = 2
-                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                    if self.mainRouter?.channelListViewController?.mode == .main {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
                         self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
                         DispatchQueue.main.async {
@@ -506,13 +506,13 @@ class ChannelMessagesViewController: UIViewController {
 //    }
     
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
-        if gestureReconizer.state == UIGestureRecognizer.State.ended {
-            //When lognpress is start or running
+        if gestureReconizer.state == UIGestureRecognizer.State.began {
             print("Cell tapp")
             let touchPoint = gestureReconizer.location(in: tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
                 let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-                print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                //print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                
                 inputTextField.text = cell!.messageLabel.text
             }
             
@@ -548,7 +548,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
-            })//checkmark.circle.fill
+            })
             cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
@@ -557,7 +557,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             })
             cell!.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
         }
-        print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
         return indexPath
     }
     
@@ -572,7 +571,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             cell!.button?.setImage(image, for: .normal)
-            
         }
         print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
     }
@@ -592,15 +590,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
-                //                if isPreview == true {
-                //                    cell.leadingConstraintOfButton!.constant = -10
-                //                    tableView.allowsMultipleSelection = false
-                //                    cell.button?.isHidden = true
-                //                } else if isPreview == false {
-                //                    cell.leadingConstraintOfButton!.constant = 10
-                //                    tableView.allowsMultipleSelection = true
-                //                    cell.button?.isHidden = false
-                //                }
                 cell.setCheckButton(isPreview: isPreview!)
             } else {
                 cell.button?.isHidden = true
@@ -610,7 +599,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
-            cell.nameLabel.text = "Vanine Ghazaryan"
+            cell.nameLabel.text = "Vanine123"
             cell.messageLabel.sizeToFit()
             if (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()

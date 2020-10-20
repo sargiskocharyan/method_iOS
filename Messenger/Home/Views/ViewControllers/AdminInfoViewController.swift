@@ -103,7 +103,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         return self.channelInfo?.channel?._id != channelId
                     })
                     SharedConfigs.shared.signedUser?.channels = filteredChannels
-                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                    if self.mainRouter?.channelListViewController?.mode == .main {
                         for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
                             if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
                                 self.mainRouter!.channelListViewController!.channels.remove(at: i)
@@ -161,7 +161,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         self.activityIndicator.stopAnimating()
                     }
                 }
-                if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                if self.mainRouter?.channelListViewController?.mode == .main {
                     for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
                         if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
                             self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
@@ -261,7 +261,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                     self.dismissFullscreenImage()
                     self.channelLogoImageView.image = UIImage(named: "groupPeople")
                 }
-                if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                if self.mainRouter?.channelListViewController?.mode == .main {
                     for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
                         if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
                             self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil

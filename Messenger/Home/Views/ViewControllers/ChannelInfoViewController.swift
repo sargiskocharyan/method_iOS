@@ -118,7 +118,7 @@ class ChannelInfoViewController: UIViewController {
                     self.channelInfo?.role = 2
                     SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
-                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
+                    if self.mainRouter?.channelListViewController?.mode == .main {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
                         self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
                         DispatchQueue.main.async {
