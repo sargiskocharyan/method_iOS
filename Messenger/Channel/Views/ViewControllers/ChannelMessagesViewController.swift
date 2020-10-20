@@ -365,7 +365,6 @@ class ChannelMessagesViewController: UIViewController {
     
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            print(self.channelInfo?.role)
             switch self.channelInfo?.role {
             case 0:
                 self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
@@ -381,7 +380,6 @@ class ChannelMessagesViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    //        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
     @IBAction func universalButtonAction(_ sender: Any) {
         if channelInfo?.role == 3 {
             viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
