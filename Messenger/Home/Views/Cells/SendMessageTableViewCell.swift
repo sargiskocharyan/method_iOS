@@ -13,6 +13,7 @@ class SendMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var checkImageView: UIImageView?
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfChaeckImage: NSLayoutConstraint?
+    var id: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()

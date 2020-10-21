@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		CD352E362488F71900747E32 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E372488F72F00747E32 /* ContactsViewModel.swift */; };
 		CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */; };
@@ -237,10 +238,9 @@
 		D0F66513251B177D0018D9B7 /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		D0F66514251B177D0018D9B7 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
 		D0F66515251B177D0018D9B7 /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
-		D0F66517251B177D0018D9B7 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
-		D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* CryptoSwift */; };
-		D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SocketIO */; };
-		D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* Lottie */; };
+		D0F66518251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */; };
+		D0F66519251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */; };
+		D0F6651A251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */; };
 		D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
 		D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
@@ -256,9 +256,9 @@
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
-		F1764361249CD60800492327 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SocketIO */; };
-		F1764364249CD61F00492327 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* Lottie */; };
-		F1764367249CD68B00492327 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* CryptoSwift */; };
+		F1764361249CD60800492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SwiftPackageProductDependency */; };
+		F1764364249CD61F00492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* SwiftPackageProductDependency */; };
+		F1764367249CD68B00492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* SwiftPackageProductDependency */; };
 		F1ACA84324E42C1E00EE8578 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA84224E42C1E00EE8578 /* NotificationService.swift */; };
 		F1ACA84724E42C1E00EE8578 /* methodNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1ACA85224E48A5900EE8578 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85124E48A5900EE8578 /* UserNotifications.framework */; };
@@ -327,9 +327,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		CD2C163C24FD325A0054114C /* methodNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationService.entitlements; sourceTree = "<group>"; };
 		CD352E352488F71900747E32 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		CD352E372488F72F00747E32 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
@@ -492,9 +492,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */,
-				F1764367249CD68B00492327 /* CryptoSwift in Frameworks */,
-				F1764361249CD60800492327 /* SocketIO in Frameworks */,
-				F1764364249CD61F00492327 /* Lottie in Frameworks */,
+				F1764367249CD68B00492327 /* BuildFile in Frameworks */,
+				F1764361249CD60800492327 /* BuildFile in Frameworks */,
+				F1764364249CD61F00492327 /* BuildFile in Frameworks */,
+				AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,10 +503,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0F66517251B177D0018D9B7 /* Pods_Messenger.framework in Frameworks */,
-				D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */,
-				D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */,
-				D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */,
+				D0F66518251B177D0018D9B7 /* BuildFile in Frameworks */,
+				D0F66519251B177D0018D9B7 /* BuildFile in Frameworks */,
+				D0F6651A251B177D0018D9B7 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,8 +531,8 @@
 		5750680802076C9E6BEC6CFD /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */,
-				BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */,
+				547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */,
+				8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1085,9 +1085,9 @@
 			);
 			name = Messenger;
 			packageProductDependencies = (
-				F1764360249CD60800492327 /* SocketIO */,
-				F1764363249CD61F00492327 /* Lottie */,
-				F1764366249CD68B00492327 /* CryptoSwift */,
+				F1764360249CD60800492327 /* SwiftPackageProductDependency */,
+				F1764363249CD61F00492327 /* SwiftPackageProductDependency */,
+				F1764366249CD68B00492327 /* SwiftPackageProductDependency */,
 			);
 			productName = Messenger;
 			productReference = CDBE8DED2476744C0049F971 /* method.app */;
@@ -1097,11 +1097,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0F6652B251B177D0018D9B7 /* Build configuration list for PBXNativeTarget "Messenger_dev" */;
 			buildPhases = (
-				D0F664B3251B177D0018D9B7 /* [CP] Check Pods Manifest.lock */,
 				D0F664B4251B177D0018D9B7 /* Sources */,
 				D0F66516251B177D0018D9B7 /* Frameworks */,
 				D0F6651B251B177D0018D9B7 /* Resources */,
-				D0F66527251B177D0018D9B7 /* [CP] Embed Pods Frameworks */,
 				D0F66528251B177D0018D9B7 /* Embed App Extensions */,
 			);
 			buildRules = (
@@ -1112,9 +1110,9 @@
 			);
 			name = Messenger_dev;
 			packageProductDependencies = (
-				D0F664AD251B177D0018D9B7 /* SocketIO */,
-				D0F664AF251B177D0018D9B7 /* Lottie */,
-				D0F664B1251B177D0018D9B7 /* CryptoSwift */,
+				D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */,
+				D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */,
+				D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */,
 			);
 			productName = Messenger;
 			productReference = D0F6652E251B177D0018D9B7 /* method_dev.app */;
@@ -1161,7 +1159,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1160;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Dynamic LLC";
 				TargetAttributes = {
 					CDBE8DEC2476744C0049F971 = {
@@ -1191,9 +1189,9 @@
 			);
 			mainGroup = CDBE8DE42476744C0049F971;
 			packageReferences = (
-				F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */,
-				F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				F176435F249CD60800492327 /* RemoteSwiftPackageReference */,
+				F1764362249CD61F00492327 /* RemoteSwiftPackageReference */,
+				F1764365249CD68B00492327 /* RemoteSwiftPackageReference */,
 			);
 			productRefGroup = CDBE8DEE2476744C0049F971 /* Products */;
 			projectDirPath = "";
@@ -1304,45 +1302,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D0F664B3251B177D0018D9B7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Messenger-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D0F66527251B177D0018D9B7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1677,6 +1636,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1739,6 +1699,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1770,7 +1731,7 @@
 		};
 		CDBE8E022476744D0049F971 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */;
+			baseConfigurationReference = 547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1796,7 +1757,7 @@
 		};
 		CDBE8E032476744D0049F971 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */;
+			baseConfigurationReference = 8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1821,7 +1782,6 @@
 		};
 		D0F6652C251B177D0018D9B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B10584C9CA48D5A62D6D61A /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1848,7 +1808,6 @@
 		};
 		D0F6652D251B177D0018D9B7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA1EF5C2EE18546CB5116C5C /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2007,7 +1966,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */ = {
+		D0F664AE251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
 			requirement = {
@@ -2015,7 +1974,7 @@
 				minimumVersion = 15.2.0;
 			};
 		};
-		D0F664B0251B177D0018D9B7 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		D0F664B0251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -2023,7 +1982,7 @@
 				minimumVersion = 3.1.8;
 			};
 		};
-		D0F664B2251B177D0018D9B7 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+		D0F664B2251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
 			requirement = {
@@ -2031,7 +1990,7 @@
 				minimumVersion = 1.3.1;
 			};
 		};
-		F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */ = {
+		F176435F249CD60800492327 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
 			requirement = {
@@ -2039,7 +1998,7 @@
 				minimumVersion = 15.2.0;
 			};
 		};
-		F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		F1764362249CD61F00492327 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -2047,7 +2006,7 @@
 				minimumVersion = 3.1.8;
 			};
 		};
-		F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+		F1764365249CD68B00492327 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
 			requirement = {
@@ -2058,34 +2017,34 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D0F664AD251B177D0018D9B7 /* SocketIO */ = {
+		D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */;
+			package = D0F664AE251B177D0018D9B7 /* RemoteSwiftPackageReference */;
 			productName = SocketIO;
 		};
-		D0F664AF251B177D0018D9B7 /* Lottie */ = {
+		D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664B0251B177D0018D9B7 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = D0F664B0251B177D0018D9B7 /* RemoteSwiftPackageReference */;
 			productName = Lottie;
 		};
-		D0F664B1251B177D0018D9B7 /* CryptoSwift */ = {
+		D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664B2251B177D0018D9B7 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			package = D0F664B2251B177D0018D9B7 /* RemoteSwiftPackageReference */;
 			productName = CryptoSwift;
 		};
-		F1764360249CD60800492327 /* SocketIO */ = {
+		F1764360249CD60800492327 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */;
+			package = F176435F249CD60800492327 /* RemoteSwiftPackageReference */;
 			productName = SocketIO;
 		};
-		F1764363249CD61F00492327 /* Lottie */ = {
+		F1764363249CD61F00492327 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = F1764362249CD61F00492327 /* RemoteSwiftPackageReference */;
 			productName = Lottie;
 		};
-		F1764366249CD68B00492327 /* CryptoSwift */ = {
+		F1764366249CD68B00492327 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			package = F1764365249CD68B00492327 /* RemoteSwiftPackageReference */;
 			productName = CryptoSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

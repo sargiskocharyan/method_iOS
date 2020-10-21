@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum MessageMode {
+    case edit
+    case main
+}
+
 class ChannelMessagesViewController: UIViewController {
     
     //MARK: @IBOutlets
@@ -26,9 +31,9 @@ class ChannelMessagesViewController: UIViewController {
     var check: Bool!
     var arrayOfSelectedMesssgae: [String] = []
     var bottomConstraint: NSLayoutConstraint?
-    var messageId: String?
     var indexPath: IndexPath?
     var isLoadedMessages = false
+    var mode: MessageMode!
     let deleteMessageButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(named: "imputColor")
@@ -60,7 +65,7 @@ class ChannelMessagesViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         self.getChannelMessages()
-        
+        mode = .main
         setObservers()
         isPreview = true
         check = true
@@ -222,12 +227,32 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @objc func sendMessage() {
-        if inputTextField.text != "" {
-            let text = inputTextField.text
-            inputTextField.text = ""
-            SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
-            removeView()
-            self.universalButton.isHidden = false
+        if mode == .edit {
+            mode = .main
+            if inputTextField.text != "" {
+                if let cell = tableView.cellForRow(at: indexPath!) as? SendMessageTableViewCell {
+                    self.viewModel?.editChannelMessageBySender(id: cell.id!, text: self.inputTextField.text!, completion: { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                cell.messageLabel.text = self.inputTextField.text
+                                self.inputTextField.text = ""
+                            }
+                        }
+                    })
+                }
+            }
+        } else {
+            if inputTextField.text != "" {
+                let text = inputTextField.text
+                inputTextField.text = ""
+                SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
+                removeView()
+                self.universalButton.isHidden = false
+            }
         }
     }
     
@@ -306,7 +331,6 @@ class ChannelMessagesViewController: UIViewController {
     
     @IBAction func nameOfChannelButtonAction(_ sender: Any) {
         DispatchQueue.main.async {
-            print(self.channelInfo?.role)
             switch self.channelInfo?.role {
             case 0:
                 self.mainRouter?.showAdminInfoViewController(channelInfo: self.channelInfo!)
@@ -322,7 +346,6 @@ class ChannelMessagesViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    //        viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
     @IBAction func universalButtonAction(_ sender: Any) {
         if channelInfo?.role == 3 {
             viewModel?.subscribeToChannel(id: channelInfo!.channel!._id, completion: { (subResponse, error) in
@@ -459,28 +482,38 @@ class ChannelMessagesViewController: UIViewController {
         })
     }
     
-//    func addGesturesOnTableViewCell(indexPath: IndexPath)  {
-//        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
-//         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
-//            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-//            tap.minimumPressDuration = 0.5
-//            cell?.contentView.addGestureRecognizer(tap)
-//         } else {
-//            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
-//            cell?.contentView.addGestureRecognizer(tap)
-//        }
-////        logoutView.addGestureRecognizer(tapLogOut)
-//    }
-    
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
         if gestureReconizer.state == UIGestureRecognizer.State.began {
-            print("Cell tapp")
             let touchPoint = gestureReconizer.location(in: tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
                 let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-                //print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
-                
-                inputTextField.text = cell!.messageLabel.text
+                print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+                    self.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.channelMessages.array?.remove(at: indexPath.row)
+                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                                if self.channelMessages.array?.count == 0 {
+                                    self.setView("there_is_no_publication_yet".localized())
+                                    self.universalButton.isHidden = true
+                                }
+                            }
+                        }
+                    })
+                }))
+                alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
+                    self.mode = .edit
+                    self.indexPath = indexPath
+                    self.inputTextField.text = cell?.messageLabel.text
+                }))
+                alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             }
             
         }
@@ -490,14 +523,8 @@ class ChannelMessagesViewController: UIViewController {
 //MARK: Extensions
 extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        if channelMessages != nil && channelMessages!.array != nil {
-        //            return channelMessages!.array!.count
-        //        } else {
-        //            return 0
-        //        }
         return channelMessages.array!.count
     }
-    
     
     //MARK: HeightForRowAt indexPath
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -507,7 +534,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
         return channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id ?  frame.height + 30 : frame.height + 30 + 20
     }
-    
     
     //MARK: WillDeselectRowAt indexPath
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -550,6 +576,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
           let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
+            cell.id = channelMessages.array![indexPath.row]._id
+            cell.readMessage.isHidden = true
             cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
@@ -566,7 +594,17 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
             cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
-            cell.nameLabel.text = "Vanine123"
+            for i in 0..<(channelInfo.channel?.subscribers?.count)! {
+                if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
+                    cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
+                    ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
+                        DispatchQueue.main.async {
+                            cell.userImageView.image = image
+                        }
+                    }
+                    break
+                }
+            }
             cell.messageLabel.sizeToFit()
             if (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
