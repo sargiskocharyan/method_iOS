@@ -57,6 +57,8 @@ public enum HomeApi {
     case blockSubscribers(id: String, subscribers: [String])
     case deleteChannelMessageBySender(ids: [String])
     case editChannelMessageBySender(id: String, text: String)
+    case editChatMessage(messageId: String, text: String)
+    case deleteChatMessages(arrayMessageIds: [String])
 }
 
 extension HomeApi: EndPointType {
@@ -146,7 +148,7 @@ extension HomeApi: EndPointType {
             return "\(HomeUrls.CreateChannel)/\(id)/removeModerator"
         case .updateChannelInfo(id: let id, _, _):
             return "\(HomeUrls.CreateChannel)/\(id)/update"
-        case .changeAdmin(id: let id,_) :
+        case .changeAdmin(id: let id,_):
             return "\(HomeUrls.CreateChannel)/\(id)/changeAdmin"
         case .deleteChannelLogo(id: let id):
             return "\(HomeUrls.CreateChannel)/\(id)/avatar"
@@ -162,6 +164,10 @@ extension HomeApi: EndPointType {
             return HomeUrls.DeleteChannelMessageBySender
         case .editChannelMessageBySender(_,_):
             return HomeUrls.EditChannelMessageBySender
+        case .editChatMessage(_,_):
+            return HomeUrls.EditChatMessage
+        case .deleteChatMessages(_):
+            return HomeUrls.DeleteChatMessages
         }
     }
     
@@ -261,6 +267,10 @@ extension HomeApi: EndPointType {
         case .deleteChannelMessageBySender(_):
             return .post
         case .editChannelMessageBySender(_,_):
+            return .post
+        case .editChatMessage(_,_):
+            return .post
+        case .deleteChatMessages(_):
             return .post
         }
     }
@@ -462,6 +472,14 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .editChannelMessageBySender(id: let id, text: let text):
             let parameters:Parameters = ["messageId": id, "text": text]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .editChatMessage(messageId: let messageId, text: let text):
+            let parameters:Parameters = ["messageId": messageId, "text" : text]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChatMessages(arrayMessageIds: let arrayMessageIds):
+            let parameters:Parameters = ["arrayMessageIds": arrayMessageIds]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

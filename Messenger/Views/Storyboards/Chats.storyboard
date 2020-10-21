@@ -70,7 +70,10 @@
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1500" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="checkImage" destination="TiK-tW-8MK" id="ca5-ur-bt5"/>
                                             <outlet property="leadingConstraint" destination="Y2X-HH-9e5" id="amF-GF-Jho"/>
+                                            <outlet property="leadingConstraintOfCheckImage" destination="Y2X-HH-9e5" id="NoY-Fg-scG"/>
+                                            <outlet property="leadingConstraintOfImageView" destination="Xz9-fb-jmY" id="NQA-em-wYV"/>
                                             <outlet property="messageLabel" destination="YAf-TJ-1jx" id="i6Q-2L-QWM"/>
                                             <outlet property="userImageView" destination="FvM-lC-mdx" id="X6q-lG-nwu"/>
                                         </connections>
@@ -119,6 +122,8 @@
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="1015" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="checkImageView" destination="hfJ-qd-3ut" id="ejH-KY-3eC"/>
+                                            <outlet property="leadingConstraintOfChaeckImage" destination="XVI-Xq-BK0" id="MK0-0j-byc"/>
                                             <outlet property="messageLabel" destination="7bW-6Y-hXY" id="3Rj-yY-nCX"/>
                                             <outlet property="readMessage" destination="qtB-km-wJC" id="JdQ-pd-3Ht"/>
                                         </connections>

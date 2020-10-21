@@ -20,9 +20,9 @@ class SendMessageTableViewCell: UITableViewCell {
         changeShapeOfImageView()
         isSelected = false
         leadingConstraintOfChaeckImage?.constant = -10
-        checkImageView?.isHidden = false
+        checkImageView?.isHidden = true
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
@@ -34,34 +34,34 @@ class SendMessageTableViewCell: UITableViewCell {
         
     }
     
-//    func editPage(isPreview: Bool) {
-//        if !isPreview {
-//            button?.isHidden = true
-//        } else {
-//            button?.isHidden = false
-//        }
-//    }
+    //    func editPage(isPreview: Bool) {
+    //        if !isPreview {
+    //            button?.isHidden = true
+    //        } else {
+    //            button?.isHidden = false
+    //        }
+    //    }
     
-    func setCheckButton(isPreview: Bool) {
-        if isPreview {
-            leadingConstraintOfChaeckImage?.constant = -10
-            checkImageView?.isHidden = true
-        } else if !isPreview {
-            leadingConstraintOfChaeckImage?.constant = 10
-            checkImageView?.isHidden = false
-        }
-    }
-    
-    func setCheckImage() {
-        if isSelected  {
-            checkImageView?.image = UIImage.init(systemName: "checkmark.circle.fill")
-        } else {
-            checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
-        }
-    }
-
-    func changeShapeOfImageView() {
-           messageLabel.clipsToBounds = true
-           messageLabel.layer.cornerRadius = 10
+   func setCheckButton(isPreview: Bool) {
+       if isPreview {
+           leadingConstraintOfChaeckImage?.constant = -10
+           checkImageView?.isHidden = true
+       } else if !isPreview {
+           leadingConstraintOfChaeckImage?.constant = 10
+           checkImageView?.isHidden = false
        }
+   }
+   
+   func setCheckImage() {
+       if isSelected  {
+           checkImageView?.image = UIImage.init(systemName: "checkmark.circle.fill")
+       } else {
+           checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
+       }
+   }
+   
+   func changeShapeOfImageView() {
+       messageLabel.clipsToBounds = true
+       messageLabel.layer.cornerRadius = 10
+   }
 }

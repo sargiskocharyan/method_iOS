@@ -41,6 +41,8 @@ class ChatViewController: UIViewController {
     var tabbar: MainTabBarController?
     var mainRouter: MainRouter?
     var statuses: [MessageStatus]?
+    var indexPath: IndexPath?
+    var mode: MessageMode?
     var fromContactProfile: Bool?
     let messageInputContainerView: UIView = {
         let view = UIView()
@@ -71,6 +73,7 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        mode = .main
         getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
@@ -117,12 +120,72 @@ class ChatViewController: UIViewController {
     }
     
     @objc func sendMessage() {
-        if inputTextField.text != "" {
-            let text = inputTextField.text
-            inputTextField.text = ""
-            SocketTaskManager.shared.send(message: text!, id: id!)
-            self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
-            self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
+        if mode == .main {
+            if inputTextField.text != "" {
+                let text = inputTextField.text
+                inputTextField.text = ""
+                SocketTaskManager.shared.send(message: text!, id: id!)
+                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
+                self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
+            }
+        } else {
+            mode = .main
+            if inputTextField.text != "" {
+                if let cell = tableView.cellForRow(at: indexPath!) as? SendMessageTableViewCell {
+                    self.viewModel?.editChatMessage(messageId: cell.id!, text: inputTextField.text!, completion: { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                cell.messageLabel.text = self.inputTextField.text
+                                self.inputTextField.text = ""
+                            }
+                        }
+                    })
+                }
+            }
+        }
+    }
+    
+    func handleDeleteMessage(message: Message) {
+        var count = 0
+//        for i in 0..<(allMessages?.array!.count)! {
+//            if allMessages?.array![i]._id == message._id {
+//                allMessages?.array![i] = message
+//                count = i
+//                break
+//            }
+//        }
+        allMessages?.array = allMessages?.array?.filter({ (mes) -> Bool in
+            count += 1
+            return mes._id != message._id
+        })
+        if id != SharedConfigs.shared.signedUser?.id {
+            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
+                DispatchQueue.main.async {
+                    cell.messageLabel.text = message.text
+                }
+            }
+        }
+    }
+    
+    func handleMessageEdited(message: Message) {
+        var count = 0
+        for i in 0..<(allMessages?.array!.count)! {
+            if allMessages?.array![i]._id == message._id {
+                allMessages?.array![i] = message
+                count = i
+                break
+            }
+        }
+        if id != SharedConfigs.shared.signedUser?.id {
+            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
+                DispatchQueue.main.async {
+                    cell.messageLabel.text = message.text
+                }
+            }
         }
     }
     
@@ -509,6 +572,58 @@ class ChatViewController: UIViewController {
             }
         }
     }
+    
+    @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
+        if gestureReconizer.state == UIGestureRecognizer.State.began {
+            let touchPoint = gestureReconizer.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+                print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
+                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+//                    self.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
+//                        if error != nil {
+//                            DispatchQueue.main.async {
+//                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                            }
+//                        } else {
+//                            DispatchQueue.main.async {
+//                                self.channelMessages.array?.remove(at: indexPath.row)
+//                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+//                                if self.channelMessages.array?.count == 0 {
+//                                    self.setView("there_is_no_publication_yet".localized())
+//                                    self.universalButton.isHidden = true
+//                                }
+//                            }
+//                        }
+//                    })
+                    self.viewModel?.deleteChatMessages(arrayMessageIds: [cell?.id ?? ""], completion: { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.allMessages?.array!.remove(at: indexPath.row)
+                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                                if self.allMessages?.array!.count == 0 {
+                                }
+                            }
+                        }
+                    })
+                }))
+                alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
+                    self.mode = .edit
+                    self.indexPath = indexPath
+                    self.inputTextField.text = cell?.messageLabel.text
+                }))
+                alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+            
+        }
+    }
+    
 }
 
 //MARK: Extension
@@ -542,13 +657,16 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(gestureReconizer:)))
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
                 cell.messageLabel.text = allMessages?.array![indexPath.row].text
                 cell.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
+                cell.id = allMessages!.array![indexPath.row]._id
                 cell.messageLabel.textColor = .black
                 cell.messageLabel.sizeToFit()
+                cell.addGestureRecognizer(tap)
                 if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
                     if allMessages?.array![indexPath.row]._id != nil {
                         let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)

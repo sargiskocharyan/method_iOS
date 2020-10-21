@@ -1165,6 +1165,43 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
+    func editChatMessage(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.editChatMessage(messageId: messageId, text: text)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChatMessages(arrayMessageIds: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChatMessages(arrayMessageIds: arrayMessageIds)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
 }
 
 extension NSMutableData {

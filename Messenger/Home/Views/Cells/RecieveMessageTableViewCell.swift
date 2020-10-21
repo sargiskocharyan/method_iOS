@@ -30,7 +30,7 @@ class RecieveMessageTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        checkImage.image = nil
+        checkImage?.image = nil
     }
     
     func setCheckImage() {
