@@ -197,40 +197,6 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @objc func deleteMessages() {
-        //        if arrayOfSelectedMesssgae.count == 0 {
-        //            deleteMessageButton.isEnabled = false
-        //        } else {
-        //            deleteMessageButton.isEnabled = true
-        //        }
-        //        viewModel?.deleteChannelMessages(id: (channelInfo?.channel!._id)!, ids: arrayOfSelectedMesssgae, completion: { (error) in
-        //            if error != nil {
-        //                DispatchQueue.main.async {
-        //                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-        //                }
-        //            } else {
-        //                self.channelMessages.array = self.channelMessages.array?.filter({ (message) -> Bool in
-        //                    return !(self.arrayOfSelectedMesssgae.contains(message._id!))
-        //                })
-        //                DispatchQueue.main.async {
-        //                    UIView.setAnimationsEnabled(false)
-        //                    self.tableView.reloadData()
-        //                }
-        //            }
-        //            self.check = !self.check
-        //            self.isPreview = self.check
-        //            DispatchQueue.main.async {
-        //                UIView.setAnimationsEnabled(false)
-        //                self.tableView.beginUpdates()
-        //                self.tableView.reloadData()
-        //                self.tableView.endUpdates()
-        //                self.universalButton.setTitle("edit".localized(), for: .normal)
-        //                self.tableView.allowsMultipleSelection = false
-        //                self.tableView.allowsSelection = false
-        //                self.sendButton.isHidden = false
-        //                self.removeDeleteButton()
-        //            }
-        //            self.arrayOfSelectedMesssgae = []
-        //        })
         showAlertBeforeDeleteMessage()
     }
     
