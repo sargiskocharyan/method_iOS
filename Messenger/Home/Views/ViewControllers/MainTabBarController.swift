@@ -96,6 +96,37 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    func handleChannelSubscriberUpdate() {
+        SocketTaskManager.shared.addChannelSubscriberInfo { (user, name, avatarUrl) in
+            print(user, name, avatarUrl)
+            self.mainRouter?.channelListViewController?.handleSubscriberUpdate(user: user, name: name, avatarUrl: avatarUrl)
+        }
+    }
+    
+    func handleChannelMessageEdit() {
+        SocketTaskManager.shared.addEditChannelMessageListener { (message) in
+            if self.selectedIndex == 2 {
+                let channelNC = self.selectedViewController as? UINavigationController
+                if channelNC?.viewControllers.count ?? 0 >= 2 {
+//                let channelNC = self.selectedViewController as? UINavigationController
+//                let vc = channelNC?.viewControllers[1] as? ChannelMessages
+                self.mainRouter?.channelMessagesViewController?.handleMessageEdited(message: message)
+                }
+            }
+        }
+    }
+    
+    func handleChannelMessageDelete() {
+        SocketTaskManager.shared.addDeleteChannelMessageListener(completion: { (messages) in
+            if self.selectedIndex == 2 {
+                let channelNC = self.selectedViewController as? UINavigationController
+                if channelNC?.viewControllers.count ?? 0 >= 2 {
+                self.mainRouter?.channelMessagesViewController?.handleChannelMessageDeleted(messages: messages)
+                }
+            }
+        })
+    }
+    
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname

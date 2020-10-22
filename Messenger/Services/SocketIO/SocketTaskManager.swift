@@ -87,9 +87,11 @@ class SocketTaskManager {
                     self.tabbar?.handleContactRemoved()
                     self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
-                    self.addChannelSubscriberInfo()
                     self.addEditChatMessageListener()
                     self.addDeleteMessageListener()
+                    self.tabbar?.handleChannelSubscriberUpdate()
+                    self.tabbar?.handleChannelMessageEdit()
+                    self.tabbar?.handleChannelMessageDelete()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -275,6 +277,26 @@ class SocketTaskManager {
 //        }
 //    }
 //
+    func addEditChannelMessageListener(completion: @escaping (_ message: Message) -> ()) {
+        socket?.on("channelMessageEdited", callback: { (dataArray, socketAck) in
+            let data = dataArray[0] as? Dictionary<String, Any>
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+            completion(message)
+        })
+    }
+    
+    func addDeleteChannelMessageListener(completion: @escaping (_ message: [Message]) -> ()) {
+        socket?.on("channelMessageDeleted", callback: { (dataArray, socketAck) in
+            let array = dataArray[0] as? Array<Any>
+            var messages: [Message] = []
+            for i in 0..<(array?.count ?? 0) {
+                let data = array?[i] as? Dictionary<String, Any>
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                messages.append(message)
+            }
+            completion(messages)
+        })
+    }
     
     func addEditChatMessageListener() {
         socket?.on("chatMessageEdited", callback: { (dataArray, socketAck) in
@@ -288,11 +310,15 @@ class SocketTaskManager {
     func addDeleteMessageListener() {
         socket?.on("chatMessageDeleted", callback: { (dataArray, socketAck) in
             let data = (dataArray[0] as? Array<Any>)?[0] as? Dictionary<String, Any>
-            let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[1] as! ChatViewController
-//            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-//            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"], reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
-            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
-            vc.handleDeleteMessage(message: message)
+            let nc = self.tabbar?.viewControllers![1] as? UINavigationController
+            if nc?.viewControllers.count ?? 0 > 0 {
+                let vc = nc?.viewControllers[1] as! ChatViewController
+    //            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+    //            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"], reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                vc.handleDeleteMessage(message: message)
+            }
+            
         })
     }
     
@@ -304,9 +330,12 @@ class SocketTaskManager {
         socket!.emit("sendMessage", message, id)
     }
     
-    func addChannelSubscriberInfo() {
+    func addChannelSubscriberInfo(completion: @escaping (_ user: String, _ name: String, _ avatarUrl: String?) -> ()) {
         socket!.on("channelSubscriberInfo") { (dataArray, socketAck) in
             print(dataArray)
+            if let dictionary = dataArray[1] as? Dictionary<String, Any>, let user = dictionary["user"] as? String, let name = dictionary["name"] as? String {
+                completion(user, name, dictionary["avatarURL"] as? String)
+            }
         }
     }
     

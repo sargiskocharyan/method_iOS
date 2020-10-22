@@ -238,9 +238,9 @@
 		D0F66513251B177D0018D9B7 /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		D0F66514251B177D0018D9B7 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
 		D0F66515251B177D0018D9B7 /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
-		D0F66518251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */; };
-		D0F66519251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */; };
-		D0F6651A251B177D0018D9B7 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */; };
+		D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* CryptoSwift */; };
+		D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SocketIO */; };
+		D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* Lottie */; };
 		D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
 		D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
@@ -256,9 +256,9 @@
 		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
-		F1764361249CD60800492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SwiftPackageProductDependency */; };
-		F1764364249CD61F00492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* SwiftPackageProductDependency */; };
-		F1764367249CD68B00492327 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* SwiftPackageProductDependency */; };
+		F1764361249CD60800492327 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SocketIO */; };
+		F1764364249CD61F00492327 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* Lottie */; };
+		F1764367249CD68B00492327 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* CryptoSwift */; };
 		F1ACA84324E42C1E00EE8578 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA84224E42C1E00EE8578 /* NotificationService.swift */; };
 		F1ACA84724E42C1E00EE8578 /* methodNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1ACA85224E48A5900EE8578 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85124E48A5900EE8578 /* UserNotifications.framework */; };
@@ -492,9 +492,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */,
-				F1764367249CD68B00492327 /* BuildFile in Frameworks */,
-				F1764361249CD60800492327 /* BuildFile in Frameworks */,
-				F1764364249CD61F00492327 /* BuildFile in Frameworks */,
+				F1764367249CD68B00492327 /* CryptoSwift in Frameworks */,
+				F1764361249CD60800492327 /* SocketIO in Frameworks */,
+				F1764364249CD61F00492327 /* Lottie in Frameworks */,
 				AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,9 +503,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0F66518251B177D0018D9B7 /* BuildFile in Frameworks */,
-				D0F66519251B177D0018D9B7 /* BuildFile in Frameworks */,
-				D0F6651A251B177D0018D9B7 /* BuildFile in Frameworks */,
+				D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */,
+				D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */,
+				D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,16 +813,8 @@
 			isa = PBXGroup;
 			children = (
 				CDCB74BE2522FEC400E805E2 /* ViewControllers */,
-				CDCB74BD2522FEBA00E805E2 /* Cells */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		CDCB74BD2522FEBA00E805E2 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Cells;
 			sourceTree = "<group>";
 		};
 		CDCB74BE2522FEC400E805E2 /* ViewControllers */ = {
@@ -1085,9 +1077,9 @@
 			);
 			name = Messenger;
 			packageProductDependencies = (
-				F1764360249CD60800492327 /* SwiftPackageProductDependency */,
-				F1764363249CD61F00492327 /* SwiftPackageProductDependency */,
-				F1764366249CD68B00492327 /* SwiftPackageProductDependency */,
+				F1764360249CD60800492327 /* SocketIO */,
+				F1764363249CD61F00492327 /* Lottie */,
+				F1764366249CD68B00492327 /* CryptoSwift */,
 			);
 			productName = Messenger;
 			productReference = CDBE8DED2476744C0049F971 /* method.app */;
@@ -1110,9 +1102,9 @@
 			);
 			name = Messenger_dev;
 			packageProductDependencies = (
-				D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */,
-				D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */,
-				D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */,
+				D0F664AD251B177D0018D9B7 /* SocketIO */,
+				D0F664AF251B177D0018D9B7 /* Lottie */,
+				D0F664B1251B177D0018D9B7 /* CryptoSwift */,
 			);
 			productName = Messenger;
 			productReference = D0F6652E251B177D0018D9B7 /* method_dev.app */;
@@ -1189,9 +1181,9 @@
 			);
 			mainGroup = CDBE8DE42476744C0049F971;
 			packageReferences = (
-				F176435F249CD60800492327 /* RemoteSwiftPackageReference */,
-				F1764362249CD61F00492327 /* RemoteSwiftPackageReference */,
-				F1764365249CD68B00492327 /* RemoteSwiftPackageReference */,
+				F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */,
+				F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
 			);
 			productRefGroup = CDBE8DEE2476744C0049F971 /* Products */;
 			projectDirPath = "";
@@ -1966,7 +1958,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D0F664AE251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
+		D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
 			requirement = {
@@ -1974,7 +1966,7 @@
 				minimumVersion = 15.2.0;
 			};
 		};
-		D0F664B0251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
+		D0F664B0251B177D0018D9B7 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -1982,7 +1974,7 @@
 				minimumVersion = 3.1.8;
 			};
 		};
-		D0F664B2251B177D0018D9B7 /* RemoteSwiftPackageReference */ = {
+		D0F664B2251B177D0018D9B7 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
 			requirement = {
@@ -1990,7 +1982,7 @@
 				minimumVersion = 1.3.1;
 			};
 		};
-		F176435F249CD60800492327 /* RemoteSwiftPackageReference */ = {
+		F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
 			requirement = {
@@ -1998,7 +1990,7 @@
 				minimumVersion = 15.2.0;
 			};
 		};
-		F1764362249CD61F00492327 /* RemoteSwiftPackageReference */ = {
+		F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -2006,7 +1998,7 @@
 				minimumVersion = 3.1.8;
 			};
 		};
-		F1764365249CD68B00492327 /* RemoteSwiftPackageReference */ = {
+		F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
 			requirement = {
@@ -2017,34 +2009,34 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D0F664AD251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
+		D0F664AD251B177D0018D9B7 /* SocketIO */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664AE251B177D0018D9B7 /* RemoteSwiftPackageReference */;
+			package = D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */;
 			productName = SocketIO;
 		};
-		D0F664AF251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
+		D0F664AF251B177D0018D9B7 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664B0251B177D0018D9B7 /* RemoteSwiftPackageReference */;
+			package = D0F664B0251B177D0018D9B7 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		D0F664B1251B177D0018D9B7 /* SwiftPackageProductDependency */ = {
+		D0F664B1251B177D0018D9B7 /* CryptoSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0F664B2251B177D0018D9B7 /* RemoteSwiftPackageReference */;
+			package = D0F664B2251B177D0018D9B7 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
 		};
-		F1764360249CD60800492327 /* SwiftPackageProductDependency */ = {
+		F1764360249CD60800492327 /* SocketIO */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F176435F249CD60800492327 /* RemoteSwiftPackageReference */;
+			package = F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */;
 			productName = SocketIO;
 		};
-		F1764363249CD61F00492327 /* SwiftPackageProductDependency */ = {
+		F1764363249CD61F00492327 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764362249CD61F00492327 /* RemoteSwiftPackageReference */;
+			package = F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		F1764366249CD68B00492327 /* SwiftPackageProductDependency */ = {
+		F1764366249CD68B00492327 /* CryptoSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764365249CD68B00492327 /* RemoteSwiftPackageReference */;
+			package = F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

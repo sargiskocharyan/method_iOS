@@ -215,6 +215,7 @@ class ChannelMessagesViewController: UIViewController {
         if message.owner == channelInfo.channel?._id {
             DispatchQueue.main.async {
                 self.channelMessages.array!.append(message)
+                self.removeView()
                 self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
                 let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -448,12 +449,10 @@ class ChannelMessagesViewController: UIViewController {
     
     func getChannelMessages() {
         viewModel?.getChannelMessages(id: self.channelInfo!.channel!._id, dateUntil: "", completion: { (messages, error) in
-            
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-                
             } else if messages != nil {
                 self.isLoadedMessages = true
                 self.channelMessages = messages!
@@ -495,16 +494,16 @@ class ChannelMessagesViewController: UIViewController {
                             DispatchQueue.main.async {
                                 self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                             }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.channelMessages.array?.remove(at: indexPath.row)
-                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                                if self.channelMessages.array?.count == 0 {
-                                    self.setView("there_is_no_publication_yet".localized())
-                                    self.universalButton.isHidden = true
-                                }
-                            }
-                        }
+                        } //else {
+//                            DispatchQueue.main.async {
+//                                self.channelMessages.array?.remove(at: indexPath.row)
+//                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+//                                if self.channelMessages.array?.count == 0 {
+//                                    self.setView("there_is_no_publication_yet".localized())
+//                                    self.universalButton.isHidden = true
+//                                }
+//                            }
+//                        }
                     })
                 }))
                 alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
@@ -516,6 +515,52 @@ class ChannelMessagesViewController: UIViewController {
                 self.present(alert, animated: true, completion: nil)
             }
             
+        }
+    }
+    
+    func handleMessageEdited(message: Message) {
+        if message.owner == channelInfo.channel?._id {
+            for i in 0..<(channelMessages.array?.count ?? 0) {
+                if channelMessages.array?[i]._id == message._id {
+                    channelMessages.array?[i] = message
+                    DispatchQueue.main.async {
+                        if message.senderId == SharedConfigs.shared.signedUser?.id {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.messageLabel.text = message.text
+                        } else {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecieveMessageTableViewCell)?.messageLabel.text = message.text
+                        }
+                    }
+                    break
+                }
+            }
+        }
+        //        if id != SharedConfigs.shared.signedUser?.id {
+        //            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
+        //                DispatchQueue.main.async {
+        //                    cell.messageLabel.text = message.text
+        //                }
+        //            }
+        //        }
+    }
+    
+    func handleChannelMessageDeleted(messages: [Message]) {
+        for message in messages {
+            if message.owner == channelInfo.channel?._id {
+                var i = 0
+                DispatchQueue.main.async {
+                    while i < self.channelMessages.array?.count ?? 0 {
+                        if self.channelMessages.array?[i]._id == message._id {
+                            self.channelMessages.array?.remove(at: i)
+                            self.tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+                            if self.channelMessages.array?.count == 0 {
+                                self.setView("there_is_no_publication_yet".localized())
+                            }
+                        } else {
+                            i += 1
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -86,7 +86,7 @@ class ChatViewController: UIViewController {
         getImage()
         setObservers()
         activity.tag = 5
-        if (SocketTaskManager.shared.socket?.handlers.count)! < 12 {
+        if (SocketTaskManager.shared.socket?.handlers.count)! < 13 {
             self.handleReadMessage()
             self.handleMessageTyping()
             self.handleReceiveMessage()

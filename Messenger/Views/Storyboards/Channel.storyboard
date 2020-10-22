@@ -74,13 +74,13 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labeljhgjhgjhgjhgbjhbhjbvhjvhjvh" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EVp-39-A5A" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
-                                                    <rect key="frame" x="95" y="10" width="228.5" height="18"/>
+                                                    <rect key="frame" x="95" y="10" width="228.5" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label djfhgdjg" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pv2-xm-kHt">
-                                                    <rect key="frame" x="95" y="49" width="86.5" height="16"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pv2-xm-kHt">
+                                                    <rect key="frame" x="95" y="49" width="33.5" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="16" id="Wzx-pI-xll"/>
                                                     </constraints>
@@ -106,7 +106,7 @@
                                                 <constraint firstItem="tTA-nh-eJo" firstAttribute="centerY" secondItem="1Mk-Cj-xT3" secondAttribute="centerY" id="ctr-LW-Ibm"/>
                                                 <constraint firstItem="Pv2-xm-kHt" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="h3x-Fa-J7G"/>
                                                 <constraint firstItem="Pv2-xm-kHt" firstAttribute="top" secondItem="1Pc-OF-3c0" secondAttribute="bottom" constant="5" id="lkl-VE-AI0"/>
-                                                <constraint firstItem="EVp-39-A5A" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Pv2-xm-kHt" secondAttribute="top" id="pki-mi-KEl"/>
+                                                <constraint firstItem="EVp-39-A5A" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Pv2-xm-kHt" secondAttribute="top" constant="-5" id="pki-mi-KEl"/>
                                                 <constraint firstItem="EVp-39-A5A" firstAttribute="leading" secondItem="1Pc-OF-3c0" secondAttribute="trailing" constant="15" id="zVg-FN-b90"/>
                                             </constraints>
                                         </tableViewCellContentView>

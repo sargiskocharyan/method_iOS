@@ -21,6 +21,7 @@ class ChannelListViewController: UIViewController {
     
     //MARk: Properties
     var channels: [ChannelInfo] = []
+    var isLoaded: Bool!
     var viewModel: ChannelListViewModel?
     var mainRouter: MainRouter?
     var foundChannels: [ChannelInfo] = []
@@ -34,6 +35,7 @@ class ChannelListViewController: UIViewController {
     //MARK: LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        isLoaded = false
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
@@ -81,6 +83,51 @@ class ChannelListViewController: UIViewController {
     func addResfreshControl() {
         tableView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(refreshCallHistory), for: .valueChanged)
+    }
+    
+    func handleSubscriberUpdate(user: String, name: String, avatarUrl: String?) {
+        if mode == .main {
+            for i in 0..<channels.count {
+                for j in 0..<(channels[i].channel?.subscribers?.count ?? 0) {
+                    if channels[i].channel?.subscribers?[j].user == user {
+                        channels[i].channel?.subscribers?[j].name = name
+                        channels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            self.channelsInfo = self.channels
+        }
+        else {
+            for i in 0..<channels.count {
+                for j in 0..<(channels[i].channel?.subscribers?.count ?? 0) {
+                    if channels[i].channel?.subscribers?[j].user == user {
+                        channels[i].channel?.subscribers?[j].name = name
+                        channels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            for i in 0..<foundChannels.count {
+                for j in 0..<(foundChannels[i].channel?.subscribers?.count ?? 0) {
+                    if foundChannels[i].channel?.subscribers?[j].user == user {
+                        foundChannels[i].channel?.subscribers?[j].name = name
+                        foundChannels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            self.channelsInfo = self.foundChannels
+        }
+        if self.tabBarController?.selectedIndex == 2 && self.navigationController?.viewControllers.count == 2 {
+            for i in 0..<self.channels.count {
+                if channels[i].channel?._id == self.mainRouter?.channelMessagesViewController?.channelInfo.channel?._id {
+                    self.mainRouter?.channelMessagesViewController?.channelInfo.channel?.subscribers = channels[i].channel?.subscribers
+                    self.mainRouter?.channelMessagesViewController?.tableView?.reloadData()
+                    break
+                }
+            }
+        }
     }
     
     func setActivity() {
@@ -173,13 +220,14 @@ class ChannelListViewController: UIViewController {
     }
     
     func getChannels(completion: @escaping () -> ()) {
-        viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (channels, error) in
+        viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (retrievedChannels, error) in
+            self.isLoaded = true
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
                 completion()
-            } else if let channels = channels {
+            } else if let channels = retrievedChannels {
                 if channels.count != 0 {
                     self.channels = channels
                     self.channelsInfo = channels
@@ -211,6 +259,7 @@ class ChannelListViewController: UIViewController {
                         self.foundChannels = foundchannels
                         self.channelsInfo = foundchannels
                         if self.channelsInfo.elementsEqual(self.foundChannels) {
+                            self.removeView()
                             self.tableView.reloadData()
                         }
                     }
@@ -255,6 +304,9 @@ extension ChannelListViewController: UISearchResultsUpdating {
             channelsInfo = channels
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                if self.channelsInfo.count == 0 {
+                    self.setView("no_channels".localized())
+                }
             }
         }
     }
