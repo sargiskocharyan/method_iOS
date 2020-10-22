@@ -11,9 +11,9 @@ import AVFoundation
 
 class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    //MARK: IBOutlets
     @IBOutlet weak var urlView: UIView!
     @IBOutlet weak var deleteButton: UIButton!
-    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var descriptionView: UIView!
@@ -31,27 +31,19 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     @IBOutlet weak var subscribersView: UIView!
     @IBOutlet weak var changeAdminView: UIView!
     
+    //MARK: Properties
     var channelInfo: ChannelInfo?
     var mainRouter: MainRouter?
     var viewModel: ChannelInfoViewModel?
     var moderators: [ChannelSubscriber] = []
     var imagePicker = UIImagePickerController()
     
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
         configureView()
         addGestures()
-    }
-    
-    func setImage() {
-        activityIndicator.startAnimating()
-        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo!.channel!._id, isChannel: true) { (image) in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.channelLogoImageView.image = image
-            }
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,6 +55,17 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         setCornerRadius(view: activityIndicator)
     }
     
+    //MARK: Helper methods
+    func setImage() {
+        activityIndicator.startAnimating()
+        ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo!.channel!._id, isChannel: true) { (image) in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.channelLogoImageView.image = image
+            }
+        }
+    }
+        
     @IBAction func cameraButtonAction(_ sender: Any) {
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
             if response {
@@ -141,6 +144,37 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
+    
+    func updateImage(_ avatarURL: String?) {
+        if self.mainRouter?.channelListViewController?.mode == .main {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        } else {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
+                }
+            }
+            for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = avatarURL
+                    break
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        }
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         activityIndicator.startAnimating()
         picker.dismiss(animated: true, completion: nil)
@@ -161,33 +195,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         self.activityIndicator.stopAnimating()
                     }
                 }
-                if self.mainRouter?.channelListViewController?.mode == .main {
-                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
-                        }
-                    }
-                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    }
-                } else {
-                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = avatarURL
-                        }
-                    }
-                    for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                        if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = avatarURL
-                            break
-                        }
-                    }
-                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    }
-                }
+                self.updateImage(avatarURL)
             }
         }
     }
@@ -207,7 +215,6 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         closeButton.isUserInteractionEnabled = true
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
         imageView.backgroundColor = UIColor(named: "imputColor")
-        
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
         deleteImageButton.translatesAutoresizingMaskIntoConstraints = false
@@ -233,6 +240,36 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         self.tabBarController?.tabBar.isHidden = true
     }
     
+    func deleteImage() {
+        if self.mainRouter?.channelListViewController?.mode == .main {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        } else {
+            for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
+                if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
+                }
+            }
+            for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = nil
+                    break
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        }
+    }
+    
     @objc func deleteAvatar() {
         viewModel!.deleteChannelLogo(id: channelInfo!.channel!._id) { (error) in
             if (error != nil) {
@@ -241,53 +278,12 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 }
                 return
             } else {
-//                DispatchQueue.main.async {
-//                    for i in 0..<(self.mainRouter?.channelListViewController?.channels.count)! {
-//                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channels[i].channel!._id {
-//                            self.mainRouter?.channelListViewController?.channels[i].channel!.avatarURL = nil
-//                            break
-//                        }
-//                    }
-//                    for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-//                        if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
-//                            self.mainRouter?.channelListViewController?.channelsInfo[i].channel!.avatarURL = nil
-//                            break
-//                        }
-//                    }
-//                    self.mainRouter?.channelListViewController?.tableView.reloadData()
-//                }
                 self.channelInfo?.channel?.avatarURL = nil
                 DispatchQueue.main.async {
                     self.dismissFullscreenImage()
                     self.channelLogoImageView.image = UIImage(named: "groupPeople")
                 }
-                if self.mainRouter?.channelListViewController?.mode == .main {
-                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
-                        }
-                    }
-                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    }
-                } else {
-                    for i in 0..<self.mainRouter!.channelListViewController!.channels.count {
-                        if self.mainRouter!.channelListViewController!.channels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.channels[i].channel?.avatarURL = nil
-                        }
-                    }
-                    for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                        if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                            self.mainRouter!.channelListViewController!.foundChannels[i].channel?.avatarURL = nil
-                            break
-                        }
-                    }
-                    self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                    }
-                }
+                self.deleteImage()
             }
         }
     }
@@ -355,7 +351,6 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         moderatorsTextLabel.text = "moderators".localized()
         changeAdminTextLabel.text = "change_admin".localized()
         deleteButton.setTitle("delete_channel".localized(), for: .normal)
-        
     }
     
     func setCornerRadius(view: UIView) {
@@ -367,5 +362,4 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         view.layer.borderColor = UIColor.lightGray.cgColor
         view.layer.borderWidth = 1
     }
-    
 }

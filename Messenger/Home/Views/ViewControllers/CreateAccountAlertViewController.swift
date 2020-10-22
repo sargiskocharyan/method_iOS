@@ -15,7 +15,7 @@ class CreateAccountAlertViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var createAlertLabel: UILabel!
     @IBOutlet weak var enterNameOfChannelLabel: UILabel!
-
+    
     @IBOutlet weak var enterChannelNameView: CustomTextField!
     var mainRouter: MainRouter?
     var channelMode: Bool?
@@ -35,12 +35,12 @@ class CreateAccountAlertViewController: UIViewController {
     }
     
     @objc func nameTyping() {
-            checkName { (isAllWell) in
-                if isAllWell! {
-                    self.createButton.isEnabled = true
-                } else {
-                    self.createButton.isEnabled = false
-                }
+        checkName { (isAllWell) in
+            if isAllWell! {
+                self.createButton.isEnabled = true
+            } else {
+                self.createButton.isEnabled = false
+            }
         }
     }
     
@@ -86,5 +86,4 @@ class CreateAccountAlertViewController: UIViewController {
             completion(false)
         }
     }
-
 }

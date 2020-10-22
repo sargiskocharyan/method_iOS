@@ -29,8 +29,8 @@ class ContactsViewModel {
     func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         HomeNetworkManager().addContact(id: id) { (error) in
             completion(error)
+        }
     }
-  }
     
     func getMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
         HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
@@ -63,42 +63,42 @@ class ContactsViewModel {
     }
     
     func retrieveData(completion: @escaping ([User]?)->()) {
-           let appDelegate = AppDelegate.shared
-           let managedContext = appDelegate.persistentContainer.viewContext
-           let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ContactsEntity")
-           do {
-               let result = try managedContext.fetch(fetchRequest)
-               var i = 0
-               for data in result as! [NSManagedObject] {
-                   let mContacts = data.value(forKey: "contacts") as! Contacts
+        let appDelegate = AppDelegate.shared
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ContactsEntity")
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            var i = 0
+            for data in result as! [NSManagedObject] {
+                let mContacts = data.value(forKey: "contacts") as! Contacts
                 self.contacts = mContacts.contacts
-                   completion(mContacts.contacts)
-                   i = i + 1
-               }
-           } catch {
+                completion(mContacts.contacts)
+                i = i + 1
+            }
+        } catch {
             self.contacts = []
-               completion(nil)
-           }
-       }
+            completion(nil)
+        }
+    }
     
     func retrieveOtherContactData(completion: @escaping ([User]?)->()) {
-              let appDelegate = AppDelegate.shared
-              let managedContext = appDelegate.persistentContainer.viewContext
-              let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OtherContactEntity")
-              do {
-                  let result = try managedContext.fetch(fetchRequest)
-                  var i = 0
-                  for data in result as! [NSManagedObject] {
-                      let mOtherContacts = data.value(forKey: "otherContacts") as! Contacts
-                      self.otherContacts = mOtherContacts.contacts
-                      completion(mOtherContacts.contacts)
-                      i = i + 1
-                  }
-              } catch {
-               self.contacts = []
-                  completion(nil)
-              }
-          }
+        let appDelegate = AppDelegate.shared
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OtherContactEntity")
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            var i = 0
+            for data in result as! [NSManagedObject] {
+                let mOtherContacts = data.value(forKey: "otherContacts") as! Contacts
+                self.otherContacts = mOtherContacts.contacts
+                completion(mOtherContacts.contacts)
+                i = i + 1
+            }
+        } catch {
+            self.contacts = []
+            completion(nil)
+        }
+    }
     
     func addContactToCoreData(newContact: User, completion: @escaping (NSError?)->()) {
         let appDelegate = AppDelegate.shared

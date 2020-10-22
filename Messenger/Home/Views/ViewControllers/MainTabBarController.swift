@@ -108,9 +108,7 @@ class MainTabBarController: UITabBarController {
             if self.selectedIndex == 2 {
                 let channelNC = self.selectedViewController as? UINavigationController
                 if channelNC?.viewControllers.count ?? 0 >= 2 {
-//                let channelNC = self.selectedViewController as? UINavigationController
-//                let vc = channelNC?.viewControllers[1] as? ChannelMessages
-                self.mainRouter?.channelMessagesViewController?.handleMessageEdited(message: message)
+                    self.mainRouter?.channelMessagesViewController?.handleMessageEdited(message: message)
                 }
             }
         }
@@ -121,7 +119,7 @@ class MainTabBarController: UITabBarController {
             if self.selectedIndex == 2 {
                 let channelNC = self.selectedViewController as? UINavigationController
                 if channelNC?.viewControllers.count ?? 0 >= 2 {
-                self.mainRouter?.channelMessagesViewController?.handleChannelMessageDeleted(messages: messages)
+                    self.mainRouter?.channelMessagesViewController?.handleChannelMessageDeleted(messages: messages)
                 }
             }
         })
