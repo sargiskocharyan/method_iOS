@@ -441,5 +441,4 @@ class ContactProfileViewController: UIViewController {
         emailTextLabel.text = "email:".localized()
         infoTextLabel.text = "info".localized()
     }
-    
 }

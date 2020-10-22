@@ -151,25 +151,14 @@ class ChannelListViewController: UIViewController {
                 completion()
             } else {
                 SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-               
+                
                 if self.mode == .main {
                     self.channels.append(ChannelInfo(channel: channel, role: 0))
                     self.channelsInfo = self.channels
-                } //else {
-//                    self.channels.append(ChannelInfo(channel: channel, role: 0))
-//                    for i in 0..<self.foundChannels.count {
-//                        if self.foundChannels[i].channel?._id == channel?._id {
-//                            self.foundChannels[i].role = 2
-//                            break
-//                        }
-//                    }
-//                    self.channelsInfo = self.foundChannels
-                
+                }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
-                }
-                DispatchQueue.main.async {
                     self.removeView()
                     self.mainRouter?.showChannelMessagesViewController(channelInfo: ChannelInfo(channel: channel, role: 0))
                     completion()
@@ -178,7 +167,7 @@ class ChannelListViewController: UIViewController {
         })
     }
     
- func setView(_ str: String) {
+    func setView(_ str: String) {
         if channels.count == 0 {
             DispatchQueue.main.async {
                 let noResultView = UIView(frame: self.view.frame)
@@ -194,8 +183,6 @@ class ChannelListViewController: UIViewController {
                 label.text = str
                 label.textColor = .lightGray
                 label.textAlignment = .center
-                
-                
             }
         } else {
             removeView()
@@ -289,7 +276,6 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
-            print(self.channelsInfo[indexPath.row])
             self.mainRouter?.showChannelMessagesViewController(channelInfo: self.channelsInfo[indexPath.row])
         }
     }
