@@ -18,7 +18,7 @@ class RecentMessagesViewController: UIViewController {
     var chats: [Chat] = []
     var isLoaded: Bool = false
     var viewModel: RecentMessagesViewModel?
-    var isLoadedMessages = false
+    var isLoadedMessages: Bool = false
     let refreshControl = UIRefreshControl()
     var timer: Timer?
     var mainRouter: MainRouter?
@@ -76,7 +76,7 @@ class RecentMessagesViewController: UIViewController {
         getChats(isFromHome: false)
     }
     
-    @objc func getOnlineUsers() {
+    func onlineUsers() {
         if isLoadedMessages {
             let ids = self.chats.map { (chat) -> String in
                 return chat.id
@@ -100,6 +100,10 @@ class RecentMessagesViewController: UIViewController {
         }
     }
     
+    @objc func getOnlineUsers() {
+        onlineUsers()
+    }
+    
     @objc func addButtonTapped() {
         mainRouter?.showContactsViewControllerFromRecent()
     }
@@ -119,6 +123,17 @@ class RecentMessagesViewController: UIViewController {
                     chats[i] = chats[j]
                     chats[j] = temp
                 }
+            }
+        }
+    }
+    
+    func handleMessageEdited(chatId: String, message: Message) {
+        for i in 0..<self.chats.count {
+            if self.chats[i].id == chatId && chats[i].message?._id == message._id {
+                self.chats[i].message = message
+                self.tableView.beginUpdates()
+                (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell)?.configure(chat: chats[i])
+                self.tableView.endUpdates()
             }
         }
     }
@@ -318,13 +333,11 @@ class RecentMessagesViewController: UIViewController {
                         }
                         self.chats[i] = Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user!.avatarURL, online: true, statuses: nil, unreadMessageExists: isUnreadMessage)
                         self.sort()
-                        DispatchQueue.main.async {
-                            self.tableView?.reloadData()
-                        }
+                        self.onlineUsers()
                         return
                     }
                 }
-                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil)))
+                self.chats.append(Chat(id: id, name: user!.name, lastname: user!.lastname, username: user!.username, message: message, recipientAvatarURL: user?.avatarURL, online: true, statuses: nil, unreadMessageExists: !(callHistory != nil) && message.senderId != SharedConfigs.shared.signedUser?.id))
                 self.sort()
                 SharedConfigs.shared.unreadMessages = self.chats.filter({ (chat) -> Bool in
                     return chat.unreadMessageExists
@@ -334,9 +347,7 @@ class RecentMessagesViewController: UIViewController {
                         self.mainRouter?.notificationDetailViewController?.tableView?.reloadData()
                     }
                 }
-                DispatchQueue.main.async {
-                    self.tableView?.reloadData()
-                }
+                self.onlineUsers()
             }
         }
     }

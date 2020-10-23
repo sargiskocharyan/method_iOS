@@ -127,6 +127,7 @@ class ChatViewController: UIViewController {
                 SocketTaskManager.shared.send(message: text!, id: id!)
                 self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
                 self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
+                self.removeLabel()
             }
         } else {
             mode = .main
@@ -149,6 +150,24 @@ class ChatViewController: UIViewController {
         }
     }
     
+    func setLabel(text: String) {
+        let label = UILabel()
+        label.text = text
+        label.tag = 13
+        label.textAlignment = .center
+        label.textColor = .darkGray
+        self.tableView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func removeLabel() {
+        self.view.viewWithTag(13)?.removeFromSuperview()
+    }
+    
     func handleDeleteMessage(messages: [Message]) {
         if let _ =  self.navigationController?.visibleViewController as? ChatViewController {
             for message in messages {
@@ -159,6 +178,9 @@ class ChatViewController: UIViewController {
                             if self.allMessages?.array?[i]._id == message._id {
                                 self.allMessages?.array?.remove(at: i)
                                 self.tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+                                if self.allMessages?.array?.count == 0 {
+                                    self.setLabel(text: "there_is_no_messages_yet".localized())
+                                }
                             } else {
                                 i += 1
                             }
@@ -170,18 +192,20 @@ class ChatViewController: UIViewController {
     }
     
     func handleMessageEdited(message: Message) {
-        var count = 0
-        for i in 0..<(allMessages?.array!.count)! {
-            if allMessages?.array![i]._id == message._id {
-                allMessages?.array![i] = message
-                count = i
-                break
+        if self.navigationController?.visibleViewController == self || (self.navigationController?.viewControllers.count ?? 0) - 1 >=  self.navigationController?.viewControllers.lastIndex(of: self) ?? 0 {
+            var count = 0
+            for i in 0..<(allMessages?.array!.count)! {
+                if allMessages?.array![i]._id == message._id {
+                    allMessages?.array![i] = message
+                    count = i
+                    break
+                }
             }
-        }
-        if id != SharedConfigs.shared.signedUser?.id {
-            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
-                DispatchQueue.main.async {
-                    cell.messageLabel.text = message.text
+            if id != SharedConfigs.shared.signedUser?.id {
+                if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
+                    DispatchQueue.main.async {
+                        cell.messageLabel.text = message.text
+                    }
                 }
             }
         }
@@ -344,6 +368,7 @@ class ChatViewController: UIViewController {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.allMessages?.array!.append(message)
+                self.removeLabel()
                 if (navigationController?.viewControllers.count == 2) || (tabBarController?.selectedIndex == 2 && navigationController?.viewControllers.count == 6)  {
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
@@ -366,6 +391,7 @@ class ChatViewController: UIViewController {
                 self.inputTextField.text = ""
             }
             self.allMessages?.array!.append(message)
+            self.removeLabel()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
@@ -514,12 +540,16 @@ class ChatViewController: UIViewController {
         viewModel!.getChatMessages(id: id!, dateUntil: dateUntil) { (messages, error) in
             if messages?.array?.count == 0 || messages?.array == nil {
                 self.check = true
+                DispatchQueue.main.async {
+                    if dateUntil == nil {
+                        self.activity?.stopAnimating()
+                        self.setLabel(text: "there_is_no_messages_yet".localized())
+                    }
+                }
             }
             if error != nil {
                 DispatchQueue.main.async {
-                    if self.activity != nil {
-                        self.activity.stopAnimating()
-                    }
+                    self.activity?.stopAnimating()
                     self.view.viewWithTag(5)?.removeFromSuperview()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
@@ -549,11 +579,9 @@ class ChatViewController: UIViewController {
                         self.tableView.insertRows(at: arrayOfIndexPaths, with: .none)
                         self.tableView.endUpdates()
                         self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
-                        
                         UIView.setAnimationsEnabled(true)
                         self.tableView.contentOffset.y += initialOffset
                     } else {
-                        
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
                             if arrayOfIndexPaths.count > 1 {
