@@ -261,6 +261,17 @@ class RecentMessagesViewController: UIViewController {
         }
     }
     
+    func stringToDateD(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        if parsedDate == nil {
+            return nil
+        } else {
+            return parsedDate
+        }
+    }
+    
     func handleMessageDelete(messages: [Message]) {
         let chatId = messages[0].senderId == SharedConfigs.shared.signedUser?.id ? messages[0].reciever : messages[0].senderId
         viewModel?.getChatMessages(id: chatId!, dateUntil: nil, completion: { [self] (messages, error) in
@@ -272,19 +283,24 @@ class RecentMessagesViewController: UIViewController {
                 for i in 0..<self.chats.count {
                     if (messages?.array?.count) ?? 0 > 0 {
                         if chatId == self.chats[i].id   {
-                            if messages?.array?.count != 1 {
                                 DispatchQueue.main.async {
+                                    let lastMessage = messages!.array![messages!.array!.count - 1]
                                     let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell
-                                    cell?.lastMessageLabel.text = messages?.array![messages!.array!.count - i - 1].text
-
+                                    chats[i].message = lastMessage
+                                    if lastMessage.senderId == SharedConfigs.shared.signedUser?.id {
+                                        chats[i].unreadMessageExists = false
+                                    } else {
+                                        let createdAt = stringToDateD(date: lastMessage.createdAt ?? "")
+                                        let status = chats[i].statuses?[0].userId == SharedConfigs.shared.signedUser?.id ? chats[i].statuses?[1] : chats[i].statuses?[0]
+                                        let readDate = stringToDateD(date: status?.readMessageDate ?? "")
+                                        if createdAt! <= readDate! {
+                                            chats[i].unreadMessageExists = false
+                                        } else {
+                                            chats[i].unreadMessageExists = true
+                                        }
+                                    }
+                                    cell?.configure(chat: chats[i])
                                 }
-                            } else {
-                                DispatchQueue.main.async {
-                                    let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell
-                                    cell?.lastMessageLabel.text = messages?.array![0].text
-
-                                }
-                            }
                         }
                     }
                     else if messages?.array?.count == 0 && chatId == chats[i].id {
