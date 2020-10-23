@@ -149,23 +149,21 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func handleDeleteMessage(message: Message) {
-        var count = 0
-//        for i in 0..<(allMessages?.array!.count)! {
-//            if allMessages?.array![i]._id == message._id {
-//                allMessages?.array![i] = message
-//                count = i
-//                break
-//            }
-//        }
-        allMessages?.array = allMessages?.array?.filter({ (mes) -> Bool in
-            count += 1
-            return mes._id != message._id
-        })
-        if id != SharedConfigs.shared.signedUser?.id {
-            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
-                DispatchQueue.main.async {
-                    cell.messageLabel.text = message.text
+    func handleDeleteMessage(messages: [Message]) {
+        if let _ =  self.navigationController?.visibleViewController as? ChatViewController {
+            for message in messages {
+                var i = 0
+                if message.owner != SharedConfigs.shared.signedUser?.id {
+                    DispatchQueue.main.async {
+                        while i < self.allMessages?.array?.count ?? 0 {
+                            if self.allMessages?.array?[i]._id == message._id {
+                                self.allMessages?.array?.remove(at: i)
+                                self.tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+                            } else {
+                                i += 1
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -300,7 +298,7 @@ class ChatViewController: UIViewController {
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                           let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
                             if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
                                 cell?.readMessage.text = "delivered".localized()
                             }
@@ -393,13 +391,11 @@ class ChatViewController: UIViewController {
         bottomConstraint?.isActive = true
         messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-//        messageInputContainerView.addConstraint(bottomConstraint!)
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
         view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
         view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-//        view.addConstraint(bottomConstraint!)
     }
     
     private func setupInputComponents() {
@@ -465,51 +461,51 @@ class ChatViewController: UIViewController {
     }
     
     func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-           if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-               return "\((seconds % 3600) % 60) sec."
-           } else if seconds / 3600 == 0 {
-               return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-           }
-           return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-       }
-       
-       func stringToDate(date:String) -> String {
-           let formatter = DateFormatter()
-           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-           let parsedDate = formatter.date(from: date)
-           let calendar = Calendar.current
-           let day = calendar.component(.day, from: parsedDate!)
-           let month = calendar.component(.month, from: parsedDate!)
-           let time = Date()
-           let currentDay = calendar.component(.day, from: time as Date)
-           if currentDay != day {
-               return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
-           }
-           let hour = calendar.component(.hour, from: parsedDate!)
-           let minutes = calendar.component(.minute, from: parsedDate!)
-           return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
-       }
-       
-       @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-           tabbar?.videoVC?.isCallHandled = false
-           if !tabbar!.onCall {
-               tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
-               tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
-           } else {
-               tabbar!.handleClickOnSamePerson()
-           }
-       }
-       
-       func stringToDateD(date:String) -> Date? {
-           let formatter = DateFormatter()
-           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-           let parsedDate = formatter.date(from: date)
-           if parsedDate == nil {
-               return nil
-           } else {
-               return parsedDate
-           }
-       }
+        if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
+            return "\((seconds % 3600) % 60) sec."
+        } else if seconds / 3600 == 0 {
+            return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+        }
+        return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
+    }
+    
+    func stringToDate(date:String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: parsedDate!)
+        let month = calendar.component(.month, from: parsedDate!)
+        let time = Date()
+        let currentDay = calendar.component(.day, from: time as Date)
+        if currentDay != day {
+            return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
+        }
+        let hour = calendar.component(.hour, from: parsedDate!)
+        let minutes = calendar.component(.minute, from: parsedDate!)
+        return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        tabbar?.videoVC?.isCallHandled = false
+        if !tabbar!.onCall {
+            tabbar!.handleCallClick(id: id!, name: name ?? username ?? "", mode: .videoCall)
+            tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
+        } else {
+            tabbar!.handleClickOnSamePerson()
+        }
+    }
+    
+    func stringToDateD(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        if parsedDate == nil {
+            return nil
+        } else {
+            return parsedDate
+        }
+    }
     
     func getChatMessages(dateUntil: String?) {
         if self.activity != nil {
@@ -542,7 +538,6 @@ class ChatViewController: UIViewController {
                         self.activity.stopAnimating()
                     }
                     self.view.viewWithTag(5)?.removeFromSuperview()
-                    //self.tableView.reloadData()
                     var arrayOfIndexPaths: [IndexPath] = []
                     for i in 0..<messages!.array!.count {
                         arrayOfIndexPaths.append(IndexPath(row: i, section: 0))
@@ -553,19 +548,18 @@ class ChatViewController: UIViewController {
                         UIView.setAnimationsEnabled(false)
                         self.tableView.insertRows(at: arrayOfIndexPaths, with: .none)
                         self.tableView.endUpdates()
-                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
-                           
+                        self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count, section: 0), at: .top, animated: false)
+                        
                         UIView.setAnimationsEnabled(true)
                         self.tableView.contentOffset.y += initialOffset
                     } else {
-                       
+                        
                         DispatchQueue.main.async {
-                             self.tableView.reloadData()
+                            self.tableView.reloadData()
                             if arrayOfIndexPaths.count > 1 {
-                            self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
+                                self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
                             }
                         }
-                        
                     }
                     self.checkAndSendReadEvent()
                 }
@@ -581,33 +575,10 @@ class ChatViewController: UIViewController {
                 print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
                 let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
-//                    self.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
-//                        if error != nil {
-//                            DispatchQueue.main.async {
-//                                self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                            }
-//                        } else {
-//                            DispatchQueue.main.async {
-//                                self.channelMessages.array?.remove(at: indexPath.row)
-//                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                                if self.channelMessages.array?.count == 0 {
-//                                    self.setView("there_is_no_publication_yet".localized())
-//                                    self.universalButton.isHidden = true
-//                                }
-//                            }
-//                        }
-//                    })
                     self.viewModel?.deleteChatMessages(arrayMessageIds: [cell?.id ?? ""], completion: { (error) in
                         if error != nil {
                             DispatchQueue.main.async {
                                 self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.allMessages?.array!.remove(at: indexPath.row)
-                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                                if self.allMessages?.array!.count == 0 {
-                                }
                             }
                         }
                     })
@@ -620,10 +591,8 @@ class ChatViewController: UIViewController {
                 alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
-            
         }
     }
-    
 }
 
 //MARK: Extension
@@ -635,7 +604,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         var size: CGSize?
-        
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
             if allMessages?.array![indexPath.row].type == "text" {
@@ -747,7 +715,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == 0 && self.allMessages?.array![indexPath.row] != nil && (self.allMessages?.array!.count)! > 1 {
-                self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
+            self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
         }
     }
 }

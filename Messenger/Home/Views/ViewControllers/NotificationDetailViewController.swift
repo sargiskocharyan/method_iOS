@@ -30,7 +30,6 @@ class NotificationDetailViewController: UIViewController {
         tableView.delegate = self
         tabbar = tabBarController as? MainTabBarController
         tableView.tableFooterView = UIView()
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
