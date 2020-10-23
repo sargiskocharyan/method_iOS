@@ -124,6 +124,15 @@ class MainTabBarController: UITabBarController {
         })
     }
     
+    func handleChatMessageDelete() {
+        SocketTaskManager.shared.addDeleteChatMessageListener { (messages) in
+            if self.mainRouter?.recentMessagesViewController != nil && self.mainRouter!.recentMessagesViewController!.isLoaded {
+                self.mainRouter?.recentMessagesViewController?.handleMessageDelete(messages: messages)
+                self.mainRouter?.chatViewController?.handleDeleteMessage(messages: messages)
+            }
+        }
+    }
+    
     func startCall(_ id: String, _ roomname: String, _ name: String, _ type: String, completionHandler: @escaping () -> ()) {
         self.id = id
         self.roomName = roomname

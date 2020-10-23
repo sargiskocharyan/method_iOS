@@ -88,7 +88,7 @@ class SocketTaskManager {
                     self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
                     self.addEditChatMessageListener()
-                    self.addDeleteMessageListener()
+                    self.tabbar?.handleChatMessageDelete()
                     self.tabbar?.handleChannelSubscriberUpdate()
                     self.tabbar?.handleChannelMessageEdit()
                     self.tabbar?.handleChannelMessageDelete()
@@ -299,31 +299,18 @@ class SocketTaskManager {
         })
     }
     
-    func addDeleteMessageListener() {
+    func addDeleteChatMessageListener(completion: @escaping (_ message: [Message]) -> ()) {
         socket?.on("chatMessageDeleted", callback: { (dataArray, socketAck) in
-            let nc = self.tabbar?.viewControllers![1] as? UINavigationController
-//            if nc?.viewControllers.count ?? 0 > 1 {
-//                let vc = nc?.viewControllers[1] as! ChatViewController
-               
-    //            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-    //            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"], reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
-//                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
-//                vc.handleDeleteMessage(message: message)
-//            }
-            
-//            let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[1] as! ChatViewController
             let array = dataArray[0] as? Array<Any>
-                        var messages: [Message] = []
-                        for i in 0..<(array?.count ?? 0) {
-                            let data = array?[i] as? Dictionary<String, Any>
-                            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
-                            messages.append(message)
-                        }
-            self.tabbar?.mainRouter?.chatViewController?.handleDeleteMessage(messages: messages)
-//                vc.handleDeleteMessage(messages: messages)
-//            }
+            var messages: [Message] = []
+            for i in 0..<(array?.count ?? 0) {
+                let data = array?[i] as? Dictionary<String, Any>
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                messages.append(message)
+            }
+            completion(messages)
         })
-            
+        
     }
     
     func sendChanMessage(message: String, channelId: String) {
