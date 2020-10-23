@@ -74,7 +74,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 print("Permission don't allowed")
             }
         }
-        let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
+        let alert = UIAlertController(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 self.imagePicker.delegate = self
@@ -90,6 +90,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
         }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     

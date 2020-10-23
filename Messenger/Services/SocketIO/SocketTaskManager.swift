@@ -87,7 +87,7 @@ class SocketTaskManager {
                     self.tabbar?.handleContactRemoved()
                     self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
-                    self.addEditChatMessageListener()
+                    self.tabbar?.handleChatMessageEdit()
                     self.addDeleteMessageListener()
                     self.tabbar?.handleChannelSubscriberUpdate()
                     self.tabbar?.handleChannelMessageEdit()
@@ -290,12 +290,11 @@ class SocketTaskManager {
         })
     }
     
-    func addEditChatMessageListener() {
+    func addEditChatMessageListener(completion: @escaping (_ message: Message) -> ()) {
         socket?.on("chatMessageEdited", callback: { (dataArray, socketAck) in
             let data = dataArray[0] as! NSDictionary
-            let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[1] as! ChatViewController
             let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
-            vc.handleMessageEdited(message: message)
+            completion(message)
         })
     }
     

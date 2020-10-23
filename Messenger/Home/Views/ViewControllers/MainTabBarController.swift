@@ -113,6 +113,16 @@ class MainTabBarController: UITabBarController {
         }
     }
     
+    func handleChatMessageEdit() {
+        SocketTaskManager.shared.addEditChatMessageListener { (message) in
+            self.mainRouter?.chatViewController?.handleMessageEdited(message: message)
+            if self.mainRouter?.recentMessagesViewController?.isLoadedMessages == true {
+                let chatId = message.senderId == SharedConfigs.shared.signedUser?.id ? message.reciever : message.senderId
+                self.mainRouter?.recentMessagesViewController?.handleMessageEdited(chatId: chatId ?? "", message: message)
+            }
+        }
+    }
+    
     func handleChannelMessageDelete() {
         SocketTaskManager.shared.addDeleteChannelMessageListener(completion: { (messages) in
             if self.selectedIndex == 2 {

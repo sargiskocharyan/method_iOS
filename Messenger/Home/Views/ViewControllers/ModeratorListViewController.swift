@@ -150,7 +150,6 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
                     }
                 }
             })
-            
         }
         let swipeActions = UISwipeActionsConfiguration(actions: [contextItem])
         return swipeActions
