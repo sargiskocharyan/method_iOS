@@ -13,11 +13,6 @@ struct Users: Codable {
     let users: [User]
 }
 
-//struct Sender: Codable{
-//    let id: String?
-//    let name: String?
-//}
-
 struct MessageCall: Codable {
     var callSuggestTime: String?
     var type: String?
@@ -29,7 +24,6 @@ struct Messages: Codable {
     var array: [Message]?
     var statuses: [MessageStatus]?
 }
-
 
 struct AdminMessage: Codable {
     var _id: String

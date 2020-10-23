@@ -157,24 +157,6 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_to_block_subscriber".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
-//            self.viewModel?.rejectBeModerator(id: self.channelInfo!.channel!._id, completion: { (error) in
-//                if error != nil {
-//                    DispatchQueue.main.async {
-//                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                    }
-//                } else {
-//                    DispatchQueue.main.async {
-//                        self.navigationController?.popToRootViewController(animated: true)
-//                        for i in 0..<(self.mainRouter?.channelListViewController?.channelsInfo.count)! {
-//                            if self.channelInfo?.channel?._id == self.mainRouter?.channelListViewController?.channelsInfo[i].channel!._id {
-//                                self.mainRouter?.channelListViewController?.channelsInfo[i].role = 2
-//                                break
-//                            }
-//                        }
-//                        self.mainRouter?.channelListViewController?.channels = (self.mainRouter?.channelListViewController?.channelsInfo)!
-//                    }
-//                }
-//            })
             self.viewModel?.blockSubscribers(id: self.id!, subscribers: [self.subscribers[indexPath.row].user?._id ?? ""], completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -196,19 +178,6 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
         alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
-    
-//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-//        if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {
-//        let deleteButton = UITableViewRowAction(style: .default, title: "block".localized()) { (action, indexPath) in
-//            self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
-//            return
-//        }
-//        deleteButton.backgroundColor = UIColor.red
-//        return [deleteButton]
-//        } else {
-//            return nil
-//        }
-//    }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if subscribers[indexPath.row].user?._id != SharedConfigs.shared.signedUser?.id {

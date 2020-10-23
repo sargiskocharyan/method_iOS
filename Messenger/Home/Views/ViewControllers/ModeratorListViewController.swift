@@ -9,7 +9,10 @@
 import UIKit
 
 class ModeratorListViewController: UIViewController {
-
+    //MARK: IBOutlets
+    @IBOutlet weak var tableView: UITableView!
+    
+    //MARK: Properties
     var viewModel: ChannelInfoViewModel?
     var mainRouter: MainRouter?
     var id: String?
@@ -17,7 +20,7 @@ class ModeratorListViewController: UIViewController {
     var isChangeAdmin: Bool?
     var isLoaded = false
     
-    @IBOutlet weak var tableView: UITableView!
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         getModerators()
@@ -25,6 +28,7 @@ class ModeratorListViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if isChangeAdmin == false {
@@ -34,7 +38,8 @@ class ModeratorListViewController: UIViewController {
             self.removeLabel()
         }
     }
-       
+    
+    //MARK: Helper methods
     @objc func addButtonTapped() {
         mainRouter?.showSubscribersListViewControllerFromModeratorList(id: id!)
     }
@@ -80,6 +85,7 @@ class ModeratorListViewController: UIViewController {
     }
 }
 
+//MARK: Extensions
 extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return moderators.count
@@ -129,63 +135,24 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
         return 70
     }
     
-//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        tabbar?.viewModel?.removeCall(id: removedCalls, completion: { (error) in
-//            if error != nil {
-//                DispatchQueue.main.async {
-//                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-//                }
-//            } else {
-//                DispatchQueue.main.async {
-//                    self.viewModel!.deleteItem(id: self.removedCalls, completion: { (error)   in
-//                        self.sortedDictionary.remove(at: indexPath.row)
-//                        tableView.deleteRows(at: [indexPath], with: .automatic)
-//                         tableView.endUpdates()
-//                        if self.viewModel!.calls.count == 0 {
-//                           self.addNoCallView()
-//                        } else {
-//                            self.view.viewWithTag(20)?.removeFromSuperview()
-//                        }
-//                    })
-//                }
-//            }
-//        })
-//        viewModel?.removeModerator(id: id!, userId: (moderators[indexPath.row].user?._id)!, completion: { (error) in
-//            if error == nil {
-//                DispatchQueue.main.async {
-//                    self.tableView.beginUpdates()
-//                    self.moderators.remove(at: indexPath.row)
-//
-//                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                    self.tableView.endUpdates()
-//                    if self.moderators.count == 0 {
-//                        self.setLabel(text: "no_moderator".localized())
-//                    }
-//                }
-//            }
-//        })
-//    }
-    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-            let contextItem = UIContextualAction(style: .destructive, title: "delete".localized()) {  (action, view, boolValue) in
-                self.viewModel?.removeModerator(id: self.id!, userId: (self.moderators[indexPath.row].user?._id)!, completion: { (error) in
-                    if error == nil {
-                        DispatchQueue.main.async {
-                            self.tableView.beginUpdates()
-                            self.moderators.remove(at: indexPath.row)
-                            self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                            self.tableView.endUpdates()
-                            if self.moderators.count == 0 {
-                                self.setLabel(text: "no_moderator".localized())
-                            }
-//                            self.tableView.dataSource?.tableView!(self.tableView, commit: .delete, forRowAt: indexPath)
-//                            return
+        let contextItem = UIContextualAction(style: .destructive, title: "delete".localized()) {  (action, view, boolValue) in
+            self.viewModel?.removeModerator(id: self.id!, userId: (self.moderators[indexPath.row].user?._id)!, completion: { (error) in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self.tableView.beginUpdates()
+                        self.moderators.remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                        self.tableView.endUpdates()
+                        if self.moderators.count == 0 {
+                            self.setLabel(text: "no_moderator".localized())
                         }
                     }
-                })
-                
-            }
-             let swipeActions = UISwipeActionsConfiguration(actions: [contextItem])
-            return swipeActions
+                }
+            })
+            
         }
+        let swipeActions = UISwipeActionsConfiguration(actions: [contextItem])
+        return swipeActions
+    }
 }

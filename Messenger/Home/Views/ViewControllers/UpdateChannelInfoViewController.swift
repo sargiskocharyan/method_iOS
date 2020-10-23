@@ -10,10 +10,12 @@ import UIKit
 
 class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     
+    //MARK: IBOutlets
     @IBOutlet weak var updateInfoButton: UIButton!
     @IBOutlet weak var descriptionCustomView: CustomTextField!
     @IBOutlet weak var nameCustomView: CustomTextField!
     
+    //MARK: Properties
     var viewModel: UpdateChannelInfoViewModel?
     var mainRouter: MainRouter?
     var isChangingName = false
@@ -21,6 +23,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
     var descriptionch: String?
     var channelInfo: ChannelInfo?
     
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         disableUpdateInfoButton()
@@ -39,6 +42,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
         descriptionCustomView.placeholder = "description".localized()
     }
     
+    //MARK: Helper methods
     @objc func nameTextFieldAction() {
         nameCustomView.errorLabel.isHidden = (nameCustomView.textField.text == "")
         isChangingName = true
@@ -100,7 +104,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    fileprivate func setText(name: String? , color: UIColor, text: String) {
+    func setText(name: String? , color: UIColor, text: String) {
         self.name = name
         self.nameCustomView.errorLabel.textColor = color
         self.nameCustomView.errorLabel.text = text.localized()
@@ -143,6 +147,7 @@ class UpdateChannelInfoViewController: UIViewController, UITextFieldDelegate {
             completion(nil)
         }
     }
+    
     func disableUpdateInfoButton() {
         updateInfoButton.isEnabled = false
         updateInfoButton.titleLabel?.textColor = UIColor.white

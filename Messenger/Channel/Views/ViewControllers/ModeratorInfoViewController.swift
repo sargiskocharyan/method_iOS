@@ -9,7 +9,7 @@
 import UIKit
 
 class ModeratorInfoViewController: UIViewController {
-
+    
     //MARK: IBOutlets
     @IBOutlet weak var subscribersLabel: UILabel!
     @IBOutlet weak var rejectLabel: UILabel!
@@ -20,7 +20,6 @@ class ModeratorInfoViewController: UIViewController {
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var urlView: UIView!
-    //@IBOutlet weak var leaveButton: UIButton!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var urlTextLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -35,13 +34,12 @@ class ModeratorInfoViewController: UIViewController {
     var viewModel: ChannelInfoViewModel?
     var subscribers: [ChannelSubscriber] = []
     
-    // MARK: Lifecycles
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         setInfo()
         addGestures()
-       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,7 +50,7 @@ class ModeratorInfoViewController: UIViewController {
         rejectLabel.text = "reject".localized()
         leaveLabel.text = "leave".localized()
     }
-
+    
     //MARK: Helper methods
     func configureView() {
         setBorder(view: subscribersView)
@@ -166,10 +164,10 @@ class ModeratorInfoViewController: UIViewController {
         })
     }
     
-       func setBorder(view: UIView) {
-           view.layer.borderColor = UIColor.lightGray.cgColor
-           view.layer.borderWidth = 1
-       }
+    func setBorder(view: UIView) {
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+    }
 }
 
 

@@ -27,5 +27,4 @@ class ChatMessagesViewModel {
             completion(error)
         }
     }
-    
 }

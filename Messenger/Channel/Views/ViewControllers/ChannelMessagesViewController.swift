@@ -39,7 +39,6 @@ class ChannelMessagesViewController: UIViewController {
         button.backgroundColor = UIColor(named: "imputColor")
         return button
     }()
-    
     let messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "imputColor")
@@ -50,7 +49,6 @@ class ChannelMessagesViewController: UIViewController {
         textField.placeholder = ""
         return textField
     }()
-    
     let sendButton: UIButton = {
         let button = UIButton(type: .system)
         
@@ -144,8 +142,6 @@ class ChannelMessagesViewController: UIViewController {
                 label.text = str
                 label.textColor = .lightGray
                 label.textAlignment = .center
-                
-                
             }
         } else {
             removeView()
@@ -168,7 +164,6 @@ class ChannelMessagesViewController: UIViewController {
         line.widthAnchor.constraint(equalToConstant: self.view.frame.width).isActive = true
         line.heightAnchor.constraint(equalToConstant: 1).isActive = true
         line.backgroundColor = UIColor(red: 209/255, green: 209/255, blue: 209/255, alpha: 1)
-        
     }
     
     func addConstraints() {
@@ -416,7 +411,6 @@ class ChannelMessagesViewController: UIViewController {
                     }
                     DispatchQueue.main.async {
                         self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        //                        self.navigationController?.popToRootViewController(animated: true)
                         self.universalButton.setTitle("join".localized(), for: .normal)
                         self.universalButton.isHidden = false
                     }
@@ -494,16 +488,7 @@ class ChannelMessagesViewController: UIViewController {
                             DispatchQueue.main.async {
                                 self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                             }
-                        } //else {
-//                            DispatchQueue.main.async {
-//                                self.channelMessages.array?.remove(at: indexPath.row)
-//                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                                if self.channelMessages.array?.count == 0 {
-//                                    self.setView("there_is_no_publication_yet".localized())
-//                                    self.universalButton.isHidden = true
-//                                }
-//                            }
-//                        }
+                        }
                     })
                 }))
                 alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
@@ -534,13 +519,6 @@ class ChannelMessagesViewController: UIViewController {
                 }
             }
         }
-        //        if id != SharedConfigs.shared.signedUser?.id {
-        //            if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
-        //                DispatchQueue.main.async {
-        //                    cell.messageLabel.text = message.text
-        //                }
-        //            }
-        //        }
     }
     
     func handleChannelMessageDeleted(messages: [Message]) {
@@ -610,7 +588,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             cell!.checkImage.image = image
         }
-        print("arrayOfSelectedMesssgae:  \(arrayOfSelectedMesssgae)")
     }
     
     
@@ -660,8 +637,6 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             return cell
         }
     }
-    
-    
 }
 
 extension UITableView {
