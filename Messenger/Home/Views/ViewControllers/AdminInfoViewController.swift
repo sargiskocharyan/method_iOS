@@ -96,7 +96,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     }
     
     @IBAction func deleteChannelAction(_ sender: Any) {
-        let alert = UIAlertController(title: nil, message: "are_you_sure_you_want_to_delete_channel", preferredStyle: .alert)
+        let alert = UIAlertController(title: nil, message: "are_you_sure_you_want_to_delete_channel".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
             self.viewModel?.deleteChannel(id: self.channelInfo!.channel!._id, completion: { (error) in
                 if error != nil {
