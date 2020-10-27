@@ -11,9 +11,7 @@ import UIKit
 class ChannelInfoViewController: UIViewController {
     
     //MARK: @IBOutlets
-    @IBOutlet weak var urlView: UIView!
-    //    @IBOutlet weak var leaveButton: UIButton!
-    
+    @IBOutlet weak var urlView: UIView!    
     @IBOutlet weak var channelDescriptionLabel: UILabel!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
@@ -25,6 +23,8 @@ class ChannelInfoViewController: UIViewController {
     @IBOutlet weak var leaveOrJoinView: UIView!
     @IBOutlet weak var channelLogoImageView: UIImageView!
     @IBOutlet weak var leaveOrJoinTextLabel: UILabel!
+    @IBOutlet weak var chanelDescriptionLabelBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var descriptionBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var viewModel: ChannelInfoViewModel?
@@ -166,7 +166,15 @@ class ChannelInfoViewController: UIViewController {
     
     func setInfo() {
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
+        if channelInfo?.channel?.description?.count ?? 0 > 0 {
+            descriptionLabel.text = channelInfo?.channel?.description
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 1000)
+            chanelDescriptionLabelBottomConstraint.isActive = false
+        } else {
+            chanelDescriptionLabelBottomConstraint.isActive = true
+            chanelDescriptionLabelBottomConstraint.constant = 10.0
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 250)
+        }
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"

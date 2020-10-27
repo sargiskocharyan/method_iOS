@@ -83,11 +83,15 @@ class SubscribersListViewController: UIViewController {
         let isModeratorText = "is_moderator".localized()
         let n = "-n".localized()
         let message = "\(now) \(name) \(n) \(isModeratorText)"
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        let attributedText = NSMutableAttributedString(string: message)
+        let range = NSRange(location: 0, length: attributedText.length)
+        attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 15.0), range: range)
+        let alert = UIAlertController(title: nil, message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action) in
             self.navigationController?.popViewController(animated: true)
         }))
-                 self.present(alert, animated: true)
+        alert.setValue(attributedText, forKey: "attributedTitle")
+        self.present(alert, animated: true)
     }
     
     func setLabel(text: String) {
@@ -116,7 +120,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContactTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelUserTableViewCell
         cell.configure(contact: subscribers[indexPath.row].user!)
         return cell
     }
