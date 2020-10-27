@@ -91,6 +91,12 @@ class RecentMessageTableViewCell: UITableViewCell {
                 lastMessageLabel.attributedText = boldText
             }
         } else {
+            let regularAttribute = [
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
+            ]
+            let regularText = NSAttributedString(string: (chat.message?.text) ?? "Call", attributes: regularAttribute)
+            lastMessageLabel.attributedText = regularText
+            lastMessageLabel.textColor = .darkGray
             lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "Call")
         }
     }

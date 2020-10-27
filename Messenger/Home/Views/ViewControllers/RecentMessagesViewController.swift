@@ -200,6 +200,58 @@ class RecentMessagesViewController: UIViewController {
         return ("\(hour):\(minutes)")
     }
     
+    func requestChats(_ isFromHome: Bool) {
+        viewModel!.getChats { (messages, error) in
+            if messages?.array != nil {
+                SharedConfigs.shared.unreadMessages = []
+                for chat in messages!.array! {
+                    if chat.unreadMessageExists {
+                        SharedConfigs.shared.unreadMessages.append(chat)
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                let tabbar = self.tabBarController as? MainTabBarController
+                let nc = tabbar!.viewControllers![3] as! UINavigationController
+                let profile = nc.viewControllers[0] as! ProfileViewController
+                profile.changeNotificationNumber()
+                if let tabItems = tabbar?.tabBar.items {
+                    let tabItem = tabItems[1]
+                    let count = SharedConfigs.shared.unreadMessages.count
+                    tabItem.badgeValue = count > 0 ? "\(count)" : nil
+                }
+            }
+            if (error != nil) {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                if (messages?.array != nil) {
+                    self.isLoadedMessages = true
+                    if messages?.array?.count == 0 {
+                        self.setView("you_have_no_messages".localized())
+                        DispatchQueue.main.async {
+                        }
+                    } else {
+                        self.chats = messages!.array!.filter({ (chat) -> Bool in
+                            return chat.message != nil
+                        })
+                        self.sort()
+                        if !isFromHome {
+                            DispatchQueue.main.async {
+                                self.removeView()
+                                self.tableView.reloadData()
+                            }
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.refreshControl.endRefreshing()
+                    }
+                }
+            }
+        }
+    }
+    
     func getChats(isFromHome: Bool) {
         self.isLoaded = true
         if isLoadedMessages == false {
@@ -207,57 +259,7 @@ class RecentMessagesViewController: UIViewController {
             }
         }
         if !isLoadedMessages {
-            viewModel!.getChats { (messages, error) in
-                if messages?.array != nil {
-                    SharedConfigs.shared.unreadMessages = []
-                    for chat in messages!.array! {
-                        if chat.unreadMessageExists {
-                            SharedConfigs.shared.unreadMessages.append(chat)
-                        }
-                    }
-                }
-                DispatchQueue.main.async {
-                    let tabbar = self.tabBarController as? MainTabBarController
-                    let nc = tabbar!.viewControllers![3] as! UINavigationController
-                    let profile = nc.viewControllers[0] as! ProfileViewController
-                    profile.changeNotificationNumber()
-                    if let tabItems = tabbar?.tabBar.items {
-                        let tabItem = tabItems[1]
-                        let count = SharedConfigs.shared.unreadMessages.count
-                        tabItem.badgeValue = count > 0 ? "\(count)" : nil
-                    }
-                }
-                if (error != nil) {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                    }
-                } else {
-                    if (messages?.array != nil) {
-                        self.isLoadedMessages = true
-                        if messages?.array?.count == 0 {
-                            self.setView("you_have_no_messages".localized())
-                            DispatchQueue.main.async {
-                            }
-                        } else {
-                            self.chats = messages!.array!.filter({ (chat) -> Bool in
-                                return chat.message != nil
-                            })
-                            self.sort()
-                            if !isFromHome {
-                                DispatchQueue.main.async {
-                                    self.removeView()
-                                    self.tableView.reloadData()
-                                }
-                                
-                            }
-                        }
-                        DispatchQueue.main.async {
-                            self.refreshControl.endRefreshing()
-                        }
-                    }
-                }
-                
-            }
+            requestChats(isFromHome)
         }
     }
     
@@ -273,49 +275,7 @@ class RecentMessagesViewController: UIViewController {
     }
     
     func handleMessageDelete(messages: [Message]) {
-        let chatId = messages[0].senderId == SharedConfigs.shared.signedUser?.id ? messages[0].reciever : messages[0].senderId
-        viewModel?.getChatMessages(id: chatId!, dateUntil: nil, completion: { [self] (messages, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                }
-            } else {
-                for i in 0..<self.chats.count {
-                    if (messages?.array?.count) ?? 0 > 0 {
-                        if chatId == self.chats[i].id   {
-                                DispatchQueue.main.async {
-                                    let lastMessage = messages!.array![messages!.array!.count - 1]
-                                    let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell
-                                    chats[i].message = lastMessage
-                                    if lastMessage.senderId == SharedConfigs.shared.signedUser?.id {
-                                        chats[i].unreadMessageExists = false
-                                    } else {
-                                        let createdAt = stringToDateD(date: lastMessage.createdAt ?? "")
-                                        let status = chats[i].statuses?[0].userId == SharedConfigs.shared.signedUser?.id ? chats[i].statuses?[1] : chats[i].statuses?[0]
-                                        let readDate = stringToDateD(date: status?.readMessageDate ?? "")
-                                        if createdAt! <= readDate! {
-                                            chats[i].unreadMessageExists = false
-                                        } else {
-                                            chats[i].unreadMessageExists = true
-                                        }
-                                    }
-                                    cell?.configure(chat: chats[i])
-                                }
-                        }
-                    }
-                    else if messages?.array?.count == 0 && chatId == chats[i].id {
-                        DispatchQueue.main.async {
-                            self.chats.remove(at: i)
-                            if chats.count == 0 {
-                                self.setView("you_have_no_messages".localized())
-                            }
-                            tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
-                        }
-                    }
-                    
-                }
-            }
-        })
+        requestChats(false)
     }
     
     func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {

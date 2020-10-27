@@ -30,6 +30,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     @IBOutlet weak var moderatorsView: UIView!
     @IBOutlet weak var subscribersView: UIView!
     @IBOutlet weak var changeAdminView: UIView!
+    @IBOutlet weak var channelDescriptionLabel: UILabel!
     
     //MARK: Properties
     var channelInfo: ChannelInfo?
@@ -343,6 +344,11 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     }
     
     func setInfo() {
+        if channelInfo?.channel?.openMode == true {
+            channelDescriptionLabel.text = "all_members_can_post".localized()
+        } else {
+            channelDescriptionLabel.text = "only_admin_can_post".localized()
+        }
         nameLabel.text = channelInfo?.channel?.name
         descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
         urlLabel.text = channelInfo?.channel?.publicUrl

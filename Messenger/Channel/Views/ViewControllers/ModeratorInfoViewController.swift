@@ -11,6 +11,7 @@ import UIKit
 class ModeratorInfoViewController: UIViewController {
     
     //MARK: IBOutlets
+    @IBOutlet weak var channelDescriptionLabel: UILabel!
     @IBOutlet weak var subscribersLabel: UILabel!
     @IBOutlet weak var rejectLabel: UILabel!
     @IBOutlet weak var leaveView: UIView!
@@ -26,19 +27,20 @@ class ModeratorInfoViewController: UIViewController {
     @IBOutlet weak var descriptionTextLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var channelLogoImageView: UIImageView!
-    
+    @IBOutlet weak var chanelDescriptionLabelBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var descriptionBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var mainRouter: MainRouter?
     var channelInfo: ChannelInfo?
     var viewModel: ChannelInfoViewModel?
     var subscribers: [ChannelSubscriber] = []
+//    var bottomConstraintConstant: CGFloat!
     
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        setInfo()
         addGestures()
     }
     
@@ -46,6 +48,7 @@ class ModeratorInfoViewController: UIViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
+        setInfo()
         subscribersLabel.text = "subscribers".localized()
         rejectLabel.text = "reject".localized()
         leaveLabel.text = "leave".localized()
@@ -62,8 +65,21 @@ class ModeratorInfoViewController: UIViewController {
     }
     
     func setInfo() {
+        if channelInfo?.channel?.openMode == true {
+            channelDescriptionLabel.text = "all_members_can_post".localized()
+        } else {
+            channelDescriptionLabel.text = "only_admin_can_post".localized()
+        }
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
+        if channelInfo?.channel?.description?.count ?? 0 > 0 {
+            descriptionLabel.text = channelInfo?.channel?.description
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 1000)
+            chanelDescriptionLabelBottomConstraint.isActive = false
+        } else {
+            chanelDescriptionLabelBottomConstraint.isActive = true
+            chanelDescriptionLabelBottomConstraint.constant = 10.0
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 250)
+        }
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = channelInfo?.channel?.publicUrl

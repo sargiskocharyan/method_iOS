@@ -51,8 +51,7 @@ class ChannelMessagesViewController: UIViewController {
     }()
     let sendButton: UIButton = {
         let button = UIButton(type: .system)
-        
-        button.setImage(UIImage(named: "send"), for: .normal)
+        button.setImage(UIImage.init(named: "send"), for: .normal)
         return button
     }()
     
@@ -82,6 +81,7 @@ class ChannelMessagesViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
         tableView.allowsMultipleSelection = false
+        inputTextField.placeholder = "enter_message".localized()
         self.tableView.allowsSelection = false
         if (channelInfo.role == 0 || channelInfo.role == 1) {
             if isLoadedMessages {
@@ -110,7 +110,7 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
-        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30).isActive = true
+        inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -37).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
@@ -197,7 +197,22 @@ class ChannelMessagesViewController: UIViewController {
     }
     
     @objc func deleteMessages() {
-        showAlertBeforeDeleteMessage()
+        if arrayOfSelectedMesssgae.count > 0 {
+            showAlertBeforeDeleteMessage()
+        } else {
+            self.check = !self.check
+            self.isPreview = self.check
+            UIView.setAnimationsEnabled(false)
+            self.tableView.beginUpdates()
+            self.tableView.reloadData()
+            self.tableView.endUpdates()
+            self.inputTextField.placeholder = "enter_message".localized()
+            self.universalButton.setTitle("edit".localized(), for: .normal)
+            self.tableView.allowsMultipleSelection = false
+            self.tableView.allowsSelection = false
+            self.sendButton.isHidden = false
+            self.removeDeleteButton()
+        }
     }
     
     func removeDeleteButton()  {
@@ -225,6 +240,7 @@ class ChannelMessagesViewController: UIViewController {
     @objc func sendMessage() {
         if mode == .edit {
             mode = .main
+            sendButton.setImage(UIImage.init(named: "send"), for: .normal)
             if inputTextField.text != "" {
                 if let cell = tableView.cellForRow(at: indexPath!) as? SendMessageTableViewCell {
                     self.viewModel?.editChannelMessageBySender(id: cell.id!, text: self.inputTextField.text!, completion: { (error) in
@@ -287,6 +303,7 @@ class ChannelMessagesViewController: UIViewController {
                     self.tableView.reloadData()
                     self.tableView.endUpdates()
                     self.universalButton.setTitle("edit".localized(), for: .normal)
+                    self.inputTextField.placeholder = "enter_message".localized()
                     self.tableView.allowsMultipleSelection = false
                     self.tableView.allowsSelection = false
                     self.sendButton.isHidden = false
@@ -427,12 +444,14 @@ class ChannelMessagesViewController: UIViewController {
                 self.tableView.endUpdates()
                 if !self.isPreview! {
                     self.setDeleteMessageButton()
+                    self.inputTextField.placeholder = ""
                     self.universalButton.setTitle("cancel".localized(), for: .normal)
                     self.tableView.allowsMultipleSelection = true
                     self.sendButton.isHidden = true
                 } else {
                     self.sendButton.isHidden = false
                     self.tableView.allowsMultipleSelection = false
+                    self.inputTextField.placeholder = "enter_message".localized()
                     self.tableView.allowsSelection = false
                     self.universalButton.setTitle("edit".localized(), for: .normal)
                     self.removeDeleteButton()
@@ -493,6 +512,7 @@ class ChannelMessagesViewController: UIViewController {
                 }))
                 alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
                     self.mode = .edit
+                    self.sendButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
                     self.indexPath = indexPath
                     self.inputTextField.text = cell?.messageLabel.text
                 }))

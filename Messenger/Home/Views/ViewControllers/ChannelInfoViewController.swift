@@ -14,6 +14,7 @@ class ChannelInfoViewController: UIViewController {
     @IBOutlet weak var urlView: UIView!
     //    @IBOutlet weak var leaveButton: UIButton!
     
+    @IBOutlet weak var channelDescriptionLabel: UILabel!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var urlLabel: UILabel!
@@ -169,6 +170,11 @@ class ChannelInfoViewController: UIViewController {
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
+        if channelInfo?.channel?.openMode == true {
+            channelDescriptionLabel.text = "all_members_can_post".localized()
+        } else {
+            channelDescriptionLabel.text = "only_admin_can_post".localized()
+        }
         if channelInfo?.role == 2 {
             leaveOrJoinTextLabel.text = "leave".localized()
             leaveOrJoinTextLabel.textAlignment = .left
