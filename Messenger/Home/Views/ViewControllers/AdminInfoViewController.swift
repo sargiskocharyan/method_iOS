@@ -31,6 +31,9 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     @IBOutlet weak var subscribersView: UIView!
     @IBOutlet weak var changeAdminView: UIView!
     @IBOutlet weak var channelDescriptionLabel: UILabel!
+    @IBOutlet weak var chanelDescriptionLabelBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var descriptionBottomConstraint: NSLayoutConstraint!
+    
     
     //MARK: Properties
     var channelInfo: ChannelInfo?
@@ -38,11 +41,13 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     var viewModel: ChannelInfoViewModel?
     var moderators: [ChannelSubscriber] = []
     var imagePicker = UIImagePickerController()
+    var myConstraint: NSLayoutConstraint!
     
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
+        myConstraint = chanelDescriptionLabelBottomConstraint
         configureView()
         addGestures()
     }
@@ -350,7 +355,16 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
             channelDescriptionLabel.text = "only_admin_can_post".localized()
         }
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
+        if channelInfo?.channel?.description?.count ?? 0 > 0 {
+            descriptionLabel.text = channelInfo?.channel?.description
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 1000)
+            chanelDescriptionLabelBottomConstraint.isActive = false
+        } else {
+            chanelDescriptionLabelBottomConstraint = myConstraint
+            chanelDescriptionLabelBottomConstraint.isActive = true
+            chanelDescriptionLabelBottomConstraint.constant = 10.0
+            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 250)
+        }
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"

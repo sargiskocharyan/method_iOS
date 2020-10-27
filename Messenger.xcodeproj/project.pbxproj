@@ -131,6 +131,8 @@
 		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
+		D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B68D31252C3EDD0019818D /* UpdateChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */; };
 		D0B68D32252C3EDD0019818D /* UpdateChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */; };
 		D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */; };
@@ -452,6 +454,7 @@
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
+		D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUserTableViewCell.swift; sourceTree = "<group>"; };
 		D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewModel.swift; sourceTree = "<group>"; };
 		D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminInfoViewController.swift; sourceTree = "<group>"; };
 		D0B8068625273F33004E4DF0 /* ModeratorListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeratorListViewController.swift; sourceTree = "<group>"; };
@@ -571,6 +574,7 @@
 				CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */,
 				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
 				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
+				D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1351,6 +1355,7 @@
 				D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
 				CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */,
+				D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */,
 				CD9FE2EC24E2ADEB002A27CC /* RemoteNotificationManager.swift in Sources */,
 				CD9F63CC25348F01004CF9CB /* CreateAccountAlertViewController.swift in Sources */,
 				CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */,
@@ -1495,6 +1500,7 @@
 				D0F664F8251B177D0018D9B7 /* MainRouter.swift in Sources */,
 				D0F664F9251B177D0018D9B7 /* SignalingClient.swift in Sources */,
 				D0F664FA251B177D0018D9B7 /* TextField-Extension.swift in Sources */,
+				D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */,
 				D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				D0B806852526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
 				D0F664FB251B177D0018D9B7 /* BeforeLoginViewModel.swift in Sources */,

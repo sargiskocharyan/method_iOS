@@ -91,11 +91,10 @@ class ChannelMessagesViewController: UIViewController {
     
     //MARK: Helper methods
     private func setupInputComponents() {
-        let topBorderView = UIView()
-        topBorderView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
-        messageInputContainerView.addSubview(topBorderView)
+        messageInputContainerView.layer.borderWidth = 1
+        messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -37).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
@@ -108,8 +107,6 @@ class ChannelMessagesViewController: UIViewController {
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 10).isActive = true
         sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.isUserInteractionEnabled = true
-        messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
-        messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
     }
     
     func setInputMessage() {
@@ -184,12 +181,11 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
         bottomConstraint = messageInputContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         bottomConstraint?.isActive = true
-        messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        messageInputContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 1).isActive = true
+        messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: -1).isActive = true
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
-        view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
-        view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
+        messageInputContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
         tableViewBottomConstraint.constant = 48
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
     }
@@ -276,7 +272,6 @@ class ChannelMessagesViewController: UIViewController {
                 inputTextField.text = ""
                 SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
                 removeView()
-                self.universalButton.isHidden = false
             }
         }
     }
@@ -414,45 +409,7 @@ class ChannelMessagesViewController: UIViewController {
                     
                 }
             })
-        } else if channelInfo.role == 2 {
-            viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                    }
-                } else {
-                    self.channelInfo?.role = 3
-                    if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
-                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
-                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
-                        })
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    } else {
-                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
-                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
-                        })
-                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
-                                break
-                            }
-                        }
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    }
-                    DispatchQueue.main.async {
-                        self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        self.universalButton.setTitle("join".localized(), for: .normal)
-                        self.universalButton.isHidden = false
-                    }
-                }
-            })
-        } else if channelInfo?.role == 0 || channelInfo?.role == 1 {
+        }  else if channelInfo?.role == 0 || channelInfo?.role == 1 {
             check = !check
             isPreview = check
             DispatchQueue.main.async {
