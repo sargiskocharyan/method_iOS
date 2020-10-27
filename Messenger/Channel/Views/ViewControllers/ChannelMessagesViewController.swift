@@ -56,6 +56,8 @@ class ChannelMessagesViewController: UIViewController {
     }()
     
     //MARK: LifeCycles
+   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -66,14 +68,13 @@ class ChannelMessagesViewController: UIViewController {
         setObservers()
         isPreview = true
         check = true
-        if channelInfo.channel?.openMode == true && channelInfo.role != 3 {
-            addConstraints()
-            setupInputComponents()
-        }
+        setInputMessage()
         setLineOnHeaderView()
         headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         tableView.allowsMultipleSelection = false
     }
+    
+ 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -83,23 +84,8 @@ class ChannelMessagesViewController: UIViewController {
         tableView.allowsMultipleSelection = false
         inputTextField.placeholder = "enter_message".localized()
         self.tableView.allowsSelection = false
-        if (channelInfo.role == 0 || channelInfo.role == 1) {
-            if isLoadedMessages {
-                if channelMessages.array?.count != nil && channelMessages.array!.count > 0 {
-                    check = true
-                    universalButton.isHidden = false
-                    universalButton.setTitle("edit".localized(), for: .normal)
-                }
-            }
-        } else if channelInfo.role == 2 {
-            check = false
-            universalButton.isHidden = true
-        } else {
-            messageInputContainerView.removeFromSuperview()
-            check = false
-            universalButton.isHidden = false
-            universalButton.setTitle("join".localized(), for: .normal)
-        }
+        checkChannelRole()
+        setInputMessage()
     }
     
     
@@ -126,6 +112,32 @@ class ChannelMessagesViewController: UIViewController {
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
     }
     
+    func setInputMessage() {
+        if channelInfo.channel?.openMode == true && channelInfo.role != 3 {
+            addConstraints()
+            setupInputComponents()
+        }
+    }
+    
+       func checkChannelRole() {
+        if (channelInfo.role == 0 || channelInfo.role == 1) {
+            if isLoadedMessages {
+                if channelMessages.array?.count != nil && channelMessages.array!.count > 0 {
+                    check = true
+                    universalButton.isHidden = false
+                    universalButton.setTitle("edit".localized(), for: .normal)
+                }
+            }
+        } else if channelInfo.role == 2 {
+            check = false
+            universalButton.isHidden = true
+        } else {
+            messageInputContainerView.removeFromSuperview()
+            check = false
+            universalButton.isHidden = false
+            universalButton.setTitle("join".localized(), for: .normal)
+        }
+    }
   
     func setView(_ str: String) {
         if channelMessages.array?.count == 0 {

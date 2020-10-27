@@ -10,6 +10,7 @@ import UIKit
 
 class ModeratorListViewController: UIViewController {
     //MARK: IBOutlets
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
     //MARK: Properties
@@ -37,6 +38,7 @@ class ModeratorListViewController: UIViewController {
         if self.moderators.count > 0 && self.isLoaded {
             self.removeLabel()
         }
+        descriptionLabel.text = "admin_permission_can_be_set_only_moderators".localized()
     }
     
     //MARK: Helper methods
