@@ -276,6 +276,50 @@ class RecentMessagesViewController: UIViewController {
     
     func handleMessageDelete(messages: [Message]) {
         requestChats(false)
+        let chatId = messages[0].senderId == SharedConfigs.shared.signedUser?.id ? messages[0].reciever : messages[0].senderId
+        viewModel?.getChatMessages(id: chatId!, dateUntil: nil, completion: { [self] (messages, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else {
+                for i in 0..<self.chats.count {
+                    if (messages?.array?.count) ?? 0 > 0 {
+                        if chatId == self.chats[i].id   {
+                            DispatchQueue.main.async {
+                                let lastMessage = messages!.array![messages!.array!.count - 1]
+                                let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecentMessageTableViewCell
+                                chats[i].message = lastMessage
+                                if lastMessage.senderId == SharedConfigs.shared.signedUser?.id {
+                                    chats[i].unreadMessageExists = false
+                                } else {
+                                    let createdAt = stringToDateD(date: lastMessage.createdAt ?? "")
+                                    let status = chats[i].statuses?[0].userId == SharedConfigs.shared.signedUser?.id ? chats[i].statuses?[1] : chats[i].statuses?[0]
+                                    let readDate = stringToDateD(date: status?.readMessageDate ?? "")
+                                    if readDate != nil {
+                                        if createdAt! <= readDate! {
+                                            chats[i].unreadMessageExists = false
+                                        } else {
+                                            chats[i].unreadMessageExists = true
+                                        }
+                                    }
+                                }
+                                cell?.configure(chat: chats[i])
+                            }
+                        }
+                    }
+                    else if messages?.array?.count == 0 && chatId == chats[i].id {
+                        DispatchQueue.main.async {
+                            self.chats.remove(at: i)
+                            if chats.count == 0 {
+                                self.setView("you_have_no_messages".localized())
+                            }
+                            tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+                        }
+                    }
+                }
+            }
+        })
     }
     
     func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {

@@ -66,7 +66,7 @@ class ChannelMessagesViewController: UIViewController {
         setObservers()
         isPreview = true
         check = true
-        if channelInfo.channel?.openMode == true || channelInfo.channel?.creator == SharedConfigs.shared.signedUser?.id {
+        if channelInfo.channel?.openMode == true && channelInfo.role != 3 {
             addConstraints()
             setupInputComponents()
         }
@@ -95,6 +95,7 @@ class ChannelMessagesViewController: UIViewController {
             check = false
             universalButton.isHidden = true
         } else {
+            messageInputContainerView.removeFromSuperview()
             check = false
             universalButton.isHidden = false
             universalButton.setTitle("join".localized(), for: .normal)
@@ -369,6 +370,12 @@ class ChannelMessagesViewController: UIViewController {
                 } else {
                     SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo.channel!._id)
                     self.channelInfo?.role = 2
+                    if self.channelInfo.channel?.openMode ?? false {
+                        DispatchQueue.main.async {
+                            self.addConstraints()
+                            self.setupInputComponents()
+                        }
+                    }
                     if self.mainRouter?.channelListViewController?.mode == .main {
                         self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
                         self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
@@ -574,8 +581,12 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         var size: CGSize?
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+        if channelMessages.array?.count ?? 0 > 0 {
         let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
         return channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id ?  frame.height + 30 : frame.height + 30 + 20
+        } else {
+            return 0
+        }
     }
     
     //MARK: WillDeselectRowAt indexPath
@@ -585,13 +596,13 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-            cell!.checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
+            cell!.checkImageView?.image = UIImage.init(systemName: "circle")
         } else {
             let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
-            cell!.checkImage?.image = UIImage.init(systemName: "checkmark.circle")
+            cell!.checkImage?.image = UIImage.init(systemName: "circle")
         }
         return indexPath
     }
@@ -624,7 +635,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             cell.messageLabel.text = channelMessages.array![indexPath.row].text
             cell.messageLabel.sizeToFit()
             cell.contentView.addGestureRecognizer(tap)
-            cell.checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
+            cell.checkImageView?.image = UIImage.init(systemName: "circle")
             if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
                 cell.setCheckImage()
                 cell.setCheckButton(isPreview: isPreview!)

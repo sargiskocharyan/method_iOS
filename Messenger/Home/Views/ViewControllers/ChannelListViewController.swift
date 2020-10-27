@@ -168,7 +168,7 @@ class ChannelListViewController: UIViewController {
     }
     
     func setView(_ str: String) {
-        if channels.count == 0 {
+        if channelsInfo.count == 0 {
             DispatchQueue.main.async {
                 let noResultView = UIView(frame: self.view.frame)
                 self.tableView.addSubview(noResultView)
@@ -240,14 +240,19 @@ class ChannelListViewController: UIViewController {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
             } else if let foundchannels = channels {
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [self] in
                     if self.searchController.searchBar.text!.count > 0 {
                         self.mode = .search
                         self.foundChannels = foundchannels
                         self.channelsInfo = foundchannels
-                        if self.channelsInfo.elementsEqual(self.foundChannels) {
-                            self.removeView()
-                            self.tableView.reloadData()
+                        self.tableView.reloadData()
+                        self.removeView()
+                        if self.channelsInfo.count > 0 {
+                            if self.channelsInfo.elementsEqual(self.foundChannels) {
+                                
+                            }
+                        } else {
+                            self.setView("there_is_no_result".localized())
                         }
                     }
                 }
@@ -286,6 +291,7 @@ extension ChannelListViewController: UISearchResultsUpdating {
         if searchController.searchBar.text!.count > 0 {
             findChannels(term: searchController.searchBar.text!)
         } else if searchController.searchBar.text!.count == 0 {
+            removeView()
             self.mode = .main
             channelsInfo = channels
             DispatchQueue.main.async {

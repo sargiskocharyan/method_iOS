@@ -153,7 +153,7 @@
 "change_admin"                                    = "Сменить администратора";
 "delete_channel"                                  = "Удалить канал";
 "no_subscriber"                                   = "Нет подписчиков";
-"you_are_going_to_change_adnim"                   = "Вы собираетесь сменить админа";
+"are_you_sure_you_want_to_change_admin"           = "Вы уверены, что хотите сменить администратора?";
 "are_you_sure"                                    = "Вы уверены?";
 "back"                                            = "Назад";
 "no_moderator"                                    = "Нет модераторов";
@@ -161,3 +161,10 @@
 "are_you_sure_you_want_to_block_subscriber"       = "Вы уверены, что хотите заблокировать подписчика";
 "block"                                           = "Заблокировать";
 "search"                                          = "Поиск";
+"there_is_no_publication_yet"                     = "There is no publication yet";
+"no_channel"                                      = "No channel";
+"there_is_no_publication_yet"                     = "Публикаций пока нет";
+"no_channel"                                      = "Нет каналов";
+"now"                                             = "Сейчас";
+"is moderator"                                    = "модератор";
+"-n"                                               = "";

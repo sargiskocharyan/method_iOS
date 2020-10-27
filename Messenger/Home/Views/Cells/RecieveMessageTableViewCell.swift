@@ -38,7 +38,7 @@ class RecieveMessageTableViewCell: UITableViewCell {
             checkImage.image = UIImage.init(systemName: "checkmark.circle.fill")
         } else {
             
-            checkImage.image = UIImage.init(systemName: "checkmark.circle")
+            checkImage.image = UIImage.init(systemName: "circle")
         }
     }
     

@@ -152,7 +152,7 @@
 "change_admin"                                    = "Փոխել ադմինիստրատորին";
 "delete_channel"                                  = "Ջնջել ալիքը";
 "no_subscriber"                                   = "Չկան բաժանորդներ";
-"you_are_going_to_change_adnim"                   = "Դուք պատրաստվում եք փոխել ադմինիստրատորին";
+"are_you_sure_you_want_to_change_admin"           = "համոզվա՞ծ եք, որ ցանկանում եք փոխել ադմինիստրատորին";
 "are_you_sure"                                    = "Համոզված եք?";
 "back"                                            = "Հետ";
 "no_moderator"                                    = "Չկան մոդերատորներ";
@@ -160,3 +160,8 @@
 "are_you_sure_you_want_to_block_subscriber"       = "Վստա՞հ եք, որ ցանկանում եք արգելափակել բաժանորդին";
 "block"                                           = "Արգելափակել";
 "search"                                          = "Որոնել";
+"there_is_no_publication_yet"                     = "Դեռ հրապարակում չկա";
+"no_channel"                                      = "Չկա ալիքներ";
+"now"                                             = "Այժմ";
+"-n"                                              = "-ն";
+"is_moderator"                                    = "մոդերատոր է";

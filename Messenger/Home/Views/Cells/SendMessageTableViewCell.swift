@@ -56,7 +56,7 @@ class SendMessageTableViewCell: UITableViewCell {
        if isSelected  {
            checkImageView?.image = UIImage.init(systemName: "checkmark.circle.fill")
        } else {
-           checkImageView?.image = UIImage.init(systemName: "checkmark.circle")
+           checkImageView?.image = UIImage.init(systemName: "circle")
        }
    }
    
