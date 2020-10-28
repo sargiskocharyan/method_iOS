@@ -554,7 +554,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
         return channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id ?  frame.height + 30 : frame.height + 30 + 20
         } else {
-            return 0
+            return UITableView.automaticDimension
         }
     }
     
