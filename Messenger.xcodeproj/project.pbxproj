@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
+		CD09EC412549369400907003 /* SendImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */; };
 		CD352E362488F71900747E32 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E372488F72F00747E32 /* ContactsViewModel.swift */; };
 		CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */; };
@@ -332,6 +333,7 @@
 		547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD2C163C24FD325A0054114C /* methodNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationService.entitlements; sourceTree = "<group>"; };
 		CD352E352488F71900747E32 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		CD352E372488F72F00747E32 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
@@ -575,6 +577,7 @@
 				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
 				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
 				D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */,
+				CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1412,6 +1415,7 @@
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,
 				CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */,
 				CDD9C677247BC4AE0048A9A1 /* EndPointType.swift in Sources */,
+				CD09EC412549369400907003 /* SendImageMessageTableViewCell.swift in Sources */,
 				CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */,
 				CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */,
 				CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */,
