@@ -109,7 +109,12 @@ struct Message: Codable {
     let updatedAt: String?
     let owner: String?
     let senderId: String?
-    
+    let image: Image?
+}
+
+struct Image: Codable {
+    let imageName: String?
+    let imageURL: String?
 }
 
 struct OnlineUsers: Codable {

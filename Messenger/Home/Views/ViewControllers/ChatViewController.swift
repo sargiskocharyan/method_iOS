@@ -128,7 +128,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 let text = inputTextField.text
                 inputTextField.text = ""
                 SocketTaskManager.shared.send(message: text!, id: id!)
-                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id))
+                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil))
                 self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
                 self.removeLabel()
             }

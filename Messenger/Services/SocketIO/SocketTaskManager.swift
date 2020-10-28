@@ -272,7 +272,9 @@ class SocketTaskManager {
     func addEditChannelMessageListener(completion: @escaping (_ message: Message) -> ()) {
         socket?.on("channelMessageEdited", callback: { (dataArray, socketAck) in
             let data = dataArray[0] as? Dictionary<String, Any>
-            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+            let imageDic = data?["image"] as? Dictionary<String, Any>
+            let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
             completion(message)
         })
     }
@@ -283,7 +285,9 @@ class SocketTaskManager {
             var messages: [Message] = []
             for i in 0..<(array?.count ?? 0) {
                 let data = array?[i] as? Dictionary<String, Any>
-                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                let imageDic = data?["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
                 messages.append(message)
             }
             completion(messages)
@@ -292,8 +296,10 @@ class SocketTaskManager {
     
     func addEditChatMessageListener(completion: @escaping (_ message: Message) -> ()) {
         socket?.on("chatMessageEdited", callback: { (dataArray, socketAck) in
-            let data = dataArray[0] as! NSDictionary
-            let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+            let data = dataArray[0] as? Dictionary<String, Any>
+            let imageDic = data?["image"] as? Dictionary<String, Any>
+            let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
             completion(message)
         })
     }
@@ -304,7 +310,9 @@ class SocketTaskManager {
             var messages: [Message] = []
             for i in 0..<(array?.count ?? 0) {
                 let data = array?[i] as? Dictionary<String, Any>
-                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String)
+                let imageDic = data?["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
                 messages.append(message)
             }
             completion(messages)
@@ -350,7 +358,7 @@ class SocketTaskManager {
     
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
-            let data = dataArray[0] as! NSDictionary
+            let data = dataArray[0] as! Dictionary<String, Any>
             let chatId = data["reciever"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["reciever"] as? String
             if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
                 self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
@@ -361,12 +369,14 @@ class SocketTaskManager {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
-                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: nil)
                 completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
             if let text = data["text"] as? String {
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let imageDic = data["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image)
                 completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                 for i in 0..<vc.chats.count {
@@ -391,23 +401,14 @@ class SocketTaskManager {
             }
         }
     }
-//    func addSendChannelMessageListener()  {
-//        socket?.on("sendChnMessage", callback: { (dataArray, socketAck) in
-//            print(dataArray)
-//        })
-//    }
     
     func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("sendChnMessage") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
+            let imageDictionary = data["image"] as? Dictionary<String, Any>
             let _ = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
-//            if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
-//                self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
-//                    print("messageReceived")
-//                }
-//            }
             if let text = data["text"] as? String {
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: Image(imageName: imageDictionary?["imageName"] as? String, imageURL: imageDictionary?["imageURL"] as? String))
                 completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
             }
         }

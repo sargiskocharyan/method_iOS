@@ -10,9 +10,10 @@ import UIKit
 
 class SendImageMessageTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
+//    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
+
     @IBOutlet weak var snedImageView: UIImageView!
-    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
+//    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
     override func awakeFromNib() {
         super.awakeFromNib()
     }

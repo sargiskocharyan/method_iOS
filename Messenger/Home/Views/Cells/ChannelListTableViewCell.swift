@@ -16,12 +16,18 @@ class ChannelListTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         channelLogoImageView.contentMode = .scaleAspectFill
-        channelLogoImageView.layer.cornerRadius = 23
+        channelLogoImageView.layer.cornerRadius = channelLogoImageView.frame.height / 2 - 2
         channelLogoImageView.clipsToBounds = true
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.channelLogoImageView.image = nil
     }
     
     func configureCell(avatar: String?, name: String, id: String) {
         channelNameLabel.text = name
+        channelLogoImageView.contentMode = .scaleAspectFit
         ImageCache.shared.getImage(url: avatar ?? "", id: id, isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image
@@ -30,8 +36,6 @@ class ChannelListTableViewCell: UITableViewCell {
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

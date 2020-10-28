@@ -12,9 +12,11 @@ class ChannelInfoViewController: UIViewController {
     
     //MARK: @IBOutlets
     @IBOutlet weak var urlView: UIView!    
-    @IBOutlet weak var channelDescriptionLabel: UILabel!
+    @IBOutlet weak var privacyLabel: UILabel!
+    @IBOutlet weak var privacyTextLabel: UILabel!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var privacyView: UIView!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var urlTextLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -23,8 +25,6 @@ class ChannelInfoViewController: UIViewController {
     @IBOutlet weak var leaveOrJoinView: UIView!
     @IBOutlet weak var channelLogoImageView: UIImageView!
     @IBOutlet weak var leaveOrJoinTextLabel: UILabel!
-    @IBOutlet weak var chanelDescriptionLabelBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var descriptionBottomConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var viewModel: ChannelInfoViewModel?
@@ -166,23 +166,16 @@ class ChannelInfoViewController: UIViewController {
     
     func setInfo() {
         nameLabel.text = channelInfo?.channel?.name
-        if channelInfo?.channel?.description?.count ?? 0 > 0 {
-            descriptionLabel.text = channelInfo?.channel?.description
-            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 1000)
-            chanelDescriptionLabelBottomConstraint.isActive = false
-        } else {
-            chanelDescriptionLabelBottomConstraint.isActive = true
-            chanelDescriptionLabelBottomConstraint.constant = 10.0
-            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 250)
-        }
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo!.channel!.description : "description_not_set".localized()
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
         if channelInfo?.channel?.openMode == true {
-            channelDescriptionLabel.text = "all_members_can_post".localized()
+            privacyLabel.text = "all_members_can_post".localized()
         } else {
-            channelDescriptionLabel.text = "only_admin_can_post".localized()
+            privacyLabel.text = "only_admin_can_post".localized()
         }
+        privacyTextLabel.text = "privacy".localized()
         if channelInfo?.role == 2 {
             leaveOrJoinTextLabel.text = "leave".localized()
             leaveOrJoinTextLabel.textAlignment = .left
@@ -192,6 +185,7 @@ class ChannelInfoViewController: UIViewController {
             leaveOrJoinTextLabel.textAlignment = .center
             leaveOrJoinTextLabel.textColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
         }
+        self.channelLogoImageView.contentMode = .scaleAspectFit
         ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "", isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image

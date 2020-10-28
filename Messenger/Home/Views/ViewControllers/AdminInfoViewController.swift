@@ -12,6 +12,8 @@ import AVFoundation
 class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: IBOutlets
+    @IBOutlet weak var privacyLabel: UILabel!
+    @IBOutlet weak var privacyTextLabel: UILabel!
     @IBOutlet weak var urlView: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -30,10 +32,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     @IBOutlet weak var moderatorsView: UIView!
     @IBOutlet weak var subscribersView: UIView!
     @IBOutlet weak var changeAdminView: UIView!
-    @IBOutlet weak var channelDescriptionLabel: UILabel!
-    @IBOutlet weak var chanelDescriptionLabelBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var descriptionBottomConstraint: NSLayoutConstraint!
-    
+    @IBOutlet weak var privacyView: UIView!
     
     //MARK: Properties
     var channelInfo: ChannelInfo?
@@ -41,13 +40,11 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     var viewModel: ChannelInfoViewModel?
     var moderators: [ChannelSubscriber] = []
     var imagePicker = UIImagePickerController()
-    var myConstraint: NSLayoutConstraint!
     
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
-        myConstraint = chanelDescriptionLabelBottomConstraint
         configureView()
         addGestures()
     }
@@ -350,21 +347,13 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
     
     func setInfo() {
         if channelInfo?.channel?.openMode == true {
-            channelDescriptionLabel.text = "all_members_can_post".localized()
+            privacyLabel.text = "all_members_can_post".localized()
         } else {
-            channelDescriptionLabel.text = "only_admin_can_post".localized()
+            privacyLabel.text = "only_admin_can_post".localized()
         }
+        privacyTextLabel.text = "privacy".localized()
         nameLabel.text = channelInfo?.channel?.name
-        if channelInfo?.channel?.description?.count ?? 0 > 0 {
-            descriptionLabel.text = channelInfo?.channel?.description
-            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 1000)
-            chanelDescriptionLabelBottomConstraint.isActive = false
-        } else {
-            chanelDescriptionLabelBottomConstraint = myConstraint
-            chanelDescriptionLabelBottomConstraint.isActive = true
-            chanelDescriptionLabelBottomConstraint.constant = 10.0
-            descriptionBottomConstraint.priority = UILayoutPriority(rawValue: 250)
-        }
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo!.channel!.description : "description_not_set".localized()
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
