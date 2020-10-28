@@ -18,7 +18,7 @@ enum CallStatus: String {
     case ongoing   = "ongoing"
 }
 
-class ChatViewController: UIViewController {
+class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -44,6 +44,7 @@ class ChatViewController: UIViewController {
     var indexPath: IndexPath?
     var mode: MessageMode?
     var fromContactProfile: Bool?
+    var rowHeights:[Int:CGFloat] = [:]
     let messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "imputColor")
@@ -424,15 +425,63 @@ class ChatViewController: UIViewController {
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
     }
     
-    private func setupInputComponents() {
+    @objc func handleUploadTap() {
+        let imagePickerController = UIImagePickerController()
+        
+        imagePickerController.allowsEditing = true
+        imagePickerController.delegate = self
+        
+        present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    func setSendImageView(image: UIImage) {
+        let viewOfImage = UIView()
+        tableView.addSubview(viewOfImage)
+        viewOfImage.translatesAutoresizingMaskIntoConstraints = false
+        viewOfImage.leftAnchor.constraint(equalTo: self.tableView.leftAnchor, constant: 10).isActive = true
+        viewOfImage.bottomAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: -5).isActive = true
+        viewOfImage.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        viewOfImage.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        let sendingImage = UIImageView()
+        tableView.addSubview(sendingImage)
+        sendingImage.translatesAutoresizingMaskIntoConstraints = false
+        sendingImage.leftAnchor.constraint(equalTo: self.tableView.leftAnchor, constant: 10).isActive = true
+        sendingImage.bottomAnchor.constraint(equalTo: viewOfImage.bottomAnchor, constant: 0).isActive = true
+        sendingImage.topAnchor.constraint(equalTo: viewOfImage.topAnchor, constant: 0).isActive = true
+        sendingImage.rightAnchor.constraint(equalTo: viewOfImage.rightAnchor, constant: 0).isActive = true
+        sendingImage.clipsToBounds = true
+        sendingImage.image = image
+//        sendingImage.contentMode = .scaleAspectFit
+        sendingImage.layer.cornerRadius = 20
+       
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+        var selectedImageFromPicker: UIImage?
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            selectedImageFromPicker = originalImage
+        }
+        if let selectedImage = selectedImageFromPicker {
+            setSendImageView(image: selectedImage)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func setupInputComponents() {
         let topBorderView = UIView()
+      
+        
         topBorderView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -32).isActive = true
-        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 5).isActive = true
+        inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 44).isActive = true
         inputTextField.bottomAnchor.constraint(equalTo: messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         inputTextField.isUserInteractionEnabled = true
@@ -444,6 +493,16 @@ class ChatViewController: UIViewController {
         sendButton.isUserInteractionEnabled = true
         messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
         messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
+        let uploadImageView = UIImageView()
+        uploadImageView.isUserInteractionEnabled = true
+        uploadImageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        uploadImageView.translatesAutoresizingMaskIntoConstraints = false
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
+        inputTextField.addSubview(uploadImageView)
+        uploadImageView.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor).isActive = true
+        uploadImageView.centerYAnchor.constraint(equalTo: messageInputContainerView.centerYAnchor).isActive = true
+        uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        uploadImageView.heightAnchor.constraint(equalToConstant: 42).isActive = true
     }
     
     func getImage() {
@@ -631,114 +690,144 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        var size: CGSize?
-        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
-            if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-                return frame.height + 30 + 22
-            } else {
-                return 80
-            }
+        if let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell {
+//        if let height = self.rowHeights[indexPath.row]{
+            return cell.snedImageView.frame.height
         } else {
-            if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-                return frame.height + 30
-            } else {
-                return 80
-            }
+            return 150
         }
+//                } else{
+//                    return 60
+//                }
+//        var size: CGSize?
+//        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+//        if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+//                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+//                return frame.height + 30 + 22
+//            } else {
+//                return 80
+//            }
+//        } else {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+//                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+//                return frame.height + 30
+//            } else {
+//                return 80
+//            }
+//        }
+      //  return 300
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(gestureReconizer:)))
-        if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
-            if allMessages?.array![indexPath.row].type == "text" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
-                cell.messageLabel.text = allMessages?.array![indexPath.row].text
-                cell.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
-                cell.id = allMessages!.array![indexPath.row]._id
-                cell.messageLabel.textColor = .black
-                cell.messageLabel.sizeToFit()
-                cell.addGestureRecognizer(tap)
-                if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
-                    if allMessages?.array![indexPath.row]._id != nil {
-                        let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
-                        let status = allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? allMessages?.statuses![1] : allMessages?.statuses![0]
-                        if date! < stringToDateD(date: status!.receivedMessageDate!)! {
-                            if date! < stringToDateD(date: status!.readMessageDate!)! || date! == stringToDateD(date: status!.readMessageDate!)! {
-                                cell.readMessage.text = "seen".localized()
-                            } else {
-                                cell.readMessage.text = "delivered".localized()
-                            }
-                        } else if date! > stringToDateD(date: status!.receivedMessageDate!)! {
-                            cell.readMessage.text = "sent".localized()
-                        } else {
-                            if date! == stringToDateD(date: status!.readMessageDate!)! || date! < stringToDateD(date: status!.readMessageDate!)! {
-                                cell.readMessage.text = "seen".localized()
-                            } else {
-                                cell.readMessage.text = "delivered".localized()
-                            }
-                        }
-                    } else {
-                        cell.readMessage.text = "waiting".localized()
-                    }
-                }
-                return cell
-            } else if allMessages?.array![indexPath.row].type == "call" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
-                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-                cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
-                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
-                    cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
-                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-                    return cell
-                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
-                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-                    return cell
-                } else {
-                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-                    return cell
-                }
-            } 
-        } else {
-            if allMessages?.array![indexPath.row].type == "text" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
-                cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
-                cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-                cell.userImageView.image = image
-                cell.messageLabel.text = allMessages?.array![indexPath.row].text
-                cell.messageLabel.sizeToFit()
-                return cell
-            }  else if allMessages?.array![indexPath.row].type == "call" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
-                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-                cell.cellMessageView.addGestureRecognizer(tapSendCallTableViewCell)
-                cell.userImageView.image = image
-                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
-                    cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
-                    cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
-                    return cell
-                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
-                    cell.arrowImageView.tintColor = .red
-                    cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-                    return cell
-                } else  {
-                    cell.arrowImageView.tintColor = .red
-                    cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
-                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
-                    return cell
-                }
-                
+        let image = UIImage(named: "sea")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+        DispatchQueue.main.async {
+            
+            let aspectRatio = (image! as UIImage).size.height/(image! as UIImage).size.width
+            
+            cell.snedImageView.image = image
+            var imageHeight =  (image! as UIImage).size.height //self.view.frame.width * aspectRatio
+//            tableView.beginUpdates()
+            if (image?.size.height)! > 500 {
+//                imageHeight = cell.snedImageView.frame.width
             }
+            
+            self.rowHeights[indexPath.row] = imageHeight
+    
+//            tableView.endUpdates()
+            
         }
-        return UITableViewCell()
+        
+        return cell
+//        if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
+//                cell.messageLabel.text = allMessages?.array![indexPath.row].text
+//                cell.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
+//                cell.id = allMessages!.array![indexPath.row]._id
+//                cell.messageLabel.textColor = .black
+//                cell.messageLabel.sizeToFit()
+//                cell.addGestureRecognizer(tap)
+//                if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+//                    if allMessages?.array![indexPath.row]._id != nil {
+//                        let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
+//                        let status = allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? allMessages?.statuses![1] : allMessages?.statuses![0]
+//                        if date! < stringToDateD(date: status!.receivedMessageDate!)! {
+//                            if date! < stringToDateD(date: status!.readMessageDate!)! || date! == stringToDateD(date: status!.readMessageDate!)! {
+//                                cell.readMessage.text = "seen".localized()
+//                            } else {
+//                                cell.readMessage.text = "delivered".localized()
+//                            }
+//                        } else if date! > stringToDateD(date: status!.receivedMessageDate!)! {
+//                            cell.readMessage.text = "sent".localized()
+//                        } else {
+//                            if date! == stringToDateD(date: status!.readMessageDate!)! || date! < stringToDateD(date: status!.readMessageDate!)! {
+//                                cell.readMessage.text = "seen".localized()
+//                            } else {
+//                                cell.readMessage.text = "delivered".localized()
+//                            }
+//                        }
+//                    } else {
+//                        cell.readMessage.text = "waiting".localized()
+//                    }
+//                }
+//                return cell
+//            } else if allMessages?.array![indexPath.row].type == "call" {
+//                let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
+//                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+//                cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
+//                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
+//                    cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
+//                    cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+//                    return cell
+//                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+//                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
+//                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    return cell
+//                } else {
+//                    cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
+//                    cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    return cell
+//                }
+//            }
+//        } else {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
+//                cell.messageLabel.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
+//                cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+//                cell.userImageView.image = image
+//                cell.messageLabel.text = allMessages?.array![indexPath.row].text
+//                cell.messageLabel.sizeToFit()
+//                return cell
+//            }  else if allMessages?.array![indexPath.row].type == "call" {
+//                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
+//                let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+//                cell.cellMessageView.addGestureRecognizer(tapSendCallTableViewCell)
+//                cell.userImageView.image = image
+//                if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
+//                    cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
+//                    cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
+//                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+//                    return cell
+//                } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
+//                    cell.arrowImageView.tintColor = .red
+//                    cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
+//                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    return cell
+//                } else  {
+//                    cell.arrowImageView.tintColor = .red
+//                    cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
+//                    cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+//                    return cell
+//                }
+//
+//            }
+//        }
+      //  return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -746,4 +835,19 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             self.getChatMessages(dateUntil: self.allMessages?.array![0].createdAt)
         }
     }
+}
+
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+    return input.rawValue
 }
