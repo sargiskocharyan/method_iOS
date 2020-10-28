@@ -67,7 +67,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     var check = false
     var newArray: [Message]?
     var test = false
-    
+    let sendImage = UIImage(named: "sea")
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -78,6 +78,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableView.automaticDimension
         setupInputComponents()
         setObservers()
         inputTextField.placeholder = "enter_message".localized()
@@ -689,13 +691,13 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         return (allMessages?.array?.count ?? 0)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell {
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        if let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell {
 //        if let height = self.rowHeights[indexPath.row]{
-            return cell.snedImageView.frame.height
-        } else {
-            return 150
-        }
+          //  return self.sendImage!.size.height
+        //} else {
+//            return 200
+        //}
 //                } else{
 //                    return 60
 //                }
@@ -719,28 +721,30 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
 //            }
 //        }
       //  return 300
-    }
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(gestureReconizer:)))
-        let image = UIImage(named: "sea")
+       
         let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             
-            let aspectRatio = (image! as UIImage).size.height/(image! as UIImage).size.width
+//            let aspectRatio = (self.sendImage! as UIImage).size.height/(self.sendImage! as UIImage).size.width
             
-            cell.snedImageView.image = image
-            var imageHeight =  (image! as UIImage).size.height //self.view.frame.width * aspectRatio
+//            cell.snedImageView.image = self.sendImage
+//            var imageHeight =  (self.sendImage! as UIImage).size.height //self.view.frame.width * aspectRatio
 //            tableView.beginUpdates()
-            if (image?.size.height)! > 500 {
+//            if (self.image?.size.height)! > 500 {
 //                imageHeight = cell.snedImageView.frame.width
-            }
-            
-            self.rowHeights[indexPath.row] = imageHeight
+//            }
+            cell.setPostedImage(image: self.sendImage!)
+//            cell.imageViewHeightConstraint.constant = self.sendImage!.size.height
+//            cell.imageWidthConstraint.constant = (self.sendImage?.size.width)!
+//            self.rowHeights[indexPath.row] = imageHeight
     
 //            tableView.endUpdates()
             
-        }
+//        }
         
         return cell
 //        if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
