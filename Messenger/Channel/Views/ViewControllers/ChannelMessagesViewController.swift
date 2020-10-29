@@ -67,6 +67,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         mode = .main
         selectedImage = nil
         setObservers()
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableView.automaticDimension
         isPreview = true
         check = true
         setLineOnHeaderView()
@@ -626,17 +628,21 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         var size: CGSize?
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-       
+
         if channelMessages.array?.count ?? 0 > indexPath.row {
             let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             if channelMessages.array![indexPath.row].type == "image" {
-                return UITableView.automaticDimension
+                return  UITableView.automaticDimension
             }
             return channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id ?  frame.height + 30 : frame.height + 30 + 20
         } else {
             return 0
         }
     }
+
+     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+     }
     
     //MARK: WillDeselectRowAt indexPath
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -678,9 +684,11 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
                 ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
-                        cell.setPostedImage(image: image)
+                cell.setPostedImage(image: image)
                     }
                 }
+                cell.setNeedsUpdateConstraints()
+                cell.updateConstraintsIfNeeded()
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
@@ -697,6 +705,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 } else {
                     cell.checkImageView?.isHidden = true
                 }
+                cell.setNeedsUpdateConstraints()
+                cell.updateConstraintsIfNeeded()
                 return cell
             }
         } else {
@@ -706,7 +716,12 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                     DispatchQueue.main.async {
                         cell.setPostedImage(image: image)
                     }
+                    print(cell)
+                    print(image)
                 }
+               // cell.setPostedImage(image: UIImage(named: "sea")!)
+                cell.setNeedsUpdateConstraints()
+                cell.updateConstraintsIfNeeded()
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
@@ -730,6 +745,8 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 } else {
                     cell.checkImage.isHidden = true
                 }
+                cell.setNeedsUpdateConstraints()
+                cell.updateConstraintsIfNeeded()
                 return cell
             }
         }

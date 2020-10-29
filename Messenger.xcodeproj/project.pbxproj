@@ -79,6 +79,7 @@
 		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
 		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
+		CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */; };
 		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
@@ -408,6 +409,7 @@
 		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
 		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveImageMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
 				D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */,
 				CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */,
+				CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1389,6 +1392,7 @@
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
+				CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
