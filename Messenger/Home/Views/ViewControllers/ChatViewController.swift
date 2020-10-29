@@ -67,7 +67,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     var check = false
     var newArray: [Message]?
     var test = false
-    let sendImage = UIImage(named: "sea")
+    var sendImage: UIImage?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -78,8 +78,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
-//        tableView.estimatedRowHeight = 100
-//        tableView.rowHeight = UITableView.automaticDimension
         setupInputComponents()
         setObservers()
         inputTextField.placeholder = "enter_message".localized()
@@ -107,6 +105,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             navigationController?.navigationBar.isHidden = false
         }
         checkAndSendReadEvent()
+        setupInputComponents()
     }
     
     //MARK: Helper methods
@@ -124,7 +123,19 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     @objc func sendMessage() {
         if mode == .main {
-            if inputTextField.text != "" {
+            if sendImage != nil {
+                HomeNetworkManager().sendImageInChat(tmpImage: sendImage, userId: self.id ?? "", text: inputTextField.text!) { (error) in
+                    DispatchQueue.main.async {
+                        self.sendImage = nil
+                        if error != nil {
+                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                        } else {
+                            self.removeSendImageView()
+                            self.inputTextField.text = ""
+                        }
+                    }
+                }
+            } else if inputTextField.text != "" {
                 let text = inputTextField.text
                 inputTextField.text = ""
                 SocketTaskManager.shared.send(message: text!, id: id!)
@@ -376,11 +387,15 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
-                for i in 0..<allMessages!.array!.count {
-                    if message.text  == allMessages!.array![i].text {
-                        (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
-                        self.allMessages!.array![i] = message
+                if message.type == "text" {
+                    for i in 0..<allMessages!.array!.count {
+                        if message.text  == allMessages!.array![i].text {
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
+                            self.allMessages!.array![i] = message
+                        }
                     }
+                } else if message.type == "image" {
+                    self.allMessages?.array!.append(message)
                 }
             }
             
@@ -422,8 +437,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         messageInputContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         messageInputContainerView.isUserInteractionEnabled = true
-        view.addConstraintsWithFormat("H:|[v0]|", views: messageInputContainerView)
-        view.addConstraintsWithFormat("V:[v0(48)]", views: messageInputContainerView)
+        messageInputContainerView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
     }
     
@@ -439,13 +453,14 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     func setSendImageView(image: UIImage) {
         let viewOfImage = UIView()
         tableView.addSubview(viewOfImage)
+        viewOfImage.tag = 14
         viewOfImage.translatesAutoresizingMaskIntoConstraints = false
         viewOfImage.leftAnchor.constraint(equalTo: self.tableView.leftAnchor, constant: 10).isActive = true
         viewOfImage.bottomAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: -5).isActive = true
         viewOfImage.widthAnchor.constraint(equalToConstant: 100).isActive = true
         viewOfImage.heightAnchor.constraint(equalToConstant: 100).isActive = true
         let sendingImage = UIImageView()
-        tableView.addSubview(sendingImage)
+        viewOfImage.addSubview(sendingImage)
         sendingImage.translatesAutoresizingMaskIntoConstraints = false
         sendingImage.leftAnchor.constraint(equalTo: self.tableView.leftAnchor, constant: 10).isActive = true
         sendingImage.bottomAnchor.constraint(equalTo: viewOfImage.bottomAnchor, constant: 0).isActive = true
@@ -453,9 +468,11 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         sendingImage.rightAnchor.constraint(equalTo: viewOfImage.rightAnchor, constant: 0).isActive = true
         sendingImage.clipsToBounds = true
         sendingImage.image = image
-//        sendingImage.contentMode = .scaleAspectFit
         sendingImage.layer.cornerRadius = 20
-       
+    }
+    
+    func removeSendImageView() {
+        self.view.viewWithTag(14)?.removeFromSuperview()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -469,18 +486,16 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
         if let selectedImage = selectedImageFromPicker {
             setSendImageView(image: selectedImage)
+            sendImage = selectedImage
         }
         dismiss(animated: true, completion: nil)
     }
     
     func setupInputComponents() {
-        let topBorderView = UIView()
-      
-        
-        topBorderView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
+        messageInputContainerView.layer.borderWidth = 1
+        messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
         messageInputContainerView.addSubview(inputTextField)
         messageInputContainerView.addSubview(sendButton)
-        messageInputContainerView.addSubview(topBorderView)
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
         inputTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -32).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor, constant: 44).isActive = true
@@ -493,13 +508,11 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         sendButton.topAnchor.constraint(equalTo: messageInputContainerView.topAnchor, constant: 10).isActive = true
         sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         sendButton.isUserInteractionEnabled = true
-        messageInputContainerView.addConstraintsWithFormat("H:|[v0]|", views: topBorderView)
-        messageInputContainerView.addConstraintsWithFormat("V:|[v0(0.5)]", views: topBorderView)
         let uploadImageView = UIImageView()
         uploadImageView.isUserInteractionEnabled = true
-//        uploadImageView.image = UIImage(named: "more") //UIImage(systemName: "photo.on.rectangle.fill")
+        uploadImageView.image = UIImage(named: "upload_image_icon")
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
-        uploadImageView.backgroundColor = .red
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
         messageInputContainerView.addSubview(uploadImageView)
         uploadImageView.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: messageInputContainerView.centerYAnchor).isActive = true
@@ -709,45 +722,51 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
                 let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
                 return frame.height + 30 + 22
-            } else {
+            }  else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
+            } else if allMessages?.array![indexPath.row].type == "image" {
+                return UITableView.automaticDimension
             }
         } else {
             if allMessages?.array![indexPath.row].type == "text" {
                 size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
                 let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
                 return frame.height + 30
-            } else {
+            } else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
+            } else if allMessages?.array![indexPath.row].type == "image" {
+                return UITableView.automaticDimension
             }
         }
         return 300
 //        return UITableView.automaticDimension
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(gestureReconizer:)))
-       
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
-//        DispatchQueue.main.async {
-            
-//            let aspectRatio = (self.sendImage! as UIImage).size.height/(self.sendImage! as UIImage).size.width
-            
-//            cell.snedImageView.image = self.sendImage
-//            var imageHeight =  (self.sendImage! as UIImage).size.height //self.view.frame.width * aspectRatio
-//            tableView.beginUpdates()
-//            if (self.image?.size.height)! > 500 {
-//                imageHeight = cell.snedImageView.frame.width
-//            }
-//            cell.setPostedImage(image: self.sendImage!)
-//            cell.imageViewHeightConstraint.constant = self.sendImage!.size.height
-//            cell.imageWidthConstraint.constant = (self.sendImage?.size.width)!
-//            self.rowHeights[indexPath.row] = imageHeight
     
-//            tableView.endUpdates()
-            
-//        }
-        
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(gestureReconizer:)))
+//
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+////        DispatchQueue.main.async {
+//
+////            let aspectRatio = (self.sendImage! as UIImage).size.height/(self.sendImage! as UIImage).size.width
+//
+////            cell.snedImageView.image = self.sendImage
+////            var imageHeight =  (self.sendImage! as UIImage).size.height //self.view.frame.width * aspectRatio
+////            tableView.beginUpdates()
+////            if (self.image?.size.height)! > 500 {
+////                imageHeight = cell.snedImageView.frame.width
+////            }
+//            cell.setPostedImage(image: self.sendImage!)
+////            cell.imageViewHeightConstraint.constant = self.sendImage!.size.height
+////            cell.imageWidthConstraint.constant = (self.sendImage?.size.width)!
+////            self.rowHeights[indexPath.row] = imageHeight
+//
+////            tableView.endUpdates()
+//
+////        }
+//
 //        return cell
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
@@ -757,7 +776,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.id = allMessages!.array![indexPath.row]._id
                 cell.messageLabel.textColor = .black
                 cell.messageLabel.sizeToFit()
-                cell.addGestureRecognizer(tap)
+//                cell.addGestureRecognizer(tap)
                 if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
                     if allMessages?.array![indexPath.row]._id != nil {
                         let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
@@ -799,6 +818,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 }
+            } else if allMessages?.array![indexPath.row].type == "image" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+                    DispatchQueue.main.async {
+                        cell.setPostedImage(image: image)
+                    }
+                }
+                return cell
             }
         } else {
             if allMessages?.array![indexPath.row].type == "text" {
@@ -830,7 +857,14 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
                     return cell
                 }
-
+            } else if allMessages?.array![indexPath.row].type == "image" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+                    DispatchQueue.main.async {
+                        cell.setPostedImage(image: image)
+                    }
+                }
+                return cell
             }
         }
         return UITableViewCell()

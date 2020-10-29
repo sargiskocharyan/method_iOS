@@ -23,7 +23,6 @@ class SendImageMessageTableViewCell: UITableViewCell {
 
     }
     
-    
     internal var aspectConstraint : NSLayoutConstraint? {
         didSet {
             if oldValue != nil {
@@ -39,15 +38,12 @@ class SendImageMessageTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         aspectConstraint = nil
+        snedImageView.image = nil
     }
 
     func setPostedImage(image : UIImage) {
-
         let aspect = image.size.width / image.size.height
-
         aspectConstraint = NSLayoutConstraint(item: snedImageView!, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: snedImageView, attribute: NSLayoutConstraint.Attribute.height, multiplier: aspect, constant: 0.0)
-
         snedImageView.image = image
     }
-
 }

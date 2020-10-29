@@ -107,7 +107,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.image = UIImage(named: "upload_image_icon")
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
-        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap1)))
         messageInputContainerView.addSubview(uploadImageView)
         uploadImageView.leftAnchor.constraint(equalTo: messageInputContainerView.leftAnchor).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: messageInputContainerView.centerYAnchor).isActive = true
@@ -121,7 +121,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         inputTextField.isUserInteractionEnabled = true
     }
     
-    @objc func handleUploadTap() {
+    @objc func handleUploadTap1() {
         let imagePickerController = UIImagePickerController()
         
         imagePickerController.allowsEditing = true
@@ -678,7 +678,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
     
     //MARK: CellForRowAt indexPath
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-          let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if channelMessages.array![indexPath.row].type == "image" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
