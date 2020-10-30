@@ -8,7 +8,9 @@
 
 import UIKit
 import SocketIO
-
+import AVKit
+import AVFoundation
+import Photos
 enum CallStatus: String {
     case accepted  = "accepted"
     case missed    = "missed"
@@ -68,6 +70,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     var newArray: [Message]?
     var test = false
     var sendImage: UIImage?
+    var sendAsset: AVURLAsset?
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -87,6 +90,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         getImage()
         setObservers()
         activity.tag = 5
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableView.automaticDimension
         if (SocketTaskManager.shared.socket?.handlers.count)! < 13 {
             self.handleReadMessage()
             self.handleMessageTyping()
@@ -443,10 +448,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     @objc func handleUploadTap() {
         let imagePickerController = UIImagePickerController()
-        
-        imagePickerController.allowsEditing = true
+        imagePickerController.mediaTypes = ["public.image", "public.movie"]
+        imagePickerController.allowsEditing = false
         imagePickerController.delegate = self
-        
         present(imagePickerController, animated: true, completion: nil)
     }
     
@@ -471,6 +475,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         sendingImage.layer.cornerRadius = 20
     }
     
+        
+    
     func removeSendImageView() {
         self.view.viewWithTag(14)?.removeFromSuperview()
     }
@@ -487,7 +493,32 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         if let selectedImage = selectedImageFromPicker {
             setSendImageView(image: selectedImage)
             sendImage = selectedImage
+            return
         }
+        if let videoURL = info["UIImagePickerControllerReferenceURL"] as? NSURL {
+            print(videoURL)
+                PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
+                    ()
+                    
+                    if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
+                        print("creating 2")
+                        do {
+                            self.sendAsset = AVURLAsset(url: videoURL as URL , options: nil)
+                            let imgGenerator = AVAssetImageGenerator(asset: self.sendAsset!)
+                            imgGenerator.appliesPreferredTrackTransform = true
+                            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                            let thumbnail = UIImage(cgImage: cgImage)
+                            DispatchQueue.main.async {
+                                self.setSendImageView(image: thumbnail)
+                            }
+                        } catch let error {
+                            print("*** Error generating thumbnail: \(error.localizedDescription)")
+                        }
+                    }
+                    
+                })
+            }
+         
         dismiss(animated: true, completion: nil)
     }
     
@@ -705,42 +736,43 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         return (allMessages?.array?.count ?? 0)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell {
-        if let height = self.rowHeights[indexPath.row]{
-            return self.sendImage!.size.height
-        } else {
-            return 200
-        }
-                } else{
-                    return 60
-                }
-        var size: CGSize?
-        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
-            if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-                return frame.height + 30 + 22
-            }  else if allMessages?.array![indexPath.row].type == "call" {
-                return 80
-            } else if allMessages?.array![indexPath.row].type == "image" {
-                return UITableView.automaticDimension
-            }
-        } else {
-            if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-                return frame.height + 30
-            } else if allMessages?.array![indexPath.row].type == "call" {
-                return 80
-            } else if allMessages?.array![indexPath.row].type == "image" {
-                return UITableView.automaticDimension
-            }
-        }
-        return 300
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        if let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell {
+//        if let height = self.rowHeights[indexPath.row]{
+//            return self.sendImage!.size.height
+//        } else {
+//            return 200
+//        }
+//                } else{
+//                    return 60
+//                }
+//        var size: CGSize?
+//        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+//        if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+//                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+//                return frame.height + 30 + 22
+//            }  else if allMessages?.array![indexPath.row].type == "call" {
+//                return 80
+//            } else if allMessages?.array![indexPath.row].type == "image" {
+//                return UITableView.automaticDimension
+//            }
+//        } else {
+//            if allMessages?.array![indexPath.row].type == "text" {
+//                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+//                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
+//                return frame.height + 30
+//            } else if allMessages?.array![indexPath.row].type == "call" {
+//                return 80
+//            } else if allMessages?.array![indexPath.row].type == "image" {
+//                tableView.estimatedRowHeight = 100
+//                return UITableView.automaticDimension
+//            }
+//        }
+//        return 300
 //        return UITableView.automaticDimension
-    }
+//    }
     
     
     
@@ -858,10 +890,10 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     return cell
                 }
             } else if allMessages?.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecieveImageMessageTableViewCell
                 ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
-                        cell.setPostedImage(image: image)
+                        cell.sendImageView.image = image
                     }
                 }
                 return cell

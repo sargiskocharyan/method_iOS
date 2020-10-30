@@ -684,7 +684,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
                 ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
-                cell.setPostedImage(image: image)
+                        cell.setPostedImage(image: image)
                     }
                 }
                 cell.setNeedsUpdateConstraints()
@@ -711,10 +711,10 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
             }
         } else {
             if channelMessages.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecieveImageMessageTableViewCell
                 ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
-                        cell.setPostedImage(image: image)
+                        cell.sendImageView.image = image
                     }
                     print(cell)
                     print(image)

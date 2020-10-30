@@ -8,10 +8,47 @@
 
 import UIKit
 import Lottie
+import FBSDKLoginKit
+import FacebookLogin
+import FBSDKCoreKit_Basics
 
-class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
+class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginButtonDelegate {
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        fetchUserInfo()
+    }
+    
+    func fetchUserInfo() -> Void {
+        if (AccessToken.current != nil) {
+            let graphRequest: GraphRequest = GraphRequest(graphPath: "/me", parameters:["fields": "id, first_name, last_name, name, email, picture"])
+            graphRequest.start(completionHandler: { (connection, result, error) in
+
+                if(error != nil){
+
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
+
+                }
+                else
+                {
+                     print("Result is:\(result)")
+                    self.dictionary = result as! [String : AnyObject]
+                    let name = self.dictionary["name"] as! String
+//                    let email = self.dictionary["email"] as! String
+                    let token = AccessToken.current?.tokenString
+
+                    print("name is -\(name)")
+                    print("token is -\(token)")
+                }
+            })
+        }
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        print("")
+    }
+    
     
     //MARK: @IBOutlets
+    @IBOutlet weak var logInWithFacebookButton: FBLoginButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var emailDescriptionLabel: UILabel!
     @IBOutlet weak var aboutPgLabel: UILabel!
@@ -31,7 +68,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
     var bottomHeight = CGFloat()
     var constant: CGFloat = 0
     var authRouter: AuthRouter?
-    
+    var dictionary: Dictionary<String, AnyObject> = [:]
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
         checkEmail()
@@ -61,6 +98,8 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate {
         setObservers()
         emaiCustomView.textField.returnKeyType = .done
         constant = animationTopConstraint.constant
+        logInWithFacebookButton.permissions = ["public_profile", "email"]
+        logInWithFacebookButton.delegate = self
     }
    
     

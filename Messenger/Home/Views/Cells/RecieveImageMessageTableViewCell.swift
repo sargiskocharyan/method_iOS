@@ -10,18 +10,18 @@ import UIKit
 
 class RecieveImageMessageTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var sendImageView: UIImageView!
     @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        sendImageView.contentMode = .scaleAspectFill
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
 

@@ -127,6 +127,8 @@
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
 		D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
+		D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = D016E646254AE42F0067DEE8 /* FacebookCore */; };
+		D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D016E648254AE42F0067DEE8 /* FacebookLogin */; };
 		D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
@@ -499,9 +501,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */,
+				D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */,
 				F1764367249CD68B00492327 /* CryptoSwift in Frameworks */,
 				F1764361249CD60800492327 /* SocketIO in Frameworks */,
 				F1764364249CD61F00492327 /* Lottie in Frameworks */,
+				D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */,
 				AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1090,6 +1094,8 @@
 				F1764360249CD60800492327 /* SocketIO */,
 				F1764363249CD61F00492327 /* Lottie */,
 				F1764366249CD68B00492327 /* CryptoSwift */,
+				D016E646254AE42F0067DEE8 /* FacebookCore */,
+				D016E648254AE42F0067DEE8 /* FacebookLogin */,
 			);
 			productName = Messenger;
 			productReference = CDBE8DED2476744C0049F971 /* method.app */;
@@ -1194,6 +1200,7 @@
 				F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */,
 				F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = CDBE8DEE2476744C0049F971 /* Products */;
 			projectDirPath = "";
@@ -1972,6 +1979,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.0;
+			};
+		};
 		D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
@@ -2023,6 +2038,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D016E646254AE42F0067DEE8 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		D016E648254AE42F0067DEE8 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
 		D0F664AD251B177D0018D9B7 /* SocketIO */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */;

@@ -14,6 +14,9 @@ import CoreData
 import UserNotifications
 import PushKit
 
+import UIKit
+import FBSDKCoreKit
+
 protocol AppDelegateProtocol : class {
     func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
@@ -84,10 +87,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         }
     }
     
+    func application( _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool { ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation] )
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDataController().loadUserInfo()
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
+        ApplicationDelegate.shared.application( application, didFinishLaunchingWithOptions: launchOptions )
         providerDelegate = ProviderDelegate(callManager: callManager)
         UNUserNotificationCenter.current().delegate = self
         self.voipRegistration()
