@@ -140,7 +140,34 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                         }
                     }
                 }
-            } else if inputTextField.text != "" {
+            } else if sendAsset != nil {
+//                PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
+//                        if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
+//                        print("creating 2")
+//                        do {
+//                            let esim = try NSData(contentsOf: self.sendAsset!.url, options: .dataReadingMapped)
+//                            print(esim)
+//                        } catch(let error) {
+//                            print(error.localizedDescription)
+//                        }
+//                    }
+//                })
+                encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+                        if let url = url {
+                            do {
+                                let data = try Data(contentsOf: url)
+                                DispatchQueue.main.async {
+                                    HomeNetworkManager().sendVideoInChat(data: data, id: self.id!, text: self.inputTextField.text!)
+                                }
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        }
+                    }
+                    
+                
+                
+              } else if inputTextField.text != "" {
                 let text = inputTextField.text
                 inputTextField.text = ""
                 SocketTaskManager.shared.send(message: text!, id: id!)
@@ -448,8 +475,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     @objc func handleUploadTap() {
         let imagePickerController = UIImagePickerController()
-        imagePickerController.mediaTypes = ["public.image", "public.movie"]
-        imagePickerController.allowsEditing = false
+        imagePickerController.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        imagePickerController.allowsEditing = true
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
     }
@@ -499,11 +526,11 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             print(videoURL)
                 PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
                     ()
-                    
                     if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
                         print("creating 2")
                         do {
                             self.sendAsset = AVURLAsset(url: videoURL as URL , options: nil)
+                            let asset = AVAsset(url: videoURL as URL)
                             let imgGenerator = AVAssetImageGenerator(asset: self.sendAsset!)
                             imgGenerator.appliesPreferredTrackTransform = true
                             let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
@@ -512,16 +539,62 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                                 self.setSendImageView(image: thumbnail)
                             }
                         } catch let error {
-                            print("*** Error generating thumbnail: \(error.localizedDescription)")
+                            print("*** Error: \(error.localizedDescription)")
                         }
                     }
                     
                 })
             }
-         
         dismiss(animated: true, completion: nil)
     }
     
+    func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
+        let avAsset = AVURLAsset(url: videoURL, options: nil)
+        let startDate = Date()
+        //Create Export session
+        guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
+            completionHandler?(nil, nil)
+            return
+        }
+        //Creating temp path to save the converted video
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
+        let filePath = documentsDirectory.appendingPathComponent("rendered-Video.mp4")
+        //Check if the file already exists then remove the previous file
+        if FileManager.default.fileExists(atPath: filePath.path) {
+            do {
+                try FileManager.default.removeItem(at: filePath)
+            } catch {
+                completionHandler?(nil, error)
+            }
+        }
+        exportSession.outputURL = filePath
+        exportSession.outputFileType = AVFileType.mp4
+        exportSession.shouldOptimizeForNetworkUse = true
+        let start = CMTimeMakeWithSeconds(0.0, preferredTimescale: 0)
+        let range = CMTimeRangeMake(start: start, duration: avAsset.duration)
+        exportSession.timeRange = range
+        exportSession.exportAsynchronously(completionHandler: {() -> Void in
+            switch exportSession.status {
+            case .failed:
+                print(exportSession.error ?? "NO ERROR")
+                completionHandler?(nil, exportSession.error)
+            case .cancelled:
+                print("Export canceled")
+                completionHandler?(nil, nil)
+            case .completed:
+                //Video conversion finished
+                let endDate = Date()
+                    
+                let time = endDate.timeIntervalSince(startDate)
+                print(time)
+                print("Successful!")
+                print(exportSession.outputURL ?? "NO OUTPUT URL")
+                completionHandler?(exportSession.outputURL, nil)
+                    
+                default: break
+            }
+        })
+    }
     func setupInputComponents() {
         messageInputContainerView.layer.borderWidth = 1
         messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor

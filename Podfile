@@ -9,7 +9,8 @@ target 'Messenger' do
         pod 'DropDown'
         pod 'Firebase/Analytics'
         pod 'GoogleWebRTC'
-
+	pod 'Firebase/Auth'
+	pod 'PhoneNumberKit', '~> 3.3'
 end
 
 #target 'methodNotificationService' do
@@ -20,7 +21,8 @@ end
 #        pod 'DropDown'
 #        pod 'Firebase/Analytics'
 #        pod 'GoogleWebRTC'
-#
+#	 pod 'Firebase/Auth'
+#	 pod 'PhoneNumberKit', '~> 3.3'
 #end
 #
 #target 'methodNotificationContent' do
@@ -31,6 +33,7 @@ end
 #        pod 'DropDown'
 #        pod 'Firebase/Analytics'
 #        pod 'GoogleWebRTC'
-#
+#	 pod 'Firebase/Auth'
+#	 pod 'PhoneNumberKit', '~> 3.3'
 #end
 

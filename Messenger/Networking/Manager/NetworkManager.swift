@@ -22,7 +22,7 @@ enum Result<String>{
     case failure(String)
 }
 
-class NetworkManager {
+class NetworkManager: NSObject {
     static let environment : NetworkEnvironment = .production
     
     func downloadImage(imageUrl:String,completion: @escaping (_ data: Data?, _ error: Error?)->()) {

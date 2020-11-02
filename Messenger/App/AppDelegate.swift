@@ -94,6 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         UserDataController().loadUserInfo()
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
+        print(FirebaseApp.app()?.options.clientID)
         ApplicationDelegate.shared.application( application, didFinishLaunchingWithOptions: launchOptions )
         providerDelegate = ProviderDelegate(callManager: callManager)
         UNUserNotificationCenter.current().delegate = self
@@ -120,6 +121,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let firebaseAuth = Auth.auth()
+        firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
         if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
             SharedConfigs.shared.isRegistered = true
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
@@ -318,6 +321,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        let firebaseAuth = Auth.auth()
+        if (firebaseAuth.canHandleNotification(userInfo)) {
+            print(userInfo)
+            return
+        }
         guard let aps = userInfo["aps"] as? [String: AnyObject] else {
             completionHandler(.failed)
             return
