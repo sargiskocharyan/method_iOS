@@ -41,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var isVoIPCallStarted: Bool?
     let viewModel = AppDelegateViewModel()
     var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
