@@ -57,7 +57,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     var selectedImage: UIImage?
     
     //MARK: LifeCycles
-   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -68,7 +68,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         selectedImage = nil
         setObservers()
         tableView.rowHeight = UITableView.automaticDimension
-           tableView.estimatedRowHeight = 30
+        tableView.estimatedRowHeight = 30
         isPreview = true
         check = true
         setLineOnHeaderView()
@@ -76,7 +76,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         tableView.allowsMultipleSelection = false
     }
     
- override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
@@ -147,16 +147,16 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         present(imagePickerController, animated: true, completion: nil)
     }
     
-     func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+    func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
         return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
     }
-
-     func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+    
+    func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
         guard let input = input else { return nil }
         return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
     }
-
-     func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+    
+    func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
         return input.rawValue
     }
     
@@ -189,7 +189,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
-       func checkChannelRole() {
+    func checkChannelRole() {
         if (channelInfo.role == 0 || channelInfo.role == 1) {
             if isLoadedMessages {
                 if channelMessages.array?.count != nil && channelMessages.array!.count > 0 {
@@ -208,7 +208,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             universalButton.setTitle("join".localized(), for: .normal)
         }
     }
-  
+    
     func setView(_ str: String) {
         if channelMessages.array?.count == 0 {
             DispatchQueue.main.async {
@@ -604,6 +604,102 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
+    func configureSendImageMessageTableViewCell(_ cell: SendImageMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
+        cell.contentView.addGestureRecognizer(tap)
+        ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
+            DispatchQueue.main.async {
+                cell.imageWidthConstraint.constant = image.size.width
+                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+                let ratio = image.size.width / image.size.height
+                if containerView.frame.width > containerView.frame.height {
+                    let newHeight = containerView.frame.width / ratio
+                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+                }
+                cell.snedImageView.image = image
+            }
+        }
+        cell.checkImage?.image = UIImage.init(systemName: "circle")
+        if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            cell.setCheckImage()
+            cell.setCheckButton(isPreview: isPreview!)
+        } else {
+            cell.checkImage?.isHidden = true
+        }
+        cell.messageLabel.text = channelMessages.array![indexPath.row].text
+    }
+    
+    func configureSendMessageTableViewCell(_ cell: SendMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+        cell.id = channelMessages.array![indexPath.row]._id
+        cell.readMessage.isHidden = true
+        cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
+        cell.messageLabel.text = channelMessages.array![indexPath.row].text
+        cell.messageLabel.sizeToFit()
+        cell.contentView.addGestureRecognizer(tap)
+        cell.checkImageView?.image = UIImage.init(systemName: "circle")
+        if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            cell.setCheckImage()
+            cell.setCheckButton(isPreview: isPreview!)
+        } else {
+            cell.checkImageView?.isHidden = true
+        }
+    }
+    
+    func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecieveImageMessageTableViewCell) {
+        for i in 0..<(channelInfo.channel?.subscribers?.count)! {
+            if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
+                cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
+                ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
+                    DispatchQueue.main.async {
+                        cell.userImageView.image = image
+                    }
+                }
+                break
+            }
+        }
+        if (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            cell.setCheckImage()
+            cell.setCheckButton(isPreview: isPreview!)
+        } else {
+            cell.checkImage.isHidden = true
+        }
+        ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
+            DispatchQueue.main.async {
+                cell.imageWidthConstraint?.constant = image.size.width
+                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+                let ratio = image.size.width / image.size.height
+                if containerView.frame.width > containerView.frame.height {
+                    let newHeight = containerView.frame.width / ratio
+                    cell.sendImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+                }
+                cell.sendImageView.image = image
+            }
+        }
+        cell.messageLabel.text = channelMessages.array![indexPath.row].text
+    }
+    
+    func configureRecieveMessageTableViewCell(_ cell: RecieveMessageTableViewCell, _ indexPath: IndexPath) {
+        cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+        cell.messageLabel.text = channelMessages.array![indexPath.row].text
+        for i in 0..<(channelInfo.channel?.subscribers?.count)! {
+            if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
+                cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
+                ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
+                    DispatchQueue.main.async {
+                        cell.userImageView.image = image
+                    }
+                }
+                break
+            }
+        }
+        cell.messageLabel.sizeToFit()
+        if (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            cell.setCheckImage()
+            cell.setCheckButton(isPreview: isPreview!)
+        } else {
+            cell.checkImage.isHidden = true
+        }
+    }
+    
     func handleChannelMessageDeleted(messages: [Message]) {
         print("arrayOfSelectedMesssgae:   \(arrayOfSelectedMesssgae)")
         for message in messages {
@@ -639,7 +735,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         var size: CGSize?
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-
+        
         if channelMessages.array?.count ?? 0 > indexPath.row {
             let frame = NSString(string: channelMessages.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             if channelMessages.array![indexPath.row].type == "image" {
@@ -649,12 +745,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         } else {
             return 0
         }
-    }
-    
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
-    }
-
+    }   
     //MARK: WillDeselectRowAt indexPath
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
         let isSendererMe = channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id
@@ -720,111 +811,25 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if channelMessages.array![indexPath.row].type == "image" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
-                cell.contentView.addGestureRecognizer(tap)
-                ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
-                    DispatchQueue.main.async {
-                        cell.imageWidthConstraint.constant = image.size.width
-                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                        let ratio = image.size.width / image.size.height
-                        if containerView.frame.width > containerView.frame.height {
-                            let newHeight = containerView.frame.width / ratio
-                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                        }
-                        cell.snedImageView.image = image
-                    }
-                }
-                cell.checkImage?.image = UIImage.init(systemName: "circle")
-                if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                    cell.setCheckImage()
-                    cell.setCheckButton(isPreview: isPreview!)
-                } else {
-                    cell.checkImage?.isHidden = true
-                }
-                cell.messageLabel.text = channelMessages.array![indexPath.row].text
+                configureSendImageMessageTableViewCell(cell, tap, indexPath)
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
-                cell.id = channelMessages.array![indexPath.row]._id
-                cell.readMessage.isHidden = true
-                cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
-                cell.messageLabel.text = channelMessages.array![indexPath.row].text
-                cell.messageLabel.sizeToFit()
-                cell.contentView.addGestureRecognizer(tap)
-                cell.checkImageView?.image = UIImage.init(systemName: "circle")
-                if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                    cell.setCheckImage()
-                    cell.setCheckButton(isPreview: isPreview!)
-                } else {
-                    cell.checkImageView?.isHidden = true
-                }
+                configureSendMessageTableViewCell(cell, indexPath, tap)
                 return cell
             }
         } else {
             if channelMessages.array![indexPath.row].type == "image" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecieveImageMessageTableViewCell
-                
-                for i in 0..<(channelInfo.channel?.subscribers?.count)! {
-                    if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
-                        cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
-                        ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
-                            DispatchQueue.main.async {
-                                cell.userImageView.image = image
-                            }
-                        }
-                        break
-                    }
-                }
-                if (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                    cell.setCheckImage()
-                    cell.setCheckButton(isPreview: isPreview!)
-                } else {
-                    cell.checkImage.isHidden = true
-                }
-                ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
-                    DispatchQueue.main.async {
-                        cell.imageWidthConstraint?.constant = image.size.width
-                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                        let ratio = image.size.width / image.size.height
-                        if containerView.frame.width > containerView.frame.height {
-                            let newHeight = containerView.frame.width / ratio
-                            cell.sendImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                        }
-                        cell.sendImageView.image = image
-                    }
-                }
-                cell.messageLabel.text = channelMessages.array![indexPath.row].text
+                configureRecieveImageMessageTableViewCell(indexPath, cell)
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
-                cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-                cell.messageLabel.text = channelMessages.array![indexPath.row].text
-                for i in 0..<(channelInfo.channel?.subscribers?.count)! {
-                    if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
-                        cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
-                        ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
-                            DispatchQueue.main.async {
-                                cell.userImageView.image = image
-                            }
-                        }
-                        break
-                    }
-                }
-                cell.messageLabel.sizeToFit()
-                if (channelInfo?.role == 0 || channelInfo?.role == 1) {
-                    cell.setCheckImage()
-                    cell.setCheckButton(isPreview: isPreview!)
-                } else {
-                    cell.checkImage.isHidden = true
-                }
+                configureRecieveMessageTableViewCell(cell, indexPath)
                 return cell
             }
         }
     }
 }
 
-extension UITableView {
-    func reloadData(completion:@escaping ()->()) {
-        UIView.animate(withDuration: 0, animations: { self.reloadData() })
-        { _ in completion() }
-    }
-}
+

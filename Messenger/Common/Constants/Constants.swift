@@ -26,6 +26,7 @@ struct AUTHUrls {
     static let VerifyToken       = "/tokenExists"
     static let RegisterDevice    = "/registerdevice"
     static let CheckUsername     = "/usernameExists"
+    static let LoginWithFacebook = "/loginFacebook"
 }
 
 struct HomeUrls {

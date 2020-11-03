@@ -17,6 +17,7 @@ public enum AuthApi {
     case verifyToken(token: String)
     case getUserContacts(token: String)
     case checkUsername(username: String)
+    case loginWithFacebook(accessToken: String)
 }
 
 extension AuthApi: EndPointType {
@@ -43,6 +44,8 @@ extension AuthApi: EndPointType {
             return HomeUrls.GetUserContacts
         case .checkUsername(_):
             return AUTHUrls.CheckUsername
+        case .loginWithFacebook(_):
+            return AUTHUrls.LoginWithFacebook
         }
     }
     
@@ -63,6 +66,8 @@ extension AuthApi: EndPointType {
         case .getUserContacts(_):
             return .get
         case .checkUsername(_):
+            return .post
+        case .loginWithFacebook(_):
             return .post
         }
     }
@@ -101,6 +106,10 @@ extension AuthApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .checkUsername(username: let username):
             let parameters:Parameters = ["username": username]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: nil)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .loginWithFacebook(accessToken: let accessToken):
+            let parameters:Parameters = ["accessToken": accessToken]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

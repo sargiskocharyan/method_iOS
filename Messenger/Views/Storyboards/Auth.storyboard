@@ -24,13 +24,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email will be used to confirm" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jKN-9l-I9Q">
-                                <rect key="frame" x="40" y="457" width="334" height="19.5"/>
+                                <rect key="frame" x="40" y="477" width="334" height="19.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2VC-pA-HW0" customClass="FBSDKLoginButton">
-                                <rect key="frame" x="50" y="94" width="46" height="30"/>
+                                <rect key="frame" x="10" y="94" width="46" height="30"/>
                                 <state key="normal" title="Button"/>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YaA-Xg-Bwh" customClass="GradientView" customModule="method" customModuleProvider="target">
@@ -78,8 +78,48 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" hidden="NO"/>
                             </view>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pgh-Hv-J1c">
+                                <rect key="frame" x="40" y="395.5" width="334" height="66.5"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uEI-va-kXa" customClass="CustomTextField" customModule="method" customModuleProvider="target">
+                                        <rect key="frame" x="103.5" y="0.0" width="230.5" height="66.5"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="number"/>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                <real key="value" value="0.0"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zQC-EL-mWd" customClass="CustomTextField" customModule="method" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="83.5" height="66.5"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="code"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="uEI-va-kXa" firstAttribute="top" secondItem="Pgh-Hv-J1c" secondAttribute="top" id="2qG-R7-MjW"/>
+                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="leading" secondItem="Pgh-Hv-J1c" secondAttribute="leading" id="5ts-a4-vf2"/>
+                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="width" secondItem="Pgh-Hv-J1c" secondAttribute="width" multiplier="0.25" id="P90-Ln-NfJ"/>
+                                    <constraint firstItem="uEI-va-kXa" firstAttribute="leading" secondItem="zQC-EL-mWd" secondAttribute="trailing" constant="20" id="Wqc-6x-pJK"/>
+                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="top" secondItem="Pgh-Hv-J1c" secondAttribute="top" id="YQ4-WP-dwp"/>
+                                    <constraint firstAttribute="bottom" secondItem="zQC-EL-mWd" secondAttribute="bottom" id="az2-nj-BSo"/>
+                                    <constraint firstAttribute="trailing" secondItem="uEI-va-kXa" secondAttribute="trailing" id="o0E-EJ-HB8"/>
+                                    <constraint firstAttribute="bottom" secondItem="uEI-va-kXa" secondAttribute="bottom" id="q77-N3-0Bh"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XSO-bX-5AT">
+                                <rect key="frame" x="40" y="355.5" width="46" height="30"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="changeModeButtonAction:" destination="SB7-lZ-Am6" eventType="touchUpInside" id="nWa-tn-fsx"/>
+                                </connections>
+                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O8b-Qw-8k0" customClass="CustomTextField" customModule="method" customModuleProvider="target">
-                                <rect key="frame" x="40" y="375.5" width="334" height="66.5"/>
+                                <rect key="frame" x="40" y="395.5" width="334" height="66.5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="66.333333333333314" id="cqb-X8-1Q2"/>
                                 </constraints>
@@ -120,18 +160,23 @@
                             <constraint firstItem="ENg-t3-oNR" firstAttribute="top" secondItem="eQJ-vN-M76" secondAttribute="top" constant="-50" id="Evh-9L-An3">
                                 <variation key="heightClass=regular-widthClass=compact" constant="90"/>
                             </constraint>
+                            <constraint firstItem="XSO-bX-5AT" firstAttribute="top" secondItem="7Du-X6-Dgm" secondAttribute="bottom" constant="10" id="GBE-3f-kck"/>
+                            <constraint firstItem="Pgh-Hv-J1c" firstAttribute="leading" secondItem="O8b-Qw-8k0" secondAttribute="leading" id="GCV-ao-hy5"/>
                             <constraint firstItem="9kI-qx-ouS" firstAttribute="top" secondItem="Wsi-Pt-bLK" secondAttribute="top" id="Ibr-bs-v32"/>
                             <constraint firstItem="YaA-Xg-Bwh" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" constant="100" id="Ig0-rt-6QI">
                                 <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                             </constraint>
-                            <constraint firstItem="eQJ-vN-M76" firstAttribute="trailing" secondItem="7Du-X6-Dgm" secondAttribute="trailing" constant="100" id="PDi-dl-aUD">
+                            <constraint firstItem="Pgh-Hv-J1c" firstAttribute="trailing" secondItem="O8b-Qw-8k0" secondAttribute="trailing" id="Ikq-Ev-Wji"/>
+                            <constraint firstItem="Pgh-Hv-J1c" firstAttribute="top" secondItem="O8b-Qw-8k0" secondAttribute="top" id="K4X-AG-xSa"/>
+                            <constraint firstItem="9kI-qx-ouS" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" id="PI6-Ij-uFS"/>
+                            <constraint firstItem="eQJ-vN-M76" firstAttribute="trailing" secondItem="7Du-X6-Dgm" secondAttribute="trailing" constant="100" id="S4k-ez-dOu">
                                 <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                             </constraint>
-                            <constraint firstItem="9kI-qx-ouS" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" id="PI6-Ij-uFS"/>
                             <constraint firstAttribute="bottom" secondItem="9kI-qx-ouS" secondAttribute="bottom" id="TeI-Ip-8cr"/>
                             <constraint firstItem="ENg-t3-oNR" firstAttribute="width" secondItem="Wsi-Pt-bLK" secondAttribute="width" multiplier="0.241546" id="Un6-0I-XVR"/>
                             <constraint firstItem="jKN-9l-I9Q" firstAttribute="top" secondItem="O8b-Qw-8k0" secondAttribute="bottom" constant="15" id="W7A-xL-4dg"/>
-                            <constraint firstItem="2VC-pA-HW0" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" constant="50" id="XjD-BI-tGk"/>
+                            <constraint firstItem="2VC-pA-HW0" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" constant="10" id="XjD-BI-tGk"/>
+                            <constraint firstItem="XSO-bX-5AT" firstAttribute="leading" secondItem="7Du-X6-Dgm" secondAttribute="leading" id="Xsn-5p-1Dk"/>
                             <constraint firstItem="eQJ-vN-M76" firstAttribute="trailing" secondItem="O8b-Qw-8k0" secondAttribute="trailing" constant="100" id="c1A-A2-28d">
                                 <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                             </constraint>
@@ -144,10 +189,9 @@
                             <constraint firstItem="O8b-Qw-8k0" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" constant="100" id="imk-CQ-ldF">
                                 <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                             </constraint>
-                            <constraint firstItem="O8b-Qw-8k0" firstAttribute="top" secondItem="7Du-X6-Dgm" secondAttribute="bottom" constant="30" id="oJq-Et-RgJ">
-                                <variation key="heightClass=regular-widthClass=compact" constant="30"/>
-                            </constraint>
                             <constraint firstItem="7Du-X6-Dgm" firstAttribute="top" secondItem="ENg-t3-oNR" secondAttribute="bottom" constant="85" id="ocg-mK-aiF"/>
+                            <constraint firstItem="O8b-Qw-8k0" firstAttribute="top" secondItem="XSO-bX-5AT" secondAttribute="bottom" constant="10" id="pL2-9l-HQ8"/>
+                            <constraint firstItem="Pgh-Hv-J1c" firstAttribute="bottom" secondItem="O8b-Qw-8k0" secondAttribute="bottom" id="vgc-ff-D8h"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="jpJ-1p-5Mf"/>
@@ -156,10 +200,14 @@
                         <outlet property="activityIndicator" destination="9kI-qx-ouS" id="sgn-17-YQ3"/>
                         <outlet property="animationTopConstraint" destination="Evh-9L-An3" id="hhj-Q0-cy8"/>
                         <outlet property="animationView" destination="ENg-t3-oNR" id="akM-Du-3QS"/>
+                        <outlet property="changeModeButton" destination="XSO-bX-5AT" id="iTY-6J-qjs"/>
+                        <outlet property="codeCustomView" destination="zQC-EL-mWd" id="x8p-kr-fq0"/>
                         <outlet property="continueButton" destination="Yw9-km-qzn" id="nrS-IW-A1S"/>
                         <outlet property="emaiCustomView" destination="O8b-Qw-8k0" id="pwQ-Be-XGt"/>
                         <outlet property="emailDescriptionLabel" destination="jKN-9l-I9Q" id="iLK-8e-FJT"/>
                         <outlet property="logInWithFacebookButton" destination="2VC-pA-HW0" id="1je-Ys-vec"/>
+                        <outlet property="numberCustomView" destination="uEI-va-kXa" id="3ds-jc-CIS"/>
+                        <outlet property="phonaView" destination="Pgh-Hv-J1c" id="UQv-BD-Uf8"/>
                         <outlet property="storyboardView" destination="Wsi-Pt-bLK" id="oX6-97-Prk"/>
                     </connections>
                 </viewController>
@@ -363,7 +411,6 @@
                                                         </userDefinedRuntimeAttributes>
                                                     </view>
                                                 </subviews>
-                                                <color key="backgroundColor" systemColor="systemIndigoColor"/>
                                                 <variation key="heightClass=regular-widthClass=compact" spacing="20"/>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Um2-NN-8OI">
@@ -578,9 +625,6 @@
         </systemColor>
         <systemColor name="systemGray6Color">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemIndigoColor">
-            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

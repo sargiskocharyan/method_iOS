@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>963219707627-64h8bpgua9tlump0cl0j2tgikctlvmh9.apps.googleusercontent.com</string>
+	<string>963219707627-sbh0fcbeac4qima77m74bdf30695ehfd.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.963219707627-64h8bpgua9tlump0cl0j2tgikctlvmh9</string>
+	<string>com.googleusercontent.apps.963219707627-sbh0fcbeac4qima77m74bdf30695ehfd</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>963219707627-ti7q2fvii97mrmpbeirre3buomuk1le4.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCC0wF096t502iA9z4a5i9SYrimJSljQt0</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>am.dynamic.messenger</string>
+	<string>am.dynamic.method</string>
 	<key>PROJECT_ID</key>
 	<string>dynamic-messenger-4a076</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:963219707627:ios:2c5179d71219a208bdd0ae</string>
+	<string>1:963219707627:ios:9acb24406bc342f0bdd0ae</string>
 	<key>DATABASE_URL</key>
 	<string>https://dynamic-messenger-4a076.firebaseio.com</string>
 </dict>

@@ -140,6 +140,33 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                         }
                     }
                 }
+            } else if sendAsset != nil {
+                //                PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
+                //                        if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
+                //                        print("creating 2")
+                //                        do {
+                //                            let esim = try NSData(contentsOf: self.sendAsset!.url, options: .dataReadingMapped)
+                //                            print(esim)
+                //                        } catch(let error) {
+                //                            print(error.localizedDescription)
+                //                        }
+                //                    }
+                //                })
+                encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+                    if let url = url {
+                        do {
+                            let data = try Data(contentsOf: url)
+                            DispatchQueue.main.async {
+                                HomeNetworkManager().sendVideoInChat(data: data, id: self.id!, text: self.inputTextField.text!)
+                            }
+                        } catch {
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
+                
+                
+                
             } else if inputTextField.text != "" {
                 let text = inputTextField.text
                 inputTextField.text = ""
@@ -449,6 +476,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     @objc func handleUploadTap() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.mediaTypes = ["public.image", "public.movie"]
+        imagePickerController.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
         imagePickerController.allowsEditing = true
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
@@ -475,7 +503,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         sendingImage.layer.cornerRadius = 20
     }
     
-        
+    
     
     func removeSendImageView() {
         self.view.viewWithTag(14)?.removeFromSuperview()
@@ -497,31 +525,77 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
         if let videoURL = info["UIImagePickerControllerReferenceURL"] as? NSURL {
             print(videoURL)
-                PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
-                    ()
-                    
-                    if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
-                        print("creating 2")
-                        do {
-                            self.sendAsset = AVURLAsset(url: videoURL as URL , options: nil)
-                            let imgGenerator = AVAssetImageGenerator(asset: self.sendAsset!)
-                            imgGenerator.appliesPreferredTrackTransform = true
-                            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
-                            let thumbnail = UIImage(cgImage: cgImage)
-                            DispatchQueue.main.async {
-                                self.setSendImageView(image: thumbnail)
-                            }
-                        } catch let error {
-                            print("*** Error generating thumbnail: \(error.localizedDescription)")
+            PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
+                ()
+                if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
+                    print("creating 2")
+                    do {
+                        self.sendAsset = AVURLAsset(url: videoURL as URL , options: nil)
+                        _ = AVAsset(url: videoURL as URL)
+                        let imgGenerator = AVAssetImageGenerator(asset: self.sendAsset!)
+                        imgGenerator.appliesPreferredTrackTransform = true
+                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                        let thumbnail = UIImage(cgImage: cgImage)
+                        DispatchQueue.main.async {
+                            self.setSendImageView(image: thumbnail)
                         }
+                    } catch let error {
+                        print("*** Error: \(error.localizedDescription)")
                     }
-                    
-                })
-            }
-         
+                }
+                
+            })
+        }
         dismiss(animated: true, completion: nil)
     }
     
+    func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
+        let avAsset = AVURLAsset(url: videoURL, options: nil)
+        let startDate = Date()
+        //Create Export session
+        guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
+            completionHandler?(nil, nil)
+            return
+        }
+        //Creating temp path to save the converted video
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
+        let filePath = documentsDirectory.appendingPathComponent("rendered-Video.mp4")
+        //Check if the file already exists then remove the previous file
+        if FileManager.default.fileExists(atPath: filePath.path) {
+            do {
+                try FileManager.default.removeItem(at: filePath)
+            } catch {
+                completionHandler?(nil, error)
+            }
+        }
+        exportSession.outputURL = filePath
+        exportSession.outputFileType = AVFileType.mp4
+        exportSession.shouldOptimizeForNetworkUse = true
+        let start = CMTimeMakeWithSeconds(0.0, preferredTimescale: 0)
+        let range = CMTimeRangeMake(start: start, duration: avAsset.duration)
+        exportSession.timeRange = range
+        exportSession.exportAsynchronously(completionHandler: {() -> Void in
+            switch exportSession.status {
+            case .failed:
+                print(exportSession.error ?? "NO ERROR")
+                completionHandler?(nil, exportSession.error)
+            case .cancelled:
+                print("Export canceled")
+                completionHandler?(nil, nil)
+            case .completed:
+                //Video conversion finished
+                let endDate = Date()
+                
+                let time = endDate.timeIntervalSince(startDate)
+                print(time)
+                print("Successful!")
+                print(exportSession.outputURL ?? "NO OUTPUT URL")
+                completionHandler?(exportSession.outputURL, nil)
+                
+            default: break
+            }
+        })
+    }
     func setupInputComponents() {
         messageInputContainerView.layer.borderWidth = 1
         messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
@@ -688,10 +762,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                         self.tableView.contentOffset.y += initialOffset
                     } else {
                         DispatchQueue.main.async {
-                            self.tableView.reloadData {
-                                if arrayOfIndexPaths.count > 1 {
-//                                    self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
-                                }
+                            self.tableView.reloadData()
+                            if arrayOfIndexPaths.count > 1 {
+                                self.tableView.scrollToRow(at: IndexPath(row: arrayOfIndexPaths.count - 1, section: 0), at: .bottom, animated: false)
                             }
                         }
                     }
@@ -701,7 +774,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-     func tappedSendMessageCell(_ indexPath: IndexPath) {
+    func tappedSendMessageCell(_ indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
@@ -754,7 +827,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-     func configureSendCallTableViewCell(_ cell: SendCallTableViewCell, _ indexPath: IndexPath) {
+    func configureSendCallTableViewCell(_ cell: SendCallTableViewCell, _ indexPath: IndexPath) {
         let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
         cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
         cell.id = allMessages!.array![indexPath.row]._id
@@ -770,7 +843,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-     func configureSendImageMessageTableViewCell(_ cell: SendImageMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+    func configureSendImageMessageTableViewCell(_ cell: SendImageMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = allMessages!.array![indexPath.row]._id
         ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
@@ -835,7 +908,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         cell.messageLabel.sizeToFit()
     }
     
-     func tappedSendImageMessageCell(_ indexPath: IndexPath) {
+    func tappedSendImageMessageCell(_ indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
@@ -880,7 +953,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 } else {
                     tappedSendCallCell(indexPath)
                 }
-              
+                
             }
         }
     }
