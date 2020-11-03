@@ -34,16 +34,6 @@
 				<string>com.googleusercontent.apps.963219707627-sbh0fcbeac4qima77m74bdf30695ehfd</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>None</string>
-			<key>CFBundleURLSchemes</key>
-			<array/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>

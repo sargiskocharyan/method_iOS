@@ -15,7 +15,7 @@ import Firebase
 import PhoneNumberKit
 import DropDown
 
-class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginButtonDelegate {
+class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         fetchUserInfo()
     }
@@ -61,9 +61,9 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
     @IBOutlet weak var animationTopConstraint: NSLayoutConstraint!
     @IBOutlet var storyboardView: UIView!
     @IBOutlet weak var phonaView: UIView!
-    @IBOutlet weak var numberCustomView: CustomTextField!
-    @IBOutlet weak var codeCustomView: CustomTextField!
+    @IBOutlet weak var numberTextField: PhoneNumberTextField!
     @IBOutlet weak var changeModeButton: UIButton!
+    @IBOutlet weak var borderView: UIView!
     
     
     //MARK: Properties
@@ -80,11 +80,14 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
     var isLoginWithEmail: Bool!
     let phoneNumberKit = PhoneNumberKit()
     let codeDropDown = DropDown()
-    var isMoreCode: Bool!
     let codeMoreOrLessImageView = UIImageView()
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
-        checkEmail()
+        if isLoginWithEmail {
+            checkEmail()
+        } else {
+            checkPhone()
+        }
     } 
     
    
@@ -102,12 +105,16 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
         super.viewDidLoad()
         storyboardView.bringSubviewToFront(view)
         emaiCustomView.delagate = self
-        emaiCustomView.textField.delegate = self
         navigationController?.isNavigationBarHidden = true
         continueButton.isEnabled = false
+        numberTextField.withDefaultPickerUI = true
+        numberTextField.withPrefix = true
+        numberTextField.defaultRegion = "AM"
+        numberTextField.withFlag = true
+        numberTextField.withExamplePlaceholder = true
         continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
         continueButton.titleLabel?.textColor = UIColor.lightGray
-//        self.emaiCustomView.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .allEvents)
+        self.numberTextField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .allEvents)
         showAnimation()
         self.hideKeyboardWhenTappedAround()
         setObservers()
@@ -116,30 +123,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
         logInWithFacebookButton.permissions = ["public_profile", "email"]
         logInWithFacebookButton.delegate = self
         isLoginWithEmail = true
-        codeCustomView.textField.keyboardType = .numbersAndPunctuation
-        numberCustomView.textField.keyboardType = .numberPad
-        let tapOnCodeView = UITapGestureRecognizer(target: self, action: #selector(handleCodeViewTap(_:)))
-        codeCustomView.delagate = self
-        numberCustomView.delagate = self
-        isMoreCode = false
-        codeCustomView.isUserInteractionEnabled = true
-        codeCustomView.addGestureRecognizer(tapOnCodeView)
-        codeCustomView.textField.isEnabled = false
-        addCodeDropDown()
-    }
-   
-    @objc func handleCodeViewTap(_ gesture: UITapGestureRecognizer) {
-        codeDropDown.width = codeCustomView.textField.frame.width
-        if isMoreCode {
-            isMoreCode = false
-            codeDropDown.hide()
-            codeMoreOrLessImageView.image = UIImage(named: "more")
-        }
-        else {
-            isMoreCode = true
-            codeDropDown.show()
-            codeMoreOrLessImageView.image = UIImage(named: "less")
-        }
+        numberTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     func addImage(textField: UITextField, imageView: UIImageView) {
@@ -153,37 +137,8 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
         imageView.isUserInteractionEnabled = true
     }
     
-    func addCodeDropDown() {
-        addImage(textField: codeCustomView.textField, imageView: codeMoreOrLessImageView)
-        codeDropDown.anchorView = codeCustomView.textField
-        codeDropDown.direction = .any
-        let allCountries = phoneNumberKit.allCountries().filter { (country) -> Bool in
-            return country != "AZ" && country != "TR"
-        }
-        let countryCodes = allCountries.map { (country) -> String in
-            return "+\(phoneNumberKit.countryCode(for: country) ?? 374)"
-        }
-        codeDropDown.dataSource = countryCodes
-        codeDropDown.bottomOffset = CGPoint(x: 0, y:((codeDropDown.anchorView?.plainView.bounds.height)! + codeCustomView.textField.frame.height + 30))
-        codeDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            self.codeCustomView.textField.text = item
-            self.codeMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreCode = false
-//            self.checkFields()
-        }
-        codeDropDown.width = codeCustomView.textField.bounds.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.codeCustomView.textField.frame.height))
-        codeCustomView.textField.rightView = paddingView
-        codeCustomView.textField.rightViewMode = UITextField.ViewMode.always
-        codeDropDown.cancelAction = { [unowned self] in
-            self.codeMoreOrLessImageView.image = UIImage(named: "more")
-            self.isMoreCode = false
-        }
-    }
-    
     override func viewDidLayoutSubviews() {
         self.emaiCustomView.handleRotate()
-        codeDropDown.width = codeCustomView.textField.frame.width
         let minRect = CGRect(x: 0, y: 0, width: 0, height: 0)
         let maxRectBottom = CGRect(x: 0, y: view.frame.height - bottomHeight, width: bottomWidth, height: bottomHeight)
         let maxRect = CGRect(x: self.view.frame.size.width - topWidth, y: 0, width: topWidth, height: topHeight)
@@ -236,23 +191,23 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
         continueButton.titleLabel?.textColor = UIColor.white
     }
     
-//    @objc func textFieldDidChange(textField: UITextField){
-//        if isLoginWithEmail {
-//            if !textField.text!.isValidEmail() {
-//               disableContinueButton()
-//            } else {
-//               enableContinueButton()
-//            }
-//        } else {
-//
-//        }
-//    }
+    @objc func textFieldDidChange(textField: UITextField){
+        do {
+            let phoneNumber = try phoneNumberKit.parse(textField.text!)
+            borderView.backgroundColor = .lightGray
+            enableContinueButton()
+        }
+        catch {
+            borderView.backgroundColor = .red
+            disableContinueButton()
+        }
+    }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-            if isLoginWithEmail {
+//            if isLoginWithEmail {
                 if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
                     animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
                 } else {
@@ -261,18 +216,18 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
                 UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                     self.view.layoutIfNeeded()
                 }, completion: nil)
-            } else {
-                if !(isKeyboardShowing && animationTopConstraint.constant != constant) {
-                    if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
-                        animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
-                    } else {
-                        animationTopConstraint.constant = constant
-                    }
-                    UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                        self.view.layoutIfNeeded()
-                    }, completion: nil)
-                }
-            }
+//            } else {
+//                if !(isKeyboardShowing && animationTopConstraint.constant != constant) {
+//                    if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
+//                        animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
+//                    } else {
+//                        animationTopConstraint.constant = constant
+//                    }
+//                    UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+//                        self.view.layoutIfNeeded()
+//                    }, completion: nil)
+//                }
+//            }
         }
     }
        
@@ -281,8 +236,7 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
         if isLoginWithEmail {
             sender.setTitle("use_phone_number_for_login".localized(), for: .normal)
             phonaView.isHidden = true
-            emptyField(customView: codeCustomView)
-            emptyField(customView: numberCustomView)
+            numberTextField.text = ""
             emaiCustomView.isHidden = false
             emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
             aboutPgLabel.text = "enter_your_email".localized()
@@ -308,44 +262,45 @@ class BeforeLoginViewController: UIViewController, UITextFieldDelegate, LoginBut
            NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
            NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
        }
-       
-       func checkEmail() {
-//           activityIndicator.startAnimating()
-//           viewModel!.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
-//               if (error != nil) {
-//                   DispatchQueue.main.async {
-//                       self.activityIndicator.stopAnimating()
-//                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-//                   }
-//               } else if responseObject != nil {
-//                   DispatchQueue.main.async {
-//                    self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist)
-//                       self.activityIndicator.stopAnimating()
-//                   }
-//               }
-//           }
-        Auth.auth().languageCode = "am";
-        Auth.auth().settings?.isAppVerificationDisabledForTesting = true
-        PhoneAuthProvider.provider().verifyPhoneNumber("+37494021274", uiDelegate: nil) { (verificationID, error) in
-          
+    
+    func checkPhone() {
+        Auth.auth().languageCode = "az";
+        Auth.auth().settings?.isAppVerificationDisabledForTesting = false
+        PhoneAuthProvider.provider().verifyPhoneNumber(numberTextField.text!, uiDelegate: nil) { (verificationID, error) in
             if let error = error {
-                
+                self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
                 return
             }
-          // Sign in using the verificationID and the code sent to the user
-          // ...
+            UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
         }
-       }
-       
-       func showAnimation() {
-           let checkMarkAnimation =  AnimationView(name:  "message")
-           animationView.contentMode = .scaleAspectFit
-           checkMarkAnimation.animationSpeed = 1
-           checkMarkAnimation.frame = self.animationView.bounds
-           checkMarkAnimation.loopMode = .loop
-           checkMarkAnimation.play()
-           self.animationView.addSubview(checkMarkAnimation)
-       }
+    }
+    
+    func checkEmail() {
+        activityIndicator.startAnimating()
+        viewModel!.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
+            if (error != nil) {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                }
+            } else if responseObject != nil {
+                DispatchQueue.main.async {
+                    self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist)
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+        }
+    }
+    
+    func showAnimation() {
+        let checkMarkAnimation =  AnimationView(name:  "message")
+        animationView.contentMode = .scaleAspectFit
+        checkMarkAnimation.animationSpeed = 1
+        checkMarkAnimation.frame = self.animationView.bounds
+        checkMarkAnimation.loopMode = .loop
+        checkMarkAnimation.play()
+        self.animationView.addSubview(checkMarkAnimation)
+    }
 }
 
 //MARK: Extension

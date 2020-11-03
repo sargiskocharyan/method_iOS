@@ -81,34 +81,28 @@
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pgh-Hv-J1c">
                                 <rect key="frame" x="40" y="395.5" width="334" height="66.5"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uEI-va-kXa" customClass="CustomTextField" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="103.5" y="0.0" width="230.5" height="66.5"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="number"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                <real key="value" value="0.0"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zQC-EL-mWd" customClass="CustomTextField" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="83.5" height="66.5"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="code"/>
-                                        </userDefinedRuntimeAttributes>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cAt-BW-4Vu" customClass="PhoneNumberTextField" customModule="PhoneNumberKit">
+                                        <rect key="frame" x="0.0" y="2" width="334" height="50"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                    </textField>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6kH-bZ-Rjv">
+                                        <rect key="frame" x="0.0" y="38" width="334" height="1"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="8ga-RK-KG0"/>
+                                        </constraints>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="uEI-va-kXa" firstAttribute="top" secondItem="Pgh-Hv-J1c" secondAttribute="top" id="2qG-R7-MjW"/>
-                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="leading" secondItem="Pgh-Hv-J1c" secondAttribute="leading" id="5ts-a4-vf2"/>
-                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="width" secondItem="Pgh-Hv-J1c" secondAttribute="width" multiplier="0.25" id="P90-Ln-NfJ"/>
-                                    <constraint firstItem="uEI-va-kXa" firstAttribute="leading" secondItem="zQC-EL-mWd" secondAttribute="trailing" constant="20" id="Wqc-6x-pJK"/>
-                                    <constraint firstItem="zQC-EL-mWd" firstAttribute="top" secondItem="Pgh-Hv-J1c" secondAttribute="top" id="YQ4-WP-dwp"/>
-                                    <constraint firstAttribute="bottom" secondItem="zQC-EL-mWd" secondAttribute="bottom" id="az2-nj-BSo"/>
-                                    <constraint firstAttribute="trailing" secondItem="uEI-va-kXa" secondAttribute="trailing" id="o0E-EJ-HB8"/>
-                                    <constraint firstAttribute="bottom" secondItem="uEI-va-kXa" secondAttribute="bottom" id="q77-N3-0Bh"/>
+                                    <constraint firstItem="6kH-bZ-Rjv" firstAttribute="leading" secondItem="cAt-BW-4Vu" secondAttribute="leading" id="Q3S-Or-QP0"/>
+                                    <constraint firstAttribute="bottom" secondItem="6kH-bZ-Rjv" secondAttribute="bottom" constant="27.5" id="T9h-ND-TUg"/>
+                                    <constraint firstItem="6kH-bZ-Rjv" firstAttribute="trailing" secondItem="cAt-BW-4Vu" secondAttribute="trailing" id="WHc-as-5VU"/>
+                                    <constraint firstItem="cAt-BW-4Vu" firstAttribute="top" secondItem="Pgh-Hv-J1c" secondAttribute="top" constant="2" id="Yjk-Yd-I3s"/>
+                                    <constraint firstAttribute="trailing" secondItem="cAt-BW-4Vu" secondAttribute="trailing" id="ePZ-6Z-bsO"/>
+                                    <constraint firstItem="6kH-bZ-Rjv" firstAttribute="top" secondItem="cAt-BW-4Vu" secondAttribute="bottom" constant="-14" id="o3f-n2-Oit"/>
+                                    <constraint firstItem="cAt-BW-4Vu" firstAttribute="leading" secondItem="Pgh-Hv-J1c" secondAttribute="leading" id="wwb-8x-96z"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XSO-bX-5AT">
@@ -200,13 +194,13 @@
                         <outlet property="activityIndicator" destination="9kI-qx-ouS" id="sgn-17-YQ3"/>
                         <outlet property="animationTopConstraint" destination="Evh-9L-An3" id="hhj-Q0-cy8"/>
                         <outlet property="animationView" destination="ENg-t3-oNR" id="akM-Du-3QS"/>
+                        <outlet property="borderView" destination="6kH-bZ-Rjv" id="35a-av-962"/>
                         <outlet property="changeModeButton" destination="XSO-bX-5AT" id="iTY-6J-qjs"/>
-                        <outlet property="codeCustomView" destination="zQC-EL-mWd" id="x8p-kr-fq0"/>
                         <outlet property="continueButton" destination="Yw9-km-qzn" id="nrS-IW-A1S"/>
                         <outlet property="emaiCustomView" destination="O8b-Qw-8k0" id="pwQ-Be-XGt"/>
                         <outlet property="emailDescriptionLabel" destination="jKN-9l-I9Q" id="iLK-8e-FJT"/>
                         <outlet property="logInWithFacebookButton" destination="2VC-pA-HW0" id="1je-Ys-vec"/>
-                        <outlet property="numberCustomView" destination="uEI-va-kXa" id="3ds-jc-CIS"/>
+                        <outlet property="numberTextField" destination="cAt-BW-4Vu" id="lNy-k7-k60"/>
                         <outlet property="phonaView" destination="Pgh-Hv-J1c" id="UQv-BD-Uf8"/>
                         <outlet property="storyboardView" destination="Wsi-Pt-bLK" id="oX6-97-Prk"/>
                     </connections>

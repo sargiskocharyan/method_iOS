@@ -37,6 +37,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
         .underlineStyle: NSUnderlineStyle.single.rawValue]
+    var isLoginWithPhone: Bool?
     
     //MARK: @IBAction
     @IBAction func resendCodeAction(_ sender: UIButton) {
@@ -170,7 +171,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
+                        self.showErrorAlert(title: "error_message`".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }
