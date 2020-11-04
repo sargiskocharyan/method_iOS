@@ -27,6 +27,15 @@ extension UIViewController {
            self.present(alert, animated: true)
        }
     
+    func showAlert(title: String?, message: String?, buttonTitle1: String? = nil, buttonTitle2: String? = nil, buttonTitle3: String? = nil, completion1: (()->())?, completion2: (()->())?, completion3: (()->())?) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "", style: .default, handler: { (action) in
+            completion1()
+        }))
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    
     class var storyboardID : String {
         return "\(self)"
     }

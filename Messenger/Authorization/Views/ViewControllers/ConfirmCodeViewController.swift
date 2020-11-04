@@ -153,7 +153,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
                     return
                 }
-                print("Signed in")
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.viewModel?.loginWithPhoneNumber(number: self.phoneNumber!.replacingOccurrences(of: " ", with: ""), completion: { (response, error) in

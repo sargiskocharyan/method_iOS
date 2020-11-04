@@ -230,14 +230,6 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         self.view.addSubview(headerShapeView)
     }
     
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
-//        if textField.text!.isValidEmail() {
-//            checkEmail()
-//        }
-//        return true
-//    }
-    
     func disableContinueButton() {
         continueButton.isEnabled = false
         continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
