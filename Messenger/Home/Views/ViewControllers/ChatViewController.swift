@@ -173,6 +173,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 SocketTaskManager.shared.send(message: text!, id: id!)
                 self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil))
                 self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
+                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
+                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
                 self.removeLabel()
             }
         } else {
@@ -429,12 +431,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 } else if message.type == "image" {
                     self.allMessages?.array!.append(message)
                 }
-            }
-            
-            DispatchQueue.main.async { [self] in
-                self.tableView.insertRows(at: [IndexPath(row: (self.allMessages?.array!.count)! - 1, section: 0)], with: .none)
-                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else if self.id == SharedConfigs.shared.signedUser?.id && message.senderId == message.reciever  {
             DispatchQueue.main.async {

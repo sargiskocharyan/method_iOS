@@ -20,9 +20,15 @@ class SharedConfigs {
     var unreadMessages: [Chat] = []
     var missedCalls: [String] = []
     var adminMessages: [AdminMessage] = []
+    var isLoginFromFacebook: Bool = false
     
     private init () {
        let _ = appLang
+    }
+    
+    func setIfLoginFromFacebook(isFromFacebook: Bool)  {
+        isLoginFromFacebook = isFromFacebook
+        UserDefaults.standard.setValue(isLoginFromFacebook, forKey: "isLoginFromFacebook")
     }
     
     func getNumberOfNotifications() -> Int {

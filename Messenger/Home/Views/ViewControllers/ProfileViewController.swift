@@ -10,6 +10,8 @@ import UIKit
 import DropDown
 import AVFoundation
 import CoreData
+import FBSDKLoginKit
+
 
 protocol ProfileViewControllerDelegate: class {
     func changeLanguage(key: String)
@@ -345,15 +347,27 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         addDropDown()
     }
     
-    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {        
-        viewModel!.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        if UserDefaults.standard.object(forKey: "isLoginFromFacebook") as? Bool == false {
+            viewModel!.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
+                UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
+                DispatchQueue.main.async {
+                    self.deleteAllRecords()
+                    UserDataController().logOutUser()
+                    AuthRouter().assemblyModule()
+                }
+                SocketTaskManager.shared.disconnect{}
+            }
+        } else {
             UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
             DispatchQueue.main.async {
                 self.deleteAllRecords()
+                LoginManager().logOut()
                 UserDataController().logOutUser()
                 AuthRouter().assemblyModule()
             }
             SocketTaskManager.shared.disconnect{}
+            
         }
     }
     

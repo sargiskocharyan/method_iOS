@@ -37,6 +37,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
         .underlineStyle: NSUnderlineStyle.single.rawValue]
+    var isLoginWithPhone: Bool?
     
     //MARK: @IBAction
     @IBAction func resendCodeAction(_ sender: UIButton) {
@@ -148,13 +149,9 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else if (token != nil && loginResponse != nil) {
                     let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire), missedCallHistory: loginResponse!.user.missedCallHistory)
+                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().populateUserProfile(model: model)
-//                    DispatchQueue.main.async {
-//                        MainRouter().assemblyModule()
-//                        self.activityIndicator.stopAnimating()
-//                    }
-                    
                     self.registerDevice { (error) in
                         if error != nil {
                             DispatchQueue.main.async {
@@ -170,7 +167,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
+                        self.showErrorAlert(title: "error_message`".localized(), errorMessage: "incorrect_code".localized())
                         self.activityIndicator.stopAnimating()
                     }
                 }
@@ -184,6 +181,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else if token != nil {
                     SharedConfigs.shared.signedUser = loginResponse?.user
+                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
                     SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()

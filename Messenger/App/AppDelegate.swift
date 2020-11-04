@@ -122,7 +122,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let firebaseAuth = Auth.auth()
-        firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
+        firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.unknown)
         if UserDefaults.standard.bool(forKey: Keys.IS_REGISTERED) {
             SharedConfigs.shared.isRegistered = true
             SharedConfigs.shared.deviceToken = UserDefaults.standard.object(forKey: Keys.PUSH_DEVICE_TOKEN) as? String
