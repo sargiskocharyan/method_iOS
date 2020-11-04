@@ -64,7 +64,6 @@
 		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
 		CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3F251A36D100BF34BF /* Chats.storyboard */; };
 		CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF41251A391000BF34BF /* Profile.storyboard */; };
-		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9F63CC25348F01004CF9CB /* CreateAccountAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */; };
@@ -79,6 +78,8 @@
 		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
 		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
+		CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */; };
+		CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB9214425528AB000E65FAC /* Auth.storyboard */; };
 		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
@@ -126,12 +127,15 @@
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
 		D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
+		D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = D016E646254AE42F0067DEE8 /* FacebookCore */; };
+		D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D016E648254AE42F0067DEE8 /* FacebookLogin */; };
 		D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */; };
 		D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B68D31252C3EDD0019818D /* UpdateChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */; };
@@ -244,9 +248,7 @@
 		D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* CryptoSwift */; };
 		D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SocketIO */; };
 		D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* Lottie */; };
-		D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
-		D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
 		D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A045250B6EFD0067B245 /* ringback.mp3 */; };
 		D0F66520251B177D0018D9B7 /* congr.json in Resources */ = {isa = PBXBuildFile; fileRef = CD35E26B2497A6E2003C53AB /* congr.json */; };
 		D0F66521251B177D0018D9B7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD361E1F248B8DFA00BCF154 /* Localizable.strings */; };
@@ -268,7 +270,6 @@
 		F1ACA85424E48A5900EE8578 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85324E48A5900EE8578 /* UserNotificationsUI.framework */; };
 		F1ACA85A24E48A5900EE8578 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1ACA85824E48A5900EE8578 /* MainInterface.storyboard */; };
 		F1ACA85E24E48A5900EE8578 /* methodNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA85024E48A5900EE8578 /* methodNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -393,7 +394,6 @@
 		CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribersListViewController.swift; sourceTree = "<group>"; };
 		CD9ACF3F251A36D100BF34BF /* Chats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		CD9ACF41251A391000BF34BF /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
-		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountAlertViewController.swift; sourceTree = "<group>"; };
@@ -408,6 +408,8 @@
 		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
 		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveImageMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB9214425528AB000E65FAC /* Auth.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
@@ -456,6 +458,7 @@
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
+		D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUserTableViewCell.swift; sourceTree = "<group>"; };
 		D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewModel.swift; sourceTree = "<group>"; };
 		D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminInfoViewController.swift; sourceTree = "<group>"; };
@@ -488,7 +491,6 @@
 		F1ACA85B24E48A5900EE8578 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1ACA86224E48BCB00EE8578 /* methodNotificationContentRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationContentRelease.entitlements; sourceTree = "<group>"; };
 		F1ACA86424E522C300EE8578 /* methodNotificationContentDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationContentDebug.entitlements; sourceTree = "<group>"; };
-		F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -497,9 +499,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */,
+				D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */,
 				F1764367249CD68B00492327 /* CryptoSwift in Frameworks */,
 				F1764361249CD60800492327 /* SocketIO in Frameworks */,
 				F1764364249CD61F00492327 /* Lottie in Frameworks */,
+				D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */,
 				AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -578,6 +582,7 @@
 				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
 				D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */,
 				CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */,
+				CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -771,8 +776,8 @@
 		CDBE8E042476746B0049F971 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				F1E60A7024ACA46500276D2B /* GoogleService-Info.plist */,
 				CDBE8DFE2476744D0049F971 /* Info.plist */,
+				D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */,
 				CDBE8DF02476744C0049F971 /* AppDelegate.swift */,
 			);
 			path = App;
@@ -858,7 +863,7 @@
 				D0EDEFF3252495B000016AF7 /* Main.storyboard */,
 				D0065B73251CCB0700EE880A /* Calls.storyboard */,
 				CDCA9A19252F32320040253A /* Channel.storyboard */,
-				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
+				CDB9214425528AB000E65FAC /* Auth.storyboard */,
 				CD9ACF3F251A36D100BF34BF /* Chats.storyboard */,
 				CD9ACF41251A391000BF34BF /* Profile.storyboard */,
 			);
@@ -880,7 +885,6 @@
 		CDD9C649247BC1CA0048A9A1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CDD9C64E247BC2410048A9A1 /* Cells */,
 				CDD9C64D247BC2370048A9A1 /* ViewControllers */,
 			);
 			path = Views;
@@ -918,13 +922,6 @@
 				CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */,
 			);
 			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		CDD9C64E247BC2410048A9A1 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Cells;
 			sourceTree = "<group>";
 		};
 		CDD9C651247BC3090048A9A1 /* Networking */ = {
@@ -1087,6 +1084,8 @@
 				F1764360249CD60800492327 /* SocketIO */,
 				F1764363249CD61F00492327 /* Lottie */,
 				F1764366249CD68B00492327 /* CryptoSwift */,
+				D016E646254AE42F0067DEE8 /* FacebookCore */,
+				D016E648254AE42F0067DEE8 /* FacebookLogin */,
 			);
 			productName = Messenger;
 			productReference = CDBE8DED2476744C0049F971 /* method.app */;
@@ -1191,6 +1190,7 @@
 				F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */,
 				F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = CDBE8DEE2476744C0049F971 /* Products */;
 			projectDirPath = "";
@@ -1209,9 +1209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
-				F1E60A7124ACA46500276D2B /* GoogleService-Info.plist in Resources */,
 				CDCA9A1A252F32320040253A /* Channel.storyboard in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
@@ -1223,6 +1221,8 @@
 				CD424917248A315E00A38987 /* message.json in Resources */,
 				CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */,
 				D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */,
+				CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */,
+				D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */,
 				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1232,10 +1232,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0EDEFF5252495B000016AF7 /* Main.storyboard in Resources */,
-				D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */,
 				D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */,
 				D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */,
-				D0F6651E251B177D0018D9B7 /* GoogleService-Info.plist in Resources */,
 				D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */,
 				D0F66520251B177D0018D9B7 /* congr.json in Resources */,
 				D0F66521251B177D0018D9B7 /* Localizable.strings in Resources */,
@@ -1389,6 +1387,7 @@
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
+				CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
@@ -1968,6 +1967,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.0;
+			};
+		};
 		D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
@@ -2019,6 +2026,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D016E646254AE42F0067DEE8 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		D016E648254AE42F0067DEE8 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
 		D0F664AD251B177D0018D9B7 /* SocketIO */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */;

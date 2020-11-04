@@ -9,10 +9,10 @@
 import UIKit
 
 
-class HomeNetworkManager: NetworkManager {
+class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
+   
     
     let router = Router<HomeApi>()
-    
     
     func getUserContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
         router.request(.getUserContacts) { data, response, error in
@@ -332,6 +332,156 @@ class HomeNetworkManager: NetworkManager {
             }
         }.resume()
     }
+    
+    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        guard let image = tmpImage else { return }
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(userId)/imageMessage")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
+        body.appendString(text)
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
+        body.appendString("Content-Type: image/jpg\r\n\r\n")
+        body.append(image.jpegData(compressionQuality: 1)!)
+        body.appendString("\r\n--\(boundary)--\r\n")
+        let session = URLSession.shared
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            print(request.httpBody as Any)
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed)
+            } else {
+                guard data != nil else {
+                    completion(NetworkResponse.noData)
+                    return
+                }
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+    func sendVideoInChat(data: Data, id: String, text: String) {
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(id)/videoMessage")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
+        body.appendString(text)
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
+        body.appendString("Content-Type: video/mp4\r\n\r\n")
+        body.append(data)
+        body.appendString("\r\n--\(boundary)--\r\n")
+//        let config = URLSessionConfiguration.background(withIdentifier: UUID().uuidString)
+        let session = URLSession.shared
+//        let task = session.uploadTask(withStreamedRequest: request)
+//        task.resume()
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            print(request.httpBody as Any)
+            guard (response as? HTTPURLResponse) != nil else {
+//                completion(NetworkResponse.failed)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+//                completion(NetworkResponse.failed)
+            } else {
+                guard data != nil else {
+//                    completion(NetworkResponse.noData)
+                    return
+                }
+//                completion(nil)
+            }
+        }.resume()
+    }
+    struct Streams {
+        let input: InputStream
+        let output: OutputStream
+    }
+    lazy var boundStreams: Streams = {
+        var inputOrNil: InputStream? = nil
+        var outputOrNil: OutputStream? = nil
+        Stream.getBoundStreams(withBufferSize: 4096,
+                               inputStream: &inputOrNil,
+                               outputStream: &outputOrNil)
+        guard let input = inputOrNil, let output = outputOrNil else {
+            fatalError("On return of `getBoundStreams`, both `inputStream` and `outputStream` will contain non-nil streams.")
+        }
+        // configure and open output stream
+        output.delegate = self
+        output.schedule(in: .current, forMode: .default)
+        output.open()
+        return Streams(input: input, output: output)
+    }()
+
+    func stopStreaming() {
+        guard let task = self.streamingTask else {
+            return
+        }
+        self.streamingTask = nil
+        task.cancel()
+        self.closeStream()
+    }
+
+    var outputStream: OutputStream? = nil
+    private var session: URLSession! = nil
+    private func closeStream() {
+        if let stream = self.outputStream {
+            stream.close()
+            self.outputStream = nil
+        }
+    }
+    private var streamingTask: URLSessionDataTask? = nil
+
+    var isStreaming: Bool { return self.streamingTask != nil }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
+        self.closeStream()
+        completionHandler(boundStreams.input)
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        NSLog("task data: %@", data as NSData)
+        print(String(data: data, encoding: .utf8) as Any)
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error as NSError? {
+            NSLog("task error: %@ / %d", error.domain, error.code)
+        } else {
+            NSLog("task complete")
+        }
+    }
+    
+    var canWrite = false
+    
+    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
+        guard aStream == boundStreams.output else {
+            return
+        }
+        if eventCode.contains(.hasSpaceAvailable) {
+            canWrite = true
+        }
+        if eventCode.contains(.errorOccurred) {
+            // Close the streams and alert the user that the upload failed.f
+            print(eventCode)
+        }
+    }
+    
     
 //    func getArticles(text: String, page: Int, complete: @escaping (_ error: Error?, _ result: ResponseArticles?) -> ()) {
 //            let url = URL(string: "http://\(Environment.baseURL):\(Environment.port)\(URLs.getArticles)")!

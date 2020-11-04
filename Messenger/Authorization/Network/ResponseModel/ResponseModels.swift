@@ -24,7 +24,7 @@ struct CheckUsername: Codable {
 
 struct MailExistsResponse: Codable {
     var mailExist: Bool
-    var code: String
+    var code: String?
 }
 
 struct PhoneExistsResponse: Codable {

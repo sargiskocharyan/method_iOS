@@ -9,45 +9,52 @@
 import UIKit
 
 class SendImageMessageTableViewCell: UITableViewCell {
-
-//    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
-
+    
+    //    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var snedImageView: UIImageView!
-//    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var leadingConstraintOfChaeckImage: NSLayoutConstraint!
+    @IBOutlet weak var checkImage: UIImageView?
+    var id: String?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+        //    snedImageView.contentMode = .scaleAspectFill
+        leadingConstraintOfChaeckImage?.constant = -10
+        checkImage?.isHidden = true
+        viewUnderImage.clipsToBounds = true
+        viewUnderImage.layer.cornerRadius = 10
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
     
-    
-    internal var aspectConstraint : NSLayoutConstraint? {
-        didSet {
-            if oldValue != nil {
-                snedImageView.removeConstraint(oldValue!)
-            }
-            if aspectConstraint != nil {
-                aspectConstraint?.priority = UILayoutPriority(rawValue: 999)  //add this
-                snedImageView.addConstraint(aspectConstraint!)
-            }
-        }
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
-        aspectConstraint = nil
+        checkImage?.image = nil
     }
-
-    func setPostedImage(image : UIImage) {
-
-        let aspect = image.size.width / image.size.height
-
-        aspectConstraint = NSLayoutConstraint(item: snedImageView!, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: snedImageView, attribute: NSLayoutConstraint.Attribute.height, multiplier: aspect, constant: 0.0)
-
-        snedImageView.image = image
+    
+    func setCheckButton(isPreview: Bool) {
+        if isPreview {
+            leadingConstraintOfChaeckImage?.constant = -10
+            checkImage?.isHidden = true
+        } else if !isPreview {
+            leadingConstraintOfChaeckImage?.constant = 10
+            checkImage?.isHidden = false
+        }
     }
-
+    
+    func setCheckImage() {
+        if isSelected  {
+            checkImage?.image = UIImage.init(systemName: "checkmark.circle.fill")
+        } else {
+            checkImage?.image = UIImage.init(systemName: "circle")
+        }
+    }
+    
 }

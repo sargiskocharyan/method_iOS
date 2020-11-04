@@ -17,6 +17,8 @@ public enum AuthApi {
     case verifyToken(token: String)
     case getUserContacts(token: String)
     case checkUsername(username: String)
+    case loginWithFacebook(accessToken: String)
+    case loginWithPhoneNumber(number: String)
 }
 
 extension AuthApi: EndPointType {
@@ -28,7 +30,6 @@ extension AuthApi: EndPointType {
     
     var path: String {
         switch self {
-
         case .beforeLogin(_):
             return AUTHUrls.MailisExist
         case .login(_,_):
@@ -43,13 +44,16 @@ extension AuthApi: EndPointType {
             return HomeUrls.GetUserContacts
         case .checkUsername(_):
             return AUTHUrls.CheckUsername
+        case .loginWithFacebook(_):
+            return AUTHUrls.LoginWithFacebook
+        case .loginWithPhoneNumber(_):
+            return AUTHUrls.LoginWithPhoneNumber
         }
     }
     
     var httpMethod: HTTPMethod {
         
         switch self {
-            
         case .beforeLogin(_):
             return .post
         case .login(_,_):
@@ -63,6 +67,10 @@ extension AuthApi: EndPointType {
         case .getUserContacts(_):
             return .get
         case .checkUsername(_):
+            return .post
+        case .loginWithFacebook(_):
+            return .post
+        case .loginWithPhoneNumber(_):
             return .post
         }
     }
@@ -101,8 +109,15 @@ extension AuthApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .checkUsername(username: let username):
             let parameters:Parameters = ["username": username]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: nil)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .loginWithFacebook(accessToken: let accessToken):
+            let parameters:Parameters = ["accessToken": accessToken]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .loginWithPhoneNumber(number: let number):
+            let parameters:Parameters = ["phoneNumber": number]
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: nil)
         }
     }
     

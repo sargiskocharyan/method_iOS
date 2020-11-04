@@ -17,4 +17,10 @@ class BeforeLoginViewModel {
             completion(responseObject, error)
         }
     }
+    
+    func loginWithFacebook(accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        networkManager.loginWithFacebook(accessToken: accessToken) { (response, error) in
+            completion(response, error)
+        }
+    }
 }

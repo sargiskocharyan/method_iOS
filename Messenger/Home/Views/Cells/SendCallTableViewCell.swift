@@ -15,6 +15,9 @@ class SendCallTableViewCell: UITableViewCell {
     @IBOutlet weak var durationAndStartTimeLabel: UILabel!
     @IBOutlet weak var callMessageView: UIView!
     @IBOutlet weak var ststusLabel: UILabel!
+    
+    var id: String?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfCallMessageView()
