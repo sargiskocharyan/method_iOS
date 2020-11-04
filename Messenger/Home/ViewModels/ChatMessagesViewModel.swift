@@ -15,4 +15,16 @@ class ChatMessagesViewModel {
             completion(messages, error)
         }
     }
+    
+    func editChatMessage(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().editChatMessage(messageId: messageId, text: text) { (error) in
+            completion(error)
+        }
+    }
+    
+    func deleteChatMessages(arrayMessageIds: [String], completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().deleteChatMessages(arrayMessageIds: arrayMessageIds) { (error) in
+            completion(error)
+        }
+    }
 }

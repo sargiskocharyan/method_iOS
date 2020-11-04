@@ -8,33 +8,46 @@
 
 import UIKit
 
+enum ChannelListMode {
+    case search
+    case main
+}
+
 class ChannelListViewController: UIViewController {
     
     //MARK: @IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
+    //    @IBOutlet weak var searchBar: UISearchBar!
     
     //MARk: Properties
     var channels: [ChannelInfo] = []
+    var isLoaded: Bool!
     var viewModel: ChannelListViewModel?
     var mainRouter: MainRouter?
     var foundChannels: [ChannelInfo] = []
     var channelsInfo: [ChannelInfo] = []
     var text = ""
+    var mode = ChannelListMode.main
     var activity = UIActivityIndicatorView(style: .medium)
     let refreshControl = UIRefreshControl()
+    let searchController = UISearchController(searchResultsController: nil)
     
     //MARK: LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        isLoaded = false
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
-        searchBar.delegate = self
         self.navigationItem.title = "channels".localized()
         getChannels{ }
         addResfreshControl()
         setActivity()
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "search".localized()
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
         activity.startAnimating()
         self.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
     }
@@ -56,31 +69,76 @@ class ChannelListViewController: UIViewController {
     }
     
     @objc func refreshCallHistory() {
-        getChannels {
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
+        if self.mode == .main {
+            getChannels {
+                DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
+                }
             }
+        } else {
+            refreshControl.endRefreshing()
         }
     }
     
     func addResfreshControl() {
-        if #available(iOS 10.0, *) {
-            tableView.refreshControl = refreshControl
-        } else {
-            tableView.addSubview(refreshControl)
-        }
+        tableView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(refreshCallHistory), for: .valueChanged)
+    }
+    
+    func handleSubscriberUpdate(user: String, name: String, avatarUrl: String?) {
+        if mode == .main {
+            for i in 0..<channels.count {
+                for j in 0..<(channels[i].channel?.subscribers?.count ?? 0) {
+                    if channels[i].channel?.subscribers?[j].user == user {
+                        channels[i].channel?.subscribers?[j].name = name
+                        channels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            self.channelsInfo = self.channels
+        }
+        else {
+            for i in 0..<channels.count {
+                for j in 0..<(channels[i].channel?.subscribers?.count ?? 0) {
+                    if channels[i].channel?.subscribers?[j].user == user {
+                        channels[i].channel?.subscribers?[j].name = name
+                        channels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            for i in 0..<foundChannels.count {
+                for j in 0..<(foundChannels[i].channel?.subscribers?.count ?? 0) {
+                    if foundChannels[i].channel?.subscribers?[j].user == user {
+                        foundChannels[i].channel?.subscribers?[j].name = name
+                        foundChannels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+                        break
+                    }
+                }
+            }
+            self.channelsInfo = self.foundChannels
+        }
+        if self.tabBarController?.selectedIndex == 2 && self.navigationController?.viewControllers.count == 2 {
+            for i in 0..<self.channels.count {
+                if channels[i].channel?._id == self.mainRouter?.channelMessagesViewController?.channelInfo.channel?._id {
+                    self.mainRouter?.channelMessagesViewController?.channelInfo.channel?.subscribers = channels[i].channel?.subscribers
+                    self.mainRouter?.channelMessagesViewController?.tableView?.reloadData()
+                    break
+                }
+            }
+        }
     }
     
     func setActivity() {
         self.tableView.addSubview(self.activity)
-          self.activity.tag = 33
-          self.activity.translatesAutoresizingMaskIntoConstraints = false
-          self.activity.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-          self.activity.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-          self.activity.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
-          self.activity.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
-      }
+        self.activity.tag = 33
+        self.activity.translatesAutoresizingMaskIntoConstraints = false
+        self.activity.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        self.activity.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        self.activity.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+        self.activity.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
+    }
     
     func createChannel(name: String, mode: Bool, completion: @escaping () -> ()) {
         self.activity.startAnimating()
@@ -93,25 +151,15 @@ class ChannelListViewController: UIViewController {
                 completion()
             } else {
                 SharedConfigs.shared.signedUser?.channels?.append(channel!._id)
-                self.channels.insert(ChannelInfo(channel: channel, role: 0), at: 0)
-                if (self.channelsInfo.elementsEqual((self.channels))) == true {
+                
+                if self.mode == .main {
                     self.channels.append(ChannelInfo(channel: channel, role: 0))
                     self.channelsInfo = self.channels
-                } else {
-                    self.channels.append(ChannelInfo(channel: channel, role: 0))
-                    for i in 0..<self.foundChannels.count {
-                        if self.foundChannels[i].channel?._id == channel?._id {
-                            self.foundChannels[i].role = 2
-                            break
-                        }
-                    }
-                    self.channelsInfo = self.foundChannels
                 }
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     self.tableView.reloadData()
-                }
-                DispatchQueue.main.async {
+                    self.removeView()
                     self.mainRouter?.showChannelMessagesViewController(channelInfo: ChannelInfo(channel: channel, role: 0))
                     completion()
                 }
@@ -119,7 +167,34 @@ class ChannelListViewController: UIViewController {
         })
     }
     
-
+    func setView(_ str: String) {
+        if channelsInfo.count == 0 {
+            DispatchQueue.main.async {
+                let noResultView = UIView(frame: self.view.frame)
+                self.tableView.addSubview(noResultView)
+                noResultView.tag = 26
+                noResultView.backgroundColor = UIColor(named: "imputColor")
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: 50))
+                noResultView.addSubview(label)
+                label.translatesAutoresizingMaskIntoConstraints = false
+                label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
+                label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+                label.center = self.view.center
+                label.text = str
+                label.textColor = .lightGray
+                label.textAlignment = .center
+            }
+        } else {
+            removeView()
+        }
+    }
+    
+    func removeView() {
+          DispatchQueue.main.async {
+              let resultView = self.view.viewWithTag(26)
+              resultView?.removeFromSuperview()
+          }
+      }
     
     @objc func addButtonTapped() {
         let vc = CreateAccountAlertViewController.instantiate(fromAppStoryboard: .channel)
@@ -128,24 +203,32 @@ class ChannelListViewController: UIViewController {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
         alertController.setValue(vc, forKey: "contentViewController")
         self.present(alertController, animated: true, completion: nil)
-   
+        
     }
     
     func getChannels(completion: @escaping () -> ()) {
-        viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (channels, error) in
+        viewModel?.getChannels(ids: SharedConfigs.shared.signedUser?.channels ?? [], completion: { (retrievedChannels, error) in
+            self.isLoaded = true
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
                 completion()
-            } else if let channels = channels {
-                self.channels = channels
-                self.channelsInfo = channels
-                DispatchQueue.main.async {
-                    self.activity.stopAnimating()
-                    self.tableView.reloadData()
+            } else if let channels = retrievedChannels {
+                if channels.count != 0 {
+                    self.channels = channels
+                    self.channelsInfo = channels
+                    DispatchQueue.main.async {
+                        self.activity.stopAnimating()
+                        self.tableView.reloadData()
+                    }
+                    completion()
+                } else {
+                    DispatchQueue.main.async {
+                        self.setView("no_channels".localized())
+                        self.activity.stopAnimating()
+                    }
                 }
-                completion()
             }
         })
     }
@@ -156,11 +239,22 @@ class ChannelListViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-            } else if let channels = channels {
-                self.foundChannels = channels
-                self.channelsInfo = channels
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
+            } else if let foundchannels = channels {
+                DispatchQueue.main.async { [self] in
+                    if self.searchController.searchBar.text!.count > 0 {
+                        self.mode = .search
+                        self.foundChannels = foundchannels
+                        self.channelsInfo = foundchannels
+                        self.tableView.reloadData()
+                        self.removeView()
+                        if self.channelsInfo.count > 0 {
+                            if self.channelsInfo.elementsEqual(self.foundChannels) {
+                                
+                            }
+                        } else {
+                            self.setView("there_is_no_result".localized())
+                        }
+                    }
                 }
             }
         })
@@ -187,20 +281,24 @@ extension ChannelListViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
-            print(self.channelsInfo[indexPath.row])
             self.mainRouter?.showChannelMessagesViewController(channelInfo: self.channelsInfo[indexPath.row])
         }
     }
 }
 
-extension ChannelListViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.count > 0 {
-            findChannels(term: searchText)
-        } else if searchText.count == 0 {
+extension ChannelListViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        if searchController.searchBar.text!.count > 0 {
+            findChannels(term: searchController.searchBar.text!)
+        } else if searchController.searchBar.text!.count == 0 {
+            removeView()
+            self.mode = .main
             channelsInfo = channels
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                if self.channelsInfo.count == 0 {
+                    self.setView("no_channels".localized())
+                }
             }
         }
     }

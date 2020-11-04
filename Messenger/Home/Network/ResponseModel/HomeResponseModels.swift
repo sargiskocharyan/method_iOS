@@ -13,11 +13,6 @@ struct Users: Codable {
     let users: [User]
 }
 
-//struct Sender: Codable{
-//    let id: String?
-//    let name: String?
-//}
-
 struct MessageCall: Codable {
     var callSuggestTime: String?
     var type: String?
@@ -29,7 +24,6 @@ struct Messages: Codable {
     var array: [Message]?
     var statuses: [MessageStatus]?
 }
-
 
 struct AdminMessage: Codable {
     var _id: String
@@ -69,7 +63,7 @@ struct ChannelInfo: Codable, Equatable {
     var channel: Channel?
     var role: Int?
 }
-
+ 
 struct ChannelSubscriber: Codable {
     var _id: String?
     var user: User?
@@ -99,7 +93,10 @@ struct Admin: Codable {
 }
 
 struct Subscriber: Codable {
-    var user: String
+    var _id: String?
+    var user: String?
+    var avatarURL: String?
+    var name: String?
 }
 
 struct Message: Codable {
@@ -112,7 +109,12 @@ struct Message: Codable {
     let updatedAt: String?
     let owner: String?
     let senderId: String?
-    
+    let image: Image?
+}
+
+struct Image: Codable {
+    let imageName: String?
+    let imageURL: String?
 }
 
 struct OnlineUsers: Codable {

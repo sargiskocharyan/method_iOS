@@ -87,6 +87,11 @@ class SocketTaskManager {
                     self.tabbar?.handleContactRemoved()
                     self.tabbar?.getNewChannelMessage()
                     self.addErrorListener()
+                    self.tabbar?.handleChatMessageDelete()
+                    self.tabbar?.handleChatMessageEdit()
+                    self.tabbar?.handleChannelSubscriberUpdate()
+                    self.tabbar?.handleChannelMessageEdit()
+                    self.tabbar?.handleChannelMessageDelete()
                 }
                 for compleion in self.completions {
                     compleion()
@@ -264,14 +269,56 @@ class SocketTaskManager {
         })
     }
     
+    func addEditChannelMessageListener(completion: @escaping (_ message: Message) -> ()) {
+        socket?.on("channelMessageEdited", callback: { (dataArray, socketAck) in
+            let data = dataArray[0] as? Dictionary<String, Any>
+            let imageDic = data?["image"] as? Dictionary<String, Any>
+            let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+            completion(message)
+        })
+    }
     
+    func addDeleteChannelMessageListener(completion: @escaping (_ message: [Message]) -> ()) {
+        socket?.on("channelMessageDeleted", callback: { (dataArray, socketAck) in
+            let array = dataArray[0] as? Array<Any>
+            var messages: [Message] = []
+            for i in 0..<(array?.count ?? 0) {
+                let data = array?[i] as? Dictionary<String, Any>
+                let imageDic = data?["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+                messages.append(message)
+            }
+            completion(messages)
+        })
+    }
     
-//    func sendChanMessage(message: String, channelId: String, completionHandler: @escaping (_ roomname: String) -> ()) {
-//        socket?.emitWithAck("call", message, channelId).timingOut(after: 0.0) { (dataArray) in
-//            completionHandler(dataArray[0] as! String)
-//        }
-//    }
-//
+    func addEditChatMessageListener(completion: @escaping (_ message: Message) -> ()) {
+        socket?.on("chatMessageEdited", callback: { (dataArray, socketAck) in
+            let data = dataArray[0] as? Dictionary<String, Any>
+            let imageDic = data?["image"] as? Dictionary<String, Any>
+            let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+            completion(message)
+        })
+    }
+    
+    func addDeleteChatMessageListener(completion: @escaping (_ message: [Message]) -> ()) {
+        socket?.on("chatMessageDeleted", callback: { (dataArray, socketAck) in
+            let array = dataArray[0] as? Array<Any>
+            var messages: [Message] = []
+            for i in 0..<(array?.count ?? 0) {
+                let data = array?[i] as? Dictionary<String, Any>
+                let imageDic = data?["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+                messages.append(message)
+            }
+            completion(messages)
+        })
+        
+    }
     
     func sendChanMessage(message: String, channelId: String) {
          socket!.emit("sendChnMessage", message, channelId)
@@ -279,6 +326,15 @@ class SocketTaskManager {
     
     func send(message: String, id: String) {
         socket!.emit("sendMessage", message, id)
+    }
+    
+    func addChannelSubscriberInfo(completion: @escaping (_ user: String, _ name: String, _ avatarUrl: String?) -> ()) {
+        socket!.on("channelSubscriberInfo") { (dataArray, socketAck) in
+            print(dataArray)
+            if let dictionary = dataArray[1] as? Dictionary<String, Any>, let user = dictionary["user"] as? String, let name = dictionary["name"] as? String {
+                completion(user, name, dictionary["avatarURL"] as? String)
+            }
+        }
     }
     
     func addErrorListener() {
@@ -302,7 +358,7 @@ class SocketTaskManager {
     
     func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
-            let data = dataArray[0] as! NSDictionary
+            let data = dataArray[0] as! Dictionary<String, Any>
             let chatId = data["reciever"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["reciever"] as? String
             if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
                 self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
@@ -313,12 +369,14 @@ class SocketTaskManager {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
-                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: nil)
                 completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
             if let text = data["text"] as? String {
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let imageDic = data["image"] as? Dictionary<String, Any>
+                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image)
                 completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                 for i in 0..<vc.chats.count {
@@ -343,44 +401,15 @@ class SocketTaskManager {
             }
         }
     }
-//    func addSendChannelMessageListener()  {
-//        socket?.on("sendChnMessage", callback: { (dataArray, socketAck) in
-//            print(dataArray)
-//        })
-//    }
     
     func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
         socket!.on("sendChnMessage") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
-            let chatId = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
-//            if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
-//                self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
-//                    print("messageReceived")
-//                }
-//            }
+            let imageDictionary = data["image"] as? Dictionary<String, Any>
+            let _ = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
             if let text = data["text"] as? String {
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String)
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: Image(imageName: imageDictionary?["imageName"] as? String, imageURL: imageDictionary?["imageURL"] as? String))
                 completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
-                
-//                for i in 0..<vc.chats.count {
-//                    if vc.chats[i].id == data["senderId"] as? String {
-//                        if !vc.chats[i].unreadMessageExists {
-//                            SharedConfigs.shared.unreadMessages.append(vc.chats[i])
-//                            self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
-//                            DispatchQueue.main.async {
-//                                let nc = self.tabbar!.viewControllers![2] as! UINavigationController
-//                                let profile = nc.viewControllers[0] as! ProfileViewController
-//                                profile.changeNotificationNumber()
-//                            }
-//                            if let tabItems = self.tabbar?.tabBar.items  {
-//                                let tabItem = tabItems[1]
-//                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
-//                            }
-//                            break
-//                        }
-//                    }
-//                }
-//                return
             }
         }
     }

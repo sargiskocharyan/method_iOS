@@ -78,6 +78,11 @@ class RecentMessagesViewModel {
         }
     }
     
+    func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
+        HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+            completion(messages, error)
+        }
+    }
     
     func deleteItem(id: [String], completion: @escaping (NetworkResponse?)->()) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
@@ -88,14 +93,14 @@ class RecentMessagesViewModel {
         let managedContext = appDelegate.persistentContainer.viewContext
         do {
             
-//            privateCalls.remove(at: privateCalls.count - index - 1)
+            //            privateCalls.remove(at: privateCalls.count - index - 1)
             privateCalls = privateCalls.filter { (obj) -> Bool in
                 if id.contains(obj.value(forKey: "id") as! String) {
                     managedContext.delete(obj)
                 }
                 return !(id.contains(obj.value(forKey: "id") as! String))
             }
-//            calls.remove(at: index)
+            //            calls.remove(at: index)
             calls = calls.filter({ (call) -> Bool in
                 return !(id.contains(call._id!))
             })

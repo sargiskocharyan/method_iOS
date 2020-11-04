@@ -12,56 +12,57 @@ class RecieveMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     
+    @IBOutlet weak var leadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
-    @IBOutlet weak var leadingConstraintOfButton: NSLayoutConstraint?
+    @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint?
     
-    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var checkImage: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
         userImageView.image = UIImage(named: "noPhoto")
-        leadingConstraintOfButton?.constant -= 15
+        leadingConstraintOfCheckImage?.constant -= 15
         leadingConstraintOfImageView?.constant -= 15
-        button?.isHidden = true
-        
+        checkImage?.isHidden = true
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        button?.setImage(nil, for: .normal)
+        checkImage?.image = nil
     }
     
     func setCheckImage() {
         if isSelected  {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+            checkImage.image = UIImage.init(systemName: "checkmark.circle.fill")
         } else {
-            button?.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+            
+            checkImage.image = UIImage.init(systemName: "circle")
         }
     }
     
     func setCheckButton(isPreview: Bool) {
         if isPreview {
-            leadingConstraintOfButton?.constant = -10
+            leadingConstraintOfCheckImage?.constant = -10
             leadingConstraintOfImageView?.constant = -5
-            button?.isHidden = true
+            checkImage?.isHidden = true
         } else if !isPreview {
-            leadingConstraintOfButton?.constant = 10
+            leadingConstraintOfCheckImage?.constant = 10
             leadingConstraintOfImageView?.constant = 15
-            button?.isHidden = false
+            checkImage?.isHidden = false
         }
     }
     
     func editPage(isPreview: Bool?) {
         if isPreview == true {
-            leadingConstraintOfButton?.constant -= 20
+            leadingConstraintOfCheckImage?.constant -= 20
             leadingConstraintOfImageView?.constant -= 20
-            button.isHidden = true
+            checkImage.isHidden = true
         } else if isPreview == false {
-            leadingConstraintOfButton?.constant += 20
+            leadingConstraintOfCheckImage?.constant += 20
             leadingConstraintOfImageView?.constant += 20
-            button.isHidden = false
+            checkImage.isHidden = false
         }
     }
     

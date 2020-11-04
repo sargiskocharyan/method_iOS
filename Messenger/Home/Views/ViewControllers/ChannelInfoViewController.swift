@@ -11,11 +11,12 @@ import UIKit
 class ChannelInfoViewController: UIViewController {
     
     //MARK: @IBOutlets
-    @IBOutlet weak var urlView: UIView!
-    //    @IBOutlet weak var leaveButton: UIButton!
-    
+    @IBOutlet weak var urlView: UIView!    
+    @IBOutlet weak var privacyLabel: UILabel!
+    @IBOutlet weak var privacyTextLabel: UILabel!
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var privacyView: UIView!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var urlTextLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -63,6 +64,54 @@ class ChannelInfoViewController: UIViewController {
         }
     }
 
+    func leaveChannel() {
+        if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
+            self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                return channelInfo.channel?._id != self.channelInfo?.channel?._id
+            })
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        } else {
+            self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
+                return channelInfo.channel?._id != self.channelInfo?.channel?._id
+            })
+            for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
+                    break
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        }
+    }
+    
+    func joinToChannel() {
+        if self.mainRouter?.channelListViewController?.mode == .main {
+            self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        } else {
+            self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
+            for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
+                if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
+                    self.mainRouter!.channelListViewController!.foundChannels[i].role = 2
+                    break
+                }
+            }
+            self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
+            DispatchQueue.main.async {
+                self.mainRouter?.channelListViewController?.tableView.reloadData()
+            }
+        }
+    }
+    
     @objc func handleLeaveOrJoinTap() {
         if channelInfo?.role == 2 {
             viewModel?.leaveChannel(id: channelInfo!.channel!._id, completion: { (error) in
@@ -77,29 +126,7 @@ class ChannelInfoViewController: UIViewController {
                     })
                     SharedConfigs.shared.signedUser?.channels = filterChannels
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
-                    if self.mainRouter?.channelListViewController?.channelsInfo == self.mainRouter?.channelListViewController?.channels {
-                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
-                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
-                        })
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    } else {
-                        self.mainRouter?.channelListViewController?.channels = self.mainRouter!.channelListViewController!.channels.filter({ (channelInfo) -> Bool in
-                            return channelInfo.channel?._id != self.channelInfo?.channel?._id
-                        })
-                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.foundChannels[i].role = 3
-                                break
-                            }
-                        }
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    }
+                    self.leaveChannel()
                     DispatchQueue.main.async {
                         self.mainRouter?.channelListViewController?.tableView.reloadData()
                         self.leaveOrJoinTextLabel.text = "join".localized()
@@ -118,25 +145,7 @@ class ChannelInfoViewController: UIViewController {
                     self.channelInfo?.role = 2
                     SharedConfigs.shared.signedUser?.channels?.append(self.channelInfo!.channel!._id)
                     self.mainRouter?.channelMessagesViewController?.channelInfo = self.channelInfo
-                    if (self.mainRouter?.channelListViewController?.channelsInfo.elementsEqual((self.mainRouter!.channelListViewController!.channels))) == true {
-                        self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.channels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    } else {
-                        self.mainRouter?.channelListViewController?.channels.append(self.channelInfo!)
-                        for i in 0..<self.mainRouter!.channelListViewController!.foundChannels.count {
-                            if self.mainRouter!.channelListViewController!.foundChannels[i].channel?._id == self.channelInfo?.channel?._id {
-                                self.mainRouter!.channelListViewController!.foundChannels[i].role = 2
-                                break
-                            }
-                        }
-                        self.mainRouter?.channelListViewController?.channelsInfo = (self.mainRouter?.channelListViewController?.foundChannels)!
-                        DispatchQueue.main.async {
-                            self.mainRouter?.channelListViewController?.tableView.reloadData()
-                        }
-                    }
+                    self.joinToChannel()
                     DispatchQueue.main.async {
                         self.mainRouter?.channelListViewController?.tableView.reloadData()
                         self.leaveOrJoinTextLabel.text = "leave".localized()
@@ -148,7 +157,6 @@ class ChannelInfoViewController: UIViewController {
         }
     }
     
-    
     func configureView() {
         setBorder(view: urlView)
         setBorder(view: descriptionView)
@@ -158,10 +166,16 @@ class ChannelInfoViewController: UIViewController {
     
     func setInfo() {
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo!.channel!.description : "description_not_set".localized()
         urlLabel.text = channelInfo?.channel?.publicUrl
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = "URL"
+        if channelInfo?.channel?.openMode == true {
+            privacyLabel.text = "all_members_can_post".localized()
+        } else {
+            privacyLabel.text = "only_admin_can_post".localized()
+        }
+        privacyTextLabel.text = "privacy".localized()
         if channelInfo?.role == 2 {
             leaveOrJoinTextLabel.text = "leave".localized()
             leaveOrJoinTextLabel.textAlignment = .left
@@ -171,6 +185,7 @@ class ChannelInfoViewController: UIViewController {
             leaveOrJoinTextLabel.textAlignment = .center
             leaveOrJoinTextLabel.textColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
         }
+        self.channelLogoImageView.contentMode = .scaleAspectFit
         ImageCache.shared.getImage(url: channelInfo?.channel?.avatarURL ?? "", id: channelInfo?.channel?._id ?? "", isChannel: true) { (image) in
             DispatchQueue.main.async {
                 self.channelLogoImageView.image = image

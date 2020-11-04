@@ -55,6 +55,10 @@ public enum HomeApi {
     case rejectBeModerator(id: String)
     case deleteChannelMessages(id: String, ids: [String])
     case blockSubscribers(id: String, subscribers: [String])
+    case deleteChannelMessageBySender(ids: [String])
+    case editChannelMessageBySender(id: String, text: String)
+    case editChatMessage(messageId: String, text: String)
+    case deleteChatMessages(arrayMessageIds: [String])
 }
 
 extension HomeApi: EndPointType {
@@ -144,7 +148,7 @@ extension HomeApi: EndPointType {
             return "\(HomeUrls.CreateChannel)/\(id)/removeModerator"
         case .updateChannelInfo(id: let id, _, _):
             return "\(HomeUrls.CreateChannel)/\(id)/update"
-        case .changeAdmin(id: let id,_) :
+        case .changeAdmin(id: let id,_):
             return "\(HomeUrls.CreateChannel)/\(id)/changeAdmin"
         case .deleteChannelLogo(id: let id):
             return "\(HomeUrls.CreateChannel)/\(id)/avatar"
@@ -156,6 +160,14 @@ extension HomeApi: EndPointType {
             return "\(HomeUrls.CreateChannel)/\(id)/deleteMessages"
         case .blockSubscribers(id: let id, _):
             return "\(HomeUrls.CreateChannel)/\(id)/blockSubscribers"
+        case .deleteChannelMessageBySender(_):
+            return HomeUrls.DeleteChannelMessageBySender
+        case .editChannelMessageBySender(_,_):
+            return HomeUrls.EditChannelMessageBySender
+        case .editChatMessage(_,_):
+            return HomeUrls.EditChatMessage
+        case .deleteChatMessages(_):
+            return HomeUrls.DeleteChatMessages
         }
     }
     
@@ -251,6 +263,14 @@ extension HomeApi: EndPointType {
         case .deleteChannelMessages(_,_):
             return .post
         case .blockSubscribers(_,_):
+            return .post
+        case .deleteChannelMessageBySender(_):
+            return .post
+        case .editChannelMessageBySender(_,_):
+            return .post
+        case .editChatMessage(_,_):
+            return .post
+        case .deleteChatMessages(_):
             return .post
         }
     }
@@ -444,6 +464,22 @@ extension HomeApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .blockSubscribers(_, subscribers: let subscribers):
             let parameters: Parameters = ["subscribers": subscribers]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChannelMessageBySender(ids: let ids):
+            let parameters:Parameters = ["arrayMessageIds": ids]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .editChannelMessageBySender(id: let id, text: let text):
+            let parameters:Parameters = ["messageId": id, "text": text]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .editChatMessage(messageId: let messageId, text: let text):
+            let parameters:Parameters = ["messageId": messageId, "text" : text]
+            let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .deleteChatMessages(arrayMessageIds: let arrayMessageIds):
+            let parameters:Parameters = ["arrayMessageIds": arrayMessageIds]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }

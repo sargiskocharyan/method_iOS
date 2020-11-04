@@ -296,6 +296,75 @@ class HomeNetworkManager: NetworkManager {
         }.resume()
     }
     
+    func sendImage(tmpImage: UIImage?, channelId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        guard let image = tmpImage else { return }
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chnMessages/\(channelId)/imageMessage")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
+        body.appendString(text)
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
+        body.appendString("Content-Type: image/jpg\r\n\r\n")
+        body.append(image.jpegData(compressionQuality: 1)!)
+        body.appendString("\r\n--\(boundary)--\r\n")
+        let session = URLSession.shared
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            print(request.httpBody as Any)
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed)
+            } else {
+                guard data != nil else {
+                    completion(NetworkResponse.noData)
+                    return
+                }
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+//    func getArticles(text: String, page: Int, complete: @escaping (_ error: Error?, _ result: ResponseArticles?) -> ()) {
+//            let url = URL(string: "http://\(Environment.baseURL):\(Environment.port)\(URLs.getArticles)")!
+//            let session = URLSession.shared
+//            var request = URLRequest(url: url)
+//            request.httpMethod = RequestMethod.POST.rawValue
+//            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//            request.setValue(UserDataManager.getToken(), forHTTPHeaderField: "Authorization")
+//            let json = [
+//                "words": text,
+//                "pageNumber": "\(page)"
+//            ]
+//            let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+//            request.httpBody = jsonData
+//            let task = session.dataTask(with: request as URLRequest) { data, response, error in
+//                if(error != nil){
+//                    complete(error, nil)
+//                } else{
+//                    do {
+//                        guard data != nil else {
+//                            return
+//                        }
+//                        let res = try JSONDecoder().decode(ResponseArticles.self, from: data!)
+//                        complete(nil, res)
+//
+//                    } catch {
+//                        complete(error, nil)
+//                    }
+//                }
+//            }
+//            task.resume()
+//        }
+    
     func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
@@ -403,6 +472,42 @@ class HomeNetworkManager: NetworkManager {
     
     func deleteChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.deleteChannel(id: id)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChannelMessageBySender(ids: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChannelMessageBySender(ids: ids)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func editChannelMessageBySender(id: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.editChannelMessageBySender(id: id, text: text)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(error)
@@ -1129,6 +1234,43 @@ class HomeNetworkManager: NetworkManager {
             }
         }
     }
+    
+    func editChatMessage(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        router.request(.editChatMessage(messageId: messageId, text: text)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func deleteChatMessages(arrayMessageIds: [String], completion: @escaping (NetworkResponse?)->()) {
+        router.request(.deleteChatMessages(arrayMessageIds: arrayMessageIds)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure( _):
+                    completion(NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
 }
 
 extension NSMutableData {

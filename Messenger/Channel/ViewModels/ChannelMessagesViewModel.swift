@@ -39,4 +39,16 @@ class ChannelMessagesViewModel {
             completion(error)
         }
     }
+    
+    func deleteChannelMessageBySender(ids: [String], completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().deleteChannelMessageBySender(ids: ids) { (error) in
+            completion(error)
+        }
+    }
+    
+    func editChannelMessageBySender(id: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        HomeNetworkManager().editChannelMessageBySender(id: id, text: text) { (error) in
+            completion(error)
+        }
+    }
 }

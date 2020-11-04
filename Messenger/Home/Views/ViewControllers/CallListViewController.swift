@@ -13,7 +13,7 @@ import WebRTC
 import CoreData
 import Network
 
-let defaultSignalingServerUrl = URL(string: Environment.socketUrl)! //TODO !!!! move to constants
+let defaultSignalingServerUrl = URL(string: Environment.socketUrl)!
 let defaultIceServers = ["stun:stun.l.google.com:19302",
                          "stun:stun1.l.google.com:19302",
                          "stun:stun2.l.google.com:19302",
@@ -56,7 +56,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
     
     //MARK: IBOutlets
     @IBOutlet weak var tableView: UITableView!
-//    @IBOutlet weak var activity: UIActivityIndicatorView!
     
     //MARK: Lifecycles
     override func viewWillAppear(_ animated: Bool) {
@@ -90,8 +89,6 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
             })
         }
     }
-    
-   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -175,8 +172,7 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                     removedCalls.append((viewModel?.calls[i]._id)!)
                   }
               }
-          }
-          else {
+          } else {
             for call in viewModel!.calls {
                 if call.caller == SharedConfigs.shared.signedUser?.id && call.receiver == id {
                     removedCalls.append(call._id!)
@@ -217,16 +213,22 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 }
             } else if calls != nil {
                 DispatchQueue.main.async {
-                    self.view.viewWithTag(200)?.removeFromSuperview()
-                    self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
-                        if calls != nil || calls?.count == 0 {
-                            self.viewModel!.calls = calls!
-                            self.sort()
-                            self.groupCalls()
-                            self.tableView.reloadData()
-                        }
-                         completion()
-                    })
+                    if calls?.count == 0 {
+                        self.addNoCallView()
+                        self.activity.stopAnimating()
+                        completion()
+                    } else {
+                        self.view.viewWithTag(200)?.removeFromSuperview()
+                        self.viewModel?.saveCalls(calls: calls!, completion: { (calls, error) in
+                            if calls != nil || calls?.count == 0 {
+                                self.viewModel!.calls = calls!
+                                self.sort()
+                                self.groupCalls()
+                                self.tableView.reloadData()
+                            }
+                            completion()
+                        })
+                    }
                 }
             }
         })
@@ -318,6 +320,23 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         let minutes = calendar.component(.minute, from: parsedDate)
         return ("\(hour):\(minutes)")
     }
+    
+    func getUser(_ cell: CallTableViewCell, _ indexPath: Int) {
+        viewModel!.getuserById(id: cell.calleId!) { (user, error) in
+            DispatchQueue.main.async {
+                if error != nil {
+                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil, channels: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
+                } else if user != nil {
+                    var newArray = self.tabbar?.contactsViewModel?.otherContacts
+                    newArray?.append(user!)
+                    self.tabbar?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
+                        self.tabbar?.contactsViewModel!.otherContacts = users!
+                    })
+                    cell.configureCell(contact: user!, call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
+                }
+            }
+        }
+    }
 }
 
 // MAARK: Extensions
@@ -353,23 +372,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sortedDictionary.count
-    }
-    
-    func getUser(_ cell: CallTableViewCell, _ indexPath: Int) {
-        viewModel!.getuserById(id: cell.calleId!) { (user, error) in
-            DispatchQueue.main.async {
-                if error != nil {
-                    cell.configureCell(contact: User(name: nil, lastname: nil, _id: cell.calleId!, username: nil, avaterURL: nil, email: nil, info: nil, phoneNumber: nil, birthday: nil, address: nil, gender: nil, missedCallHistory: nil, channels: nil), call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
-                } else if user != nil {
-                    var newArray = self.tabbar?.contactsViewModel?.otherContacts
-                    newArray?.append(user!)
-                    self.tabbar?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
-                        self.tabbar?.contactsViewModel!.otherContacts = users!
-                    })
-                    cell.configureCell(contact: user!, call: self.sortedDictionary[indexPath].0, count: self.sortedDictionary[indexPath].1)
-                }
-            }
-        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -441,9 +443,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func saveCall(startDate: Date?) {
-        //        if viewModel!.calls.count >= 15 {
-        //            viewModel!.deleteItem(index: viewModel!.calls.count - 1)
-        //        }
         if startDate == nil {
             activeCall?.callDuration = 0
         } else {

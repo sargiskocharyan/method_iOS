@@ -158,10 +158,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.viewDidLoad()
     }
     
-    func configureImageView() {
-        let cameraView = UIView()
-        view.addSubview(cameraView)
-        userImageView.backgroundColor = .clear
+     func addCameraView(_ cameraView: UIView) {
         cameraView.translatesAutoresizingMaskIntoConstraints = false
         cameraView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
         cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
@@ -172,6 +169,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         cameraView.contentMode = . scaleAspectFill
         cameraView.layer.cornerRadius = 15
         cameraView.clipsToBounds = true
+    }
+    
+    func configureImageView() {
+        let cameraView = UIView()
+        view.addSubview(cameraView)
+        userImageView.backgroundColor = .clear
+        addCameraView(cameraView)
         let cameraImageView = UIImageView()
         cameraImageView.image = UIImage(named: "camera")
         cameraView.addSubview(cameraImageView)
@@ -209,7 +213,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    
     @objc func handleCameraTap(_ sender: UITapGestureRecognizer? = nil) {
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { response in
             if response {
@@ -218,7 +221,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 print("Permission don't allowed")
             }
         }
-        let alert = UIAlertController(title: "attention".localized(), message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
+        let alert = UIAlertController(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 self.imagePicker.delegate = self
@@ -227,7 +230,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
         }))
-        
         alert.addAction(UIAlertAction(title: "album".localized(), style: .default, handler: { (_) in
             if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
                 self.imagePicker.sourceType = .savedPhotosAlbum
@@ -235,14 +237,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
         }))
+        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     
-    @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
-        if SharedConfigs.shared.signedUser?.avatarURL == nil {
-            return
-        }
-        let imageView = UIImageView(image: userImageView.image)
+     func addCloseButton(_ imageView: UIImageView) {
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -252,8 +251,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
-        imageView.backgroundColor = UIColor(named: "imputColor")
-        
+        closeButton.addTarget(self, action: #selector(dismissFullscreenImage), for: .touchUpInside)
+    }
+    
+     func addDeleteMessageButton(_ imageView: UIImageView) {
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
         deleteImageButton.translatesAutoresizingMaskIntoConstraints = false
@@ -264,12 +265,19 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         deleteImageButton.isUserInteractionEnabled = true
         deleteImageButton.setImage(UIImage(named: "trash"), for: .normal)
         deleteImageButton.addTarget(self, action: #selector(deleteAvatar), for: .touchUpInside)
-        
-        
+    }
+    
+    @objc func handleImageTap(_ sender: UITapGestureRecognizer? = nil) {
+        if SharedConfigs.shared.signedUser?.avatarURL == nil {
+            return
+        }
+        let imageView = UIImageView(image: userImageView.image)
+        addCloseButton(imageView)
+        imageView.backgroundColor = UIColor(named: "imputColor")
+        addDeleteMessageButton(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
         imageView.tag = 3
-        closeButton.addTarget(self, action: #selector(dismissFullscreenImage), for: .touchUpInside)
         self.view.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
@@ -457,6 +465,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }    
 }
+
 //MARK: Extension
 extension ProfileViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {

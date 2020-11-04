@@ -9,7 +9,7 @@
 import UIKit
 
 class ModeratorInfoViewController: UIViewController {
-
+    
     //MARK: IBOutlets
     @IBOutlet weak var subscribersLabel: UILabel!
     @IBOutlet weak var rejectLabel: UILabel!
@@ -20,39 +20,40 @@ class ModeratorInfoViewController: UIViewController {
     @IBOutlet weak var descriptionView: UIView!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var urlView: UIView!
-    //@IBOutlet weak var leaveButton: UIButton!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var urlTextLabel: UILabel!
+    @IBOutlet weak var privacyTextLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var descriptionTextLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var channelLogoImageView: UIImageView!
-    
+    @IBOutlet weak var privacyLabel: UILabel!
+    @IBOutlet weak var privacyView: UIView!
     
     //MARK: Properties
     var mainRouter: MainRouter?
     var channelInfo: ChannelInfo?
     var viewModel: ChannelInfoViewModel?
     var subscribers: [ChannelSubscriber] = []
+//    var bottomConstraintConstant: CGFloat!
     
-    // MARK: Lifecycles
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        setInfo()
         addGestures()
-       
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
+        setInfo()
         subscribersLabel.text = "subscribers".localized()
         rejectLabel.text = "reject".localized()
         leaveLabel.text = "leave".localized()
     }
-
+    
     //MARK: Helper methods
     func configureView() {
         setBorder(view: subscribersView)
@@ -64,8 +65,14 @@ class ModeratorInfoViewController: UIViewController {
     }
     
     func setInfo() {
+        if channelInfo?.channel?.openMode == true {
+            privacyLabel.text = "all_members_can_post".localized()
+        } else {
+            privacyLabel.text = "only_admin_can_post".localized()
+        }
+        privacyTextLabel.text = "privacy".localized()
         nameLabel.text = channelInfo?.channel?.name
-        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo?.channel?.description : "description_not_set".localized()
+        descriptionLabel.text = channelInfo?.channel?.description?.count ?? 0 > 0 ? channelInfo!.channel!.description : "description_not_set".localized()
         urlLabel.text = "URL"
         descriptionTextLabel.text = "description".localized()
         urlTextLabel.text = channelInfo?.channel?.publicUrl
@@ -166,10 +173,10 @@ class ModeratorInfoViewController: UIViewController {
         })
     }
     
-       func setBorder(view: UIView) {
-           view.layer.borderColor = UIColor.lightGray.cgColor
-           view.layer.borderWidth = 1
-       }
+    func setBorder(view: UIView) {
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+    }
 }
 
 
