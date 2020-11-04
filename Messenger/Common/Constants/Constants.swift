@@ -19,13 +19,14 @@ struct Environment {
 }
 
 struct AUTHUrls {
-    static let MailisExist       = "/mailExists"
-    static let Login             = "/login"
-    static let Register          = "/register"
-    static let UpdateUser        = "/updateuser"
-    static let VerifyToken       = "/tokenExists"
-    static let RegisterDevice    = "/registerdevice"
-    static let CheckUsername     = "/usernameExists"
+    static let MailisExist          = "/mailExists"
+    static let Login                = "/login"
+    static let Register             = "/register"
+    static let UpdateUser           = "/updateuser"
+    static let VerifyToken          = "/tokenExists"
+    static let RegisterDevice       = "/registerdevice"
+    static let CheckUsername        = "/usernameExists"
+    static let LoginWithPhoneNumber = "/loginPhone"
 }
 
 struct HomeUrls {
