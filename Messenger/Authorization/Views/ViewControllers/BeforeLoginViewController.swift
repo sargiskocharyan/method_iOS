@@ -24,7 +24,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         //
         //            }
         //        })
-        
+        activityIndicator.startAnimating()
         var token = ""
         if AccessToken.current != nil {
             token = AccessToken.current!.tokenString
@@ -32,7 +32,14 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
             if error != nil {
                 self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
             } else if response != nil {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
+                
                 let model = UserModel(name: response!.user.name, lastname: response!.user.lastname, username: response!.user.username, email: response!.user.email,  token: response!.token, id: response!.user.id, avatarURL: response!.user.avatarURL, phoneNumber: response!.user.phoneNumber, birthDate: response!.user.birthDate, tokenExpire: self.stringToDate(date: response!.tokenExpire), missedCallHistory: response!.user.missedCallHistory)
                 SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: true)
                 UserDataController().saveUserSensitiveData(token: response!.token)
@@ -124,6 +131,10 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     let phoneNumberKit = PhoneNumberKit()
     let codeDropDown = DropDown()
     let codeMoreOrLessImageView = UIImageView()
+    let buttonAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.systemFont(ofSize: 14),
+        .foregroundColor: UIColor.darkGray,
+        .underlineStyle: NSUnderlineStyle.single.rawValue]
     
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
@@ -142,7 +153,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         continueButton.setTitle("continue".localized(), for: .normal)
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         aboutPgLabel.text = "enter_your_email".localized()
-        changeModeButton.setTitle("use_phone_number_for_login".localized(), for: .normal)
+        let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
+                                                        attributes: buttonAttributes)
+        changeModeButton.setAttributedTitle(attributeString, for: .normal)
     }
     
     override func viewDidLoad() {
@@ -150,12 +163,12 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         storyboardView.bringSubviewToFront(view)
         emaiCustomView.delagate = self
         navigationController?.isNavigationBarHidden = true
-        continueButton.isEnabled = false
         numberTextField.withDefaultPickerUI = true
         numberTextField.withPrefix = true
         numberTextField.defaultRegion = "AM"
         numberTextField.withFlag = true
         numberTextField.withExamplePlaceholder = true
+        continueButton.isEnabled = false
         continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
         continueButton.titleLabel?.textColor = UIColor.lightGray
         self.numberTextField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .allEvents)
@@ -194,6 +207,8 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             bottomView.frame = maxRectBottom
         }
         continueButton.layer.cornerRadius = 8
+        logInWithFacebookButton.layer.cornerRadius = 8
+        logInWithFacebookButton.clipsToBounds = true
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -226,18 +241,18 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     func disableContinueButton() {
         continueButton.isEnabled = false
         continueButton.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
-        continueButton.titleLabel?.textColor = UIColor.lightGray
+        continueButton.setTitleColor(.lightGray, for: .normal)
     }
     
     func enableContinueButton() {
         continueButton.isEnabled = true
         continueButton.backgroundColor = UIColor.clear
-        continueButton.titleLabel?.textColor = UIColor.white
+        continueButton.setTitleColor(.white, for: .normal)
     }
     
     @objc func textFieldDidChange(textField: UITextField){
         do {
-            let phoneNumber = try phoneNumberKit.parse(textField.text!)
+            let _ = try phoneNumberKit.parse(textField.text!)
             borderView.backgroundColor = .lightGray
             enableContinueButton()
         }
@@ -251,27 +266,14 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-//            if isLoginWithEmail {
-                if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
-                    animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
-                } else {
-                    animationTopConstraint.constant = constant
-                }
-                UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                    self.view.layoutIfNeeded()
-                }, completion: nil)
-//            } else {
-//                if !(isKeyboardShowing && animationTopConstraint.constant != constant) {
-//                    if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
-//                        animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
-//                    } else {
-//                        animationTopConstraint.constant = constant
-//                    }
-//                    UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-//                        self.view.layoutIfNeeded()
-//                    }, completion: nil)
-//                }
-//            }
+            if self.view.frame.height - emailDescriptionLabel.frame.maxY < keyboardFrame!.height {
+                animationTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - emailDescriptionLabel.frame.maxY)) : constant
+            } else {
+                animationTopConstraint.constant = constant
+            }
+            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
         }
     }
        
@@ -281,6 +283,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             sender.setTitle("use_phone_number_for_login".localized(), for: .normal)
             phonaView.isHidden = true
             numberTextField.text = ""
+            borderView.backgroundColor = .lightGray
             emaiCustomView.isHidden = false
             emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
             aboutPgLabel.text = "enter_your_email".localized()
@@ -289,7 +292,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             emaiCustomView.isHidden = true
             emptyField(customView: emaiCustomView)
             sender.setTitle("use_email_for_login".localized(), for: .normal)
-            emailDescriptionLabel.text = "phone_number_will_be_used_to_confirm".localized()
+            emailDescriptionLabel.text = "phone_number_will_be_used".localized()
             aboutPgLabel.text = "enter_your_phone_number".localized()
         }
     }
@@ -303,12 +306,12 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     }
     
     func setObservers() {
-           NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
-           NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
-       }
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     func checkPhone() {
-        Auth.auth().languageCode = "az";
+        Auth.auth().languageCode = "hy" //222222
         Auth.auth().settings?.isAppVerificationDisabledForTesting = false
         PhoneAuthProvider.provider().verifyPhoneNumber(numberTextField.text!, uiDelegate: nil) { (verificationID, error) in
             if let error = error {
@@ -316,6 +319,30 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                 return
             }
             UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+            let currentUser = Auth.auth().currentUser
+            currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
+              if let error = error {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                }
+                return;
+              }
+            
+             //uxarkel Erikin idToken-y
+            }
+           
+            self.viewModel?.emailChecking(email: self.numberTextField.text!, completion: { (responseObject, error) in
+                if let error = error {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error", errorMessage: error.rawValue)
+                    }
+                } else if let response = responseObject {
+                    DispatchQueue.main.async {
+                        self.authRouter?.showConfirmCodeViewController(email: nil, code: nil, isExists: response.mailExist, phoneNumber: self.numberTextField.text)
+                        self.activityIndicator.stopAnimating()
+                    }
+                }
+            })
         }
     }
     
@@ -329,7 +356,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                 }
             } else if responseObject != nil {
                 DispatchQueue.main.async {
-                    self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist)
+                    self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist, phoneNumber: nil)
                     self.activityIndicator.stopAnimating()
                 }
             }

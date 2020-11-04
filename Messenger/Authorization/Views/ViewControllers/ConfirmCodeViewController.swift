@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
@@ -23,6 +24,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     var constant: CGFloat = 0
     var email: String?
     var code: String?
+    var phoneNumber: String?
     var viewModel: ConfirmCodeViewModel?
     var headerShapeView = HeaderShapeView()
     var isExists: Bool?
@@ -37,7 +39,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
         .underlineStyle: NSUnderlineStyle.single.rawValue]
-    var isLoginWithPhone: Bool?
     
     //MARK: @IBAction
     @IBAction func resendCodeAction(_ sender: UIButton) {
@@ -67,10 +68,12 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-     
-    
     @IBAction func continueAction(_ sender: UIButton) {
-        confirmCode()
+        if email != nil {
+            confirmEmailCode()
+        } else {
+            confirmPhoneCode()
+        }
     }
     
     //MARK: Lifecycle methodes
@@ -136,7 +139,57 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         return parsedDate
     }
     
-    func confirmCode() {
+    func confirmPhoneCode() {
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
+        let verificationID = UserDefaults.standard.string(forKey: "authVerificationID")
+        if let verificationID = verificationID {
+            let credential = PhoneAuthProvider.provider().credential(
+                withVerificationID: verificationID,
+                verificationCode: CodeField.text!)
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+                if let error = error {
+                    self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                    return
+                }
+                print("Signed in")
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.viewModel?.loginWithPhoneNumber(number: self.phoneNumber!.replacingOccurrences(of: " ", with: ""), completion: { (response, error) in
+                        if let error = error {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error", errorMessage: error.rawValue)
+                            }
+                        } else if let response = response {
+                            self.parseUserData(response, response.token)
+                        }
+                    })
+                }
+            }
+        }
+    }
+    
+    func parseUserData(_ loginResponse: LoginResponse?, _ token: String?) {
+        let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire), missedCallHistory: loginResponse!.user.missedCallHistory)
+        UserDataController().saveUserSensitiveData(token: token!)
+        UserDataController().populateUserProfile(model: model)
+        self.registerDevice { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else {
+                DispatchQueue.main.async {
+                    MainRouter().assemblyModule()
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+        }
+    }
+    
+    func confirmEmailCode() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
@@ -165,6 +218,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                             }
                         }
                     }
+                    self.parseUserData(loginResponse, token)
                 } else {
                     DispatchQueue.main.async {
                         self.showErrorAlert(title: "error_message`".localized(), errorMessage: "incorrect_code".localized())
@@ -259,7 +313,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         if textField.text?.count == 4 {
-           confirmCode()
+            confirmEmailCode()
         }
         return true
     }

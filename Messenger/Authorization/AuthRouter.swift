@@ -26,11 +26,12 @@ class AuthRouter {
         window?.makeKeyAndVisible()
     }
     
-    func showConfirmCodeViewController(email: String, code: String, isExists: Bool) {
+    func showConfirmCodeViewController(email: String?, code: String?, isExists: Bool, phoneNumber: String?) {
         let vc = ConfirmCodeViewController.instantiate(fromAppStoryboard: .auth)
         vc.isExists = isExists
         vc.code = code
         vc.email = email
+        vc.phoneNumber = phoneNumber
         vc.authRouter = beforeLoginViewController?.authRouter
         vc.viewModel = ConfirmCodeViewModel()
         self.confirmCodeViewController = vc

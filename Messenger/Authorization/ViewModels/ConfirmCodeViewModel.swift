@@ -28,5 +28,11 @@ class ConfirmCodeViewModel {
             completion(token, loginResponse, error)
         }
     }
+    
+    func loginWithPhoneNumber(number: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        networkManager.loginWithPhoneNumber(number: number) { (responseObject, error) in
+            completion(responseObject, error)
+        }
+    }
 }
 
