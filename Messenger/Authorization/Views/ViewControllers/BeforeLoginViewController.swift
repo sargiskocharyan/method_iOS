@@ -24,7 +24,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         //
         //            }
         //        })
-        
+        activityIndicator.startAnimating()
         var token = ""
         if AccessToken.current != nil {
             token = AccessToken.current!.tokenString
@@ -32,7 +32,14 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
             if error != nil {
                 self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
             } else if response != nil {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
+                
                 let model = UserModel(name: response!.user.name, lastname: response!.user.lastname, username: response!.user.username, email: response!.user.email,  token: response!.token, id: response!.user.id, avatarURL: response!.user.avatarURL, phoneNumber: response!.user.phoneNumber, birthDate: response!.user.birthDate, tokenExpire: self.stringToDate(date: response!.tokenExpire), missedCallHistory: response!.user.missedCallHistory)
                 SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: true)
                 UserDataController().saveUserSensitiveData(token: response!.token)
@@ -200,6 +207,8 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             bottomView.frame = maxRectBottom
         }
         continueButton.layer.cornerRadius = 8
+        logInWithFacebookButton.layer.cornerRadius = 8
+        logInWithFacebookButton.clipsToBounds = true
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

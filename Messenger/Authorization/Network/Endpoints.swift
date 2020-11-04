@@ -17,8 +17,13 @@ public enum AuthApi {
     case verifyToken(token: String)
     case getUserContacts(token: String)
     case checkUsername(username: String)
+<<<<<<< HEAD
     case loginWithPhoneNumber(number: String)
     case loginWithFacebook(accessToken: String)
+=======
+    case loginWithFacebook(accessToken: String)
+    case loginWithPhoneNumber(number: String)
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
 }
 
 extension AuthApi: EndPointType {
@@ -44,10 +49,17 @@ extension AuthApi: EndPointType {
             return HomeUrls.GetUserContacts
         case .checkUsername(_):
             return AUTHUrls.CheckUsername
+<<<<<<< HEAD
         case .loginWithPhoneNumber(_):
             return AUTHUrls.LoginWithPhoneNumber
         case .loginWithFacebook(_):
             return AUTHUrls.LoginWithFacebook
+=======
+        case .loginWithFacebook(_):
+            return AUTHUrls.LoginWithFacebook
+        case .loginWithPhoneNumber(_):
+            return AUTHUrls.LoginWithPhoneNumber
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
         }
     }
     
@@ -68,9 +80,15 @@ extension AuthApi: EndPointType {
             return .get
         case .checkUsername(_):
             return .post
+<<<<<<< HEAD
         case .loginWithPhoneNumber(_):
             return .post
         case .loginWithFacebook(_):
+=======
+        case .loginWithFacebook(_):
+            return .post
+        case .loginWithPhoneNumber(_):
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
             return .post
         }
     }

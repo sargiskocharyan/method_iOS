@@ -201,6 +201,26 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                         self.activityIndicator.stopAnimating()
                     }
                 } else if (token != nil && loginResponse != nil) {
+<<<<<<< HEAD
+=======
+                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire), missedCallHistory: loginResponse!.user.missedCallHistory)
+                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
+                    UserDataController().saveUserSensitiveData(token: token!)
+                    UserDataController().populateUserProfile(model: model)
+                    self.registerDevice { (error) in
+                        if error != nil {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                                self.activityIndicator.stopAnimating()
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                MainRouter().assemblyModule()
+                                self.activityIndicator.stopAnimating()
+                            }
+                        }
+                    }
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
                     self.parseUserData(loginResponse, token)
                 } else {
                     DispatchQueue.main.async {

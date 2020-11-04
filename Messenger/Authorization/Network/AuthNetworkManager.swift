@@ -70,6 +70,7 @@ class AuthorizationNetworkManager: NetworkManager {
         }
     }
     
+<<<<<<< HEAD
     func loginWithPhoneNumber(number: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
         router.request(.loginWithPhoneNumber(number: number)) { data, response, error in
             if error != nil {
@@ -99,6 +100,8 @@ class AuthorizationNetworkManager: NetworkManager {
     }
             
             
+=======
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
     func loginWithFacebook(accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
         router.request(.loginWithFacebook(accessToken: accessToken)) { data, response, error in
             if error != nil {
@@ -118,6 +121,37 @@ class AuthorizationNetworkManager: NetworkManager {
                         completion(responseObject, nil)
                     } catch {
                         print(error)
+<<<<<<< HEAD
+=======
+                        completion(nil, NetworkResponse.unableToDecode)
+                    }
+                case .failure( _):
+                    completion(nil, NetworkResponse.failed)
+                }
+            }
+        }
+    }
+    
+    func loginWithPhoneNumber(number: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        router.request(.loginWithPhoneNumber(number: number)) { data, response, error in
+            if error != nil {
+                print(error!.rawValue)
+                completion(nil, error)
+            }
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, error)
+                        return
+                    }
+                    do {
+                        let responseObject = try JSONDecoder().decode(LoginResponse.self, from: responseData)
+                        completion(responseObject, nil)
+                    } catch {
+                        print(error)
+>>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
                         completion(nil, NetworkResponse.unableToDecode)
                     }
                 case .failure( _):

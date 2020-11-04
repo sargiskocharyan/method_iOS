@@ -64,7 +64,6 @@
 		CD91D67224FFB81800D4E0AB /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA85624E48A5900EE8578 /* NotificationViewController.swift */; };
 		CD9ACF40251A36D100BF34BF /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF3F251A36D100BF34BF /* Chats.storyboard */; };
 		CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9ACF41251A391000BF34BF /* Profile.storyboard */; };
-		CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1024D94600007818E9 /* AuthRouter.swift */; };
 		CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
 		CD9F63CC25348F01004CF9CB /* CreateAccountAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */; };
@@ -80,6 +79,7 @@
 		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
 		CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */; };
+		CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB9214425528AB000E65FAC /* Auth.storyboard */; };
 		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
@@ -248,7 +248,6 @@
 		D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* CryptoSwift */; };
 		D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SocketIO */; };
 		D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* Lottie */; };
-		D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD9D5E0E24D9416D007818E9 /* Auth.storyboard */; };
 		D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
 		D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A045250B6EFD0067B245 /* ringback.mp3 */; };
 		D0F66520251B177D0018D9B7 /* congr.json in Resources */ = {isa = PBXBuildFile; fileRef = CD35E26B2497A6E2003C53AB /* congr.json */; };
@@ -395,7 +394,6 @@
 		CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribersListViewController.swift; sourceTree = "<group>"; };
 		CD9ACF3F251A36D100BF34BF /* Chats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		CD9ACF41251A391000BF34BF /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
-		CD9D5E0E24D9416D007818E9 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CD9D5E1024D94600007818E9 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
 		CD9D5E1224D950AA007818E9 /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 		CD9F63CB25348F01004CF9CB /* CreateAccountAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountAlertViewController.swift; sourceTree = "<group>"; };
@@ -411,6 +409,7 @@
 		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveImageMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB9214425528AB000E65FAC /* Auth.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
@@ -864,7 +863,7 @@
 				D0EDEFF3252495B000016AF7 /* Main.storyboard */,
 				D0065B73251CCB0700EE880A /* Calls.storyboard */,
 				CDCA9A19252F32320040253A /* Channel.storyboard */,
-				CD9D5E0E24D9416D007818E9 /* Auth.storyboard */,
+				CDB9214425528AB000E65FAC /* Auth.storyboard */,
 				CD9ACF3F251A36D100BF34BF /* Chats.storyboard */,
 				CD9ACF41251A391000BF34BF /* Profile.storyboard */,
 			);
@@ -1210,7 +1209,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD9D5E0F24D9416D007818E9 /* Auth.storyboard in Resources */,
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				CDCA9A1A252F32320040253A /* Channel.storyboard in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
@@ -1223,6 +1221,7 @@
 				CD424917248A315E00A38987 /* message.json in Resources */,
 				CD9ACF42251A391000BF34BF /* Profile.storyboard in Resources */,
 				D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */,
+				CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */,
 				D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */,
 				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
@@ -1233,7 +1232,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0EDEFF5252495B000016AF7 /* Main.storyboard in Resources */,
-				D0F6651C251B177D0018D9B7 /* Auth.storyboard in Resources */,
 				D0F6651D251B177D0018D9B7 /* CustomCell.xib in Resources */,
 				D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */,
 				D0F6651F251B177D0018D9B7 /* ringback.mp3 in Resources */,
