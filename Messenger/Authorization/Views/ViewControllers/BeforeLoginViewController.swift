@@ -17,29 +17,72 @@ import DropDown
 
 class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
-        fetchUserInfo()
+        //        viewModel?.loginWithFacebook(accessToken: result?.token, completion: { (response, error) in
+        //            if error != nil {
+        //
+        //            } else {
+        //
+        //            }
+        //        })
+        
+        var token = ""
+        if AccessToken.current != nil {
+            token = AccessToken.current!.tokenString
+        }
+        viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
+            if error != nil {
+                self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
+            } else if response != nil {
+                let model = UserModel(name: response!.user.name, lastname: response!.user.lastname, username: response!.user.username, email: response!.user.email,  token: response!.token, id: response!.user.id, avatarURL: response!.user.avatarURL, phoneNumber: response!.user.phoneNumber, birthDate: response!.user.birthDate, tokenExpire: self.stringToDate(date: response!.tokenExpire), missedCallHistory: response!.user.missedCallHistory)
+                SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: true)
+                UserDataController().saveUserSensitiveData(token: response!.token)
+                UserDataController().populateUserProfile(model: model)
+                self.registerDevice { (error) in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                            self.activityIndicator.stopAnimating()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            MainRouter().assemblyModule()
+                            self.activityIndicator.stopAnimating()
+                        }
+                    }
+                }
+            }
+        })
+        // fetchUserInfo()
+    }
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        return parsedDate
+    }
+    func registerDevice(completion: @escaping (NetworkResponse?)->()) {
+        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken ?? "", voipDeviceToken: SharedConfigs.shared.voIPToken ?? "") { (error) in
+            completion(error)
+        }
     }
     
     func fetchUserInfo() -> Void {
         if (AccessToken.current != nil) {
             let graphRequest: GraphRequest = GraphRequest(graphPath: "/me", parameters:["fields": "id, first_name, last_name, name, email, picture"])
             graphRequest.start(completionHandler: { (connection, result, error) in
-
-                if(error != nil){
-
-                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
-
-                }
+                
+                if(error != nil) { self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
+                  }
                 else
                 {
-                     print("Result is:\(result)")
+                    print("Result is:\(result ?? "")")
                     self.dictionary = result as! [String : AnyObject]
                     let name = self.dictionary["name"] as! String
 //                    let email = self.dictionary["email"] as! String
                     let token = AccessToken.current?.tokenString
-
+                    
                     print("name is -\(name)")
-                    print("token is -\(token)")
+                    print("token is -\(token ?? "")")
                 }
             })
         }
@@ -85,6 +128,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         .font: UIFont.systemFont(ofSize: 14),
         .foregroundColor: UIColor.darkGray,
         .underlineStyle: NSUnderlineStyle.single.rawValue]
+    
     //MARK: @IBAction
     @IBAction func continueButtonAction(_ sender: UIButton) {
         if isLoginWithEmail {

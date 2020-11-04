@@ -42,6 +42,7 @@ struct UserModel: Codable, PropertyReflectable {
     var missedCallHistory: [String]?
     var channels: [String]?
     
+    
     enum CodingKeys: String, CodingKey {
         case name
         case lastname

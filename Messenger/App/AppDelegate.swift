@@ -13,7 +13,6 @@ import CallKit
 import CoreData
 import UserNotifications
 import PushKit
-
 import UIKit
 import FBSDKCoreKit
 
@@ -41,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     var isVoIPCallStarted: Bool?
     let viewModel = AppDelegateViewModel()
     var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    
     class var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -94,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         UserDataController().loadUserInfo()
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
-        print(FirebaseApp.app()?.options.clientID)
+        print(FirebaseApp.app()?.options.clientID as Any)
         ApplicationDelegate.shared.application( application, didFinishLaunchingWithOptions: launchOptions )
         providerDelegate = ProviderDelegate(callManager: callManager)
         UNUserNotificationCenter.current().delegate = self

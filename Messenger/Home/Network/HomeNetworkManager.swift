@@ -456,7 +456,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         NSLog("task data: %@", data as NSData)
-        print(String(data: data, encoding: .utf8))
+        print(String(data: data, encoding: .utf8) as Any)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

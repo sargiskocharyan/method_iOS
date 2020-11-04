@@ -218,6 +218,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     }
                 } else if token != nil {
                     SharedConfigs.shared.signedUser = loginResponse?.user
+                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
                     SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
                     UserDataController().saveUserSensitiveData(token: token!)
                     UserDataController().saveUserInfo()
