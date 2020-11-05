@@ -82,8 +82,8 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
                 } else {
                     DispatchQueue.main.async {
                         let nc = self.tabbar!.viewControllers![2] as! UINavigationController
-                        let profile = nc.viewControllers[0] as! ProfileViewController
-                        profile.changeNotificationNumber()
+                        let profile = nc.viewControllers[0] as? ProfileViewController
+                        profile?.changeNotificationNumber()
                     }
                 }
             })

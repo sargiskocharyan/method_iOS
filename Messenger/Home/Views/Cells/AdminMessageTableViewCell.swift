@@ -20,12 +20,6 @@ class AdminMessageTableViewCell: UITableViewCell {
         appImageView.layer.cornerRadius = 30
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
     func configure(adminMessage: AdminMessage)  {
         self.messageLabel.text = adminMessage.body
         self.titleLabel.text = adminMessage.title

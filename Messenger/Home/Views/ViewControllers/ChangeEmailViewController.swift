@@ -54,82 +54,98 @@ class ChangeEmailViewController: UIViewController  {
     }
     
     //MARK: Helper methods
+    func changeEmail() {
+        viewModel?.changeEmail(email: emailCustomView.textField.text!, completion: { (responseObj, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if responseObj != nil {
+                if responseObj?.mailExist == false {
+                    DispatchQueue.main.async {
+                        self.codeCustomView.isHidden = false
+                        self.isVerifedEmail = true
+                        self.codeCustomView.textField.text = responseObj?.code
+                        self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: "this_email_is_taken".localized())
+                    }
+                }
+            }
+        })
+    }
+    
+    func verifyEmail() {
+        viewModel?.verifyEmail(email: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if responseObj != nil {
+                DispatchQueue.main.async {
+                    let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    UserDataController().populateUserProfile(model: user)
+                    self.delegate?.setEmail(email: self.emailCustomView.textField.text!)
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        })
+    }
+    
+    func changePhoneNuber() {
+        viewModel?.changePhone(phone: emailCustomView.textField.text!, completion: { (responseObj, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if responseObj != nil {
+                if responseObj?.phonenumberExists == false {
+                    DispatchQueue.main.async {
+                        self.codeCustomView.isHidden = false
+                        self.isVerifiedPhone = true
+                        self.codeCustomView.textField.text = responseObj?.code
+                        self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error".localized(), errorMessage: "this_number_is_taken".localized())
+                    }
+                }
+            }
+        })
+    }
+    
+    func verifyPhoneNumber() {
+        viewModel?.verifyPhone(phone: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            } else if responseObj != nil {
+                DispatchQueue.main.async {
+                    let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
+                    UserDataController().populateUserProfile(model: user)
+                    self.delegate?.setPhone(phone: self.emailCustomView.textField.text!)
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        })
+    }
+    
     @IBAction func changeEmailButtonAction(_ sender: Any) {
         if changingSubject == .email {
             if !isVerifedEmail! {
-                viewModel?.changeEmail(email: emailCustomView.textField.text!, completion: { (responseObj, error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    } else if responseObj != nil {
-                        if responseObj?.mailExist == false {
-                            DispatchQueue.main.async {
-                                self.codeCustomView.isHidden = false
-                                self.isVerifedEmail = true
-                                self.codeCustomView.textField.text = responseObj?.code
-                                self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error".localized(), errorMessage: "this_email_is_taken".localized())
-                            }
-                        }
-                    }
-                })
+                changeEmail()
             } else {
-                viewModel?.verifyEmail(email: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    } else if responseObj != nil {
-                        DispatchQueue.main.async {
-                            let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
-                            UserDataController().populateUserProfile(model: user)
-                            self.delegate?.setEmail(email: self.emailCustomView.textField.text!)
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                    }
-                })
+                verifyEmail()
             }
         } else if changingSubject == .phone {
             if !isVerifiedPhone! {
-                viewModel?.changePhone(phone: emailCustomView.textField.text!, completion: { (responseObj, error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    } else if responseObj != nil {
-                        if responseObj?.phonenumberExists == false {
-                            DispatchQueue.main.async {
-                                self.codeCustomView.isHidden = false
-                                self.isVerifiedPhone = true
-                                self.codeCustomView.textField.text = responseObj?.code
-                                self.updateInformationButton.setTitle("confirm_code".localized(), for: .normal)
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error".localized(), errorMessage: "this_number_is_taken".localized())
-                            }
-                        }
-                    }
-                })
+                changePhoneNuber()
             } else {
-                viewModel?.verifyPhone(phone: emailCustomView.textField.text!, code: codeCustomView.textField.text!, completion: { (responseObj, error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    } else if responseObj != nil {
-                        DispatchQueue.main.async {
-                            let user = UserModel(name: responseObj!.user.name, lastname: responseObj!.user.lastname, username: responseObj!.user.username, email: responseObj!.user.email,  token: SharedConfigs.shared.signedUser!.token, id: responseObj!.user.id, avatarURL: responseObj!.user.avatarURL, phoneNumber: responseObj!.user.phoneNumber, birthDate: responseObj!.user.birthDate, gender: responseObj!.user.gender, info: responseObj!.user.info, tokenExpire: SharedConfigs.shared.signedUser?.tokenExpire)
-                            UserDataController().populateUserProfile(model: user)
-                            self.delegate?.setPhone(phone: self.emailCustomView.textField.text!)
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                    }
-                })
+                verifyPhoneNumber()
             }
         }
     }
