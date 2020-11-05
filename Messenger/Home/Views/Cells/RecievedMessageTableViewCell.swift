@@ -1,41 +1,32 @@
 //
-//  RecieveImageMessageTableViewCell.swift
+//  RecieveMessageTableViewCell.swift
 //  Messenger
 //
-//  Created by Employee1 on 10/29/20.
-//  Copyright © 2020 Dynamic LLC. All rights reserved.
+//  Created by Employee1 on 6/16/20.
+//  Copyright © 2020 Employee1. All rights reserved.
 //
 
 import UIKit
 
-class RecieveImageMessageTableViewCell: UITableViewCell {
-
+class RecievedMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var viewUnderImage: UIView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var sendImageView: UIImageView!
-    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint!
     @IBOutlet weak var userImageView: UIImageView!
-    @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
-    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
+    
+    //@IBOutlet weak var leadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
+    @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint?
+    
     @IBOutlet weak var checkImage: UIImageView!
-
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        // Configure the view for the selected state
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
-        sendImageView?.contentMode = .scaleAspectFill
         userImageView.image = UIImage(named: "noPhoto")
         leadingConstraintOfCheckImage?.constant -= 15
         leadingConstraintOfImageView?.constant -= 15
         checkImage?.isHidden = true
-        viewUnderImage.clipsToBounds = true
-        viewUnderImage.layer.cornerRadius = 10
+        
     }
     
     override func prepareForReuse() {
@@ -75,10 +66,11 @@ class RecieveImageMessageTableViewCell: UITableViewCell {
             checkImage.isHidden = false
         }
     }
-
+    
     func changeShapeOfImageView() {
         userImageView.clipsToBounds = true
         userImageView.layer.cornerRadius = 15
+        messageLabel.clipsToBounds = true
+        messageLabel.layer.cornerRadius = 10
     }
-    
 }

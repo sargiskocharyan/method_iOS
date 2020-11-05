@@ -132,48 +132,33 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
     
     //MARK: Helper methods
-    func stringToDate(date:String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        return parsedDate
-    }
     
     func confirmPhoneCode() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        let verificationID = UserDefaults.standard.string(forKey: "authVerificationID")
-        if let verificationID = verificationID {
-            let credential = PhoneAuthProvider.provider().credential(
-                withVerificationID: verificationID,
-                verificationCode: CodeField.text!)
-            Auth.auth().signIn(with: credential) { (authResult, error) in
-                if let error = error {
-                    self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.viewModel?.loginWithPhoneNumber(number: self.phoneNumber!.replacingOccurrences(of: " ", with: ""), completion: { (response, error) in
-                        if let error = error {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error", errorMessage: error.rawValue)
-                            }
-                        } else if let response = response {
-                            self.parseUserData(response, response.token)
-                        }
-                    })
-                }
+        self.viewModel?.signInWithFirebase(code: CodeField.text!, completion: { (authResult, error) in
+            if let error = error {
+                self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                return
             }
-        }
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.viewModel?.loginWithPhoneNumber(number: self.phoneNumber!.replacingOccurrences(of: " ", with: ""), completion: { (response, error) in
+                    if let error = error {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error", errorMessage: error.rawValue)
+                        }
+                    } else if let response = response {
+                        self.parseData(response)
+                    }
+                })
+            }
+        })
     }
     
-    func parseUserData(_ loginResponse: LoginResponse?, _ token: String?) {
-        let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire), missedCallHistory: loginResponse!.user.missedCallHistory)
-        UserDataController().saveUserSensitiveData(token: token!)
-        UserDataController().populateUserProfile(model: model)
-        self.registerDevice { (error) in
+    func parseData(_ loginResponse: LoginResponse?) {
+        self.viewModel?.parseUserData(loginResponse, loginResponse?.token, completion: { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
@@ -185,6 +170,55 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                     self.activityIndicator.stopAnimating()
                 }
             }
+        })
+    }
+    
+    func loginUser() {
+        viewModel!.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else if (token != nil && loginResponse != nil) {
+                self.parseData(loginResponse)
+            } else {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message`".localized(), errorMessage: "incorrect_code".localized())
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+        }
+    }
+    
+    func registerUser() {
+        viewModel!.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else if token != nil {
+                self.viewModel?.saveUserInfo(loginResponse, token)
+                self.viewModel?.registerDevice { (error) in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                            self.activityIndicator.stopAnimating()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.authRouter?.showRegisterViewController()
+                            self.activityIndicator.stopAnimating()
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
+                    self.activityIndicator.stopAnimating()
+                }
+            }
         }
     }
     
@@ -193,80 +227,9 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             self.activityIndicator.startAnimating()
         }
         if isExists! {
-            viewModel!.login(email: email!, code: CodeField.text!) { (token, loginResponse, error) in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        self.activityIndicator.stopAnimating()
-                    }
-                } else if (token != nil && loginResponse != nil) {
-<<<<<<< HEAD
-=======
-                    let model = UserModel(name: loginResponse!.user.name, lastname: loginResponse!.user.lastname, username: loginResponse!.user.username, email: loginResponse!.user.email,  token: token!, id: loginResponse!.user.id, avatarURL: loginResponse!.user.avatarURL, phoneNumber: loginResponse!.user.phoneNumber, birthDate: loginResponse!.user.birthDate, tokenExpire: self.stringToDate(date: loginResponse!.tokenExpire), missedCallHistory: loginResponse!.user.missedCallHistory)
-                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
-                    UserDataController().saveUserSensitiveData(token: token!)
-                    UserDataController().populateUserProfile(model: model)
-                    self.registerDevice { (error) in
-                        if error != nil {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                                self.activityIndicator.stopAnimating()
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                MainRouter().assemblyModule()
-                                self.activityIndicator.stopAnimating()
-                            }
-                        }
-                    }
->>>>>>> fa1ffeff2df102fab794b509f78dbccee15a585d
-                    self.parseUserData(loginResponse, token)
-                } else {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message`".localized(), errorMessage: "incorrect_code".localized())
-                        self.activityIndicator.stopAnimating()
-                    }
-                }
-            }
+            loginUser()
         } else {
-            viewModel!.register(email: email!, code: CodeField.text!) { (token, loginResponse, error)  in
-                if error != nil {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                        self.activityIndicator.stopAnimating()
-                    }
-                } else if token != nil {
-                    SharedConfigs.shared.signedUser = loginResponse?.user
-                    SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: false)
-                    SharedConfigs.shared.signedUser?.tokenExpire = self.stringToDate(date: loginResponse!.tokenExpire)
-                    UserDataController().saveUserSensitiveData(token: token!)
-                    UserDataController().saveUserInfo()
-                    self.registerDevice { (error) in
-                        if error != nil {
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                                self.activityIndicator.stopAnimating()
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.authRouter?.showRegisterViewController()
-                                self.activityIndicator.stopAnimating()
-                            }
-                        }
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "error_message".localized(), errorMessage: "incorrect_code".localized())
-                        self.activityIndicator.stopAnimating()
-                    }
-                }
-            }
-        }
-    }
-    
-    func registerDevice(completion: @escaping (NetworkResponse?)->()) {
-        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken ?? "", voipDeviceToken: SharedConfigs.shared.voIPToken ?? "") { (error) in
-            completion(error)
+            registerUser()
         }
     }
     

@@ -319,10 +319,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                 }
                 return;
               }
-            
-             //uxarkel Erikin idToken-y
             }
-           
             self.viewModel?.emailChecking(email: self.numberTextField.text!, completion: { (responseObject, error) in
                 if let error = error {
                     DispatchQueue.main.async {

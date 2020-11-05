@@ -83,15 +83,9 @@ class SubscribersListViewController: UIViewController {
         let isModeratorText = "is_moderator".localized()
         let n = "-n".localized()
         let message = "\(now) \(name) \(n) \(isModeratorText)"
-        let attributedText = NSMutableAttributedString(string: message)
-        let range = NSRange(location: 0, length: attributedText.length)
-        attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 15.0), range: range)
-        let alert = UIAlertController(title: nil, message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action) in
+        self.showAlert(title: message, message: nil, buttonTitle1: "ok".localized(), buttonTitle2: nil, buttonTitle3: nil, completion1: {
             self.navigationController?.popViewController(animated: true)
-        }))
-        alert.setValue(attributedText, forKey: "attributedTitle")
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     func setLabel(text: String) {
@@ -162,8 +156,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_to_block_subscriber".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+        self.showAlert(title: "attention".localized(), message: "are_you_sure_you_want_to_block_subscriber".localized(), buttonTitle1: "ok", buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.viewModel?.blockSubscribers(id: self.id!, subscribers: [self.subscribers[indexPath.row].user?._id ?? ""], completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -181,9 +174,7 @@ extension SubscribersListViewController: UITableViewDelegate, UITableViewDataSou
                     }
                 }
             })
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

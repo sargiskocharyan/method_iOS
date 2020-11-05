@@ -108,8 +108,7 @@ class ModeratorInfoViewController: UIViewController {
     }
     
     @objc func handleRejectViewTap(_ sender: UITapGestureRecognizer? = nil) {
-        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_you_want_reject_be_moderator".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+        self.showAlert(title: "attention".localized(), message: "are_you_sure_you_want_reject_be_moderator".localized(), buttonTitle1: "ok", buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.viewModel?.rejectBeModerator(id: self.channelInfo!.channel!._id, completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -128,9 +127,7 @@ class ModeratorInfoViewController: UIViewController {
                     }
                 }
             })
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     @objc func handleLeaveViewTap(_ sender: UITapGestureRecognizer? = nil) {

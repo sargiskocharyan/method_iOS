@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SendCallTableViewCell: UITableViewCell {
+class SentCallTableViewCell: UITableViewCell {
 
     @IBOutlet weak var callButton: UIButton!
     @IBOutlet weak var arrowImageView: UIImageView!

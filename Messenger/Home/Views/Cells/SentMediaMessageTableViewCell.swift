@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SendImageMessageTableViewCell: UITableViewCell {
+class SentMediaMessageTableViewCell: UITableViewCell {
     
     //    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
     

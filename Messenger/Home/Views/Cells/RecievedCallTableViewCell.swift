@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RecieveCallTableViewCell: UITableViewCell {
+class RecievedCallTableViewCell: UITableViewCell {
 
     @IBOutlet weak var callButton: UIButton!
     @IBOutlet weak var userImageView: UIImageView!

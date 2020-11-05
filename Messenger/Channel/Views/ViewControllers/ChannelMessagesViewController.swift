@@ -324,7 +324,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             mode = .main
             sendButton.setImage(UIImage.init(named: "send"), for: .normal)
             if inputTextField.text != "" {
-                if let cell = tableView.cellForRow(at: indexPath!) as? SendMessageTableViewCell {
+                if let cell = tableView.cellForRow(at: indexPath!) as? SentMessageTableViewCell {
                     self.viewModel?.editChannelMessageBySender(id: cell.id!, text: self.inputTextField.text!, completion: { (error) in
                         if error != nil {
                             DispatchQueue.main.async {
@@ -369,8 +369,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     }
     
     func showAlertBeforeDeleteMessage() {
-        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_want_to_delete_selected_messages".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (_) in
+        self.showAlert(title: "attention".localized(), message: "are_you_sure_want_to_delete_selected_messages".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             if self.arrayOfSelectedMesssgae.count == 0 {
                 self.deleteMessageButton.isEnabled = false
             } else {
@@ -410,12 +409,9 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                     DispatchQueue.main.async {
                         self.universalButton.isHidden = true
                     }
-                    
                 }
             })
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     @objc func handleKeyboardNotification(notification: NSNotification) {
@@ -561,10 +557,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         if gestureReconizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureReconizer.location(in: tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
-                let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-                print("cell?.messageLabel.text \(String(describing: cell?.messageLabel.text))")
-                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+                let cell = tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
+                self.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "edit".localized(), buttonTitle3: "cancel".localized()) {
                     self.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
                         if error != nil {
                             DispatchQueue.main.async {
@@ -572,15 +566,13 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                             }
                         }
                     })
-                }))
-                alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
+                } completion2: {
                     self.mode = .edit
                     self.sendButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
                     self.indexPath = indexPath
                     self.inputTextField.text = cell?.messageLabel.text
-                }))
-                alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                } completion3: {}
+
             }
             
         }
@@ -593,9 +585,9 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                     channelMessages.array?[i] = message
                     DispatchQueue.main.async {
                         if message.senderId == SharedConfigs.shared.signedUser?.id {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.messageLabel.text = message.text
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.messageLabel.text = message.text
                         } else {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecieveMessageTableViewCell)?.messageLabel.text = message.text
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? RecievedMessageTableViewCell)?.messageLabel.text = message.text
                         }
                     }
                     break
@@ -604,7 +596,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
-    func configureSendImageMessageTableViewCell(_ cell: SendImageMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
+    func configureSendImageMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
         cell.contentView.addGestureRecognizer(tap)
         ImageCache.shared.getImage(url: channelMessages.array![indexPath.row].image?.imageURL ?? "", id: channelMessages.array![indexPath.row]._id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
@@ -628,7 +620,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         cell.messageLabel.text = channelMessages.array![indexPath.row].text
     }
     
-    func configureSendMessageTableViewCell(_ cell: SendMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+    func configureSendMessageTableViewCell(_ cell: SentMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = channelMessages.array![indexPath.row]._id
         cell.readMessage.isHidden = true
         cell.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
@@ -644,7 +636,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
-    func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecieveImageMessageTableViewCell) {
+    func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecievedMediaMessageTableViewCell) {
         for i in 0..<(channelInfo.channel?.subscribers?.count)! {
             if channelInfo.channel?.subscribers?[i].user == channelMessages.array![indexPath.row].senderId {
                 cell.nameLabel.text = channelInfo.channel?.subscribers?[i].name
@@ -677,7 +669,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         cell.messageLabel.text = channelMessages.array![indexPath.row].text
     }
     
-    func configureRecieveMessageTableViewCell(_ cell: RecieveMessageTableViewCell, _ indexPath: IndexPath) {
+    func configureRecieveMessageTableViewCell(_ cell: RecievedMessageTableViewCell, _ indexPath: IndexPath) {
         cell.messageLabel.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
         cell.messageLabel.text = channelMessages.array![indexPath.row].text
         for i in 0..<(channelInfo.channel?.subscribers?.count)! {
@@ -751,25 +743,25 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let isSendererMe = channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id
         let image = UIImage.init(systemName: "circle")
         if isSendererMe && channelMessages.array![indexPath.row].type == "image"  {
-            let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
             cell!.checkImage?.image = UIImage.init(systemName: "circle")
         } else if isSendererMe && channelMessages.array![indexPath.row].type == "text" {
-            let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
             cell!.checkImageView?.image = image
         } else if !isSendererMe && channelMessages.array![indexPath.row].type == "text" {
-            let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? RecievedMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
             cell!.checkImage?.image = image
         } else {
-            let cell = tableView.cellForRow(at: indexPath) as? RecieveImageMessageTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? RecievedMediaMessageTableViewCell
             arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
                 return  id != channelMessages.array![indexPath.row]._id
             })
@@ -787,18 +779,18 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let image = UIImage.init(systemName: "checkmark.circle.fill")
         if isSendererMe {
             if channelMessages.array![indexPath.row].type == "text" {
-                let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
+                let cell = tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
                 cell?.checkImageView?.image = image
             } else {
-                let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell
+                let cell = tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
                 cell!.checkImage?.image = image
             }
         } else {
             if channelMessages.array![indexPath.row].type == "text" {
-                let cell = tableView.cellForRow(at: indexPath) as? RecieveMessageTableViewCell
+                let cell = tableView.cellForRow(at: indexPath) as? RecievedMessageTableViewCell
                 cell!.checkImage.image = image
             } else {
-                let cell = tableView.cellForRow(at: indexPath) as? RecieveImageMessageTableViewCell
+                let cell = tableView.cellForRow(at: indexPath) as? RecievedMediaMessageTableViewCell
                 cell!.checkImage.image = image
             }
         }
@@ -810,21 +802,21 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap))
         if channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if channelMessages.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 configureSendImageMessageTableViewCell(cell, tap, indexPath)
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SendMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SentMessageTableViewCell
                 configureSendMessageTableViewCell(cell, indexPath, tap)
                 return cell
             }
         } else {
             if channelMessages.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecieveImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 configureRecieveImageMessageTableViewCell(indexPath, cell)
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecieveMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
                 configureRecieveMessageTableViewCell(cell, indexPath)
                 return cell
             }

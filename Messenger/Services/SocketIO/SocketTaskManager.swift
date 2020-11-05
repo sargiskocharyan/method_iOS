@@ -274,7 +274,7 @@ class SocketTaskManager {
             let data = dataArray[0] as? Dictionary<String, Any>
             let imageDic = data?["image"] as? Dictionary<String, Any>
             let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image, video: data?["video"] as? String)
             completion(message)
         })
     }
@@ -287,7 +287,7 @@ class SocketTaskManager {
                 let data = array?[i] as? Dictionary<String, Any>
                 let imageDic = data?["image"] as? Dictionary<String, Any>
                 let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image, video: data?["video"] as? String)
                 messages.append(message)
             }
             completion(messages)
@@ -299,7 +299,7 @@ class SocketTaskManager {
             let data = dataArray[0] as? Dictionary<String, Any>
             let imageDic = data?["image"] as? Dictionary<String, Any>
             let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+            let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image, video: data?["video"] as? String)
             completion(message)
         })
     }
@@ -312,7 +312,7 @@ class SocketTaskManager {
                 let data = array?[i] as? Dictionary<String, Any>
                 let imageDic = data?["image"] as? Dictionary<String, Any>
                 let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image)
+                let message = Message(call: nil, type: data?["type"] as? String, _id: data?["_id"] as? String, reciever: data?["reciever"] as? String, text: data?["text"] as? String, createdAt: data?["createdAt"] as? String, updatedAt: data?["updatedAt"] as? String, owner: data?["owner"] as? String, senderId: data?["senderId"] as? String, image: image, video: data?["video"] as? String)
                 messages.append(message)
             }
             completion(messages)
@@ -369,14 +369,14 @@ class SocketTaskManager {
                 let messageCall = MessageCall(callSuggestTime: call["callSuggestTime"] as? String, type: call["type"] as? String, status: call["status"] as? String, duration: call["duration"] as? Float)
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
-                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: nil)
+                let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: nil, video: nil)
                 completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
             if let text = data["text"] as? String {
                 let imageDic = data["image"] as? Dictionary<String, Any>
                 let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image)
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image, video: data["video"] as? String)
                 completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
                 for i in 0..<vc.chats.count {
@@ -408,7 +408,7 @@ class SocketTaskManager {
             let imageDictionary = data["image"] as? Dictionary<String, Any>
             let _ = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
             if let text = data["text"] as? String {
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: Image(imageName: imageDictionary?["imageName"] as? String, imageURL: imageDictionary?["imageURL"] as? String))
+                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: Image(imageName: imageDictionary?["imageName"] as? String, imageURL: imageDictionary?["imageURL"] as? String), video: data["video"] as? String)
                 completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
             }
         }

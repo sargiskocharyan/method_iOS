@@ -27,11 +27,29 @@ extension UIViewController {
            self.present(alert, animated: true)
        }
     
-    func showAlert(title: String?, message: String?, buttonTitle1: String? = nil, buttonTitle2: String? = nil, buttonTitle3: String? = nil, completion1: (()->())?, completion2: (()->())?, completion3: (()->())?) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "", style: .default, handler: { (action) in
-            completion1()
-        }))
+    func showAlert(title: String?, message: String?, buttonTitle1: String?, buttonTitle2: String?, buttonTitle3: String?, completion1: (()->())? = nil, completion2: (()->())? = nil, completion3: (()->())? = nil) {
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        if let title = title {
+            let attributedText = NSMutableAttributedString(string: title)
+            let range = NSRange(location: 0, length: attributedText.length)
+            attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 15.0), range: range)
+            alertController.setValue(attributedText, forKey: "attributedTitle")
+        }
+        if buttonTitle1 != nil {
+            alertController.addAction(UIAlertAction(title: buttonTitle1, style: .default, handler: { (action) in
+                completion1?()
+            }))
+        }
+        if buttonTitle2 != nil {
+            alertController.addAction(UIAlertAction(title: buttonTitle2, style: .default, handler: { (action) in
+                completion2?()
+            }))
+        }
+        if buttonTitle3 != nil {
+            alertController.addAction(UIAlertAction(title: buttonTitle3, style: .default, handler: { (action) in
+                completion3?()
+            }))
+        }
         self.present(alertController, animated: true, completion: nil)
     }
     
