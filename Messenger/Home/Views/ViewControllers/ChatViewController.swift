@@ -761,7 +761,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     func configureSendVideoMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = allMessages!.array![indexPath.row]._id
-        //        ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+        //  ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
         //            DispatchQueue.main.async {
 //                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
 //                        cell.addGestureRecognizer(tap)
