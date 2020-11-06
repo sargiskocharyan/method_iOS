@@ -105,7 +105,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print(id)
-        HomeNetworkManager().getVideo(url: "https://192.168.0.105:3000/message/video/userf@13368073233206895fa3dd9ee969141597bb52d1.mp4")
+//        HomeNetworkManager().getVideo(url: "https://192.168.0.105:3000/message/video/userf@13368073233206895fa3dd9ee969141597bb52d1.mp4")
         view.endEditing(true)
         if !(tabBarController?.tabBar.isHidden)! {
             tabBarController?.tabBar.isHidden = true
@@ -145,7 +145,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     }
                 }
             } else if sendAsset != nil {
-                encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+                self.viewModel?.encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
                     if let url = url {
                         do {
                             let data = try Data(contentsOf: url)
@@ -266,9 +266,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     func handleMessageReadFromTabbar(createdAt: String, userId: String) {
         if userId == self.id {
-            let createdAtDate = self.stringToDateD(date: createdAt)!
+            let createdAtDate = self.viewModel!.stringToDateD(date: createdAt)!
             for i in 0..<self.allMessages!.array!.count {
-                if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
+                if let date = self.viewModel!.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
                     if date <= createdAtDate {
                         if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
                             self.allMessages?.statuses![1].readMessageDate = createdAt
@@ -289,10 +289,10 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     func handleMessageReceiveFromTabbar(createdAt: String, userId: String) {
         if userId == self.id {
-            let createdAtDate = self.stringToDateD(date: createdAt)!
+            let createdAtDate = self.viewModel!.stringToDateD(date: createdAt)!
             for i in 0..<self.allMessages!.array!.count {
                 
-                if let date = self.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
+                if let date = self.viewModel!.stringToDateD(date: self.allMessages?.array?[i].createdAt ?? "") {
                     if date <= createdAtDate {
                         if allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
                             self.allMessages?.statuses![1].receivedMessageDate = createdAt
@@ -326,9 +326,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     func handleReadMessage()  {
         SocketTaskManager.shared.addMessageReadListener { (createdAt, userId) in
             if userId == self.id {
-                let createdAtDate = self.stringToDateD(date: createdAt)!
+                let createdAtDate = self.viewModel!.stringToDateD(date: createdAt)!
                 for i in 0..<self.allMessages!.array!.count {
-                    let date = self.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
+                    let date = self.viewModel!.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
                     if date <= createdAtDate {
                         if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
                             self.allMessages?.statuses![1].readMessageDate = createdAt
@@ -350,9 +350,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     func handleReceiveMessage()  {
         SocketTaskManager.shared.addMessageReceivedListener { (createdAt, userId) in
             if userId == self.id {
-                let createdAtDate = self.stringToDateD(date: createdAt)!
+                let createdAtDate = self.viewModel!.stringToDateD(date: createdAt)!
                 for i in 0..<self.allMessages!.array!.count {
-                    let date = self.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
+                    let date = self.viewModel!.stringToDateD(date: self.allMessages!.array![i].createdAt!)!
                     if date <= createdAtDate {
                         if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
                             self.allMessages?.statuses![1].receivedMessageDate = createdAt
@@ -489,8 +489,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         sendingImage.layer.cornerRadius = 20
     }
     
-    
-    
     func removeSendImageView() {
         self.view.viewWithTag(14)?.removeFromSuperview()
     }
@@ -535,53 +533,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         dismiss(animated: true, completion: nil)
     }
     
-    func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
-        let avAsset = AVURLAsset(url: videoURL, options: nil)
-        let startDate = Date()
-        //Create Export session
-        guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
-            completionHandler?(nil, nil)
-            return
-        }
-        //Creating temp path to save the converted video
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
-        let filePath = documentsDirectory.appendingPathComponent("rendered-Video.mp4")
-        //Check if the file already exists then remove the previous file
-        if FileManager.default.fileExists(atPath: filePath.path) {
-            do {
-                try FileManager.default.removeItem(at: filePath)
-            } catch {
-                completionHandler?(nil, error)
-            }
-        }
-        exportSession.outputURL = filePath
-        exportSession.outputFileType = AVFileType.mp4
-        exportSession.shouldOptimizeForNetworkUse = true
-        let start = CMTimeMakeWithSeconds(0.0, preferredTimescale: 0)
-        let range = CMTimeRangeMake(start: start, duration: avAsset.duration)
-        exportSession.timeRange = range
-        exportSession.exportAsynchronously(completionHandler: {() -> Void in
-            switch exportSession.status {
-            case .failed:
-                print(exportSession.error ?? "NO ERROR")
-                completionHandler?(nil, exportSession.error)
-            case .cancelled:
-                print("Export canceled")
-                completionHandler?(nil, nil)
-            case .completed:
-                //Video conversion finished
-                let endDate = Date()
-                
-                let time = endDate.timeIntervalSince(startDate)
-                print(time)
-                print("Successful!")
-                print(exportSession.outputURL ?? "NO OUTPUT URL")
-                completionHandler?(exportSession.outputURL, nil)
-                
-            default: break
-            }
-        })
-    }
     func setupInputComponents() {
         messageInputContainerView.layer.borderWidth = 1
         messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
@@ -621,12 +572,12 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         if allMessages != nil && allMessages?.array != nil {
             if (self.allMessages?.array!.count)! > 0 {
                 let status = self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? self.allMessages?.statuses![0] : self.allMessages?.statuses![1]
-                let readMessageDate = self.stringToDateD(date: (status?.readMessageDate)!)
+                let readMessageDate = self.viewModel?.stringToDateD(date: (status?.readMessageDate)!)
                 for i in (0...((self.allMessages?.array!.count)! - 1)) {
                     let index = (self.allMessages?.array!.count)! - i - 1
                     let createdAt = self.allMessages!.array![index].createdAt
                     if self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].senderId != SharedConfigs.shared.signedUser?.id {
-                        let date = self.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
+                        let date = self.viewModel!.stringToDateD(date: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1].createdAt!)!
                         if date.compare(readMessageDate!).rawValue == 1 {
                             SocketTaskManager.shared.messageRead(chatId: self.id!, messageId: self.allMessages!.array![(self.allMessages?.array!.count)! - i - 1]._id!)
                             if self.allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id {
@@ -651,31 +602,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func secondsToHoursMinutesSeconds(seconds : Int) -> String {
-        if seconds / 3600 == 0 && ((seconds % 3600) / 60) == 0 {
-            return "\((seconds % 3600) % 60) sec."
-        } else if seconds / 3600 == 0 {
-            return "\((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-        }
-        return "\(seconds / 3600) hr. \((seconds % 3600) / 60) min. \((seconds % 3600) % 60) sec."
-    }
     
-    func stringToDate(date:String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        let calendar = Calendar.current
-        let day = calendar.component(.day, from: parsedDate!)
-        let month = calendar.component(.month, from: parsedDate!)
-        let time = Date()
-        let currentDay = calendar.component(.day, from: time as Date)
-        if currentDay != day {
-            return ("\(day >= 10 ? "\(day)" : "0\(day)").\(month >= 10 ? "\(month)" : "0\(month)")")
-        }
-        let hour = calendar.component(.hour, from: parsedDate!)
-        let minutes = calendar.component(.minute, from: parsedDate!)
-        return ("\(hour >= 10 ? "\(hour)" : "0\(hour)").\(minutes >= 10 ? "\(minutes)" : "0\(minutes)")")
-    }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
         tabbar?.videoVC?.isCallHandled = false
@@ -684,17 +611,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             tabbar!.callsVC?.activeCall = FetchedCall(id: UUID(), isHandleCall: false, time: Date(), callDuration: 0, calleeId: id!)
         } else {
             tabbar!.handleClickOnSamePerson()
-        }
-    }
-    
-    func stringToDateD(date:String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        if parsedDate == nil {
-            return nil
-        } else {
-            return parsedDate
         }
     }
     
@@ -787,18 +703,18 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             cell.addGestureRecognizer(tap)
         }
         if allMessages?.array![indexPath.row]._id != nil {
-            let date = stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
+            let date = viewModel?.stringToDateD(date: allMessages!.array![indexPath.row].createdAt!)
             let status = allMessages?.statuses![0].userId == SharedConfigs.shared.signedUser?.id ? allMessages?.statuses![1] : allMessages?.statuses![0]
-            if date! < stringToDateD(date: status!.receivedMessageDate!)! {
-                if date! < stringToDateD(date: status!.readMessageDate!)! || date! == stringToDateD(date: status!.readMessageDate!)! {
+            if date! < viewModel!.stringToDateD(date: status!.receivedMessageDate!)! {
+                if date! < viewModel!.stringToDateD(date: status!.readMessageDate!)! || date! == viewModel?.stringToDateD(date: status!.readMessageDate!)! {
                     cell.readMessage.text = "seen".localized()
                 } else {
                     cell.readMessage.text = "delivered".localized()
                 }
-            } else if date! > stringToDateD(date: status!.receivedMessageDate!)! {
+            } else if date! > viewModel!.stringToDateD(date: status!.receivedMessageDate!)! {
                 cell.readMessage.text = "sent".localized()
             } else {
-                if date! == stringToDateD(date: status!.readMessageDate!)! || date! < stringToDateD(date: status!.readMessageDate!)! {
+                if date! == viewModel?.stringToDateD(date: status!.readMessageDate!)! || date! < viewModel!.stringToDateD(date: status!.readMessageDate!)! {
                     cell.readMessage.text = "seen".localized()
                 } else {
                     cell.readMessage.text = "delivered".localized()
@@ -815,13 +731,13 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         cell.id = allMessages!.array![indexPath.row]._id
         if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
             cell.ststusLabel.text = CallStatus.outgoing.rawValue.localized()
-            cell.durationAndStartTimeLabel.text =  "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+            cell.durationAndStartTimeLabel.text =  "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? ""), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
         } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
             cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-            cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+            cell.durationAndStartTimeLabel.text = "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? "")"
         } else {
             cell.ststusLabel.text = "\(CallStatus.outgoing.rawValue)".localized()
-            cell.durationAndStartTimeLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+            cell.durationAndStartTimeLabel.text = "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? "")"
         }
     }
     
@@ -845,20 +761,57 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     func configureSendVideoMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = allMessages!.array![indexPath.row]._id
-//        ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
-//            DispatchQueue.main.async {
-//                cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-//                cell.addGestureRecognizer(tap)
-//                cell.imageWidthConstraint.constant = image.size.width
-//                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-//                let ratio = image.size.width / image.size.height
-//                if containerView.frame.width > containerView.frame.height {
-//                    let newHeight = containerView.frame.width / ratio
-//                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-//                }
-//                cell.snedImageView.image = image
-//            }
-//        }
+        //        ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+        //            DispatchQueue.main.async {
+//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+//                        cell.addGestureRecognizer(tap)
+//                        cell.imageWidthConstraint.constant = image.size.width
+//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+//                        let ratio = image.size.width / image.size.height
+//                        if containerView.frame.width > containerView.frame.height {
+//                            let newHeight = containerView.frame.width / ratio
+//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+//                        }
+//                        cell.snedImageView.image = image
+        //            }
+        //        }
+        
+        VideoCache.shared.getVideo(videoUrl: allMessages?.array?[indexPath.row].video ?? "") { (videoURL) in
+            if let videoURL = videoURL {
+                DispatchQueue.main.async {
+                    let asset = AVURLAsset(url: videoURL as URL , options: nil)
+                    let imgGenerator = AVAssetImageGenerator(asset: asset)
+                    imgGenerator.appliesPreferredTrackTransform = true
+                    do {
+                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                        let thumbnail = UIImage(cgImage: cgImage)
+                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+                        cell.addGestureRecognizer(tap)
+                        cell.imageWidthConstraint.constant = thumbnail.size.width
+                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+                        let ratio = thumbnail.size.width / thumbnail.size.height
+                        if containerView.frame.width > containerView.frame.height {
+                            let newHeight = containerView.frame.width / ratio
+                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+                        }
+                        cell.snedImageView.image = thumbnail
+                    }
+                    catch {
+                        cell.snedImageView.image = UIImage(named: "noPhoto")
+                    }
+//                    try! AVAudioSession.sharedInstance().setCategory(.playback)
+//                    let player = AVPlayer(url: videoURL)
+//                    let playerViewController = AVPlayerViewController()
+//                    playerViewController.player = player
+//                    self.present(playerViewController, animated: true) {
+//                        playerViewController.player!.play()
+//                    }
+                }
+            } else {
+                //chgitem inch
+            }
+        }
+        
         
     }
     
@@ -869,15 +822,15 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         if allMessages?.array![indexPath.row].call?.status == CallStatus.accepted.rawValue {
             cell.arrowImageView.tintColor = UIColor(red: 48/255, green: 121/255, blue: 255/255, alpha: 1)
             cell.statusLabel.text = CallStatus.incoming.rawValue.localized()
-            cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!)), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
+            cell.durationAndStartCallLabel.text = "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? ""), \(Int(allMessages?.array![indexPath.row].call?.duration ?? 0).secondsToHoursMinutesSeconds())"
         } else if allMessages?.array![indexPath.row].call?.status == CallStatus.missed.rawValue.lowercased() {
             cell.arrowImageView.tintColor = .red
             cell.statusLabel.text = "\(CallStatus.missed.rawValue)_call".localized()
-            cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+            cell.durationAndStartCallLabel.text = "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? "")"
         } else  {
             cell.arrowImageView.tintColor = .red
             cell.statusLabel.text = "\(CallStatus.cancelled.rawValue)_call".localized()
-            cell.durationAndStartCallLabel.text = "\(stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!))"
+            cell.durationAndStartCallLabel.text = "\(viewModel?.stringToDate(date: (allMessages?.array![indexPath.row].call?.callSuggestTime)!) ?? "")"
         }
     }
     
@@ -969,7 +922,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 return frame.height + 30 + 22
             }  else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
-            } else if allMessages?.array![indexPath.row].type == "image" {
+            } else if allMessages?.array![indexPath.row].type == "image" || allMessages?.array![indexPath.row].type == "video" {
                 return UITableView.automaticDimension
             }
         } else {
@@ -979,7 +932,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 return frame.height + 30
             } else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
-            } else if allMessages?.array![indexPath.row].type == "image" {
+            } else if allMessages?.array![indexPath.row].type == "image" || allMessages?.array![indexPath.row].type == "video" {
                 return UITableView.automaticDimension
             }
         }
@@ -1003,7 +956,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             } else if allMessages?.array![indexPath.row].type == "video" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
-                configureSendImageMessageTableViewCell(cell, indexPath, tap)
+                configureSendVideoMessageTableViewCell(cell, indexPath, tap)
                 return cell
             }
         } else {

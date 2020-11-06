@@ -135,6 +135,7 @@
 		D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
 		D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
 		D01A89F0252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */; };
+		D048C0532555306D006B36FC /* VideoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D048C0522555306D006B36FC /* VideoCache.swift */; };
 		D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */; };
 		D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
@@ -458,6 +459,7 @@
 		D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListTableViewCell.swift; sourceTree = "<group>"; };
 		D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		D01A89EE252311CB00ACE2D8 /* ChannelListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewModel.swift; sourceTree = "<group>"; };
+		D048C0522555306D006B36FC /* VideoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCache.swift; sourceTree = "<group>"; };
 		D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUserTableViewCell.swift; sourceTree = "<group>"; };
 		D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewModel.swift; sourceTree = "<group>"; };
@@ -998,6 +1000,7 @@
 				CDD9C684247BC9880048A9A1 /* SharedConfigs */,
 				CDD9C681247BC93B0048A9A1 /* Constants */,
 				CDF0776724A9F49800B1DAD7 /* ImageCache.swift */,
+				D048C0522555306D006B36FC /* VideoCache.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1367,6 +1370,7 @@
 				CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */,
 				CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */,
 				CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */,
+				D048C0532555306D006B36FC /* VideoCache.swift in Sources */,
 				CDCF9D7B24B601E20070B762 /* EditInformationViewModel.swift in Sources */,
 				F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */,
 				CDA56E6B2488E5E50027AA4E /* HomeEndpoints.swift in Sources */,

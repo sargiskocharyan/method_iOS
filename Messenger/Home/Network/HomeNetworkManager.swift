@@ -402,19 +402,6 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         }.resume()
     }
     
-    func getVideo(url: String) {
-        var request = URLRequest(url: URL(string: url)!)
-        request.httpMethod = "GET"
-        request.timeoutInterval = 10
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) in
-            print("")
-        }.resume()
-        
-    }
-    
     func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
