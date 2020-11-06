@@ -9,13 +9,10 @@
 import UIKit
 
 class SendImageMessageTableViewCell: UITableViewCell {
-    
-    //    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
-    
+        
     @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var snedImageView: UIImageView!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfChaeckImage: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView?
@@ -23,7 +20,6 @@ class SendImageMessageTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        //    snedImageView.contentMode = .scaleAspectFill
         leadingConstraintOfChaeckImage?.constant = -10
         checkImage?.isHidden = true
         viewUnderImage.clipsToBounds = true

@@ -53,6 +53,7 @@ class MainTabBarController: UITabBarController {
         ((self.tabBar.items?[2].value(forKey: "view") as? UIView)?.subviews[0] as? UIImageView)?.contentMode = .scaleAspectFit
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
+        
         self.retrieveCoreDataObjects()
         verifyToken()
         getRequests()
@@ -61,7 +62,7 @@ class MainTabBarController: UITabBarController {
             print("home page connect")
         })
         callManager = AppDelegate.shared.callManager
-        AppDelegate.shared.delegate = self
+        AppDelegate.shared.notificationManager.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
@@ -739,8 +740,8 @@ extension MainTabBarController: CallListViewDelegate {
     }
 }
 
-extension MainTabBarController: AppDelegateProtocol {
-    func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ()) {
+extension MainTabBarController: NotificationManagerDelegate {
+    func startCall(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ()) {
         self.startCall(id, roomName, name, type) {
             completionHandler()
         }

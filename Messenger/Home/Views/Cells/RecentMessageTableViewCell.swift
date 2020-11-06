@@ -57,7 +57,6 @@ class RecentMessageTableViewCell: UITableViewCell {
     }
     
     func configure(chat: Chat) {
-        //todo refactor
         if isOnline != nil && isOnline == true {
             setOnlineView()
         } else {
