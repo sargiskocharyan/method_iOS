@@ -77,29 +77,24 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                 print("Permission don't allowed")
             }
         }
-        let alert = UIAlertController(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
+        self.showAlert(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), buttonTitle1: "camera".localized(), buttonTitle2: "album".localized(), buttonTitle3: "cancel".localized(), completion1: {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 self.imagePicker.delegate = self
                 self.imagePicker.sourceType = .camera;
                 self.imagePicker.allowsEditing = false
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
-        }))
-        alert.addAction(UIAlertAction(title: "album".localized(), style: .default, handler: { (_) in
+        }, completion2: {
             if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
                 self.imagePicker.sourceType = .savedPhotosAlbum
                 self.imagePicker.allowsEditing = false
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .default, handler: nil))
-        self.present(alert, animated: true)
+        }, completion3: nil)
     }
     
     @IBAction func deleteChannelAction(_ sender: Any) {
-        let alert = UIAlertController(title: nil, message: "are_you_sure_you_want_to_delete_channel".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (action) in
+        self.showAlert(title: nil, message: "are_you_sure_you_want_to_delete_channel".localized(), buttonTitle1: "ok", buttonTitle2:  "cancel".localized(), buttonTitle3: nil, completion1: {
             self.viewModel?.deleteChannel(id: self.channelInfo!.channel!._id, completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -142,11 +137,9 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
                         }
                     }
                 }
-                
+
             })
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     func updateImage(_ avatarURL: String?) {

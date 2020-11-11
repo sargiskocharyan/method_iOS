@@ -543,11 +543,9 @@ class MainTabBarController: UITabBarController {
         SocketTaskManager.shared.disconnect{}
         DispatchQueue.main.async {
             UserDataController().logOutUser()
-            let alert = UIAlertController(title: "error_message".localized(), message: "your_session_expires_please_log_in_again".localized(), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action: UIAlertAction!) in
+            self.showAlert(title: "error".localized(), message: "your_session_expires_please_log_in_again".localized(), buttonTitle1: "ok".localized(), buttonTitle2: nil, buttonTitle3: nil, completion1: {
                 AuthRouter().assemblyModule()
-            }))
-            self.present(alert, animated: true)
+            }, completion2: nil, completion3: nil)
         }
     }
     
@@ -636,9 +634,7 @@ extension MainTabBarController: WebRTCClientDelegate {
             }
         } else {
             DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Message from WebRTC", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                self.showAlert(title: "Message from WebRTC", message: message, buttonTitle1: "OK", buttonTitle2: nil, buttonTitle3: nil, completion1: nil, completion2: nil, completion3: nil)
             }
         }
         

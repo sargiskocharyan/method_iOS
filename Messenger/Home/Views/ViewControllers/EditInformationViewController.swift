@@ -387,8 +387,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     
     @IBAction func deactivateAccountAction(_ sender: Any) {
-        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_want_to_deactivate_your_account_you_can_activate_account_again".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "deactivate".localized(), style: .default, handler: { (_) in
+        self.showAlert(title: "attention".localized(), message: "are_you_sure_want_to_deactivate_your_account_you_can_activate_account_again".localized(), buttonTitle1: "deactivate".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.editInformatioViewModel.deactivateAccount { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -402,15 +401,12 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 }
                 SocketTaskManager.shared.disconnect{}
             }
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     
     @IBAction func deleteAccountAction(_ sender: Any) {
-        let alert = UIAlertController(title: "attention".localized(), message: "are_you_sure_want_to_delete_your_account_your_infrtion_will_be_lost".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (_) in
+        self.showAlert(title: "attention".localized(), message: "are_you_sure_want_to_delete_your_account_your_infrtion_will_be_lost".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.editInformatioViewModel.deleteAccount { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -424,9 +420,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 }
                 SocketTaskManager.shared.disconnect{}
             }
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
+        }, completion2: nil, completion3: nil)
     }
     
     @objc func handleTapViewUnderDatePicker(_ sender: UITapGestureRecognizer? = nil) {

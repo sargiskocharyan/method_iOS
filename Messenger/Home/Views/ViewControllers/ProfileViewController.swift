@@ -223,24 +223,20 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 print("Permission don't allowed")
             }
         }
-        let alert = UIAlertController(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "camera".localized(), style: .default, handler: { (_) in
+        self.showAlert(title: nil, message: "choose_one_of_this_app_to_upload_photo".localized(), buttonTitle1: "camera".localized(), buttonTitle2: "album".localized(), buttonTitle3: nil, completion1: {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 self.imagePicker.delegate = self
                 self.imagePicker.sourceType = .camera;
                 self.imagePicker.allowsEditing = false
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
-        }))
-        alert.addAction(UIAlertAction(title: "album".localized(), style: .default, handler: { (_) in
+        }, completion2: {
             if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
                 self.imagePicker.sourceType = .savedPhotosAlbum
                 self.imagePicker.allowsEditing = false
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .default, handler: nil))
-        self.present(alert, animated: true)
+        }, completion3: nil)
     }
     
      func addCloseButton(_ imageView: UIImageView) {

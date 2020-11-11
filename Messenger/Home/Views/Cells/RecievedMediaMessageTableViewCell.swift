@@ -1,30 +1,35 @@
 //
-//  RecieveMessageTableViewCell.swift
+//  RecieveImageMessageTableViewCell.swift
 //  Messenger
 //
-//  Created by Employee1 on 6/16/20.
-//  Copyright © 2020 Employee1. All rights reserved.
+//  Created by Employee1 on 10/29/20.
+//  Copyright © 2020 Dynamic LLC. All rights reserved.
 //
 
 import UIKit
 
-class RecieveMessageTableViewCell: UITableViewCell {
+class RecievedMediaMessageTableViewCell: UITableViewCell {
+
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
-    @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint?
-    
+    @IBOutlet weak var sendImageView: UIImageView!
+    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint!
+    @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
+    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
+        sendImageView?.contentMode = .scaleAspectFill
         userImageView.image = UIImage(named: "noPhoto")
         leadingConstraintOfCheckImage?.constant -= 15
         leadingConstraintOfImageView?.constant -= 15
         checkImage?.isHidden = true
-        
+        viewUnderImage.clipsToBounds = true
+        viewUnderImage.layer.cornerRadius = 10
     }
     
     override func prepareForReuse() {
@@ -64,11 +69,10 @@ class RecieveMessageTableViewCell: UITableViewCell {
             checkImage.isHidden = false
         }
     }
-    
+
     func changeShapeOfImageView() {
         userImageView.clipsToBounds = true
         userImageView.layer.cornerRadius = 15
-        messageLabel.clipsToBounds = true
-        messageLabel.layer.cornerRadius = 10
     }
+    
 }

@@ -70,8 +70,8 @@ class AuthorizationNetworkManager: NetworkManager {
         }
     }
     
-    func loginWithFacebook(accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
-        router.request(.loginWithFacebook(accessToken: accessToken)) { data, response, error in
+    func loginWithPhoneNumber(number: String, accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        router.request(.loginWithPhoneNumber(number: number, accessToken: accessToken)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)
@@ -97,9 +97,10 @@ class AuthorizationNetworkManager: NetworkManager {
             }
         }
     }
-    
-    func loginWithPhoneNumber(number: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
-        router.request(.loginWithPhoneNumber(number: number)) { data, response, error in
+            
+            
+    func loginWithFacebook(accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        router.request(.loginWithFacebook(accessToken: accessToken)) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
                 completion(nil, error)

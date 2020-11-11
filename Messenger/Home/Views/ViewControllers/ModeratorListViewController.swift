@@ -95,9 +95,7 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isChangeAdmin == true {
-            let alert = UIAlertController(title: nil, message: "are_you_sure_you_want_to_change_admin".localized(), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: { (action) in
+            self.showAlert(title: nil, message: "are_you_sure_you_want_to_change_admin".localized(), buttonTitle1: "ok".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
                 self.viewModel?.changeAdmin(id: self.id!, userId: (self.moderators[indexPath.row].user?._id)!, completion: { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
@@ -116,8 +114,7 @@ extension ModeratorListViewController: UITableViewDelegate, UITableViewDataSourc
                         }
                     }
                 })
-            }))
-            self.present(alert, animated: true)
+            }, completion2: nil, completion3: nil)
         } else {
             DispatchQueue.main.async {
                 self.mainRouter?.showUserProfileFromModeratorList(id: (self.moderators[indexPath.row].user?._id)!)

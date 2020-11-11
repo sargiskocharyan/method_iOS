@@ -110,6 +110,7 @@ struct Message: Codable {
     let owner: String?
     let senderId: String?
     let image: Image?
+    let video: String?
 }
 
 struct Image: Codable {

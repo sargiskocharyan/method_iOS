@@ -18,7 +18,7 @@ public enum AuthApi {
     case getUserContacts(token: String)
     case checkUsername(username: String)
     case loginWithFacebook(accessToken: String)
-    case loginWithPhoneNumber(number: String)
+    case loginWithPhoneNumber(number: String, accessToken: String)
 }
 
 extension AuthApi: EndPointType {
@@ -46,7 +46,7 @@ extension AuthApi: EndPointType {
             return AUTHUrls.CheckUsername
         case .loginWithFacebook(_):
             return AUTHUrls.LoginWithFacebook
-        case .loginWithPhoneNumber(_):
+        case .loginWithPhoneNumber(_,_):
             return AUTHUrls.LoginWithPhoneNumber
         }
     }
@@ -70,7 +70,7 @@ extension AuthApi: EndPointType {
             return .post
         case .loginWithFacebook(_):
             return .post
-        case .loginWithPhoneNumber(_):
+        case .loginWithPhoneNumber(_,_):
             return .post
         }
     }
@@ -115,8 +115,8 @@ extension AuthApi: EndPointType {
             let parameters:Parameters = ["accessToken": accessToken]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-        case .loginWithPhoneNumber(number: let number):
-            let parameters:Parameters = ["phoneNumber": number]
+        case .loginWithPhoneNumber(number: let number, accessToken: let accessToken):
+            let parameters:Parameters = ["phoneNumber": number, "accessToken": accessToken]
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: nil)
         }
     }

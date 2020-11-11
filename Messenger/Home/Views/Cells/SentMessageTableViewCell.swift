@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SendMessageTableViewCell: UITableViewCell {
+class SentMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var readMessage: UILabel!
     @IBOutlet weak var checkImageView: UIImageView?
     @IBOutlet weak var messageLabel: UILabel!

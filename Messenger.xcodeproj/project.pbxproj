@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
-		CD09EC412549369400907003 /* SendImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */; };
+		CD09EC412549369400907003 /* SentMediaMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD09EC402549369400907003 /* SentMediaMessageTableViewCell.swift */; };
 		CD352E362488F71900747E32 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		CD352E382488F72F00747E32 /* ContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E372488F72F00747E32 /* ContactsViewModel.swift */; };
 		CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */; };
@@ -34,8 +34,8 @@
 		CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD39FD04248A7A0B004C083A /* CustomCell.swift */; };
 		CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD39FD05248A7A0B004C083A /* CustomCell.xib */; };
 		CD3C323F24989A7000E975DF /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C323E24989A7000E975DF /* ChatViewController.swift */; };
-		CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */; };
-		CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
+		CD3C32412498A6EE00E975DF /* RecievedMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecievedMessageTableViewCell.swift */; };
+		CD3C32432498A70800E975DF /* SentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SentMessageTableViewCell.swift */; };
 		CD3C32452498B2E000E975DF /* ChatMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */; };
 		CD3C9AEE24CFFDCF009AD586 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C9AED24CFFDCF009AD586 /* Contacts.swift */; };
 		CD3E4C3E24E3D42C0041A70C /* ChangeEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */; };
@@ -78,7 +78,7 @@
 		CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */; };
 		CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */; };
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
-		CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */; };
+		CDB88607254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift */; };
 		CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB9214425528AB000E65FAC /* Auth.storyboard */; };
 		CDB9214B2552D43800E65FAC /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB9214A2552D43800E65FAC /* NotificationManager.swift */; };
 		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
@@ -121,8 +121,8 @@
 		CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */; };
 		CDEC30602499E76D0030FE94 /* SocketTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */; };
 		CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0776724A9F49800B1DAD7 /* ImageCache.swift */; };
-		CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
-		CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
+		CDF15F0E24DBF76F00A882D7 /* SentCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SentCallTableViewCell.swift */; };
+		CDF15F1024DBF78500A882D7 /* RecievedCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecievedCallTableViewCell.swift */; };
 		CDFA2512250A579B00241713 /* CallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */; };
 		D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
@@ -158,7 +158,7 @@
 		D0F664B9251B177D0018D9B7 /* UILabelPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3542632498E830003D274B /* UILabelPadding.swift */; };
 		D0F664BA251B177D0018D9B7 /* URLParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C664247BC4AE0048A9A1 /* URLParameterEncoding.swift */; };
 		D0F664BB251B177D0018D9B7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C645247BB69F0048A9A1 /* RegisterViewController.swift */; };
-		D0F664BC251B177D0018D9B7 /* SendCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */; };
+		D0F664BC251B177D0018D9B7 /* SentCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0D24DBF76F00A882D7 /* SentCallTableViewCell.swift */; };
 		D0F664BD251B177D0018D9B7 /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		D0F664BE251B177D0018D9B7 /* SessionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12F024BC55C200040D8E /* SessionDescription.swift */; };
 		D0F664BF251B177D0018D9B7 /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F12D224BC28A700040D8E /* ProviderDelegate.swift */; };
@@ -180,7 +180,7 @@
 		D0F664CF251B177D0018D9B7 /* Button-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD36733B24794A730002E606 /* Button-Extension.swift */; };
 		D0F664D0251B177D0018D9B7 /* Data-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD355E45247FAEF90049517F /* Data-Extension.swift */; };
 		D0F664D1251B177D0018D9B7 /* RecentMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E267249797EC003C53AB /* RecentMessagesViewController.swift */; };
-		D0F664D2251B177D0018D9B7 /* RecieveMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */; };
+		D0F664D2251B177D0018D9B7 /* RecievedMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32402498A6EE00E975DF /* RecievedMessageTableViewCell.swift */; };
 		D0F664D3251B177D0018D9B7 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C9AED24CFFDCF009AD586 /* Contacts.swift */; };
 		D0F664D4251B177D0018D9B7 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C669247BC4AE0048A9A1 /* HTTPMethod.swift */; };
 		D0F664D5251B177D0018D9B7 /* Int-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBF72F424E1263B00D7A727 /* Int-Extension.swift */; };
@@ -215,7 +215,7 @@
 		D0F664F2251B177D0018D9B7 /* Date-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBF72F224E125F700D7A727 /* Date-Extension.swift */; };
 		D0F664F3251B177D0018D9B7 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6A2FE24974C4B0014837F /* ProfileViewModel.swift */; };
 		D0F664F4251B177D0018D9B7 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD9C661247BC4AE0048A9A1 /* NetworkManager.swift */; };
-		D0F664F5251B177D0018D9B7 /* RecieveCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */; };
+		D0F664F5251B177D0018D9B7 /* RecievedCallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF15F0F24DBF78500A882D7 /* RecievedCallTableViewCell.swift */; };
 		D0F664F6251B177D0018D9B7 /* NotificationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */; };
 		D0F664F7251B177D0018D9B7 /* RecentMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E26D2497AC90003C53AB /* RecentMessagesViewModel.swift */; };
 		D0F664F8251B177D0018D9B7 /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9D5E1224D950AA007818E9 /* MainRouter.swift */; };
@@ -245,7 +245,7 @@
 		D0F66512251B177D0018D9B7 /* HomeNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA56E6C2488E5FC0027AA4E /* HomeNetworkManager.swift */; };
 		D0F66513251B177D0018D9B7 /* ContactProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F1F4524B495A8005D1EEA /* ContactProfileViewController.swift */; };
 		D0F66514251B177D0018D9B7 /* BeforeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD424918248A335100A38987 /* BeforeLoginViewController.swift */; };
-		D0F66515251B177D0018D9B7 /* SendMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */; };
+		D0F66515251B177D0018D9B7 /* SentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C32422498A70800E975DF /* SentMessageTableViewCell.swift */; };
 		D0F66518251B177D0018D9B7 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664B1251B177D0018D9B7 /* CryptoSwift */; };
 		D0F66519251B177D0018D9B7 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AD251B177D0018D9B7 /* SocketIO */; };
 		D0F6651A251B177D0018D9B7 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D0F664AF251B177D0018D9B7 /* Lottie */; };
@@ -335,7 +335,7 @@
 		547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CD09EC402549369400907003 /* SentMediaMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentMediaMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD2C163C24FD325A0054114C /* methodNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationService.entitlements; sourceTree = "<group>"; };
 		CD352E352488F71900747E32 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		CD352E372488F72F00747E32 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
@@ -366,8 +366,8 @@
 		CD39FD04248A7A0B004C083A /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		CD39FD05248A7A0B004C083A /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
 		CD3C323E24989A7000E975DF /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
-		CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveMessageTableViewCell.swift; sourceTree = "<group>"; };
-		CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CD3C32402498A6EE00E975DF /* RecievedMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecievedMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CD3C32422498A70800E975DF /* SentMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD3C32442498B2E000E975DF /* ChatMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesViewModel.swift; sourceTree = "<group>"; };
 		CD3C9AED24CFFDCF009AD586 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		CD3E4C3D24E3D42C0041A70C /* ChangeEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewController.swift; sourceTree = "<group>"; };
@@ -409,7 +409,7 @@
 		CDB7D9902512360500DBAD51 /* NotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetailViewController.swift; sourceTree = "<group>"; };
 		CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
-		CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveImageMessageTableViewCell.swift; sourceTree = "<group>"; };
+		CDB88606254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecievedMediaMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDB9214425528AB000E65FAC /* Auth.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		CDB9214A2552D43800E65FAC /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
@@ -452,8 +452,8 @@
 		CDD9C685247BCA120048A9A1 /* BeforeLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeLoginViewModel.swift; sourceTree = "<group>"; };
 		CDEC305F2499E76D0030FE94 /* SocketTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTaskManager.swift; sourceTree = "<group>"; };
 		CDF0776724A9F49800B1DAD7 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
-		CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCallTableViewCell.swift; sourceTree = "<group>"; };
-		CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieveCallTableViewCell.swift; sourceTree = "<group>"; };
+		CDF15F0D24DBF76F00A882D7 /* SentCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentCallTableViewCell.swift; sourceTree = "<group>"; };
+		CDF15F0F24DBF78500A882D7 /* RecievedCallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecievedCallTableViewCell.swift; sourceTree = "<group>"; };
 		CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D0065B73251CCB0700EE880A /* Calls.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Calls.storyboard; sourceTree = "<group>"; };
 		D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewController.swift; sourceTree = "<group>"; };
@@ -572,19 +572,19 @@
 			children = (
 				CD352E3A2488FA9A00747E32 /* ContactTableViewCell.swift */,
 				CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */,
-				CD3C32402498A6EE00E975DF /* RecieveMessageTableViewCell.swift */,
-				CD3C32422498A70800E975DF /* SendMessageTableViewCell.swift */,
+				CD3C32402498A6EE00E975DF /* RecievedMessageTableViewCell.swift */,
+				CD3C32422498A70800E975DF /* SentMessageTableViewCell.swift */,
 				CD3F12D024BC26A500040D8E /* CallTableViewCell.swift */,
-				CDF15F0D24DBF76F00A882D7 /* SendCallTableViewCell.swift */,
-				CDF15F0F24DBF78500A882D7 /* RecieveCallTableViewCell.swift */,
+				CDF15F0D24DBF76F00A882D7 /* SentCallTableViewCell.swift */,
+				CDF15F0F24DBF78500A882D7 /* RecievedCallTableViewCell.swift */,
 				CDFA2511250A579B00241713 /* CallDetailTableViewCell.swift */,
 				CDB7D98E2511DF4500DBAD51 /* NotificationListTableViewCell.swift */,
 				CDB7D9922512377700DBAD51 /* ContactRequestTableViewCell.swift */,
 				CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */,
 				D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */,
 				D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */,
-				CD09EC402549369400907003 /* SendImageMessageTableViewCell.swift */,
-				CDB88606254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift */,
+				CD09EC402549369400907003 /* SentMediaMessageTableViewCell.swift */,
+				CDB88606254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1318,7 +1318,7 @@
 				CD3542642498E830003D274B /* UILabelPadding.swift in Sources */,
 				CDD9C670247BC4AE0048A9A1 /* URLParameterEncoding.swift in Sources */,
 				CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */,
-				CDF15F0E24DBF76F00A882D7 /* SendCallTableViewCell.swift in Sources */,
+				CDF15F0E24DBF76F00A882D7 /* SentCallTableViewCell.swift in Sources */,
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
@@ -1383,7 +1383,7 @@
 				CDBF72F324E125F700D7A727 /* Date-Extension.swift in Sources */,
 				CDC6A2FF24974C4B0014837F /* ProfileViewModel.swift in Sources */,
 				CDD9C66E247BC4AE0048A9A1 /* NetworkManager.swift in Sources */,
-				CDF15F1024DBF78500A882D7 /* RecieveCallTableViewCell.swift in Sources */,
+				CDF15F1024DBF78500A882D7 /* RecievedCallTableViewCell.swift in Sources */,
 				CDB7D98F2511DF4500DBAD51 /* NotificationListTableViewCell.swift in Sources */,
 				CD35E26E2497AC90003C53AB /* RecentMessagesViewModel.swift in Sources */,
 				CD9D5E1324D950AA007818E9 /* MainRouter.swift in Sources */,
@@ -1391,7 +1391,7 @@
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
 				D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
-				CDB88607254A9DC10029A325 /* RecieveImageMessageTableViewCell.swift in Sources */,
+				CDB88607254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
 				CD3713BB248674BA0088A0CC /* ProfileViewController.swift in Sources */,
 				CD5E7145248661B2008D876E /* CallListViewController.swift in Sources */,
@@ -1418,12 +1418,12 @@
 				CDBE8DF12476744C0049F971 /* AppDelegate.swift in Sources */,
 				CD5E71432486602B008D876E /* SharedConfigs.swift in Sources */,
 				CDD9C677247BC4AE0048A9A1 /* EndPointType.swift in Sources */,
-				CD09EC412549369400907003 /* SendImageMessageTableViewCell.swift in Sources */,
+				CD09EC412549369400907003 /* SentMediaMessageTableViewCell.swift in Sources */,
 				CDA56E6D2488E5FC0027AA4E /* HomeNetworkManager.swift in Sources */,
 				CD7F1F4624B495A8005D1EEA /* ContactProfileViewController.swift in Sources */,
 				CD424919248A335100A38987 /* BeforeLoginViewController.swift in Sources */,
 				CD8B397A252740D400C54D74 /* SubscribersListViewController.swift in Sources */,
-				CD3C32432498A70800E975DF /* SendMessageTableViewCell.swift in Sources */,
+				CD3C32432498A70800E975DF /* SentMessageTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1438,7 +1438,7 @@
 				D0F664B9251B177D0018D9B7 /* UILabelPadding.swift in Sources */,
 				D0F664BA251B177D0018D9B7 /* URLParameterEncoding.swift in Sources */,
 				D0F664BB251B177D0018D9B7 /* RegisterViewController.swift in Sources */,
-				D0F664BC251B177D0018D9B7 /* SendCallTableViewCell.swift in Sources */,
+				D0F664BC251B177D0018D9B7 /* SentCallTableViewCell.swift in Sources */,
 				D0F664BD251B177D0018D9B7 /* UserDataController.swift in Sources */,
 				D0F664BE251B177D0018D9B7 /* SessionDescription.swift in Sources */,
 				D0F664BF251B177D0018D9B7 /* ProviderDelegate.swift in Sources */,
@@ -1463,7 +1463,7 @@
 				D0F664D0251B177D0018D9B7 /* Data-Extension.swift in Sources */,
 				D0F664D1251B177D0018D9B7 /* RecentMessagesViewController.swift in Sources */,
 				D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */,
-				D0F664D2251B177D0018D9B7 /* RecieveMessageTableViewCell.swift in Sources */,
+				D0F664D2251B177D0018D9B7 /* RecievedMessageTableViewCell.swift in Sources */,
 				D0F664D3251B177D0018D9B7 /* Contacts.swift in Sources */,
 				D0F664D4251B177D0018D9B7 /* HTTPMethod.swift in Sources */,
 				D0F664D5251B177D0018D9B7 /* Int-Extension.swift in Sources */,
@@ -1500,7 +1500,7 @@
 				D0F664F2251B177D0018D9B7 /* Date-Extension.swift in Sources */,
 				D0F664F3251B177D0018D9B7 /* ProfileViewModel.swift in Sources */,
 				D0F664F4251B177D0018D9B7 /* NetworkManager.swift in Sources */,
-				D0F664F5251B177D0018D9B7 /* RecieveCallTableViewCell.swift in Sources */,
+				D0F664F5251B177D0018D9B7 /* RecievedCallTableViewCell.swift in Sources */,
 				D0B68D32252C3EDD0019818D /* UpdateChannelInfoViewModel.swift in Sources */,
 				D0F664F6251B177D0018D9B7 /* NotificationListTableViewCell.swift in Sources */,
 				D0F664F7251B177D0018D9B7 /* RecentMessagesViewModel.swift in Sources */,
@@ -1537,7 +1537,7 @@
 				D0F66512251B177D0018D9B7 /* HomeNetworkManager.swift in Sources */,
 				D0F66513251B177D0018D9B7 /* ContactProfileViewController.swift in Sources */,
 				D0F66514251B177D0018D9B7 /* BeforeLoginViewController.swift in Sources */,
-				D0F66515251B177D0018D9B7 /* SendMessageTableViewCell.swift in Sources */,
+				D0F66515251B177D0018D9B7 /* SentMessageTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

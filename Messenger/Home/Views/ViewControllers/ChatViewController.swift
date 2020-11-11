@@ -71,6 +71,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     var test = false
     var sendImage: UIImage?
     var sendAsset: AVURLAsset?
+    var player = AVPlayer()
     
     //MARK: Lifecycles
     override func viewDidLoad() {
@@ -78,6 +79,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         tableView.delegate = self
         tableView.dataSource = self
         mode = .main
+        player.preventsDisplaySleepDuringVideoPlayback = true
         getChatMessages(dateUntil: nil)
         tabbar = tabBarController as? MainTabBarController
         addConstraints()
@@ -102,6 +104,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print(id)
+        HomeNetworkManager().getVideo(url: "https://192.168.0.105:3000/message/video/userf@13368073233206895fa3dd9ee969141597bb52d1.mp4")
         view.endEditing(true)
         if !(tabBarController?.tabBar.isHidden)! {
             tabBarController?.tabBar.isHidden = true
@@ -157,7 +161,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 let text = inputTextField.text
                 inputTextField.text = ""
                 SocketTaskManager.shared.send(message: text!, id: id!)
-                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil))
+                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: nil, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil, video: nil))
                 self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
                 let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -166,7 +170,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         } else {
             mode = .main
             if inputTextField.text != "" {
-                if let cell = tableView.cellForRow(at: indexPath!) as? SendMessageTableViewCell {
+                if let cell = tableView.cellForRow(at: indexPath!) as? SentMessageTableViewCell {
                     self.viewModel?.editChatMessage(messageId: cell.id!, text: inputTextField.text!, completion: { (error) in
                         if error != nil {
                             DispatchQueue.main.async {
@@ -236,7 +240,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 }
             }
             if id != SharedConfigs.shared.signedUser?.id {
-                if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecieveMessageTableViewCell {
+                if let cell = tableView.cellForRow(at: IndexPath(row: count, section: 0)) as? RecievedMessageTableViewCell {
                     DispatchQueue.main.async {
                         cell.messageLabel.text = message.text
                     }
@@ -272,7 +276,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell
                             if cell?.readMessage.text != "seen".localized() {
                                 cell?.readMessage.text = "seen".localized()
                             }
@@ -296,7 +300,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell
                             if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
                                 cell?.readMessage.text = "delivered".localized()
                             }
@@ -332,7 +336,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                             self.allMessages?.statuses![0].readMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell
                             if cell?.readMessage.text != "seen".localized() {
                                 cell?.readMessage.text = "seen".localized()
                             }
@@ -356,7 +360,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                             self.allMessages?.statuses![0].receivedMessageDate = createdAt
                         }
                         if self.allMessages!.array![i].senderId == SharedConfigs.shared.signedUser?.id {
-                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell
+                            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell
                             if cell != nil && cell?.readMessage.text != "seen".localized() && cell?.readMessage.text != "delivered".localized() {
                                 cell?.readMessage.text = "delivered".localized()
                             }
@@ -410,11 +414,11 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 if message.type == "text" {
                     for i in 0..<allMessages!.array!.count {
                         if message.text  == allMessages!.array![i].text {
-                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SendMessageTableViewCell)?.readMessage.text = "sent"
+                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.readMessage.text = "sent"
                             self.allMessages!.array![i] = message
                         }
                     }
-                } else if message.type == "image" {
+                } else if message.type == "image" || message.type == "video" {
                     self.allMessages?.array!.append(message)
                 }
             }
@@ -751,9 +755,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     }
     
     func tappedSendMessageCell(_ indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? SendMessageTableViewCell
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+        let cell = tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
+        self.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "edit".localized(), buttonTitle3: "cancel".localized(), completion1: {
             self.viewModel?.deleteChatMessages(arrayMessageIds: [cell?.id ?? ""], completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -761,17 +764,14 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     }
                 }
             })
-        }))
-        alert.addAction(UIAlertAction(title: "edit".localized(), style: .default, handler: { (action) in
+        }, completion2: {
             self.mode = .edit
             self.indexPath = indexPath
             self.inputTextField.text = cell?.messageLabel.text
-        }))
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        }, completion3: nil)
     }
     
-    func configureSendMessageTableViewCell(_ cell: SendMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+    func configureSendMessageTableViewCell(_ cell: SentMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.messageLabel.text = allMessages?.array![indexPath.row].text
         cell.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
         cell.id = allMessages!.array![indexPath.row]._id
@@ -803,7 +803,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func configureSendCallTableViewCell(_ cell: SendCallTableViewCell, _ indexPath: IndexPath) {
+    func configureSendCallTableViewCell(_ cell: SentCallTableViewCell, _ indexPath: IndexPath) {
         let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
         cell.callMessageView.addGestureRecognizer(tapSendCallTableViewCell)
         cell.id = allMessages!.array![indexPath.row]._id
@@ -819,7 +819,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func configureSendImageMessageTableViewCell(_ cell: SendImageMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+    func configureSendImageMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = allMessages!.array![indexPath.row]._id
         ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
@@ -837,7 +837,26 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func configureRecieveCallTableViewCell(_ cell: RecieveCallTableViewCell, _ indexPath: IndexPath) {
+    func configureSendVideoMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
+        cell.id = allMessages!.array![indexPath.row]._id
+//        ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+//            DispatchQueue.main.async {
+//                cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+//                cell.addGestureRecognizer(tap)
+//                cell.imageWidthConstraint.constant = image.size.width
+//                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+//                let ratio = image.size.width / image.size.height
+//                if containerView.frame.width > containerView.frame.height {
+//                    let newHeight = containerView.frame.width / ratio
+//                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+//                }
+//                cell.snedImageView.image = image
+//            }
+//        }
+        
+    }
+    
+    func configureRecieveCallTableViewCell(_ cell: RecievedCallTableViewCell, _ indexPath: IndexPath) {
         let tapSendCallTableViewCell = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
         cell.cellMessageView.addGestureRecognizer(tapSendCallTableViewCell)
         cell.userImageView.image = image
@@ -856,7 +875,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecieveImageMessageTableViewCell, _ tap: UILongPressGestureRecognizer) {
+    func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecievedMediaMessageTableViewCell, _ tap: UILongPressGestureRecognizer) {
         ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
                 cell.addGestureRecognizer(tap)
@@ -873,7 +892,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func configureRecieveMessageTableViewCell(_ cell: RecieveMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
+    func configureRecieveMessageTableViewCell(_ cell: RecievedMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
         DispatchQueue.main.async {
             cell.addGestureRecognizer(tap)
         }
@@ -885,9 +904,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     }
     
     func tappedSendImageMessageCell(_ indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? SendImageMessageTableViewCell
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+        let cell = tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
+        self.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.viewModel?.deleteChatMessages(arrayMessageIds: [cell?.id ?? ""], completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -895,16 +913,12 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     }
                 }
             })
-        }))
-        
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        }, completion2: nil, completion3: nil)
     }
     
     func tappedSendCallCell(_ indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? SendCallTableViewCell
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "delete".localized(), style: .default, handler: { (action) in
+        let cell = tableView.cellForRow(at: indexPath) as? SentCallTableViewCell
+        self.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             self.viewModel?.deleteChatMessages(arrayMessageIds: [cell?.id ?? ""], completion: { (error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -912,10 +926,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     }
                 }
             })
-        }))
-        
-        alert.addAction(UIAlertAction(title: "cancel".localized(), style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        }, completion2: nil, completion3: nil)
     }
     
     @objc func handleTap1(gestureReconizer: UILongPressGestureRecognizer) {
@@ -973,29 +984,33 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap1(gestureReconizer:)))
         if allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if allMessages?.array![indexPath.row].type == "text" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SendMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.sendMessageCellIdentifier, for: indexPath) as! SentMessageTableViewCell
                 configureSendMessageTableViewCell(cell, indexPath, tap)
                 return cell
             } else if allMessages?.array![indexPath.row].type == "call" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SendCallTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SentCallTableViewCell
                 configureSendCallTableViewCell(cell, indexPath)
                 return cell
             } else if allMessages?.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SendImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
+                configureSendImageMessageTableViewCell(cell, indexPath, tap)
+                return cell
+            } else if allMessages?.array![indexPath.row].type == "video" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 configureSendImageMessageTableViewCell(cell, indexPath, tap)
                 return cell
             }
         } else {
             if allMessages?.array![indexPath.row].type == "text" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecieveMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.receiveMessageCellIdentifier, for: indexPath) as! RecievedMessageTableViewCell
                 configureRecieveMessageTableViewCell(cell, tap, indexPath)
                 return cell
             }  else if allMessages?.array![indexPath.row].type == "call" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecieveCallTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecievedCallTableViewCell
                 configureRecieveCallTableViewCell(cell, indexPath)
                 return cell
             } else if allMessages?.array![indexPath.row].type == "image" {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecieveImageMessageTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 configureRecieveImageMessageTableViewCell(indexPath, cell, tap)
                 return cell
             }
