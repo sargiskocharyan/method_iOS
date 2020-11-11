@@ -538,15 +538,12 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
         let avAsset = AVURLAsset(url: videoURL, options: nil)
         let startDate = Date()
-        //Create Export session
         guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
             completionHandler?(nil, nil)
             return
         }
-        //Creating temp path to save the converted video
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
         let filePath = documentsDirectory.appendingPathComponent("rendered-Video.mp4")
-        //Check if the file already exists then remove the previous file
         if FileManager.default.fileExists(atPath: filePath.path) {
             do {
                 try FileManager.default.removeItem(at: filePath)
@@ -569,15 +566,12 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 print("Export canceled")
                 completionHandler?(nil, nil)
             case .completed:
-                //Video conversion finished
                 let endDate = Date()
-                
                 let time = endDate.timeIntervalSince(startDate)
                 print(time)
                 print("Successful!")
                 print(exportSession.outputURL ?? "NO OUTPUT URL")
                 completionHandler?(exportSession.outputURL, nil)
-                
             default: break
             }
         })
@@ -1035,13 +1029,11 @@ fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [U
     return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
     guard let input = input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
     return input.rawValue
 }

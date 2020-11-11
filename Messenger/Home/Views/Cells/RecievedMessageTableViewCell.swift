@@ -11,8 +11,6 @@ import UIKit
 class RecievedMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
-    
-    //@IBOutlet weak var leadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint?
     @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint?

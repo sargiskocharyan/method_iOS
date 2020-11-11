@@ -80,6 +80,7 @@
 		CDB7D995251237A400DBAD51 /* AdminMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */; };
 		CDB88607254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB88606254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift */; };
 		CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB9214425528AB000E65FAC /* Auth.storyboard */; };
+		CDB9214B2552D43800E65FAC /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB9214A2552D43800E65FAC /* NotificationManager.swift */; };
 		CDB98D632514CC6D00451837 /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */; };
 		CDBBD6C624D83EE4000D88D3 /* CallDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */; };
 		CDBCCA62247BE98900115C99 /* String-Extansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDBCCA61247BE98900115C99 /* String-Extansion.swift */; };
@@ -410,6 +411,7 @@
 		CDB7D994251237A400DBAD51 /* AdminMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDB88606254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecievedMediaMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CDB9214425528AB000E65FAC /* Auth.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
+		CDB9214A2552D43800E65FAC /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		CDB98D622514CC6D00451837 /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
 		CDBBD6C524D83EE4000D88D3 /* CallDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDetailViewController.swift; sourceTree = "<group>"; };
 		CDBCCA61247BE98900115C99 /* String-Extansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-Extansion.swift"; sourceTree = "<group>"; };
@@ -779,6 +781,7 @@
 				CDBE8DFE2476744D0049F971 /* Info.plist */,
 				D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */,
 				CDBE8DF02476744C0049F971 /* AppDelegate.swift */,
+				CDB9214A2552D43800E65FAC /* NotificationManager.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -1339,7 +1342,8 @@
 				CD36733C24794A730002E606 /* Button-Extension.swift in Sources */,
 				CD355E46247FAEF90049517F /* Data-Extension.swift in Sources */,
 				CD35E268249797EC003C53AB /* RecentMessagesViewController.swift in Sources */,
-				CD3C32412498A6EE00E975DF /* RecievedMessageTableViewCell.swift in Sources */,
+				CD3C32412498A6EE00E975DF /* RecieveMessageTableViewCell.swift in Sources */,
+				CDB9214B2552D43800E65FAC /* NotificationManager.swift in Sources */,
 				CD3C9AEE24CFFDCF009AD586 /* Contacts.swift in Sources */,
 				CDD9C674247BC4AE0048A9A1 /* HTTPMethod.swift in Sources */,
 				CDBF72F524E1263B00D7A727 /* Int-Extension.swift in Sources */,

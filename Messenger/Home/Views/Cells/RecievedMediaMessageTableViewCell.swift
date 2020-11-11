@@ -19,12 +19,6 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView!
-
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        // Configure the view for the selected state
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
