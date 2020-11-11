@@ -321,7 +321,7 @@ class SocketTaskManager {
     }
     
     func sendChanMessage(message: String, channelId: String) {
-         socket!.emit("sendChnMessage", message, channelId)
+        socket!.emit("sendChnMessage", message, channelId)
     }
     
     func send(message: String, id: String) {
@@ -373,32 +373,30 @@ class SocketTaskManager {
                 completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
                 return
             }
-            if let text = data["text"] as? String {
-                let imageDic = data["image"] as? Dictionary<String, Any>
-                let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
-                let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image, video: data["video"] as? String)
-                completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
-                let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
-                for i in 0..<vc.chats.count {
-                    if vc.chats[i].id == data["senderId"] as? String {
-                        if !vc.chats[i].unreadMessageExists {
-                            SharedConfigs.shared.unreadMessages.append(vc.chats[i])
-                            self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
-                            DispatchQueue.main.async {
-                                let nc = self.tabbar!.viewControllers![3] as! UINavigationController
-                                let profile = nc.viewControllers[0] as! ProfileViewController
-                                profile.changeNotificationNumber()
-                            }
-                            if let tabItems = self.tabbar?.tabBar.items  {
-                                let tabItem = tabItems[1]
-                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
-                            }
-                            break
+            let imageDic = data["image"] as? Dictionary<String, Any>
+            let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
+            let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image, video: data["video"] as? String)
+            completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+            let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
+            for i in 0..<vc.chats.count {
+                if vc.chats[i].id == data["senderId"] as? String {
+                    if !vc.chats[i].unreadMessageExists {
+                        SharedConfigs.shared.unreadMessages.append(vc.chats[i])
+                        self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+                        DispatchQueue.main.async {
+                            let nc = self.tabbar!.viewControllers![3] as! UINavigationController
+                            let profile = nc.viewControllers[0] as! ProfileViewController
+                            profile.changeNotificationNumber()
                         }
+                        if let tabItems = self.tabbar?.tabBar.items  {
+                            let tabItem = tabItems[1]
+                            tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0 ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
+                        }
+                        break
                     }
                 }
-                return
             }
+            return
         }
     }
     

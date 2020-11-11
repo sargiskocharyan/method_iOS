@@ -776,29 +776,29 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         //            }
         //        }
         
-        VideoCache.shared.getVideo(videoUrl: allMessages?.array?[indexPath.row].video ?? "") { (videoURL) in
-            if let videoURL = videoURL {
-                DispatchQueue.main.async {
-                    let asset = AVURLAsset(url: videoURL as URL , options: nil)
-                    let imgGenerator = AVAssetImageGenerator(asset: asset)
-                    imgGenerator.appliesPreferredTrackTransform = true
-                    do {
-                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
-                        let thumbnail = UIImage(cgImage: cgImage)
-                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-                        cell.addGestureRecognizer(tap)
-                        cell.imageWidthConstraint.constant = thumbnail.size.width
-                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                        let ratio = thumbnail.size.width / thumbnail.size.height
-                        if containerView.frame.width > containerView.frame.height {
-                            let newHeight = containerView.frame.width / ratio
-                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                        }
-                        cell.snedImageView.image = thumbnail
-                    }
-                    catch {
-                        cell.snedImageView.image = UIImage(named: "noPhoto")
-                    }
+//        VideoCache.shared.getVideo(videoUrl: allMessages?.array?[indexPath.row].video ?? "") { (videoURL) in
+//            if let videoURL = videoURL {
+//                DispatchQueue.main.async {
+//                    let asset = AVURLAsset(url: videoURL as URL , options: nil)
+//                    let imgGenerator = AVAssetImageGenerator(asset: asset)
+//                    imgGenerator.appliesPreferredTrackTransform = true
+//                    do {
+//                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+//                        let thumbnail = UIImage(cgImage: cgImage)
+//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+//                        cell.addGestureRecognizer(tap)
+//                        cell.imageWidthConstraint.constant = thumbnail.size.width
+//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+//                        let ratio = thumbnail.size.width / thumbnail.size.height
+//                        if containerView.frame.width > containerView.frame.height {
+//                            let newHeight = containerView.frame.width / ratio
+//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+//                        }
+//                        cell.snedImageView.image = thumbnail
+//                    }
+//                    catch {
+//                        cell.snedImageView.image = UIImage(named: "noPhoto")
+//                    }
 //                    try! AVAudioSession.sharedInstance().setCategory(.playback)
 //                    let player = AVPlayer(url: videoURL)
 //                    let playerViewController = AVPlayerViewController()
@@ -806,13 +806,25 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
 //                    self.present(playerViewController, animated: true) {
 //                        playerViewController.player!.play()
 //                    }
-                }
-            } else {
+//                }
+//            } else {
                 //chgitem inch
+//            }
+//        }
+        ImageCache.shared.getThumbnail(videoUrl: allMessages?.array?[indexPath.row].video ?? "", messageId: allMessages?.array?[indexPath.row]._id ?? "") { (image) in
+            DispatchQueue.main.async {
+                cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+                cell.addGestureRecognizer(tap)
+                cell.imageWidthConstraint.constant = image.size.width
+                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+                let ratio = image.size.width / image.size.height
+                if containerView.frame.width > containerView.frame.height {
+                    let newHeight = containerView.frame.width / ratio
+                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+                }
+                cell.snedImageView.image = image
             }
         }
-        
-        
     }
     
     func configureRecieveCallTableViewCell(_ cell: RecievedCallTableViewCell, _ indexPath: IndexPath) {

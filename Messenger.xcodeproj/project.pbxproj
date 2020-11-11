@@ -93,8 +93,6 @@
 		CDCA69B6247D3FBF00F85145 /* ConfirmCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */; };
 		CDCA69B9247D42E600F85145 /* KeychainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */; };
 		CDCA9A1A252F32320040253A /* Channel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDCA9A19252F32320040253A /* Channel.storyboard */; };
-		CDCB74C02522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */; };
-		CDCB74C12522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */; };
 		CDCB74C72523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */; };
 		CDCB74C82523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */; };
 		CDCF7F8324A1DD7D00C97EAC /* View-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */; };
@@ -151,6 +149,8 @@
 		D0EDEFF5252495B000016AF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0EDEFF3252495B000016AF7 /* Main.storyboard */; };
 		D0EDEFF72524AE7200016AF7 /* ChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */; };
 		D0EDEFF82524AE7200016AF7 /* ChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */; };
+		D0F0AA86255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */; };
+		D0F0AA87255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */; };
 		D0F664B5251B177D0018D9B7 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		D0F664B6251B177D0018D9B7 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		D0F664B7251B177D0018D9B7 /* RecentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */; };
@@ -426,7 +426,6 @@
 		CDCA69B5247D3FBF00F85145 /* ConfirmCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCodeViewModel.swift; sourceTree = "<group>"; };
 		CDCA69B8247D42E600F85145 /* KeychainWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainWrapper.swift; sourceTree = "<group>"; };
 		CDCA9A19252F32320040253A /* Channel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Channel.storyboard; sourceTree = "<group>"; };
-		CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
 		CDCB74C62523030800E805E2 /* ChannelMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewModel.swift; sourceTree = "<group>"; };
 		CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-Extension.swift"; sourceTree = "<group>"; };
 		CDCF9D7A24B601E20070B762 /* EditInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInformationViewModel.swift; sourceTree = "<group>"; };
@@ -468,6 +467,7 @@
 		D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewController.swift; sourceTree = "<group>"; };
 		D0EDEFF3252495B000016AF7 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewModel.swift; sourceTree = "<group>"; };
+		D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
@@ -834,7 +834,7 @@
 		CDCB74BE2522FEC400E805E2 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				CDCB74BF2522FF1800E805E2 /* ChannelMessagesViewController.swift */,
+				D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */,
 				CD8B39772526F90C00C54D74 /* ModeratorInfoViewController.swift */,
 				CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */,
 			);
@@ -1328,7 +1328,6 @@
 				CD355E44247FADBA0049517F /* RegisterViewModel.swift in Sources */,
 				CD3E4C4224E415F50041A70C /* AppDelegateViewModel.swift in Sources */,
 				CDD9C67F247BC88C0048A9A1 /* ResponseModels.swift in Sources */,
-				CDCB74C02522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */,
 				CD36733424793BE90002E606 /* ConfirmCodeViewController.swift in Sources */,
 				CD3F12D524BC28C900040D8E /* Call.swift in Sources */,
 				CD3673362479495F0002E606 /* CongratulationsViewController.swift in Sources */,
@@ -1355,6 +1354,7 @@
 				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
+				D0F0AA86255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
 				D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
@@ -1448,9 +1448,9 @@
 				D0F664C2251B177D0018D9B7 /* RegisterViewModel.swift in Sources */,
 				D0F664C3251B177D0018D9B7 /* AppDelegateViewModel.swift in Sources */,
 				D0F664C4251B177D0018D9B7 /* ResponseModels.swift in Sources */,
-				CDCB74C12522FF1800E805E2 /* ChannelMessagesViewController.swift in Sources */,
 				D0F664C5251B177D0018D9B7 /* ConfirmCodeViewController.swift in Sources */,
 				D0F664C6251B177D0018D9B7 /* Call.swift in Sources */,
+				D0F0AA87255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */,
 				D0F664C7251B177D0018D9B7 /* CongratulationsViewController.swift in Sources */,
 				D0F664C8251B177D0018D9B7 /* AuthRouter.swift in Sources */,
 				D0F664C9251B177D0018D9B7 /* EndPointOptions.swift in Sources */,

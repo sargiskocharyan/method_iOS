@@ -22,7 +22,7 @@ class VideoCache {
                 completion(fileURL)
                 return
             } else {
-                downloadVideo(from: videoUrl) { (error, data) in
+                HomeNetworkManager().downloadVideo(from: videoUrl, isNeedAllBytes: true) { (error, data) in
                     if error != nil {
                         completion(nil)
                         return
@@ -39,32 +39,6 @@ class VideoCache {
                 }
             }
         }
-    }
-    
-    func downloadVideo(from url: String, completion: @escaping (NetworkResponse?, Data?) -> ()) {
-        var request = URLRequest(url: URL(string: url)!)
-        request.httpMethod = "GET"
-        request.timeoutInterval = 10
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed, nil)
-                return }
-            if error != nil {
-                print(error!.localizedDescription)
-                completion(NetworkResponse.failed, nil)
-            } else {
-                guard let responseData = data else {
-                    completion(NetworkResponse.noData, nil)
-                    return
-                }
-                completion(nil, responseData)
-                return
-            }
-        }.resume()
-        
     }
 }
 
