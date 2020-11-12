@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import AVFoundation
+
 class Avatar {
     var url: String
     var image: UIImage
@@ -78,5 +80,50 @@ class ImageCache {
                     return }
             completion(image)
         }.resume()
+    }
+    
+    func getThumbnail(videoUrl: String, messageId: String, completion: @escaping (UIImage) -> ()) {
+        if let thumbnail = cache.object(forKey: messageId as AnyObject) {
+            completion(thumbnail.image)
+            return
+        } else {
+            guard URL(string: videoUrl) != nil else {
+                completion(UIImage(named: "channelPlaceholder")!)
+                return }
+            let filename = videoUrl.components(separatedBy: "/").last
+            HomeNetworkManager().downloadVideo(from: videoUrl, isNeedAllBytes: true) { (error, data) in
+                if error != nil {
+                    completion(UIImage(named: "channelPlaceholder")!)
+                    return
+                }
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
+                let filePath = documentsDirectory.appendingPathComponent(filename ?? "")
+                if FileManager.default.fileExists(atPath: filePath.path) {
+                    try! FileManager.default.removeItem(at: filePath)
+                }
+                if let data = data {
+                    do {
+                        try data.write(to: filePath)
+                        let asset = AVURLAsset(url: filePath, options: nil)
+                        let imgGenerator = AVAssetImageGenerator(asset: asset)
+                        imgGenerator.appliesPreferredTrackTransform = true
+                        do {
+                            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                            let thumbnail = UIImage(cgImage: cgImage)
+                            self.setImage(image: thumbnail, url: videoUrl, id: messageId)
+                            completion(thumbnail)
+                            return
+                        }
+                        catch {
+                            completion(UIImage(named: "channelPlaceholder")!)
+                            return
+                        }
+                    } catch {
+                        print(error.localizedDescription)
+                        completion(UIImage(named: "channelPlaceholder")!)
+                    }
+                }
+            }
+        }
     }
 }

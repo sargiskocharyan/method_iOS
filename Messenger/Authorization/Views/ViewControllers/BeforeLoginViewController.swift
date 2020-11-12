@@ -31,8 +31,8 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         }
         viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
             if error != nil {
-                self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
                 DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
                 }
             } else if response != nil {

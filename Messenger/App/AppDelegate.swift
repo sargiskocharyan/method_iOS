@@ -20,9 +20,14 @@ protocol AppDelegateProtocol : class {
     func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
 
+enum NotificationType : String {
+    case message = "message"
+    case contactRequest = "contactRequest"
+    case missedCall = "missedCallHistory"
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
-//    weak var delegate: AppDelegateProtocol?
     var providerDelegate: ProviderDelegate!
     let callManager = CallManager()
     var tabbar: MainTabBarController?
@@ -67,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     }()
     
     func getNotificationBody(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
-        notificationManager.getNotBody(launchOptions)
+        notificationManager.sendMessageReceived(launchOptions)
     }
     
     func application( _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool { ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation] )
@@ -194,7 +199,111 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             SocketTaskManager.shared.connect {}
         }
     }
+    
 
+    func getMessage(_ userInfo: [AnyHashable : Any], _ tabbar: MainTabBarController?, _ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "krakadil") {
+            self.endBackgroundTask(task: &self.backgroundTask)
+        }
+        SocketTaskManager.shared.connect {
+            if let chatId = userInfo["chatId"] as? String, let messageId = userInfo["messageId"] as? String {
+                let vc = (tabbar?.viewControllers?[1] as? UINavigationController)?.viewControllers[0] as? RecentMessagesViewController
+                for i in 0..<(vc?.chats.count ?? 0) {
+                    if vc?.chats[i].id == chatId {
+                        if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
+                            SharedConfigs.shared.unreadMessages.append(vc!.chats[i])
+                            vc?.chats[i].unreadMessageExists = true
+                            DispatchQueue.main.async {
+                                let nc = tabbar?.viewControllers?[2] as? UINavigationController
+                                let profile = nc?.viewControllers[0] as? ProfileViewController
+                                profile?.changeNotificationNumber()
+                                UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
+                            }
+                            if let tabItems = tabbar?.tabBar.items {
+                                let tabItem = tabItems[1]
+                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0  ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
+                            }
+                            break
+                        }
+                    }
+                }
+                
+                SocketTaskManager.shared.messageReceived(chatId: chatId, messageId: messageId) {
+                    SocketTaskManager.shared.disconnect {
+                        self.endBackgroundTask(task: &self.backgroundTask)
+                        completionHandler(.newData)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getMessage(_ userInfo: [AnyHashable : Any], _ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "backgroundTask") {
+            self.endBackgroundTask(task: &self.backgroundTask)
+        }
+        SocketTaskManager.shared.connect { [self] in
+            if let chatId = userInfo["chatId"] as? String, let messageId = userInfo["messageId"] as? String {
+                let vc = (tabbar?.viewControllers?[1] as? UINavigationController)?.viewControllers[0] as? RecentMessagesViewController
+                for i in 0..<(vc?.chats.count ?? 0) {
+                    if vc?.chats[i].id == chatId {
+                        if (vc?.chats[i].unreadMessageExists != nil) && !(vc?.chats[i].unreadMessageExists)! {
+                            SharedConfigs.shared.unreadMessages.append(vc!.chats[i])
+                            vc?.chats[i].unreadMessageExists = true
+                            DispatchQueue.main.async {
+                                let nc = tabbar?.viewControllers?[2] as? UINavigationController
+                                let profile = nc?.viewControllers[0] as? ProfileViewController
+                                profile?.changeNotificationNumber()
+                                UIApplication.shared.applicationIconBadgeNumber = SharedConfigs.shared.getNumberOfNotifications()
+                            }
+                            if let tabItems = tabbar?.tabBar.items {
+                                let tabItem = tabItems[1]
+                                tabItem.badgeValue = SharedConfigs.shared.unreadMessages.count > 0  ? "\(SharedConfigs.shared.unreadMessages.count)" : nil
+                            }
+                            break
+                        }
+                    }
+                }
+                SocketTaskManager.shared.messageReceived(chatId: chatId, messageId: messageId) {
+                    SocketTaskManager.shared.disconnect {
+                        self.endBackgroundTask(task: &self.backgroundTask)
+                        completionHandler(.newData)
+                    }
+                }
+            }
+        }
+    }
+    
+    func receivedCall(_ aps: [String : AnyObject], _ application: UIApplication, _ completionHandler: (UIBackgroundFetchResult) -> Void) {
+        if let badge = aps["badge"] as? Int {
+            let nc = tabbar?.viewControllers?[2] as? UINavigationController
+            let profile = nc?.viewControllers[0] as? ProfileViewController
+            tabbar?.mainRouter?.notificationListViewController?.reloadData()
+            profile?.changeNotificationNumber()
+            if tabbar?.selectedIndex == 0 {
+                let nc = tabbar!.viewControllers![0] as! UINavigationController
+                if nc.viewControllers.count > 1 {
+                    if let tabItems = tabbar?.tabBar.items {
+                        let tabItem = tabItems[0]
+                        tabItem.badgeValue = badge > 0 ? "\(badge)" : nil
+                        print(badge as Any)
+                    }
+                } else {
+                    if application.applicationState.rawValue == 0 && tabbar?.selectedIndex == 0 && (tabbar?.selectedViewController as! UINavigationController).viewControllers.count == 1 {
+                        (nc.viewControllers[0] as! CallListViewController).viewWillAppear(false)
+                    }
+                }
+            } else {
+                if let tabItems = tabbar?.tabBar.items {
+                    let tabItem = tabItems[0]
+                    tabItem.badgeValue = badge > 0 ? "\(badge)" : nil
+                    print(badge as Any)
+                }
+            }
+        }
+        completionHandler(.newData)
+    }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         let firebaseAuth = Auth.auth()
         if (firebaseAuth.canHandleNotification(userInfo)) {
@@ -205,7 +314,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.failed)
             return
         }
-        notificationManager.didReceiveRemoteNotification(tabbar, userInfo, completionHandler, aps, application)
+        notificationManager.didReceiveRemoteNotification(userInfo, aps, application) { [self] (type) in
+            if type == NotificationType.contactRequest.rawValue {
+                self.tabbar?.mainRouter?.notificationListViewController?.reloadData()
+            } else if type == NotificationType.message.rawValue {
+                getMessage(userInfo, completionHandler)
+            } else if type == NotificationType.missedCall.rawValue {
+                receivedCall(aps, application, completionHandler)
+            }
+        }
     }
     
     //MARK:- Helper

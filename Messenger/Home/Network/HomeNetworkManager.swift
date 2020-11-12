@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import AVFoundation
 
 class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
    
@@ -181,6 +181,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             }
         }
     }
+    
     func getuserById(id: String,  completion: @escaping (User?, NetworkResponse?)->()) {
         router.request(.getUserById(id: id)) { data, response, error in
             if error != nil {
@@ -402,17 +403,70 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         }.resume()
     }
     
-    func getVideo(url: String) {
+    func sendVideoInChannel(data: Data, channelId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chnMessages/\(channelId)/videoMessage")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
+        body.appendString(text)
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
+        body.appendString("Content-Type: video/mp4\r\n\r\n")
+        body.append(data)
+        body.appendString("\r\n--\(boundary)--\r\n")
+        let session = URLSession.shared
+        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+            print(request.httpBody as Any)
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.noData)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed)
+                return
+            }
+            guard data != nil else {
+                completion(NetworkResponse.noData)
+                return
+            }
+            completion(nil)
+            return
+        }.resume()
+    }
+    
+    func downloadVideo(from url: String, isNeedAllBytes: Bool, completion: @escaping (NetworkResponse?, Data?) -> ()) {
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if !isNeedAllBytes {
+            let a = 1024 * 1024
+            request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
+        }
         request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
-            print("")
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed, nil)
+                return }
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(NetworkResponse.failed, nil)
+            } else {
+                guard let responseData = data else {
+                    completion(NetworkResponse.noData, nil)
+                    return
+                }
+                completion(nil, responseData)
+                return
+            }
         }.resume()
-        
     }
     
     func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
@@ -1320,8 +1374,8 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             }
         }
     }
-    
 }
+
 
 extension NSMutableData {
     func appendString(_ string: String) {
