@@ -201,7 +201,6 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 
             })
         }
-//        UIImage(data: <#T##Data#>)
         dismiss(animated: true, completion: nil)
     }
     
@@ -331,7 +330,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             self.view.viewWithTag(333)?.removeFromSuperview()
         }
     }
-    
+
     func get1newMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
         if message.owner == channelInfo.channel?._id {
             DispatchQueue.main.async {
@@ -349,36 +348,34 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     }
     
     func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
-        if message.owner == channelInfo.channel?._id {
-            self.removeView()
-            if message.senderId != SharedConfigs.shared.signedUser?.id {
-                self.channelMessages.array?.append(message)
-                self.removeView()
-            } else {
-                if message.type == "text" {
-                    for i in 0..<self.channelMessages.array!.count {
-                        if message.text  == self.channelMessages.array![i].text {
-                            self.channelMessages.array![i] = message
+            if message.owner == channelInfo.channel?._id {
+                if message.senderId != SharedConfigs.shared.signedUser?.id {
+                    self.channelMessages.array?.append(message)
+                    self.removeView()
+                } else {
+                    if message.type == "text" {
+                        for i in 0..<self.channelMessages.array!.count {
+                            if message.text  == self.channelMessages.array![i].text {
+                                self.channelMessages.array![i] = message
+                            }
                         }
-                    }
-                } else if message.type == "image" || message.type == "video" {
-                    DispatchQueue.main.async {
-                        self.view.viewWithTag(14)?.removeFromSuperview()
-                        self.channelMessages.array!.append(message)
-                        let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
-                        self.tableView.insertRows(at: [indexPath], with: .automatic)
-                        let cell = self.tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
-                        cell?.snedImageView.image = self.selectedImage
-                        self.selectedImage = nil
-                        self.sendAsset = nil
-                        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    } else if message.type == "image" {
+                        DispatchQueue.main.async {
+                            self.channelMessages.array!.append(message)
+                            let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
+                            self.tableView.insertRows(at: [indexPath], with: .automatic)
+                            let cell = self.tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
+                            cell?.snedImageView.image = self.selectedImage
+                            self.selectedImage = nil
+                            self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                        }
+                        
                     }
                     
                 }
+                
             }
-            
         }
-    }
     
     @objc func sendMessage() {
         if mode == .edit {
@@ -810,56 +807,6 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     
     func configureSendVideoMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = channelMessages.array![indexPath.row]._id
-        //  ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
-        //            DispatchQueue.main.async {
-//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-//                        cell.addGestureRecognizer(tap)
-//                        cell.imageWidthConstraint.constant = image.size.width
-//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-//                        let ratio = image.size.width / image.size.height
-//                        if containerView.frame.width > containerView.frame.height {
-//                            let newHeight = containerView.frame.width / ratio
-//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-//                        }
-//                        cell.snedImageView.image = image
-        //            }
-        //        }
-        
-//        VideoCache.shared.getVideo(videoUrl: allMessages?.array?[indexPath.row].video ?? "") { (videoURL) in
-//            if let videoURL = videoURL {
-//                DispatchQueue.main.async {
-//                    let asset = AVURLAsset(url: videoURL as URL , options: nil)
-//                    let imgGenerator = AVAssetImageGenerator(asset: asset)
-//                    imgGenerator.appliesPreferredTrackTransform = true
-//                    do {
-//                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
-//                        let thumbnail = UIImage(cgImage: cgImage)
-//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-//                        cell.addGestureRecognizer(tap)
-//                        cell.imageWidthConstraint.constant = thumbnail.size.width
-//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-//                        let ratio = thumbnail.size.width / thumbnail.size.height
-//                        if containerView.frame.width > containerView.frame.height {
-//                            let newHeight = containerView.frame.width / ratio
-//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-//                        }
-//                        cell.snedImageView.image = thumbnail
-//                    }
-//                    catch {
-//                        cell.snedImageView.image = UIImage(named: "noPhoto")
-//                    }
-//                    try! AVAudioSession.sharedInstance().setCategory(.playback)
-//                    let player = AVPlayer(url: videoURL)
-//                    let playerViewController = AVPlayerViewController()
-//                    playerViewController.player = player
-//                    self.present(playerViewController, animated: true) {
-//                        playerViewController.player!.play()
-//                    }
-//                }
-//            } else {
-//                chgitem inch
-//            }
-//        }
         ImageCache.shared.getThumbnail(videoUrl: channelMessages.array?[indexPath.row].video ?? "", messageId: channelMessages.array?[indexPath.row]._id ?? "") { (image) in
             DispatchQueue.main.async {
                 cell.messageLabel.text = self.channelMessages.array?[indexPath.row].text
@@ -924,21 +871,6 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     
     @objc func handle() {
         print("tapped")
-    }
-    
-    func setstartVideoImage(cell: SentMediaMessageTableViewCell) {
-        let imagView = UIImageView(image: UIImage(systemName: "play.fill"))
-        viewonCell.frame = cell.snedImageView.frame
-        viewonCell.isUserInteractionEnabled = true
-        cell.snedImageView.addSubview(viewonCell)
-        viewonCell.addSubview(imagView)
-        viewonCell.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(handle)))
-        imagView.translatesAutoresizingMaskIntoConstraints = false
-        imagView.centerYAnchor.constraint(equalTo: cell.snedImageView.centerYAnchor, constant: 0).isActive = true
-        imagView.centerXAnchor.constraint(equalTo: cell.snedImageView.centerXAnchor, constant: 0).isActive = true
-        imagView.heightAnchor.constraint(equalTo: cell.snedImageView.heightAnchor, multiplier: 0.3).isActive = true
-        imagView.widthAnchor.constraint(equalTo: cell.snedImageView.widthAnchor, multiplier: 0.3).isActive = true
-        
     }
 }
 
@@ -1043,7 +975,7 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 configureSendImageMessageTableViewCell(cell, tap, indexPath)
                 cell.snedImageView.addGestureRecognizer(tapOnVideo)
                 cell.snedImageView.isUserInteractionEnabled = true
-                setstartVideoImage(cell: cell)
+                cell.setStartVideoImage(type: "video")
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SentMessageTableViewCell
@@ -1061,11 +993,11 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 cell.sendImageView.isUserInteractionEnabled = true
                 cell.sendImageView.image = UIImage(named: "more")
-//                cell.sendImageView.addGestureRecognizer(tapOnVideo)
+                cell.sendImageView.addGestureRecognizer(tapOnVideo)
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
-//                configureRecieveMessageTableViewCell(cell, indexPath)
+                configureRecieveMessageTableViewCell(cell, indexPath)
                 return cell
             }
         }

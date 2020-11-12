@@ -24,7 +24,6 @@ class RecievedMessageTableViewCell: UITableViewCell {
         leadingConstraintOfCheckImage?.constant -= 15
         leadingConstraintOfImageView?.constant -= 15
         checkImage?.isHidden = true
-        
     }
     
     override func prepareForReuse() {

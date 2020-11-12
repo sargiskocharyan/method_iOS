@@ -181,6 +181,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             }
         }
     }
+    
     func getuserById(id: String,  completion: @escaping (User?, NetworkResponse?)->()) {
         router.request(.getUserById(id: id)) { data, response, error in
             if error != nil {
@@ -445,36 +446,12 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         request.timeoutInterval = 10
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if !isNeedAllBytes {
-            request.setValue("bytes=0-\(1024*1024)", forHTTPHeaderField: "Range")
+            let a = 1024 * 1024
+            request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
         }
         request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
-            do {
-                let filename = url.components(separatedBy: "/").last
-                //Creating temp path to save the converted video
-                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
-                let filePath = documentsDirectory.appendingPathComponent(filename ?? "rendered_video.mp4")
-                //Check if the file already exists then remove the previous file
-                if FileManager.default.fileExists(atPath: filePath.path) {
-                    do {
-                        try FileManager.default.removeItem(at: filePath)
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                }
-                try data?.write(to: filePath)
-                let sendAsset = AVURLAsset(url: filePath , options: nil)
-                print(sendAsset.duration)
-                let imgGenerator = AVAssetImageGenerator(asset: sendAsset)
-                imgGenerator.appliesPreferredTrackTransform = true
-                let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 60), actualTime: nil)
-                let thumbnail = UIImage(cgImage: cgImage)
-                print(thumbnail)
-            } catch {
-                print(error.localizedDescription)
-            }
-         
             guard (response as? HTTPURLResponse) != nil else {
                 completion(NetworkResponse.failed, nil)
                 return }
@@ -1397,8 +1374,8 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             }
         }
     }
-    
 }
+
 
 extension NSMutableData {
     func appendString(_ string: String) {

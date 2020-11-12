@@ -31,6 +31,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         checkImage?.isHidden = true
         viewUnderImage.clipsToBounds = true
         viewUnderImage.layer.cornerRadius = 10
+        viewOnCell?.tag = 12
     }
     
     override func prepareForReuse() {

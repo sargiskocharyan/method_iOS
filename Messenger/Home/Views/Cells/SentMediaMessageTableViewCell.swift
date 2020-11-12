@@ -10,9 +10,6 @@ import UIKit
 
 class SentMediaMessageTableViewCell: UITableViewCell {
     
-    //    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
-    
-        
     @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var snedImageView: UIImageView!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
@@ -30,6 +27,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         viewUnderImage.clipsToBounds = true
         viewUnderImage.layer.cornerRadius = 10
         viewOnCell?.tag = 12
+
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -51,6 +49,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
             checkImage?.isHidden = false
         }
     }
+    
     
     func setCheckImage() {
         if isSelected  {
