@@ -212,9 +212,9 @@ class RecentMessagesViewController: UIViewController {
             }
             DispatchQueue.main.async {
                 let tabbar = self.tabBarController as? MainTabBarController
-                let nc = tabbar!.viewControllers![3] as! UINavigationController
-                let profile = nc.viewControllers[0] as! ProfileViewController
-                profile.changeNotificationNumber()
+                let nc = tabbar?.viewControllers?[3] as? UINavigationController
+                let profile = nc?.viewControllers[0] as? ProfileViewController
+                profile?.changeNotificationNumber()
                 if let tabItems = tabbar?.tabBar.items {
                     let tabItem = tabItems[1]
                     let count = SharedConfigs.shared.unreadMessages.count

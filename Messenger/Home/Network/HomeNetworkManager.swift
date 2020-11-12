@@ -445,7 +445,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         request.timeoutInterval = 10
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if !isNeedAllBytes {
-            request.setValue("bytes=0-10000", forHTTPHeaderField: "Range")
+            request.setValue("bytes=0-\(1024*1024)", forHTTPHeaderField: "Range")
         }
         request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared

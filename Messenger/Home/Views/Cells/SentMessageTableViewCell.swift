@@ -34,14 +34,6 @@ class SentMessageTableViewCell: UITableViewCell {
         
     }
     
-    //    func editPage(isPreview: Bool) {
-    //        if !isPreview {
-    //            button?.isHidden = true
-    //        } else {
-    //            button?.isHidden = false
-    //        }
-    //    }
-    
    func setCheckButton(isPreview: Bool) {
        if isPreview {
            leadingConstraintOfChaeckImage?.constant = -10

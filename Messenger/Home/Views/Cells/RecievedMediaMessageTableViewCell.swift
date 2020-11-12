@@ -19,12 +19,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView!
-
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        // Configure the view for the selected state
-    }
+    var viewOnCell: UIView?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -41,6 +36,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         checkImage?.image = nil
+        viewOnCell?.removeFromSuperview()
     }
     
     func setCheckImage() {
@@ -79,6 +75,23 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
     func changeShapeOfImageView() {
         userImageView.clipsToBounds = true
         userImageView.layer.cornerRadius = 15
+    }
+    
+    func setStartVideoImage(type: String) {
+        if type == "video" {
+            let imagView = UIImageView(image: UIImage(systemName: "play.fill"))
+            viewOnCell = UIView()
+            viewOnCell?.frame = sendImageView.frame
+            sendImageView.addSubview(viewOnCell!)
+            viewOnCell?.addSubview(imagView)
+            imageView?.translatesAutoresizingMaskIntoConstraints = false
+            imagView.centerYAnchor.constraint(equalTo: sendImageView.centerYAnchor, constant: 0).isActive = true
+            imagView.centerXAnchor.constraint(equalTo: sendImageView.centerXAnchor, constant: 0).isActive = true
+            imagView.heightAnchor.constraint(equalTo: sendImageView.heightAnchor, multiplier: 0.3).isActive = true
+            imagView.widthAnchor.constraint(equalTo:  sendImageView.widthAnchor, multiplier: 0.3).isActive = true
+        } else {
+            viewOnCell = nil
+        }
     }
     
 }

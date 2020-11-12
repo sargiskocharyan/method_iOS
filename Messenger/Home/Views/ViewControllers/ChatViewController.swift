@@ -747,13 +747,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             DispatchQueue.main.async {
                 cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
                 cell.addGestureRecognizer(tap)
-                cell.imageWidthConstraint.constant = image.size.width
-                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                let ratio = image.size.width / image.size.height
-                if containerView.frame.width > containerView.frame.height {
-                    let newHeight = containerView.frame.width / ratio
-                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                }
                 cell.snedImageView.image = image
             }
         }
@@ -761,68 +754,21 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     func configureSendVideoMessageTableViewCell(_ cell: SentMediaMessageTableViewCell, _ indexPath: IndexPath, _ tap: UILongPressGestureRecognizer) {
         cell.id = allMessages!.array![indexPath.row]._id
-        //  ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
-        //            DispatchQueue.main.async {
-//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-//                        cell.addGestureRecognizer(tap)
-//                        cell.imageWidthConstraint.constant = image.size.width
-//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-//                        let ratio = image.size.width / image.size.height
-//                        if containerView.frame.width > containerView.frame.height {
-//                            let newHeight = containerView.frame.width / ratio
-//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-//                        }
-//                        cell.snedImageView.image = image
-        //            }
-        //        }
-        
-//        VideoCache.shared.getVideo(videoUrl: allMessages?.array?[indexPath.row].video ?? "") { (videoURL) in
-//            if let videoURL = videoURL {
-//                DispatchQueue.main.async {
-//                    let asset = AVURLAsset(url: videoURL as URL , options: nil)
-//                    let imgGenerator = AVAssetImageGenerator(asset: asset)
-//                    imgGenerator.appliesPreferredTrackTransform = true
-//                    do {
-//                        let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
-//                        let thumbnail = UIImage(cgImage: cgImage)
-//                        cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-//                        cell.addGestureRecognizer(tap)
-//                        cell.imageWidthConstraint.constant = thumbnail.size.width
-//                        let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-//                        let ratio = thumbnail.size.width / thumbnail.size.height
-//                        if containerView.frame.width > containerView.frame.height {
-//                            let newHeight = containerView.frame.width / ratio
-//                            cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-//                        }
-//                        cell.snedImageView.image = thumbnail
-//                    }
-//                    catch {
-//                        cell.snedImageView.image = UIImage(named: "noPhoto")
-//                    }
-//                    try! AVAudioSession.sharedInstance().setCategory(.playback)
-//                    let player = AVPlayer(url: videoURL)
-//                    let playerViewController = AVPlayerViewController()
-//                    playerViewController.player = player
-//                    self.present(playerViewController, animated: true) {
-//                        playerViewController.player!.play()
-//                    }
-//                }
-//            } else {
-                //chgitem inch
-//            }
-//        }
         ImageCache.shared.getThumbnail(videoUrl: allMessages?.array?[indexPath.row].video ?? "", messageId: allMessages?.array?[indexPath.row]._id ?? "") { (image) in
             DispatchQueue.main.async {
                 cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
                 cell.addGestureRecognizer(tap)
-                cell.imageWidthConstraint.constant = image.size.width
-                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                let ratio = image.size.width / image.size.height
-                if containerView.frame.width > containerView.frame.height {
-                    let newHeight = containerView.frame.width / ratio
-                    cell.snedImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                }
                 cell.snedImageView.image = image
+            }
+        }
+    }
+    
+    func configureRecieveVideoMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecievedMediaMessageTableViewCell, _ tap: UILongPressGestureRecognizer) {
+        ImageCache.shared.getThumbnail(videoUrl: allMessages?.array?[indexPath.row].video ?? "", messageId: allMessages?.array?[indexPath.row]._id ?? "") { (image) in
+            DispatchQueue.main.async {
+                cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+                cell.addGestureRecognizer(tap)
+                cell.sendImageView.image = image
             }
         }
     }
@@ -849,18 +795,25 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     func configureRecieveImageMessageTableViewCell(_ indexPath: IndexPath, _ cell: RecievedMediaMessageTableViewCell, _ tap: UILongPressGestureRecognizer) {
         ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
             DispatchQueue.main.async {
-                cell.addGestureRecognizer(tap)
                 cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
-                cell.imageWidthConstraint.constant = image.size.width
-                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
-                let ratio = image.size.width / image.size.height
-                if containerView.frame.width > containerView.frame.height {
-                    let newHeight = containerView.frame.width / ratio
-                    cell.sendImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
-                }
+                cell.addGestureRecognizer(tap)
                 cell.sendImageView.image = image
             }
         }
+//        ImageCache.shared.getImage(url: allMessages?.array?[indexPath.row].image?.imageURL ?? "", id: allMessages?.array?[indexPath.row]._id ?? "", isChannel: false) { (image) in
+//            DispatchQueue.main.async {
+//                cell.addGestureRecognizer(tap)
+//                cell.messageLabel.text = self.allMessages?.array?[indexPath.row].text
+//                cell.imageWidthConstraint.constant = image.size.width
+//                let containerView = UIView(frame: CGRect(x:0,y:0,width:320,height:500))
+//                let ratio = image.size.width / image.size.height
+//                if containerView.frame.width > containerView.frame.height {
+//                    let newHeight = containerView.frame.width / ratio
+//                    cell.sendImageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+//                }
+//                cell.sendImageView.image = image
+//            }
+//        }
     }
     
     func configureRecieveMessageTableViewCell(_ cell: RecievedMessageTableViewCell, _ tap: UILongPressGestureRecognizer, _ indexPath: IndexPath) {
@@ -928,24 +881,24 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         let size: CGSize?
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         if (allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
+            size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+            let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
                 return frame.height + 30 + 22
             }  else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
             } else if allMessages?.array![indexPath.row].type == "image" || allMessages?.array![indexPath.row].type == "video" {
-                return UITableView.automaticDimension
+                return frame.height + 230
             }
         } else {
+            size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
+            let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
             if allMessages?.array![indexPath.row].type == "text" {
-                size = CGSize(width: self.view.frame.width * 0.6 - 100, height: 1500)
-                let frame = NSString(string: allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
                 return frame.height + 30
             } else if allMessages?.array![indexPath.row].type == "call" {
                 return 80
             } else if allMessages?.array![indexPath.row].type == "image" || allMessages?.array![indexPath.row].type == "video" {
-                return UITableView.automaticDimension
+                return frame.height  + 30 + 200//UITableView.automaticDimension
             }
         }
         return UITableView.automaticDimension
@@ -968,6 +921,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             } else if allMessages?.array![indexPath.row].type == "video" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
+                cell.snedImageView.image = nil
+                cell.setStartVideoImage(type: "video")
                 configureSendVideoMessageTableViewCell(cell, indexPath, tap)
                 return cell
             }
@@ -983,6 +938,12 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             } else if allMessages?.array![indexPath.row].type == "image" {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 configureRecieveImageMessageTableViewCell(indexPath, cell, tap)
+                return cell
+            } else if allMessages?.array![indexPath.row].type == "video" {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
+                cell.sendImageView.image = nil
+                cell.setStartVideoImage(type: "video")
+                configureRecieveVideoMessageTableViewCell(indexPath, cell, tap)
                 return cell
             }
         }
@@ -1000,13 +961,11 @@ fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [U
     return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
     guard let input = input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
     return input.rawValue
 }
