@@ -322,7 +322,7 @@ class RecentMessagesViewController: UIViewController {
         })
     }
     
-    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         var id = ""
         if message.senderId == SharedConfigs.shared.signedUser?.id {
             id = message.reciever ?? ""
@@ -340,7 +340,7 @@ class RecentMessagesViewController: UIViewController {
                     let visibleViewController = self.navigationController?.visibleViewController
                     if visibleViewController is ChatViewController {
                         let chatViewController = visibleViewController as! ChatViewController
-                        chatViewController.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                        chatViewController.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
                     }
                 }
                 for i in 0..<self.chats.count {

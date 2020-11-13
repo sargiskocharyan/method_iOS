@@ -8,6 +8,7 @@
 
 import Foundation
 import AVFoundation
+import UIKit
 
 class ChatMessagesViewModel {
     
@@ -73,6 +74,24 @@ class ChatMessagesViewModel {
             default: break
             }
         })
+    }
+    
+    func setLabel(text: String, view: UIView, superView: UIView) {
+        let label = UILabel()
+        label.text = text
+        label.tag = 13
+        label.textAlignment = .center
+        label.textColor = .darkGray
+        superView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func removeLabel(view: UIView) {
+        view.viewWithTag(13)?.removeFromSuperview()
     }
     
     func secondsToHoursMinutesSeconds(seconds : Int) -> String {

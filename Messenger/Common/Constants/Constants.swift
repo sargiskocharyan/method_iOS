@@ -18,6 +18,15 @@ struct Environment {
     #endif
 }
 
+enum CallStatus: String {
+    case accepted  = "accepted"
+    case missed    = "missed"
+    case cancelled = "cancelled"
+    case incoming  = "incoming_call"
+    case outgoing  = "outgoing_call"
+    case ongoing   = "ongoing"
+}
+
 struct AUTHUrls {
     static let MailisExist          = "/mailExists"
     static let Login                = "/login"

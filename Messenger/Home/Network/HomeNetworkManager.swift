@@ -334,7 +334,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         }.resume()
     }
     
-    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
         guard let image = tmpImage else { return }
         let boundary = UUID().uuidString
         var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(userId)/imageMessage")!)
@@ -347,6 +347,9 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         body.appendString("\r\n--\(boundary)\r\n")
         body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
         body.appendString(text)
+        body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
+        body.appendString(uuid)
         body.appendString("\r\n--\(boundary)\r\n")
         body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
         body.appendString("Content-Type: image/jpg\r\n\r\n")
@@ -371,7 +374,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         }.resume()
     }
     
-    func sendVideoInChat(data: Data, id: String, text: String) {
+    func sendVideoInChat(data: Data, id: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
         let boundary = UUID().uuidString
         var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(id)/videoMessage")!)
         request.httpMethod = "POST"
@@ -384,6 +387,9 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
         body.appendString(text)
         body.appendString("\r\n--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
+        body.appendString(uuid)
+        body.appendString("\r\n--\(boundary)\r\n")
         body.appendString("Content-Disposition: form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
         body.appendString("Content-Type: video/mp4\r\n\r\n")
         body.append(data)
@@ -392,13 +398,15 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         session.uploadTask(with: request, from: body as Data)  { data, response, error in
             print(request.httpBody as Any)
             guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.noData)
                 return }
             if error != nil {
                 print(error!.localizedDescription)
+                completion(NetworkResponse.failed)
+                return
             } else {
-                guard data != nil else {
-                    return
-                }
+                completion(nil)
+                return
             }
         }.resume()
     }
@@ -449,7 +457,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             let a = 1024 * 1024
             request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
         }
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+//        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {

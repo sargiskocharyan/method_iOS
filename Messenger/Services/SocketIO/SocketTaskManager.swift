@@ -324,8 +324,8 @@ class SocketTaskManager {
         socket!.emit("sendChnMessage", message, channelId)
     }
     
-    func send(message: String, id: String) {
-        socket!.emit("sendMessage", message, id)
+    func send(message: String, id: String, uuid: String) {
+        socket!.emit("sendMessage", message, id, uuid)
     }
     
     func addChannelSubscriberInfo(completion: @escaping (_ user: String, _ name: String, _ avatarUrl: String?) -> ()) {
@@ -356,9 +356,10 @@ class SocketTaskManager {
         }
     }
     
-    func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
+    func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?, _ tempUUID: String) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! Dictionary<String, Any>
+            let tempUUID = data["tempUUID"] as! String
             let chatId = data["reciever"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["reciever"] as? String
             if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
                 self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
@@ -370,13 +371,13 @@ class SocketTaskManager {
                 let callHistory = CallHistory(type: call["type"] as? String, receiver: call["receiver"] as? String, status: call["status"] as? String, participants: call["participants"] as? [String], callSuggestTime: call["callSuggestTime"] as? String, _id: call["_id"] as? String, createdAt: call["createdAt"] as? String, caller: call["caller"] as? String, callEndTime: call["callEndTime"] as? String, callStartTime: call["callStartTime"] as? String)
                 print(callHistory)
                 let message = Message(call: messageCall, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: nil, video: nil)
-                completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                completionHandler(callHistory, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String, tempUUID)
                 return
             }
             let imageDic = data["image"] as? Dictionary<String, Any>
             let image = imageDic == nil ? nil : Image(imageName: imageDic?["imageName"] as? String, imageURL: imageDic?["imageURL"] as? String)
             let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["reciever"] as? String, text: data["text"] as? String, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: image, video: data["video"] as? String)
-            completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+            completionHandler(nil, message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String, tempUUID)
             let vc = (self.tabbar?.viewControllers![1] as! UINavigationController).viewControllers[0] as! RecentMessagesViewController
             for i in 0..<vc.chats.count {
                 if vc.chats[i].id == data["senderId"] as? String {
