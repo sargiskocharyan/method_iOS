@@ -399,8 +399,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             }
         } else {
             if selectedImage != nil {
-                HomeNetworkManager().sendImage(tmpImage: selectedImage, channelId: self.channelInfo.channel?._id ?? "", text: inputTextField.text ?? "") { (error) in
-                    
+                viewModel?.sendImage(tmpImage: selectedImage!, channelId: self.channelInfo.channel?._id ?? "", text: inputTextField.text ?? "", completion: { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -411,21 +410,19 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                             self.view.viewWithTag(14)?.removeFromSuperview()
                         }
                     }
-                }
+                })
             } else if sendAsset != nil {
-                self.viewModel?.encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+                self.viewModel?.encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { [self] (url, error) in
                     if let url = url {
                         do {
                             let data = try Data(contentsOf: url)
-                            DispatchQueue.main.async {
-                                HomeNetworkManager().sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: self.inputTextField.text!) { (error) in
-                                    if let error = error {
-                                        DispatchQueue.main.async {
-                                            self.showErrorAlert(title: "error".localized(), errorMessage: error.rawValue)
-                                        }
+                            viewModel?.sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: self.inputTextField.text ?? "", completion: { (err) in
+                                if err != nil {
+                                    DispatchQueue.main.async {
+                                        showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
                                     }
                                 }
-                            }
+                            })
                         } catch {
                             print(error.localizedDescription)
                         }

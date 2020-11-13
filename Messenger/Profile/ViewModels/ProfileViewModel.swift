@@ -10,7 +10,7 @@ import UIKit
 
 class ProfileViewModel {
     func logout(deviceUUID: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().logout(deviceUUID: deviceUUID) { (error) in
+        ProfileNetworkManager().logout(deviceUUID: deviceUUID) { (error) in
             completion(error)
         }
     }
@@ -22,13 +22,13 @@ class ProfileViewModel {
     }
     
     func getImage(avatar: String, completion: @escaping (UIImage?, NetworkResponse?)->()) {
-        HomeNetworkManager().getImage(avatar: avatar) { (image, error) in
+        ProfileNetworkManager().getImage(avatar: avatar) { (image, error) in
             completion(image, error)
         }
     }
     
     func deleteAvatar(completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().deleteAvatar() { (error) in
+        ProfileNetworkManager().deleteAvatar() { (error) in
             completion(error)
         }
     }

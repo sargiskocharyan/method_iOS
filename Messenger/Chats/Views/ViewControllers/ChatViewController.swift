@@ -134,7 +134,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     @objc func sendMessage() {
         if mode == .main {
             if sendImage != nil {
-                HomeNetworkManager().sendImageInChat(tmpImage: sendImage, userId: self.id ?? "", text: inputTextField.text!) { (error) in
+                ChatNetworkManager().sendImageInChat(tmpImage: sendImage, userId: self.id ?? "", text: inputTextField.text!) { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -153,7 +153,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                         do {
                             let data = try Data(contentsOf: url)
                             DispatchQueue.main.async {
-                                HomeNetworkManager().sendVideoInChat(data: data, id: self.id!, text: self.inputTextField.text!)
+                                ChatNetworkManager().sendVideoInChat(data: data, id: self.id!, text: self.inputTextField.text!)
                             }
                         } catch {
                             print(error.localizedDescription)
@@ -774,7 +774,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     @objc func handleTapOnVideo(gestureReconizer: CustomTapGesture) {
         print("tapped video")
-        print(gestureReconizer.indexPath.row)
+        print(gestureReconizer.indexPath.row as Any)
         VideoCache.shared.getVideo(videoUrl: allMessages?.array?[gestureReconizer.indexPath.row].video ?? "") { (videoURL) in
             if let videoURL = videoURL {
                 DispatchQueue.main.async {

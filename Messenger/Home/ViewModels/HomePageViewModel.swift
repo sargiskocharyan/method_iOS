@@ -17,25 +17,25 @@ class HomePageViewModel {
     }
     
     func checkCallAsSeen(callId: String, readOne: Bool, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().readCalls(id: callId, readOne: readOne) { (error) in
+        CallNetworkManager().readCalls(id: callId, readOne: readOne) { (error) in
             completion(error)
         }
     }
     
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
-        HomeNetworkManager().getUserContacts() { (contacts, error) in
+        ProfileNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
         }
     }
     
     func getCallHistory(completion: @escaping ([CallHistory]?, NetworkResponse?)->()) {
-           HomeNetworkManager().getCallHistory() { (calls, error) in
+           CallNetworkManager().getCallHistory() { (calls, error) in
                completion(calls, error)
            }
        }
     
     func removeCall(id: [String], completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().removeCall(id: id) { (error) in
+        CallNetworkManager().removeCall(id: id) { (error) in
             completion(error)
         }
     }

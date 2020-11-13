@@ -56,14 +56,17 @@ struct HomeUrls {
     static let DeleteRequest                = "/deleteContactRequest"
     static let GetRequests                  = "/contactRequests"
     static let GetAdminMessage              = "/adminmessages"
+    static let EditChatMessage              = "/message/edit"
+    static let DeleteChatMessages           = "/messages/delete"
+}
+
+struct ChannelUrls {
     static let CreateChannel                = "/channel"
     static let GetChannelInfo               = "/channelsInfo"
     static let CheckChannelName             = "/checkChannelName"
     static let FindChannels                 = "/findChannels"
     static let DeleteChannelMessageBySender = "/chnMessages/delete"
     static let EditChannelMessageBySender   = "/chnMessages/edit"
-    static let EditChatMessage              = "/message/edit"
-    static let DeleteChatMessages           = "/messages/delete"
 }
 
 struct AppLangKeys {

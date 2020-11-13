@@ -6,49 +6,55 @@
 //  Copyright © 2020 Dynamic LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit.UIImage
 import AVFoundation
 
 class ChannelMessagesViewModel {
     
     func getChannelMessages(id: String, dateUntil: String?, completion: @escaping (ChannelMessages?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChannelMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+        ChannelNetworkManager().getChannelMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)
         }
     }
 
     func subscribeToChannel(id: String, completion: @escaping (SubscribedResponse?, NetworkResponse?)->())  {
-        HomeNetworkManager().subscribe(id: id) { (subresponse, error) in
+        ChannelNetworkManager().subscribe(id: id) { (subresponse, error) in
             completion(subresponse, error)
         }
     }
     
-    func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
-           HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
-               completion(messages, error)
-           }
-       }
-    
     func deleteChannelMessages(id: String, ids: [String], completion: @escaping (NetworkResponse?)->())  {
-        HomeNetworkManager().deleteChannelMessages(id: id, ids: ids) { (error) in
+        ChannelNetworkManager().deleteChannelMessages(id: id, ids: ids) { (error) in
             completion(error)
         }
     }
     
     func leaveChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().leaveChannel(id: id) { (error) in
+        ChannelNetworkManager().leaveChannel(id: id) { (error) in
             completion(error)
         }
     }
     
     func deleteChannelMessageBySender(ids: [String], completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().deleteChannelMessageBySender(ids: ids) { (error) in
+        ChannelNetworkManager().deleteChannelMessageBySender(ids: ids) { (error) in
             completion(error)
         }
     }
     
     func editChannelMessageBySender(id: String, text: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().editChannelMessageBySender(id: id, text: text) { (error) in
+        ChannelNetworkManager().editChannelMessageBySender(id: id, text: text) { (error) in
+            completion(error)
+        }
+    }
+    
+    func sendVideoInChannel(data: Data, channelId: String, text: String, completion: @escaping (NetworkResponse?)->() ) {
+        ChannelNetworkManager().sendVideoInChannel(data: data, channelId: channelId, text: text) { (error) in
+            completion(error)
+        }
+    }
+    
+    func sendImage(tmpImage: UIImage, channelId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
+        ChannelNetworkManager().sendImage(tmpImage: tmpImage, channelId: channelId, text: text) { (error) in
             completion(error)
         }
     }
@@ -56,16 +62,13 @@ class ChannelMessagesViewModel {
     func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
         let avAsset = AVURLAsset(url: videoURL, options: nil)
         let startDate = Date()
-        //Create Export session
         guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
             completionHandler?(nil, nil)
             return
         }
         let filename = videoURL.absoluteString.components(separatedBy: "/").last
-        //Creating temp path to save the converted video
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
         let filePath = documentsDirectory.appendingPathComponent(filename ?? "rendered_video.mp4")
-        //Check if the file already exists then remove the previous file
         if FileManager.default.fileExists(atPath: filePath.path) {
             do {
                 try FileManager.default.removeItem(at: filePath)
@@ -99,4 +102,6 @@ class ChannelMessagesViewModel {
             }
         })
     }
+    
+    
 }

@@ -10,25 +10,25 @@ import Foundation
 
 class ChannelListViewModel {
     func getChannels(ids: [String], completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChannelsInfo(ids: ids) { (channels, error) in
+        ChannelNetworkManager().getChannelsInfo(ids: ids) { (channels, error) in
             completion(channels, error)
         }
     }
     
     func findChannels(term: String, completion: @escaping ([ChannelInfo]?, NetworkResponse?)->()) {
-        HomeNetworkManager().findChannels(term: term) { (channels, error) in
+        ChannelNetworkManager().findChannels(term: term) { (channels, error) in
             completion(channels, error)
         }
     }
     
     func createChannel(name: String, openMode: Bool, completion: @escaping (Channel?, NetworkResponse?)->()) {
-           HomeNetworkManager().createChannel(name: name, openMode: openMode) { (channel, error) in
+           ChannelNetworkManager().createChannel(name: name, openMode: openMode) { (channel, error) in
                completion(channel, error)
            }
        }
     
     func checkChannelName(name: String, completion: @escaping(CheckChannelName?, NetworkResponse?)->()) {
-           HomeNetworkManager().checkChannelName(name: name) { (response, error) in
+           ChannelNetworkManager().checkChannelName(name: name) { (response, error) in
                completion(response, error)
            }
        }
