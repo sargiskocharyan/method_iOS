@@ -335,8 +335,6 @@ extension HomeApi: EndPointType {
                     }
                 }
             }
-            print(allParameters)
-            print(parameters)
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .removeContact(id: let id):

@@ -82,7 +82,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         UserDataController().loadUserInfo()
         DropDown.startListeningToKeyboard()
         FirebaseApp.configure()
-        print(FirebaseApp.app()?.options.clientID as Any)
         ApplicationDelegate.shared.application( application, didFinishLaunchingWithOptions: launchOptions )
         providerDelegate = ProviderDelegate(callManager: callManager)
         UNUserNotificationCenter.current().delegate = self

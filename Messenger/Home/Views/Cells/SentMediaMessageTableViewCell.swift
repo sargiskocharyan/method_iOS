@@ -38,6 +38,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         super.prepareForReuse()
         checkImage?.image = nil
         viewOnCell?.removeFromSuperview()
+        snedImageView.image = nil
     }
     
     func setCheckButton(isPreview: Bool) {
@@ -51,6 +52,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
     }
     
     
+    
     func setCheckImage() {
         if isSelected  {
             checkImage?.image = UIImage.init(systemName: "checkmark.circle.fill")
@@ -59,19 +61,120 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         }
     }
     
-    func setStartVideoImage(type: String) {
-        if type == "video" {
-            let imagView = UIImageView(image: UIImage(systemName: "play.fill"))
-            viewOnCell = UIView()
-            viewOnCell?.frame = snedImageView.frame
-            snedImageView.addSubview(viewOnCell ?? UIView())
-            viewOnCell?.addSubview(imagView)
-            imagView.translatesAutoresizingMaskIntoConstraints = false
-            imagView.centerYAnchor.constraint(equalTo: snedImageView.centerYAnchor, constant: 0).isActive = true
-            imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
-            imagView.heightAnchor.constraint(equalTo: snedImageView.heightAnchor, multiplier: 0.3).isActive = true
-            imagView.widthAnchor.constraint(equalTo: snedImageView.widthAnchor, multiplier: 0.3).isActive = true
+    func setStartVideoImage() {
+        let imagView = UIImageView(image: UIImage(systemName: "play.fill"))
+        viewOnCell = UIView()
+        viewOnCell?.frame = snedImageView.frame
+        snedImageView.addSubview(viewOnCell ?? UIView())
+        viewOnCell?.addSubview(imagView)
+        imagView.translatesAutoresizingMaskIntoConstraints = false
+        imagView.centerYAnchor.constraint(equalTo: snedImageView.centerYAnchor, constant: 0).isActive = true
+        imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
+        imagView.heightAnchor.constraint(equalTo: snedImageView.heightAnchor, multiplier: 0.3).isActive = true
+        imagView.widthAnchor.constraint(equalTo: snedImageView.widthAnchor, multiplier: 0.3).isActive = true
+    }
+    
+    func configureSendVideoMessageTableViewCellInChannel(_ message: Message, _ channelInfo: ChannelInfo?, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
+        self.id = message._id
+        self.snedImageView.isUserInteractionEnabled = true
+        self.snedImageView.addGestureRecognizer(tapOnVideo)
+        self.addGestureRecognizer(tap)
+        self.setStartVideoImage()
+        if let videoUrl = message.video {
+            ImageCache.shared.getThumbnail(videoUrl: videoUrl, messageId: message._id ?? "") { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.snedImageView.image = image
+                }
+            }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = thumbnail
+        }
+        self.messageLabel.sizeToFit()
+        if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            self.setCheckImage()
+            self.setCheckButton(isPreview: isPreview!)
+        } else {
+            self.checkImage?.isHidden = true
         }
     }
     
+    func configureSendImageMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnImage: UITapGestureRecognizer, tmpImage: UIImage?) {
+        self.id = message._id
+        self.snedImageView.isUserInteractionEnabled = true
+        self.snedImageView.addGestureRecognizer(tapOnImage)
+        self.addGestureRecognizer(tap)
+        if let imageUrl = message.image?.imageURL {
+            ImageCache.shared.getImage(url: imageUrl, id: message._id ?? "", isChannel: false) { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.snedImageView.image = image
+                }
+            }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = tmpImage
+        }
+        
+    }
+    
+    func configureSendImageMessageTableViewCellInChannel(_ message: Message, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, channelInfo: ChannelInfo?, tapOnImage: UITapGestureRecognizer, tmpImage: UIImage?) {
+        self.contentView.addGestureRecognizer(tap)
+        self.snedImageView.isUserInteractionEnabled = true
+        self.snedImageView.addGestureRecognizer(tapOnImage)
+        self.addGestureRecognizer(tap)
+        if let imageUrl = message.image?.imageURL {
+            ImageCache.shared.getImage(url: imageUrl, id: message._id ?? "", isChannel: false) { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.snedImageView.image = image
+                }
+            }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = tmpImage
+        }
+        self.checkImage?.image = UIImage.init(systemName: "circle")
+        if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
+            self.setCheckImage()
+            self.setCheckButton(isPreview: isPreview!)
+        } else {
+            self.checkImage?.isHidden = true
+        }
+        self.messageLabel.text = message.text
+    }
+    
+    func configureSendVideoMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
+        self.id = message._id
+        self.snedImageView.image = nil
+        self.snedImageView.isUserInteractionEnabled = true
+        self.snedImageView.addGestureRecognizer(tapOnVideo)
+        self.setStartVideoImage()
+        self.addGestureRecognizer(tap)
+        if let videoUrl = message.video {
+        ImageCache.shared.getThumbnail(videoUrl: videoUrl, messageId: message._id ?? "") { (image) in
+            DispatchQueue.main.async {
+                self.messageLabel.text = message.text
+                self.snedImageView.image = image
+            }
+        }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = thumbnail
+        }
+    }
+    
+}
+
+extension SentMediaMessageTableViewCell: CellProtocol {
+    func select() {
+        let image = UIImage.init(systemName: "checkmark.circle.fill")
+        self.checkImage?.image = image
+    }
+    
+    func deselect() {
+        let image = UIImage.init(systemName: "circle")
+        self.checkImage?.image = image
+    }
 }
