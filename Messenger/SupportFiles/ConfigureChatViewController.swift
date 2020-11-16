@@ -225,7 +225,7 @@ class ConfigureChatViewController {
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
-            cell.configureSendVideoMessageTableViewCell(message, longTapGesture, tapOnVideo, thumbnail: vc.sendThumbnail!)
+            cell.configureSendVideoMessageTableViewCell(message, longTapGesture, tapOnVideo, thumbnail: vc.sendThumbnail)
             return cell
         }
     }

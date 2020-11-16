@@ -98,10 +98,10 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.endEditing(true)
-        if !(tabBarController?.tabBar.isHidden)! {
+        if tabBarController?.tabBar.isHidden == false {
             tabBarController?.tabBar.isHidden = true
         }
-        if (navigationController?.navigationBar.isHidden)! {
+        if navigationController?.navigationBar.isHidden == true {
             navigationController?.navigationBar.isHidden = false
         }
         checkAndSendReadEvent()

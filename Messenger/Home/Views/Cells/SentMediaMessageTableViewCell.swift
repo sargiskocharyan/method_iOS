@@ -135,7 +135,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         self.messageLabel.text = message.text
     }
     
-    func configureSendVideoMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage) {
+    func configureSendVideoMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
         self.id = message._id
         self.snedImageView.image = nil
         self.snedImageView.isUserInteractionEnabled = true
