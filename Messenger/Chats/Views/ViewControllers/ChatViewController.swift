@@ -663,8 +663,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    
-    
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
         tabbar?.videoVC?.isCallHandled = false
         if !tabbar!.onCall {
@@ -793,6 +791,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             }
         }
     }
+    
     
     func tappedSendMessageCell(_ indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell

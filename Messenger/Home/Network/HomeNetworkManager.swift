@@ -82,7 +82,7 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         request.timeoutInterval = 10
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if !isNeedAllBytes {
-            let a = 1024 * 100
+            let a = 1024 * 1024
             request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
         }
 //        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
