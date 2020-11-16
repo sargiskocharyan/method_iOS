@@ -74,17 +74,22 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         imagView.widthAnchor.constraint(equalTo: snedImageView.widthAnchor, multiplier: 0.3).isActive = true
     }
     
-    func configureSendVideoMessageTableViewCellInChannel(_ message: Message, _ channelInfo: ChannelInfo?, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer) {
+    func configureSendVideoMessageTableViewCellInChannel(_ message: Message, _ channelInfo: ChannelInfo?, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
         self.id = message._id
         self.snedImageView.isUserInteractionEnabled = true
         self.snedImageView.addGestureRecognizer(tapOnVideo)
+        self.addGestureRecognizer(tap)
         self.setStartVideoImage()
-        ImageCache.shared.getThumbnail(videoUrl: message.video ?? "", messageId: message._id ?? "") { (image) in
-            DispatchQueue.main.async {
-                self.messageLabel.text = message.text
-                self.addGestureRecognizer(tap)
-                self.snedImageView.image = image
+        if let videoUrl = message.video {
+            ImageCache.shared.getThumbnail(videoUrl: videoUrl, messageId: message._id ?? "") { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.snedImageView.image = image
+                }
             }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = thumbnail
         }
         self.messageLabel.sizeToFit()
         if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
@@ -114,16 +119,21 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         
     }
     
-    func configureSendImageMessageTableViewCellInChannel(_ message: Message, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, channelInfo: ChannelInfo?, tapOnImage: UITapGestureRecognizer) {
+    func configureSendImageMessageTableViewCellInChannel(_ message: Message, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, channelInfo: ChannelInfo?, tapOnImage: UITapGestureRecognizer, tmpImage: UIImage?) {
         self.contentView.addGestureRecognizer(tap)
         self.snedImageView.isUserInteractionEnabled = true
         self.snedImageView.addGestureRecognizer(tapOnImage)
-        ImageCache.shared.getImage(url: message.image?.imageURL ?? "", id: message._id ?? "", isChannel: false) { (image) in
-            DispatchQueue.main.async {
-                self.messageLabel.text = message.text
-                self.addGestureRecognizer(tap)
-                self.snedImageView.image = image
+        self.addGestureRecognizer(tap)
+        if let imageUrl = message.image?.imageURL {
+            ImageCache.shared.getImage(url: imageUrl, id: message._id ?? "", isChannel: false) { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.snedImageView.image = image
+                }
             }
+        } else {
+            self.messageLabel.text = message.text
+            self.snedImageView.image = tmpImage
         }
         self.checkImage?.image = UIImage.init(systemName: "circle")
         if  (channelInfo?.role == 0 || channelInfo?.role == 1) {

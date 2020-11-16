@@ -195,7 +195,6 @@ class MainTabBarController: UITabBarController {
     
     func handleNewContact() {
         SocketTaskManager.shared.addNewContactListener { (userId) in
-            print("new contact added")
             self.recentMessagesViewModel?.getuserById(id: userId, completion: { (user, error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -220,7 +219,6 @@ class MainTabBarController: UITabBarController {
     
     func handleContactRemoved() {
         SocketTaskManager.shared.addContactRemovedListener(completionHandler: { (userId) in
-            print("The user delete us from contacts...")
             self.contactsViewModel?.removeContactFromCoreData(id: userId, completion: { (error) in
                 if error != nil {
                     print(error?.localizedDescription as Any)
@@ -397,7 +395,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func getNewChannelMessage() {
-        SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username) in
+        SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username, uuid) in
             let channelMessageNC = self.viewControllers?[2] as? UINavigationController
             switch self.selectedIndex {
             case 2:
@@ -410,13 +408,13 @@ class MainTabBarController: UITabBarController {
                     if message.owner != channelMessageVC?.channelInfo.channel?._id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
-                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false, uuid: uuid)
                 } else {
                     if message.senderId != SharedConfigs.shared.signedUser?.id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
                     let channelMessageVC = channelMessageNC?.viewControllers[1] as? ChannelMessagesViewController
-                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false, uuid: uuid)
                 }
             default:
                 self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)

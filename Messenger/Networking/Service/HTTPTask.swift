@@ -20,7 +20,6 @@ public enum HTTPTask {
         bodyEncoding: ParameterEncoding,
         urlParameters: Parameters?,
         additionHeaders: HTTPHeaders?)
-    
     // other cases will be added here
 }
 

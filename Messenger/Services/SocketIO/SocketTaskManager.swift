@@ -401,14 +401,15 @@ class SocketTaskManager {
         }
     }
     
-    func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?) -> Void) {
+    func getChannelMessage(completionHandler: @escaping (_ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?, _ uuid: String) -> Void) {
         socket!.on("sendChnMessage") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! NSDictionary
             let imageDictionary = data["image"] as? Dictionary<String, Any>
+            let tempUUID = data["tempUUID"] as? String
             let _ = data["owner"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["owner"] as? String
-            if let text = data["text"] as? String {
+            if let text = data["text"] as? String, let uuid = tempUUID {
                 let message = Message(call: nil, type: data["type"] as? String, _id: data["_id"] as? String, reciever: data["owner"] as? String, text: text, createdAt: data["createdAt"] as? String, updatedAt: data["updatedAt"] as? String, owner: data["owner"] as? String, senderId: data["senderId"] as? String, image: Image(imageName: imageDictionary?["imageName"] as? String, imageURL: imageDictionary?["imageURL"] as? String), video: data["video"] as? String)
-                completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String)
+                completionHandler(message, data["senderName"] as? String, data["senderLastname"] as? String, data["senderUsername"] as? String, uuid)
             }
         }
     }

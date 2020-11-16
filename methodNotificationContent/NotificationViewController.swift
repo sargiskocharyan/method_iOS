@@ -30,12 +30,7 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
     }
    
     @IBAction func rejectRequestAction(_ sender: UIButton) {
-        print("dfjgfg")
-       
-//        defaults.addObserver(self, forKeyPath: "Last", options: [.initial], context: nil)
-        
         defaults!.set(!(defaults?.object(forKey: "Last") as! Bool), forKey: "Last")
-//        defaults!.synchronize()
     }
     
     @IBAction func confirmRequestAction(_ sender: UIButton) {

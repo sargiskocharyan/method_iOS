@@ -60,6 +60,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     }()
     var selectedImage: UIImage?
     var sendAsset: AVURLAsset?
+    var sendThumbnail: UIImage?
+    var sendImageTmp: UIImage?
     
     //MARK: LifeCycles
     
@@ -124,13 +126,12 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         if let selectedImage = selectedImageFromPicker {
             viewConfigurator.setSendImageView(image: selectedImage)
             self.selectedImage = selectedImage
+            self.sendImageTmp = selectedImage
         }
         if let videoURL = info["UIImagePickerControllerReferenceURL"] as? NSURL {
-            print(videoURL)
             PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
                 ()
                 if PHPhotoLibrary.authorizationStatus() == PHAuthorizationStatus.authorized {
-                    print("creating 2")
                     do {
                         self.sendAsset = AVURLAsset(url: videoURL as URL , options: nil)
                         _ = AVAsset(url: videoURL as URL)
@@ -138,6 +139,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                         imgGenerator.appliesPreferredTrackTransform = true
                         let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
                         let thumbnail = UIImage(cgImage: cgImage)
+                        self.sendThumbnail = thumbnail
                         DispatchQueue.main.async {
                             self.viewConfigurator.setSendImageView(image: thumbnail)
                         }
@@ -184,75 +186,66 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             universalButton.setTitle("join".localized(), for: .normal)
         }
     }
-
-    func get1newMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
+    
+    func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool, uuid: String) {
         if message.owner == channelInfo.channel?._id {
-            DispatchQueue.main.async {
-                self.channelMessages.array!.append(message)
+            if message.senderId != SharedConfigs.shared.signedUser?.id {
+                self.channelMessages.array?.append(message)
                 self.viewConfigurator.removeView()
-                self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
-                let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
+                self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
+                let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                if self.channelInfo.role == 0 || self.channelInfo.role == 1 {
-                    self.universalButton.isHidden = false
-                    self.universalButton.setTitle("edit".localized(), for: .normal)
+            } else {
+                for i in 0..<self.channelMessages.array!.count {
+                    if message._id  == uuid {
+                        self.channelMessages.array![i] = message
+                    }
+                }
+                if message.type == "image" {
+                    self.sendImageTmp = nil
+                } else if message.type == "video" {
+                    self.sendThumbnail = nil
                 }
             }
         }
     }
     
-    func getnewMessage(message: Message, _ name: String?, _ lastname: String?, _ username: String?, isSenderMe: Bool) {
-            if message.owner == channelInfo.channel?._id {
-                if message.senderId != SharedConfigs.shared.signedUser?.id {
-                    self.channelMessages.array?.append(message)
-                    self.viewConfigurator.removeView()
-                } else {
-                    if message.type == "text" {
-                        for i in 0..<self.channelMessages.array!.count {
-                            if message.text  == self.channelMessages.array![i].text {
-                                self.channelMessages.array![i] = message
-                            }
-                        }
-                    } else if message.type == "image" {
-                        DispatchQueue.main.async {
-                            self.channelMessages.array!.append(message)
-                            let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
-                            self.tableView.insertRows(at: [indexPath], with: .automatic)
-                            let cell = self.tableView.cellForRow(at: indexPath) as? SentMediaMessageTableViewCell
-                            cell?.snedImageView.image = self.selectedImage
-                            self.selectedImage = nil
-                            self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
-        }
-    
     func sendImage() {
-        HomeNetworkManager().sendImage(tmpImage: selectedImage, channelId: self.channelInfo.channel?._id ?? "", text: inputTextField.text ?? "") { (error) in
+        let uuid = UUID().uuidString
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let sendImageCopy = self.selectedImage
+        self.selectedImage = nil
+        self.channelMessages.array?.append(Message(call: nil, type: "image", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+        self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
+        let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
+        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        HomeNetworkManager().sendImage(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, uuid: uuid) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-            } else {
-                DispatchQueue.main.async {
-                    self.inputTextField.text = ""
-                    self.view.viewWithTag(14)?.removeFromSuperview()
-                }
             }
         }
     }
     
-    fileprivate func sendVideo() {
-        self.viewModel?.encodeVideo(at: sendAsset?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+    func sendVideo() {
+        let uuid = UUID().uuidString
+        let text = inputTextField.text
+        inputTextField.text = ""
+        self.channelMessages.array?.append(Message(call: nil, type: "video", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+        self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
+        let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
+        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        let sendAssetCopy = self.sendAsset
+        self.sendAsset = nil
+        self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
             if let url = url {
                 do {
                     let data = try Data(contentsOf: url)
+                    let uuid = UUID().uuidString
                     DispatchQueue.main.async {
-                        HomeNetworkManager().sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: self.inputTextField.text!) { (error) in
+                        HomeNetworkManager().sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: text!, uuid: uuid) { (error) in
                             if let error = error {
                                 DispatchQueue.main.async {
                                     self.showErrorAlert(title: "error".localized(), errorMessage: error.rawValue)
@@ -270,12 +263,11 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     func sendText() {
         let text = inputTextField.text
         inputTextField.text = ""
-        channelMessages.array?.append(Message(call: nil, type: "text", _id: nil, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil, video: ""))
+        channelMessages.array?.append(Message(call: nil, type: "text", _id: nil, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
         self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
         SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
         let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        viewConfigurator.removeView()
     }
     
     @objc func sendMessage() {
@@ -299,6 +291,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 }
             }
         } else {
+            view.viewWithTag(14)?.removeFromSuperview()
             if selectedImage != nil {
                 sendImage()
             } else if sendAsset != nil {

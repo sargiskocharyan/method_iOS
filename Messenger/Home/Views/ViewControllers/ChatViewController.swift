@@ -51,7 +51,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     }()
     let sendButton: UIButton = {
         let button = UIButton(type: .system)
-        
         button.setImage(UIImage(named: "send"), for: .normal)
         return button
     }()
@@ -212,30 +211,17 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
-//                if message.type == "text" {
                     for i in 0..<allMessages!.array!.count {
                         if uuid == allMessages!.array![i]._id {
                             (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.readMessage.text = "sent"
                             self.allMessages!.array![i] = message
                         }
                     }
-//                } else if message.type == "image" {
-//                    for i in 0..<allMessages!.array!.count {
-//                        if message.text == allMessages!.array![i].text {
-//                            (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.readMessage.text = "sent"
-//                            self.allMessages!.array![i] = message
-//                        }
-//                    }
-//                }
                 if message.type == "image" {
                     self.sendImageTmp = nil
                 } else if message.type == "video" {
                     self.sendThumbnail = nil
                 }
-//                } else if message.type == "image" || message.type == "video" {
-//                    self.allMessages?.array!.append(message)
-//                    self.tableView.insertRows(at: [IndexPath(row: self.allMessages!.array!.count - 1, section: 0)], with: .automatic)
-//                }
             }
         } else if self.id == SharedConfigs.shared.signedUser?.id && message.senderId == message.reciever  {
             DispatchQueue.main.async {

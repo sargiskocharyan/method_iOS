@@ -24,11 +24,11 @@ class ConfigureChannelMessagesViewController {
         if vc.channelMessages.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
             if vc.channelMessages.array![indexPath.row].type == "image" {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
-                cell.configureSendImageMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview, channelInfo: vc.channelInfo, tapOnImage: tapOnImage)
+                cell.configureSendImageMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview, channelInfo: vc.channelInfo, tapOnImage: tapOnImage, tmpImage: vc.sendImageTmp)
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == "video"  {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
-                cell.configureSendVideoMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, tap, isPreview: vc.isPreview, tapOnVideo: tapOnVideo)
+                cell.configureSendVideoMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, tap, isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: vc.sendThumbnail)
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SentMessageTableViewCell
@@ -117,7 +117,7 @@ class ConfigureChannelMessagesViewController {
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.image = UIImage(named: "upload_image_icon")
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
-        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(vc.handleUploadTap1)))
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: vc, action: #selector(vc.handleUploadTap1)))
         vc.messageInputContainerView.addSubview(uploadImageView)
         uploadImageView.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: vc.messageInputContainerView.centerYAnchor).isActive = true
@@ -153,8 +153,6 @@ class ConfigureChannelMessagesViewController {
     }
     
     @objc func handleTapOnImage(gestureReconizer: CustomTapGesture) {
-        print("tapped image")
-        print(gestureReconizer.indexPath)
         let viewUnderImageView = UIView()
         viewUnderImageView.tag = 23
         viewUnderImageView.backgroundColor = UIColor.white
@@ -188,8 +186,6 @@ class ConfigureChannelMessagesViewController {
     }
     
     @objc func handleTapOnVideo(gestureReconizer: CustomTapGesture) {
-        print("tapped video")
-        print(gestureReconizer.indexPath.row)
         VideoCache.shared.getVideo(videoUrl: vc.channelMessages.array?[gestureReconizer.indexPath.row].video ?? "") { (videoURL) in
             if let videoURL = videoURL {
                 DispatchQueue.main.async {
@@ -227,7 +223,7 @@ class ConfigureChannelMessagesViewController {
         vc.messageInputContainerView.isUserInteractionEnabled = true
         vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
         vc.tableViewBottomConstraint.constant = 48
-        vc.sendButton.addTarget(self, action: #selector(vc.sendMessage), for: .touchUpInside)
+        vc.sendButton.addTarget(vc, action: #selector(vc.sendMessage), for: .touchUpInside)
     }
     
     @objc func deleteMessages() {
