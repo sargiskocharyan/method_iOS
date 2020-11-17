@@ -32,6 +32,20 @@ class EndPointManager {
         return headers
     }
     
+    func createUploadTaskHeaders(token: String?, boundary: String) -> HTTPHeaders {
+        var headers:HTTPHeaders = [String: String]()
+        headers["Accept"] = "application/json"
+        headers["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+      
+        
+        //headers["Cache-Control"] = "no-cache"
+        if token != nil {
+            headers["Authorization"] =  "\(token!)"
+        }
+        
+        return headers
+    }
+    
     func isRequestEncrypable(tail:String, method: HTTPMethod) -> Bool {
         if method == .post {
 //            if  tail == AuthURLs.Register || tail == AuthURLs.LoginUser {

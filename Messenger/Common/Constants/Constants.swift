@@ -73,6 +73,9 @@ struct HomeUrls {
     static let EditChannelMessageBySender   = "/chnMessages/edit"
     static let EditChatMessage              = "/message/edit"
     static let DeleteChatMessages           = "/messages/delete"
+    static let SendImageInChat              = "/chatMessages"
+    static let SendImageInChannel           = "/chnMessages"
+    static let UploadAvatar                 = "/users/me/avatar"
 }
 
 struct AppLangKeys {

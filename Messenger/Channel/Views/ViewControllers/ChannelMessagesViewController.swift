@@ -197,7 +197,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             } else {
                 for i in 0..<self.channelMessages.array!.count {
-                    if message._id  == uuid {
+                    if self.channelMessages.array![i]._id == uuid {
                         self.channelMessages.array![i] = message
                     }
                 }
@@ -210,17 +210,23 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
-    func sendImage() {
+    func beforeSendRequest(messageType: String) -> String {
         let uuid = UUID().uuidString
         let text = inputTextField.text
         inputTextField.text = ""
-        let sendImageCopy = self.selectedImage
-        self.selectedImage = nil
-        self.channelMessages.array?.append(Message(call: nil, type: "image", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+        self.channelMessages.array?.append(Message(call: nil, type: messageType, _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
         self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        HomeNetworkManager().sendImage(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, uuid: uuid) { (error) in
+        return uuid
+    }
+    
+    func sendImage() {
+        let sendImageCopy = self.selectedImage
+        self.selectedImage = nil
+        let text = inputTextField.text
+        let uuid = beforeSendRequest(messageType: "image")
+        HomeNetworkManager().sendImageInChannel(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, tempUUID: uuid, boundary: uuid) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -230,20 +236,14 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     }
     
     func sendVideo() {
-        let uuid = UUID().uuidString
-        let text = inputTextField.text
-        inputTextField.text = ""
-        self.channelMessages.array?.append(Message(call: nil, type: "video", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
-        self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
-        let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
-        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
         let sendAssetCopy = self.sendAsset
         self.sendAsset = nil
+        let text = inputTextField.text
+        let uuid = beforeSendRequest(messageType: "video")
         self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
             if let url = url {
                 do {
                     let data = try Data(contentsOf: url)
-                    let uuid = UUID().uuidString
                     DispatchQueue.main.async {
                         HomeNetworkManager().sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: text!, uuid: uuid) { (error) in
                             if let error = error {

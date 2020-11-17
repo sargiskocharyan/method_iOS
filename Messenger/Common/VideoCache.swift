@@ -14,7 +14,7 @@ class VideoCache {
     private init() {}
     
     func getVideo(videoUrl: String, completion: @escaping (URL?) -> ()) {
-        if let filename = videoUrl.components(separatedBy: "/").last {
+        if let filename = videoUrl.components(separatedBy: "/").last?.components(separatedBy: "?").first {
             let fileURL = try! FileManager.default
                 .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
                 .appendingPathComponent(filename, isDirectory: false)

@@ -90,7 +90,7 @@ class ImageCache {
             guard URL(string: videoUrl) != nil else {
                 completion(UIImage(named: "channelPlaceholder")!)
                 return }
-            HomeNetworkManager().downloadVideo(from: videoUrl, isNeedAllBytes: true) { (error, data) in
+            HomeNetworkManager().downloadVideo(from: videoUrl, isNeedAllBytes: false) { (error, data) in
                 if error != nil {
                     completion(UIImage(named: "channelPlaceholder")!)
                     return

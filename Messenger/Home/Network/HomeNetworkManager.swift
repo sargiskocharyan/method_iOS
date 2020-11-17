@@ -263,155 +263,75 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
     }
     
     func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, String?)->()) {
-        guard let image = tmpImage else { return }
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/users/me/avatar")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"avatar\"; filename=\"avatar.jpg\"\r\n")
-        body.appendString("Content-Type: image/jpg\r\n\r\n")
-        body.append(image.jpegData(compressionQuality: 1)!)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
+        let uuid = UUID().uuidString
+        router.uploadImageRequest(.uploadAvatar(tmpImage: tmpImage!, boundary: uuid), boundary: uuid) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
                 completion(NetworkResponse.failed, nil)
                 return }
             if error != nil {
-                print(error!.localizedDescription)
+                print(error!.rawValue)
                 completion(NetworkResponse.failed, nil)
             } else {
                 guard let responseData = data else {
                     completion(NetworkResponse.noData, nil)
                     return
                 }
-                SharedConfigs.shared.signedUser?.avatarURL = String(data: responseData, encoding: .utf8)
-                UserDataController().saveUserInfo()
                 completion(nil, String(data: responseData, encoding: .utf8))
+                return
             }
-        }.resume()
+        }
     }
     
-    func sendImage(tmpImage: UIImage?, channelId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
-        guard let image = tmpImage else { return }
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chnMessages/\(channelId)/imageMessage")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
-        body.appendString(text)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
-        body.appendString(uuid)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
-        body.appendString("Content-Type: image/jpg\r\n\r\n")
-        body.append(image.jpegData(compressionQuality: 1)!)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
-            print(request.httpBody as Any)
+    func sendImageInChannel(tmpImage: UIImage?, channelId: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
+        router.uploadImageRequest(.sendImageInChannel(tmpImage: tmpImage, channelId: channelId, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
                 completion(NetworkResponse.failed)
                 return }
             if error != nil {
-                print(error!.localizedDescription)
                 completion(NetworkResponse.failed)
             } else {
-                guard data != nil else {
-                    completion(NetworkResponse.noData)
-                    return
-                }
                 completion(nil)
             }
-        }.resume()
+        }
     }
     
-    func sendVideoInChat(data: Data, id: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(id)/videoMessage")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
-        body.appendString(text)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
-        body.appendString(uuid)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
-        body.appendString("Content-Type: video/mp4\r\n\r\n")
-        body.append(data)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
-            print(request.httpBody as Any)
+    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
+        router.uploadImageRequest(.sendImageInChat(tmpImage: tmpImage, userId: userId, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.noData)
+                completion(NetworkResponse.failed)
                 return }
             if error != nil {
-                print(error!.localizedDescription)
                 completion(NetworkResponse.failed)
-                return
             } else {
                 completion(nil)
-                return
             }
-        }.resume()
+        }
+    }
+    
+    func sendVideoInChat(data: Data, id: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
+        router.uploadImageRequest(.sendVideoInChat(videoData: data, userId: id, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed)
+                return }
+            if error != nil {
+                completion(NetworkResponse.failed)
+            } else {
+                completion(nil)
+            }
+        }
     }
     
     func sendVideoInChannel(data: Data, channelId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chnMessages/\(channelId)/videoMessage")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
-        body.appendString(text)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
-        body.appendString(uuid)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
-        body.appendString("Content-Type: video/mp4\r\n\r\n")
-        body.append(data)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
-            print(request.httpBody as Any)
+        router.uploadImageRequest(.sendVideoInChannel(videoData: data, channelId: channelId, text: text, boundary: uuid, tempUUID: uuid), boundary: uuid) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.noData)
+                completion(NetworkResponse.failed)
                 return }
             if error != nil {
-                print(error!.localizedDescription)
                 completion(NetworkResponse.failed)
-                return
+            } else {
+                completion(nil)
             }
-            guard data != nil else {
-                completion(NetworkResponse.noData)
-                return
-            }
-            completion(nil)
-            return
-        }.resume()
+        }
     }
     
     func downloadVideo(from url: String, isNeedAllBytes: Bool, completion: @escaping (NetworkResponse?, Data?) -> ()) {
@@ -423,7 +343,6 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
             let a = 1024 * 1024
             request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
         }
-//        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
@@ -444,36 +363,26 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
     }
     
     func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
-        guard let image = tmpImage else { return }
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/channel/\(id)/avatar")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"avatar\"; filename=\"avatar.jpg\"\r\n")
-        body.appendString("Content-Type: image/jpg\r\n\r\n")
-        body.append(image.jpegData(compressionQuality: 1)!)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed, nil)
-                return }
-            if error != nil {
-                print(error!.localizedDescription)
-                completion(NetworkResponse.failed, nil)
-            } else {
-                guard let responseData = data else {
-                    completion(NetworkResponse.noData, nil)
+        if let tmpImage = tmpImage {
+            let uuid = UUID().uuidString
+            router.uploadImageRequest(.uploadChannelLogo(tmpImage: tmpImage, channelId: id, boundary: uuid), boundary: uuid) { (data, response, error) in
+                guard (response as? HTTPURLResponse) != nil else {
+                    completion(NetworkResponse.failed, nil)
+                    return }
+                if error != nil {
+                    print(error!.rawValue)
+                    completion(NetworkResponse.failed, nil)
+                } else {
+                    guard let responseData = data else {
+                        completion(NetworkResponse.noData, nil)
+                        return
+                    }
+                    completion(nil, String(data: responseData, encoding: .utf8))
                     return
                 }
-                completion(nil, String(data: responseData, encoding: .utf8))
             }
-        }.resume()
+        }
+        
     }
     
     func deleteAccount(completion: @escaping (NetworkResponse?)->()) {
