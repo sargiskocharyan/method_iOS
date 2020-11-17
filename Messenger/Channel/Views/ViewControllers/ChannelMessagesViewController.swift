@@ -197,7 +197,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
             } else {
                 for i in 0..<self.channelMessages.array!.count {
-                    if message._id  == uuid {
+                    if self.channelMessages.array![i]._id == uuid {
                         self.channelMessages.array![i] = message
                     }
                 }
@@ -210,45 +210,44 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         }
     }
     
-    func sendImage() {
-        let uuid = UUID().uuidString
-        let text = inputTextField.text
-        inputTextField.text = ""
-        self.selectedImage = nil
-        self.channelMessages.array?.append(Message(call: nil, type: "image", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+    func prepareTableView(messageType: String, uuID: String, text: String){
+        self.channelMessages.array?.append(Message(call: nil, type: messageType, _id: uuID, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
         self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        viewModel?.sendImage(tmpImage: selectedImage!, channelId: self.channelInfo.channel?._id ?? "", text: inputTextField.text ?? "", completion: { (error) in
+    }
+    
+    
+    
+    func sendImage() {
+        let sendImageCopy = self.selectedImage
+        self.selectedImage = nil
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let uuId = UUID().uuidString
+        prepareTableView(messageType: "image", uuID: uuId, text: text!)
+        HomeNetworkManager().sendImageInChannel(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, tempUUID: uuId, boundary: uuId) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
                 }
-            } else {
-                DispatchQueue.main.async {
-                    self.inputTextField.text = ""
-                    self.view.viewWithTag(14)?.removeFromSuperview()
-                }
             }
-        })
+        }
     }
     
     func sendVideo() {
-        let uuid = UUID().uuidString
-        let text = inputTextField.text
-        inputTextField.text = ""
-        self.channelMessages.array?.append(Message(call: nil, type: "video", _id: uuid, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
-        self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
-        let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
-        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
         let sendAssetCopy = self.sendAsset
         self.sendAsset = nil
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let uuId = UUID().uuidString
+        prepareTableView(messageType: "video", uuID: uuId, text: text!)
         self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
             if let url = url {
                 do {
                     let data = try Data(contentsOf: url)
                     DispatchQueue.main.async {
-                        self.viewModel?.sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: self.inputTextField.text ?? "", completion: { (err) in
+                        self.viewModel?.sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: text ?? "", completion: { (err) in
                             if err != nil {
                                 DispatchQueue.main.async {
                                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)

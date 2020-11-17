@@ -120,10 +120,28 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         SocketTaskManager.shared.messageTyping(chatId: id!)
     }
     
+    func beforeSendRequest(messageType: String) -> String {
+        let text = inputTextField.text
+        viewConfigurator.removeSendImageView()
+        viewConfigurator.removeLabel()
+        inputTextField.text = ""
+        let tempUUID = UUID().uuidString
+        self.allMessages?.array?.append(Message(call: nil, type: messageType, _id: tempUUID, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+        self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
+        let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
+        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        return tempUUID
+    }
+    
     @objc func sendMessage() {
         if mode == .main {
             if sendImage != nil {
-                ChatNetworkManager().sendImageInChat(tmpImage: sendImage, userId: self.id ?? "", text: inputTextField.text!) { (error) in
+                let text = inputTextField.text
+                let image = sendImage
+                sendImage = nil
+                let tempUUID = beforeSendRequest(messageType: "image")
+                let boundary = UUID().uuidString
+                HomeNetworkManager().sendImageInChat(tmpImage: image, userId: self.id ?? "", text: text!, tempUUID: tempUUID, boundary: boundary) { (error) in
                     if error != nil {
                         DispatchQueue.main.async {
                             self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -131,24 +149,22 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     }
                 }
             } else if sendAsset != nil {
-                let text = inputTextField.text
                 let sendAssetCopy = sendAsset
-                inputTextField.text = ""
                 sendAsset = nil
-                viewConfigurator.removeSendImageView()
-                let uuid = UUID().uuidString
-                self.allMessages?.array?.append(Message(call: nil, type: "video", _id: uuid, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
-                self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
-                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                let text = inputTextField.text
+                let tempUUID = beforeSendRequest(messageType: "video")
                 self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
                     if let url = url {
                         do {
                             let data = try Data(contentsOf: url)
-                            DispatchQueue.main.async {
-                                ChatNetworkManager().sendVideoInChat(data: data, id: self.id!, text: self.inputTextField.text!)
+                            let boundary = UUID().uuidString
+                            HomeNetworkManager().sendVideoInChat(data: data, id: self.id!, text: text!, tempUUID: tempUUID, boundary: boundary) { error in
+                                if let error = error {
+                                    DispatchQueue.main.async {
+                                        self.showErrorAlert(title: "error".localized(), errorMessage: error.rawValue)
+                                    }
+                                }
                             }
-                          
                         } catch {
                             print(error.localizedDescription)
                         }
@@ -156,14 +172,8 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                 }
             } else if inputTextField.text != "" {
                 let text = inputTextField.text
-                inputTextField.text = ""
-                let uuid = UUID().uuidString
+                let uuid = beforeSendRequest(messageType: "text")
                 SocketTaskManager.shared.send(message: text!, id: id!, uuid: uuid)
-                self.allMessages?.array?.append(Message(call: nil, type: "text", _id: uuid, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: nil, video: nil))
-                self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
-                let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
-                self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                self.viewModel?.removeLabel(view: self.view)
             }
         } else {
             mode = .main
@@ -198,6 +208,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
+                print(uuid)
                     for i in 0..<allMessages!.array!.count {
                         if uuid == allMessages!.array![i]._id {
                             (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.readMessage.text = "sent"
@@ -420,8 +431,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
     }
-    
-    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         viewConfigurator.handleFinishImagePicking(info: info)

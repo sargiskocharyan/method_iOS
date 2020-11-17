@@ -31,7 +31,7 @@ class NetworkLogger {
             logOutput += "\(key): \(value) \n"
         }
         if let body = request.httpBody {
-            logOutput += "\n \(NSString(data: body, encoding: String.Encoding.utf8.rawValue) ?? "")"
+            logOutput += "\n\(NSString(data: body, encoding: String.Encoding.utf8.rawValue) ?? "")"
         }
         
         print(logOutput)

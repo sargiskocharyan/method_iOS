@@ -37,50 +37,6 @@ class NetworkManager: NSObject {
         }
     }
     
-    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
-        guard let image = tmpImage else { return }
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "\(Environment.baseURL)/chatMessages/\(userId)/imageMessage")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
-        let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
-        body.appendString(text)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
-        body.appendString(uuid)
-        body.appendString("\r\n--\(boundary)\r\n")
-        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
-        body.appendString("Content-Type: image/jpg\r\n\r\n")
-        body.append(image.jpegData(compressionQuality: 1)!)
-        body.appendString("\r\n--\(boundary)--\r\n")
-        let session = URLSession.shared
-        session.uploadTask(with: request, from: body as Data)  { data, response, error in
-            print(request.httpBody as Any)
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed)
-                return }
-            if error != nil {
-                print(error!.localizedDescription)
-                completion(NetworkResponse.failed)
-            } else {
-                guard data != nil else {
-                    completion(NetworkResponse.noData)
-                    return
-                }
-                completion(nil)
-            }
-        }.resume()
-    }
-    
-    func uploadImage(imageUrl: String, text: String, completion: @escaping (_ data: Data?, _ error: Error?)->()) {
-        
-    }
-    
     private func getDataFromUrl(url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
         URLSession.shared.dataTask(with: url) { data, response, error in
             completion(data, response, error)
