@@ -11,73 +11,73 @@ import UIKit.UIImage
 
 class ChannelInfoViewModel {
     func leaveChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().leaveChannel(id: id) { (error) in
+        ChannelNetworkManager().leaveChannel(id: id) { (error) in
             completion(error)
         }
     }
     
     func getModerators(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?) -> ()) {
-        HomeNetworkManager().getModerators(id: id) { (moderators, error) in
+        ChannelNetworkManager().getModerators(id: id) { (moderators, error) in
             completion(moderators, error)
         }
     }
     
     func getSubscribers(id: String, completion: @escaping ([ChannelSubscriber]?, NetworkResponse?)->()) {
-        HomeNetworkManager().getSubscribers(id: id) { (user, error) in
+        ChannelNetworkManager().getSubscribers(id: id) { (user, error) in
             completion(user, error)
         }
     }
     
     func addModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().addModerator(id: id, userId: userId) { (error) in
+        ChannelNetworkManager().addModerator(id: id, userId: userId) { (error) in
             completion(error)
         }
     }
     
     func removeModerator(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().removeModerator(id: id, userId: userId) { (error) in
+        ChannelNetworkManager().removeModerator(id: id, userId: userId) { (error) in
             completion(error)
         }
     }
     
     func uploadImage(image: UIImage, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
-        HomeNetworkManager().uploadChannelImage(tmpImage: image, id: id) { (error, avatarUrl) in
+        ChannelNetworkManager().uploadChannelImage(tmpImage: image, id: id) { (error, avatarUrl) in
             completion(error, avatarUrl)
         }
     }
     
     func changeAdmin(id: String, userId: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().changeAdmin(id: id, userId: userId) { (error) in
+        ChannelNetworkManager().changeAdmin(id: id, userId: userId) { (error) in
             completion(error)
         }
     }
     
     func deleteChannelLogo(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().deleteChannelLogo(id: id) { (error) in
+        ChannelNetworkManager().deleteChannelLogo(id: id) { (error) in
             completion(error)
         }
     }
     
     func deleteChannel(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().deleteChannel(id: id) { (error) in
+        ChannelNetworkManager().deleteChannel(id: id) { (error) in
             completion(error)
         }
     }
     
     func rejectBeModerator(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().rejectBeModerator(id: id) { (error) in
+        ChannelNetworkManager().rejectBeModerator(id: id) { (error) in
             completion(error)
         }
     }
     
     func subscribeToChannel(id: String, completion: @escaping (SubscribedResponse?, NetworkResponse?)->())  {
-        HomeNetworkManager().subscribe(id: id) { (subresponse, error) in
+        ChannelNetworkManager().subscribe(id: id) { (subresponse, error) in
             completion(subresponse, error)
         }
     }
     
     func blockSubscribers(id: String, subscribers: [String], completion: @escaping (NetworkResponse?)->())  {
-        HomeNetworkManager().blockSubscribers(id: id, subscribers: subscribers) { (error) in
+        ChannelNetworkManager().blockSubscribers(id: id, subscribers: subscribers) { (error) in
             completion(error)
         }
     }

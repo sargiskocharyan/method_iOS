@@ -5,7 +5,7 @@
 //  Copyright © 2020 Sargis Kocharyan. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 typealias NetworkRouterCompletion = (_ data: Data?,_ response: URLResponse?,_ error: NetworkResponse?)->()
 
@@ -37,12 +37,11 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
         self.task?.resume()
     }
     
-    func uploadImageRequest(_ route: EndPoint, completion: @escaping NetworkRouterCompletion) {
+    func uploadImageRequest(_ route: EndPoint, boundary: String, completion: @escaping NetworkRouterCompletion) {
         let session = URLSession.shared
         session.configuration.timeoutIntervalForRequest = 80
-        let boundary = UUID().uuidString
         let request = self.buildUploadImageRequest(from: route, boundary: boundary)
-            NetworkLogger.log(request: request)
+        NetworkLogger.log(request: request)
         task = session.dataTask(with: request)  { data, response, error in
             if error != nil {
                 completion(data, response, NetworkResponse.failed)
@@ -58,35 +57,28 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
     }
     
     fileprivate func configureFormDataBody(_ bodyParameters: Parameters?, _ boundary: String) -> Data {
-        //            body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
-        //            body.appendString(bodyParameters?["text"] as? String ?? "")
-        //            body.appendString("\r\n--\(boundary)\r\n")
-        //            body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
-        //            body.appendString(bodyParameters?["tempUUID"] as? String ?? "")
-        //            body.appendString("\r\n--\(boundary)\r\n")
-        //            body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
-        //            body.appendString("Content-Type: image/jpg\r\n\r\n")
-        //            body.append(data)
-        //            body.appendString("\r\n--\(boundary)--\r\n")
         let body = NSMutableData()
-        body.appendString("\r\n--\(boundary)\r\n")
+        print(bodyParameters)
         for parameter in bodyParameters! {
-            if type(of: parameter.value) == String.self {
-                body.appendString("Content-Disposition: form-data; name=\"\(parameter.key)\"\r\n\r\n")
-                body.appendString(bodyParameters?["text"] as? String ?? "")
-                body.appendString("\r\n--\(boundary)\r\n")
+            if let stringValue = (parameter.value as? String) {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition:form-data; name=\"\(parameter.key)\"\r\n")
+                body.appendString("\r\n\(stringValue)\r\n")
             } else if parameter.key == "image" {
-                body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition:form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
                 body.appendString("Content-Type: image/jpg\r\n\r\n")
                 body.append(parameter.value as! Data)
-                body.appendString("\r\n--\(boundary)--\r\n")
+                body.appendString("\r\n")
             } else if parameter.key == "video" {
-                body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"video.mp4\"\r\n")
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition:form-data; name=\"video\"; filename=\"video.mp4\"\r\n")
                 body.appendString("Content-Type: video/mp4\r\n\r\n")
                 body.append(parameter.value as! Data)
-                body.appendString("\r\n--\(boundary)--\r\n")
+                body.appendString("\r\n")
             }
         }
+        body.appendString("--\(boundary)--\r\n")
         return body as Data
     }
     
@@ -103,7 +95,7 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
             request.httpBody = configureFormDataBody(bodyParameters, boundary)
         case .requestParametersAndHeaders(let bodyParameters, _, _, let additionalHeaders):
             request.httpBody = configureFormDataBody(bodyParameters, boundary)
-            self.addAdditionalHeaders(additionalHeaders, request: &request)
+            addAdditionalHeaders(additionalHeaders, request: &request)
         }
         return request
     }

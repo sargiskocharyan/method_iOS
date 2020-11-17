@@ -16,7 +16,7 @@ class AppDelegateViewModel {
     }
     
     func confirmRequest(id: String, confirm: Bool, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().confirmRequest(id: id, confirm: confirm) { (error) in
+        ProfileNetworkManager().confirmRequest(id: id, confirm: confirm) { (error) in
             completion(error)
         }
     }

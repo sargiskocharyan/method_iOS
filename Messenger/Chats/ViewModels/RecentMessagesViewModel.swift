@@ -79,7 +79,7 @@ class RecentMessagesViewModel {
     }
     
     func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+        ChatNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)
         }
     }
@@ -111,7 +111,7 @@ class RecentMessagesViewModel {
     }
     
     func getChats(completion: @escaping (Chats?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChats() { (chats, error) in
+        ChatNetworkManager().getChats() { (chats, error) in
             completion(chats, error)
         }
     }
@@ -121,7 +121,7 @@ class RecentMessagesViewModel {
         }
     }
     func onlineUsers(arrayOfId: [String], completion: @escaping (OnlineUsers?, NetworkResponse?)->()) {
-        HomeNetworkManager().onlineUsers(arrayOfId: arrayOfId) { (user, error) in
+        ChatNetworkManager().onlineUsers(arrayOfId: arrayOfId) { (user, error) in
             completion(user, error)
         }
     }

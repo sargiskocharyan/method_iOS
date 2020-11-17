@@ -15,49 +15,49 @@ class ContactsViewModel {
     var otherContacts: [User] = []
     
     func getContacts(completion: @escaping ([User]?, NetworkResponse?)->()) {
-        HomeNetworkManager().getUserContacts() { (contacts, error) in
+        ProfileNetworkManager().getUserContacts() { (contacts, error) in
             completion(contacts, error)
         }
     }
     
     func findUsers(term: String, completion: @escaping (Users?, NetworkResponse?)->()) {
-        HomeNetworkManager().findUsers(term: term) { (responseObject, error) in
+        ProfileNetworkManager().findUsers(term: term) { (responseObject, error) in
             completion(responseObject, error)
         }
     }
     
     func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().addContact(id: id) { (error) in
+        ProfileNetworkManager().addContact(id: id) { (error) in
             completion(error)
         }
     }
     
     func getMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+        ChatNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)
         }
     }
     
     func removeContact(id: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().removeContact(id: id) { (error) in
+        ProfileNetworkManager().removeContact(id: id) { (error) in
             completion(error)
         }
     }
     
     func getRequests(completion: @escaping ([Request]?, NetworkResponse?)->())  {
-        HomeNetworkManager().getRequests { (requests, error) in
+        ProfileNetworkManager().getRequests { (requests, error) in
             completion(requests, error)
         }
     }
     
     func getAdminMessages(completion: @escaping ([AdminMessage]?, NetworkResponse?)->())  {
-        HomeNetworkManager().getAdminMessages { (adminMessages, error) in
+        ProfileNetworkManager().getAdminMessages { (adminMessages, error) in
             completion(adminMessages, error)
         }
     }
     
     func deleteRequest(id: String, completion: @escaping (NetworkResponse?) -> ()) {
-        HomeNetworkManager().deleteRequest(id: id) { (error) in
+        ProfileNetworkManager().deleteRequest(id: id) { (error) in
             completion(error)
         }
     }

@@ -447,7 +447,7 @@ class MainTabBarController: UITabBarController {
     func onChatNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         let recentNc = self.viewControllers![1] as! UINavigationController
         if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
-            if recentNc.viewControllers.count == 2  {
+            if recentNc.viewControllers.count >= 2  {
                 let chatVC = recentNc.viewControllers[1] as? ChatViewController
                 if chatVC == nil && callHistory?.status == CallStatus.missed.rawValue  {
                     self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
@@ -457,9 +457,11 @@ class MainTabBarController: UITabBarController {
             } else if callHistory?.status == CallStatus.missed.rawValue {
                 self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
             }
-        } else if callHistory == nil && recentNc.viewControllers.count == 2 && message.senderId != SharedConfigs.shared.signedUser?.id {
+        } else if callHistory == nil && recentNc.viewControllers.count >= 2 {
             let contactsVC = recentNc.viewControllers[1] as? ContactsViewController
-            if contactsVC != nil {
+            let chatVC = recentNc.viewControllers[1] as? ChatViewController
+            chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
+            if contactsVC != nil  && message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
             }
         } else if recentNc.viewControllers.count > 2 {

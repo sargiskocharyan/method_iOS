@@ -11,13 +11,13 @@ import UIKit.UIImage
 
 class UpdateChannelInfoViewModel {
     func checkChannelName(name: String, completion: @escaping(CheckChannelName?, NetworkResponse?)->()) {
-        HomeNetworkManager().checkChannelName(name: name) { (response, error) in
+        ChannelNetworkManager().checkChannelName(name: name) { (response, error) in
             completion(response, error)
         }
     }
     
     func updateChannelInfo(id: String, name: String?, description: String?, completion: @escaping(Channel?, NetworkResponse?)->()) {
-        HomeNetworkManager().updateChannelInfo(id: id, name: name, description: description) { (channel, error) in
+        ChannelNetworkManager().updateChannelInfo(id: id, name: name, description: description) { (channel, error) in
             completion(channel, error)
         }
     }

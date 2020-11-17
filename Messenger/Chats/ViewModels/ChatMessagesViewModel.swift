@@ -13,19 +13,19 @@ import UIKit
 class ChatMessagesViewModel {
     
     func getChatMessages(id: String, dateUntil: String?, completion: @escaping (Messages?, NetworkResponse?)->()) {
-        HomeNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
+        ChatNetworkManager().getChatMessages(id: id, dateUntil: dateUntil) { (messages, error) in
             completion(messages, error)
         }
     }
     
     func editChatMessage(messageId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().editChatMessage(messageId: messageId, text: text) { (error) in
+        ChatNetworkManager().editChatMessage(messageId: messageId, text: text) { (error) in
             completion(error)
         }
     }
     
     func deleteChatMessages(arrayMessageIds: [String], completion: @escaping (NetworkResponse?)->()) {
-        HomeNetworkManager().deleteChatMessages(arrayMessageIds: arrayMessageIds) { (error) in
+        ChatNetworkManager().deleteChatMessages(arrayMessageIds: arrayMessageIds) { (error) in
             completion(error)
         }
     }
@@ -33,15 +33,12 @@ class ChatMessagesViewModel {
     func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
         let avAsset = AVURLAsset(url: videoURL, options: nil)
         let startDate = Date()
-        //Create Export session
         guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
             completionHandler?(nil, nil)
             return
         }
-        //Creating temp path to save the converted video
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
         let filePath = documentsDirectory.appendingPathComponent("rendered-Video.mp4")
-        //Check if the file already exists then remove the previous file
         if FileManager.default.fileExists(atPath: filePath.path) {
             do {
                 try FileManager.default.removeItem(at: filePath)
