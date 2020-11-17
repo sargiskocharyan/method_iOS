@@ -24,7 +24,6 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
         do {
             let request = try self.buildRequest(from: route)
             NetworkLogger.log(request: request)
-            
             task = session.dataTask(with: request, completionHandler: { data, response, error in
                 if error != nil {
                     completion(data, response, NetworkResponse.failed)
@@ -38,16 +37,83 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
         self.task?.resume()
     }
     
+    func uploadImageRequest(_ route: EndPoint, completion: @escaping NetworkRouterCompletion) {
+        let session = URLSession.shared
+        session.configuration.timeoutIntervalForRequest = 80
+        let boundary = UUID().uuidString
+        let request = self.buildUploadImageRequest(from: route, boundary: boundary)
+            NetworkLogger.log(request: request)
+        task = session.dataTask(with: request)  { data, response, error in
+            if error != nil {
+                completion(data, response, NetworkResponse.failed)
+            } else {
+                completion(data, response, nil)
+            }
+        }
+        self.task?.resume()
+    }
+    
     func cancel() {
         self.task?.cancel()
     }
     
-    fileprivate func buildRequest(from route: EndPoint) throws -> URLRequest {
-        
+    fileprivate func configureFormDataBody(_ bodyParameters: Parameters?, _ boundary: String) -> Data {
+        //            body.appendString("Content-Disposition: form-data; name=\"text\"\r\n\r\n")
+        //            body.appendString(bodyParameters?["text"] as? String ?? "")
+        //            body.appendString("\r\n--\(boundary)\r\n")
+        //            body.appendString("Content-Disposition: form-data; name=\"tempUUID\"\r\n\r\n")
+        //            body.appendString(bodyParameters?["tempUUID"] as? String ?? "")
+        //            body.appendString("\r\n--\(boundary)\r\n")
+        //            body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
+        //            body.appendString("Content-Type: image/jpg\r\n\r\n")
+        //            body.append(data)
+        //            body.appendString("\r\n--\(boundary)--\r\n")
+        let body = NSMutableData()
+        body.appendString("\r\n--\(boundary)\r\n")
+        for parameter in bodyParameters! {
+            if type(of: parameter.value) == String.self {
+                body.appendString("Content-Disposition: form-data; name=\"\(parameter.key)\"\r\n\r\n")
+                body.appendString(bodyParameters?["text"] as? String ?? "")
+                body.appendString("\r\n--\(boundary)\r\n")
+            } else if parameter.key == "image" {
+                body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n")
+                body.appendString("Content-Type: image/jpg\r\n\r\n")
+                body.append(parameter.value as! Data)
+                body.appendString("\r\n--\(boundary)--\r\n")
+            } else if parameter.key == "video" {
+                body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"video.mp4\"\r\n")
+                body.appendString("Content-Type: video/mp4\r\n\r\n")
+                body.append(parameter.value as! Data)
+                body.appendString("\r\n--\(boundary)--\r\n")
+            }
+        }
+        return body as Data
+    }
+    
+    fileprivate func buildUploadImageRequest(from route: EndPoint, boundary: String) -> URLRequest {
         var request = URLRequest(url: route.baseURL.appendingPathComponent(route.path),
                                  cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
                                  timeoutInterval: 60.0)
-        
+        request.httpMethod = route.httpMethod.rawValue
+        switch route.task {
+        case .request:
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+        case .requestParameters(let bodyParameters, _, _):
+            request.httpBody = configureFormDataBody(bodyParameters, boundary)
+        case .requestParametersAndHeaders(let bodyParameters, _, _, let additionalHeaders):
+            request.httpBody = configureFormDataBody(bodyParameters, boundary)
+            self.addAdditionalHeaders(additionalHeaders, request: &request)
+        }
+        return request
+    }
+    
+   
+    
+    fileprivate func buildRequest(from route: EndPoint) throws -> URLRequest {
+        var request = URLRequest(url: route.baseURL.appendingPathComponent(route.path),
+                                 cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
+                                 timeoutInterval: 60.0)
         request.httpMethod = route.httpMethod.rawValue
         do {
             switch route.task {
@@ -56,17 +122,14 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
             case .requestParameters(let bodyParameters,
                                     let bodyEncoding,
                                     let urlParameters):
-                
                 try self.configureParameters(bodyParameters: bodyParameters,
                                              bodyEncoding: bodyEncoding,
                                              urlParameters: urlParameters,
                                              request: &request)
-                
             case .requestParametersAndHeaders(let bodyParameters,
                                               let bodyEncoding,
                                               let urlParameters,
                                               let additionalHeaders):
-                
                 self.addAdditionalHeaders(additionalHeaders, request: &request)
                 try self.configureParameters(bodyParameters: bodyParameters,
                                              bodyEncoding: bodyEncoding,

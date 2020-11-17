@@ -10,6 +10,9 @@ PODS:
     - FirebaseAnalytics (= 6.6.1)
   - Firebase/CoreOnly (6.27.0):
     - FirebaseCore (= 6.8.0)
+  - Firebase/Crashlytics (6.27.0):
+    - Firebase/CoreOnly
+    - FirebaseCrashlytics (~> 4.2.0)
   - FirebaseAnalytics (6.6.1):
     - FirebaseCore (~> 6.8)
     - FirebaseInstallations (~> 1.4)
@@ -33,6 +36,13 @@ PODS:
     - GoogleUtilities/Environment (~> 6.5)
     - GoogleUtilities/Logger (~> 6.5)
     - nanopb (~> 1.30905.0)
+  - FirebaseCrashlytics (4.2.0):
+    - FirebaseCore (~> 6.8)
+    - FirebaseInstallations (~> 1.1)
+    - GoogleDataTransport (~> 6.1)
+    - GoogleDataTransportCCTSupport (~> 3.1)
+    - nanopb (~> 1.30905.0)
+    - PromisesObjC (~> 1.2)
   - FirebaseInstallations (1.4.0):
     - FirebaseCore (~> 6.8)
     - GoogleUtilities/Environment (~> 6.6)
@@ -86,6 +96,7 @@ DEPENDENCIES:
   - DropDown
   - Firebase/Analytics
   - Firebase/Auth
+  - Firebase/Crashlytics
   - GoogleWebRTC
   - PhoneNumberKit (~> 3.3)
 
@@ -97,6 +108,7 @@ SPEC REPOS:
     - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseCrashlytics
     - FirebaseInstallations
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -115,6 +127,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: b85c064e0ac60f82486728d50a4803f235687302
   FirebaseCore: feda061cb1ee6d8ad4824f4a4a8ffbcfe284f595
   FirebaseCoreDiagnostics: 4505e4d4009b1d93f605088ee7d7764d5f0d1c84
+  FirebaseCrashlytics: 7d0fa02ea8842cc4b2ab07b0735edafde1ad77d6
   FirebaseInstallations: 293f567159b6d66d1c990f13bb868066096c94ec
   GoogleAppMeasurement: 2fd5c5a56c069db635c8e7b92d4809a9591d0a69
   GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
@@ -126,6 +139,6 @@ SPEC CHECKSUMS:
   PhoneNumberKit: ff153d5e299f6da566cb73c6aa71e354933b2932
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
 
-PODFILE CHECKSUM: cf48c89357756e26996340e254d14f2a65e1b6d8
+PODFILE CHECKSUM: 74381a13ca13636dad165e390fe409af0212b3ac
 
 COCOAPODS: 1.10.0

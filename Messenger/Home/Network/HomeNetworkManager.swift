@@ -81,14 +81,15 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         request.httpMethod = "GET"
         request.timeoutInterval = 10
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        if !isNeedAllBytes {
-            let a = 1024 * 1024
-            request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
-        }
-//        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
+        //        if !isNeedAllBytes {
+        //            let a = 1024 * 1024
+        //            request.setValue("bytes=0-\(a)", forHTTPHeaderField: "Range")
+        //        }
+        //        request.setValue(SharedConfigs.shared.signedUser?.token, forHTTPHeaderField: "Authorization")
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             guard (response as? HTTPURLResponse) != nil else {
+                
                 completion(NetworkResponse.failed, nil)
                 return }
             if error != nil {

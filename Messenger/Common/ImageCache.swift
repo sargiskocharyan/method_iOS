@@ -90,14 +90,13 @@ class ImageCache {
             guard URL(string: videoUrl) != nil else {
                 completion(UIImage(named: "channelPlaceholder")!)
                 return }
-            let filename = videoUrl.components(separatedBy: "/").last?.components(separatedBy: "?").first
             HomeNetworkManager().downloadVideo(from: videoUrl, isNeedAllBytes: true) { (error, data) in
                 if error != nil {
                     completion(UIImage(named: "channelPlaceholder")!)
                     return
                 }
                 let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
-                let filePath = documentsDirectory.appendingPathComponent(filename ?? "")
+                let filePath = documentsDirectory.appendingPathComponent("videoPart.mp4")
                 if FileManager.default.fileExists(atPath: filePath.path) {
                     try! FileManager.default.removeItem(at: filePath)
                 }

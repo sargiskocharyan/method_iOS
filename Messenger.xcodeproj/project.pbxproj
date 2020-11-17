@@ -152,6 +152,16 @@
 		D04605B3255D02B90016255A /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04605B1255D02B90016255A /* Chats.storyboard */; };
 		D048C0532555306D006B36FC /* VideoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D048C0522555306D006B36FC /* VideoCache.swift */; };
 		D048C07B2555818A006B36FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D048C0792555818A006B36FC /* AppDelegate.swift */; };
+		D0607CE2255E4FB6008EB9DE /* CellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */; };
+		D0607CE3255E4FB6008EB9DE /* CellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */; };
+		D077FA64255D58600060CA8B /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */; };
+		D077FA65255D58600060CA8B /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */; };
+		D077FA6B255D5D470060CA8B /* ConfigureChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA6A255D5D470060CA8B /* ConfigureChatViewController.swift */; };
+		D077FA6C255D5D470060CA8B /* ConfigureChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA6A255D5D470060CA8B /* ConfigureChatViewController.swift */; };
+		D077FA72255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */; };
+		D077FA73255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */; };
+		D077FA79255D80BB0060CA8B /* CustomTapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */; };
+		D077FA7A255D80BB0060CA8B /* CustomTapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */; };
 		D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */; };
 		D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
@@ -167,8 +177,6 @@
 		D0EDEFF5252495B000016AF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0EDEFF3252495B000016AF7 /* Main.storyboard */; };
 		D0EDEFF72524AE7200016AF7 /* ChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */; };
 		D0EDEFF82524AE7200016AF7 /* ChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */; };
-		D0F0AA86255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */; };
-		D0F0AA87255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */; };
 		D0F664B5251B177D0018D9B7 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD382F27247D116700AD437D /* CustomTextField.swift */; };
 		D0F664B6251B177D0018D9B7 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD352E352488F71900747E32 /* ContactsViewController.swift */; };
 		D0F664B7251B177D0018D9B7 /* RecentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD35E2692497989A003C53AB /* RecentMessageTableViewCell.swift */; };
@@ -486,6 +494,11 @@
 		D04605B1255D02B90016255A /* Chats.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		D048C0522555306D006B36FC /* VideoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCache.swift; sourceTree = "<group>"; };
 		D048C0792555818A006B36FC /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellProtocol.swift; sourceTree = "<group>"; };
+		D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
+		D077FA6A255D5D470060CA8B /* ConfigureChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureChatViewController.swift; sourceTree = "<group>"; };
+		D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureChannelMessagesViewController.swift; sourceTree = "<group>"; };
+		D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTapGesture.swift; sourceTree = "<group>"; };
 		D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUserTableViewCell.swift; sourceTree = "<group>"; };
 		D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewModel.swift; sourceTree = "<group>"; };
@@ -494,7 +507,6 @@
 		D0EDEFF02524642F00016AF7 /* ChannelInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewController.swift; sourceTree = "<group>"; };
 		D0EDEFF3252495B000016AF7 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewModel.swift; sourceTree = "<group>"; };
-		D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
@@ -768,6 +780,10 @@
 				CD367338247949FA0002E606 /* Extensions */,
 				CD3C9AED24CFFDCF009AD586 /* Contacts.swift */,
 				CD3F580624DD2043008BE198 /* Participants.swift */,
+				D077FA6A255D5D470060CA8B /* ConfigureChatViewController.swift */,
+				D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */,
+				D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */,
+				D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */,
 			);
 			path = SupportFiles;
 			sourceTree = "<group>";
@@ -982,8 +998,8 @@
 		CDCB74BE2522FEC400E805E2 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				D0F0AA85255960A9008AE75E /* ChannelMessagesViewController.swift */,
 				CD8B39772526F90C00C54D74 /* ModeratorInfoViewController.swift */,
+				D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */,
 				CD8B3979252740D400C54D74 /* SubscribersListViewController.swift */,
 				D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */,
 				D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */,
@@ -1240,6 +1256,7 @@
 				CDBE8DEB2476744C0049F971 /* Resources */,
 				3D71DC436929572CB0C311FE /* [CP] Embed Pods Frameworks */,
 				F1ACA84824E42C1F00EE8578 /* Embed App Extensions */,
+				D0ADD9C42562466A007062FC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1470,6 +1487,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D0ADD9C42562466A007062FC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1487,6 +1522,7 @@
 				CDD9C646247BB69F0048A9A1 /* RegisterViewController.swift in Sources */,
 				CD1FA11B255D76330023A5BC /* ProfileEndpoints.swift in Sources */,
 				CDF15F0E24DBF76F00A882D7 /* SentCallTableViewCell.swift in Sources */,
+				D077FA72255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */,
 				F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */,
 				CD3F12F324BC55C200040D8E /* SessionDescription.swift in Sources */,
 				CD3F12D324BC28A700040D8E /* ProviderDelegate.swift in Sources */,
@@ -1522,6 +1558,7 @@
 				CDB7D9932512377700DBAD51 /* ContactRequestTableViewCell.swift in Sources */,
 				CDCB74C72523030800E805E2 /* ChannelMessagesViewModel.swift in Sources */,
 				CDF0776824A9F49800B1DAD7 /* ImageCache.swift in Sources */,
+				D0607CE2255E4FB6008EB9DE /* CellProtocol.swift in Sources */,
 				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
@@ -1529,6 +1566,7 @@
 				CD1FA0D3255D654C0023A5BC /* ChannelEndpoints.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
 				D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
+				D077FA6B255D5D470060CA8B /* ConfigureChatViewController.swift in Sources */,
 				CDD9C676247BC4AE0048A9A1 /* NetworkLogger.swift in Sources */,
 				CDA56E702488E7250027AA4E /* HomeResponseModels.swift in Sources */,
 				D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */,
@@ -1564,6 +1602,7 @@
 				CD3F12ED24BC558B00040D8E /* SignalingClient.swift in Sources */,
 				CD36733A24794A2E0002E606 /* TextField-Extension.swift in Sources */,
 				D01A89EF252311CB00ACE2D8 /* ChannelListViewModel.swift in Sources */,
+				D077FA64255D58600060CA8B /* ChannelMessagesViewController.swift in Sources */,
 				D0B806842526F938004E4DF0 /* AdminInfoViewController.swift in Sources */,
 				CDB88607254A9DC10029A325 /* RecievedMediaMessageTableViewCell.swift in Sources */,
 				CDD9C686247BCA120048A9A1 /* BeforeLoginViewModel.swift in Sources */,
@@ -1585,6 +1624,7 @@
 				CD352E3B2488FA9A00747E32 /* ContactTableViewCell.swift in Sources */,
 				CD1FA100255D70ED0023A5BC /* ChatEndpoints.swift in Sources */,
 				CDB7D9912512360500DBAD51 /* NotificationDetailViewController.swift in Sources */,
+				D077FA79255D80BB0060CA8B /* CustomTapGesture.swift in Sources */,
 				CDD9C672247BC4AE0048A9A1 /* BodyURLParameterEncoding.swift in Sources */,
 				D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */,
 				CDD9C671247BC4AE0048A9A1 /* JSONParameterEncoder.swift in Sources */,
@@ -1622,10 +1662,10 @@
 				D0F664C1251B177D0018D9B7 /* ChatMessagesViewModel.swift in Sources */,
 				D0F664C2251B177D0018D9B7 /* RegisterViewModel.swift in Sources */,
 				D0F664C3251B177D0018D9B7 /* AppDelegateViewModel.swift in Sources */,
+				D077FA7A255D80BB0060CA8B /* CustomTapGesture.swift in Sources */,
 				D0F664C4251B177D0018D9B7 /* ResponseModels.swift in Sources */,
 				D0F664C5251B177D0018D9B7 /* ConfirmCodeViewController.swift in Sources */,
 				D0F664C6251B177D0018D9B7 /* Call.swift in Sources */,
-				D0F0AA87255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */,
 				D0F664C7251B177D0018D9B7 /* CongratulationsViewController.swift in Sources */,
 				D0F664C8251B177D0018D9B7 /* AuthRouter.swift in Sources */,
 				D0F664C9251B177D0018D9B7 /* EndPointOptions.swift in Sources */,
@@ -1643,6 +1683,7 @@
 				D0F664D3251B177D0018D9B7 /* Contacts.swift in Sources */,
 				D0F664D4251B177D0018D9B7 /* HTTPMethod.swift in Sources */,
 				D0F664D5251B177D0018D9B7 /* Int-Extension.swift in Sources */,
+				D0607CE3255E4FB6008EB9DE /* CellProtocol.swift in Sources */,
 				D0F664D6251B177D0018D9B7 /* BottomShapeView.swift in Sources */,
 				D0F664D7251B177D0018D9B7 /* WebRTCClient.swift in Sources */,
 				D0F664D8251B177D0018D9B7 /* ContactsViewModel.swift in Sources */,
@@ -1656,6 +1697,7 @@
 				D0F664DE251B177D0018D9B7 /* CustomCell.swift in Sources */,
 				D0EDEFF22524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				D0F664DF251B177D0018D9B7 /* NetworkLogger.swift in Sources */,
+				D077FA73255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */,
 				D048C07B2555818A006B36FC /* AppDelegate.swift in Sources */,
 				CD1FA12E255D7D2D0023A5BC /* CallEndpoints.swift in Sources */,
 				D0F664E0251B177D0018D9B7 /* HomeResponseModels.swift in Sources */,
@@ -1664,6 +1706,7 @@
 				D0F664E2251B177D0018D9B7 /* ChatViewController.swift in Sources */,
 				D0F664E3251B177D0018D9B7 /* DarkModeTableViewCell.swift in Sources */,
 				D0F664E4251B177D0018D9B7 /* Endpoints.swift in Sources */,
+				D077FA65255D58600060CA8B /* ChannelMessagesViewController.swift in Sources */,
 				D0F664E5251B177D0018D9B7 /* CallDetailViewController.swift in Sources */,
 				D0F664E6251B177D0018D9B7 /* Audio.swift in Sources */,
 				D0F664E7251B177D0018D9B7 /* ConfirmCodeViewModel.swift in Sources */,
@@ -1697,6 +1740,7 @@
 				D0F664FD251B177D0018D9B7 /* CallListViewController.swift in Sources */,
 				D01A89ED2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */,
 				D0EDEFF82524AE7200016AF7 /* ChannelInfoViewModel.swift in Sources */,
+				D077FA6C255D5D470060CA8B /* ConfigureChatViewController.swift in Sources */,
 				D0F664FE251B177D0018D9B7 /* VideoViewController.swift in Sources */,
 				D0F664FF251B177D0018D9B7 /* View-Extension.swift in Sources */,
 				D0F66500251B177D0018D9B7 /* CustomAlertViewController.swift in Sources */,

@@ -82,12 +82,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                   }
                 else
                 {
-                    print("Result is:\(result ?? "")")
                     self.dictionary = result as! [String : AnyObject]
                     let name = self.dictionary["name"] as! String
-//                    let email = self.dictionary["email"] as! String
                     let token = AccessToken.current?.tokenString
-                    
                     print("name is -\(name)")
                     print("token is -\(token ?? "")")
                 }

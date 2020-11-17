@@ -61,7 +61,6 @@ class ChannelMessagesViewModel {
     
     func encodeVideo(at videoURL: URL, completionHandler: ((URL?, Error?) -> Void)?)  {
         let avAsset = AVURLAsset(url: videoURL, options: nil)
-        let startDate = Date()
         guard let exportSession = AVAssetExportSession(asset: avAsset, presetName: AVAssetExportPresetPassthrough) else {
             completionHandler?(nil, nil)
             return
@@ -88,15 +87,8 @@ class ChannelMessagesViewModel {
                 print(exportSession.error ?? "NO ERROR")
                 completionHandler?(nil, exportSession.error)
             case .cancelled:
-                print("Export canceled")
                 completionHandler?(nil, nil)
             case .completed:
-                //Video conversion finished
-                let endDate = Date()
-                let time = endDate.timeIntervalSince(startDate)
-                print(time)
-                print("Successful!")
-                print(exportSession.outputURL ?? "NO OUTPUT URL")
                 completionHandler?(exportSession.outputURL, nil)
             default: break
             }

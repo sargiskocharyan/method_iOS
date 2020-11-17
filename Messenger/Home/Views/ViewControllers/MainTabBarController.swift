@@ -195,7 +195,6 @@ class MainTabBarController: UITabBarController {
     
     func handleNewContact() {
         SocketTaskManager.shared.addNewContactListener { (userId) in
-            print("new contact added")
             self.recentMessagesViewModel?.getuserById(id: userId, completion: { (user, error) in
                 if error != nil {
                     DispatchQueue.main.async {
@@ -220,7 +219,6 @@ class MainTabBarController: UITabBarController {
     
     func handleContactRemoved() {
         SocketTaskManager.shared.addContactRemovedListener(completionHandler: { (userId) in
-            print("The user delete us from contacts...")
             self.contactsViewModel?.removeContactFromCoreData(id: userId, completion: { (error) in
                 if error != nil {
                     print(error?.localizedDescription as Any)
@@ -397,7 +395,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func getNewChannelMessage() {
-        SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username) in
+        SocketTaskManager.shared.getChannelMessage { (message, name, lastname, username, uuid) in
             let channelMessageNC = self.viewControllers?[2] as? UINavigationController
             switch self.selectedIndex {
             case 2:
@@ -410,13 +408,13 @@ class MainTabBarController: UITabBarController {
                     if message.owner != channelMessageVC?.channelInfo.channel?._id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
-                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false, uuid: uuid)
                 } else {
                     if message.senderId != SharedConfigs.shared.signedUser?.id {
                         self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
                     }
                     let channelMessageVC = channelMessageNC?.viewControllers[1] as? ChannelMessagesViewController
-                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false)
+                    channelMessageVC?.getnewMessage(message: message, name, lastname, username, isSenderMe: false, uuid: uuid)
                 }
             default:
                 self.selectedViewController?.scheduleNotification(center: Self.center, nil, message: message, name, lastname, username)
@@ -424,7 +422,7 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func onCallNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func onCallNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         let callNc = self.viewControllers![0] as! UINavigationController
         if callNc.viewControllers.count == 1 {
             if callHistory == nil {
@@ -439,14 +437,14 @@ class MainTabBarController: UITabBarController {
             }
         } else {
             if let chatVC = callNc.viewControllers[2] as? ChatViewController {
-                chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             } else if let videoVC = callNc.viewControllers[2] as? VideoViewController {
                 videoVC.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
             }
         }
     }
     
-    func onChatNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func onChatNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         let recentNc = self.viewControllers![1] as! UINavigationController
         if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
             if recentNc.viewControllers.count == 2  {
@@ -454,7 +452,7 @@ class MainTabBarController: UITabBarController {
                 if chatVC == nil && callHistory?.status == CallStatus.missed.rawValue  {
                     self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                 } else {
-                    chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                    chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
                 }
             } else if callHistory?.status == CallStatus.missed.rawValue {
                 self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
@@ -470,7 +468,7 @@ class MainTabBarController: UITabBarController {
                     self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
                 }
                 let chatVC = recentNc.viewControllers[1] as? ChatViewController
-                chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                chatVC?.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             } else if recentNc.viewControllers.count == 4, let _ = recentNc.viewControllers[3] as? ContactProfileViewController {
                 if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
                     self.selectedViewController?.scheduleNotification(center: Self.center, callHistory, message: message, name, lastname, username)
@@ -479,16 +477,16 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func onChannelNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?) {
+    func onChannelNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         let channelNC = self.viewControllers![2] as! UINavigationController
         if channelNC.viewControllers.count >= 6 {
             if let chatVC = channelNC.viewControllers[5] as? ChatViewController  {
-                chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             }
         }
     }
     
-    func onProfileNC(_ message: Message, _ callHistory: CallHistory?, _ name: String?, _ lastname: String?, _ username: String?) {
+    func onProfileNC(_ message: Message, _ callHistory: CallHistory?, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
         let profileNC = self.viewControllers![3] as! UINavigationController
         if profileNC.viewControllers.count < 4 {
             if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {
@@ -497,7 +495,7 @@ class MainTabBarController: UITabBarController {
         } else if profileNC.viewControllers.count == 4 {
             let chatVC = profileNC.viewControllers[3] as? ChatViewController
             if chatVC != nil {
-                chatVC!.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                chatVC!.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             } else {
                 let videoVC = profileNC.viewControllers[3] as? VideoViewController
                 if videoVC != nil {
@@ -508,7 +506,7 @@ class MainTabBarController: UITabBarController {
     }
     
     func getNewMessage() {
-        SocketTaskManager.shared.getChatMessage { [self] (callHistory, message, name, lastname, username) in
+        SocketTaskManager.shared.getChatMessage { [self] (callHistory, message, name, lastname, username, uuid) in
             let chatsNC = self.viewControllers![1] as! UINavigationController
             let chatsVC = chatsNC.viewControllers[0] as! RecentMessagesViewController
             if callHistory != nil && callHistory?.status == CallStatus.missed.rawValue && callHistory?.receiver == SharedConfigs.shared.signedUser?.id {
@@ -516,7 +514,7 @@ class MainTabBarController: UITabBarController {
                 self.mainRouter?.notificationListViewController?.reloadData()
             }
             if chatsVC.isLoaded {
-                chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
+                chatsVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             }
             self.getnewMessage(callHistory: callHistory, message: message, name, lastname, username)
             if callHistory != nil  {
@@ -524,15 +522,15 @@ class MainTabBarController: UITabBarController {
             }
             switch self.selectedIndex {
             case 0:
-                self.onCallNC(callHistory, message, name, lastname, username)
+                self.onCallNC(callHistory, message, name, lastname, username, uuid: uuid)
                 break
             case 1:
-                self.onChatNC(callHistory, message, name, lastname, username)
+                self.onChatNC(callHistory, message, name, lastname, username, uuid: uuid)
                 break
             case 2:
-                self.onChannelNC(callHistory, message, name, lastname, username)
+                self.onChannelNC(callHistory, message, name, lastname, username, uuid: uuid)
             case 3:
-                self.onProfileNC(message, callHistory, name, lastname, username)
+                self.onProfileNC(message, callHistory, name, lastname, username, uuid: uuid)
             default:
                 break
             }
