@@ -201,17 +201,17 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                         self.channelMessages.array![i] = message
                     }
                 }
-                if message.type == "image" {
+                if message.type == MessageType.image.rawValue {
                     self.sendImageTmp = nil
-                } else if message.type == "video" {
+                } else if message.type == MessageType.video.rawValue {
                     self.sendThumbnail = nil
                 }
             }
         }
     }
     
-    func prepareTableView(messageType: String, uuID: String, text: String){
-        self.channelMessages.array?.append(Message(call: nil, type: messageType, _id: uuID, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+    func prepareTableView(messageType: MessageType, uuID: String, text: String){
+        self.channelMessages.array?.append(Message(call: nil, type: messageType.rawValue, _id: uuID, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
         self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -225,8 +225,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         let text = inputTextField.text
         inputTextField.text = ""
         let uuId = UUID().uuidString
-        prepareTableView(messageType: "image", uuID: uuId, text: text!)
-        HomeNetworkManager().sendImageInChannel(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, tempUUID: uuId, boundary: uuId) { (error) in
+        prepareTableView(messageType: MessageType.image, uuID: uuId, text: text!)
+        ChannelNetworkManager().sendImageInChannel(tmpImage: sendImageCopy, channelId: self.channelInfo.channel?._id ?? "", text: text!, tempUUID: uuId, boundary: uuId) { (error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
@@ -241,13 +241,13 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         let text = inputTextField.text
         inputTextField.text = ""
         let uuId = UUID().uuidString
-        prepareTableView(messageType: "video", uuID: uuId, text: text!)
+        prepareTableView(messageType: MessageType.video, uuID: uuId, text: text!)
         self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
             if let url = url {
                 do {
                     let data = try Data(contentsOf: url)
                     DispatchQueue.main.async {
-                        self.viewModel?.sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: text ?? "", completion: { (err) in
+                        self.viewModel?.sendVideoInChannel(data: data, channelId: self.channelInfo.channel?._id ?? "", text: text ?? "", uuid: uuId, completion: { (err) in
                             if err != nil {
                                 DispatchQueue.main.async {
                                     self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
@@ -265,11 +265,9 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     func sendText() {
         let text = inputTextField.text
         inputTextField.text = ""
-        channelMessages.array?.append(Message(call: nil, type: "text", _id: nil, reciever: nil, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
-        self.tableView.insertRows(at: [IndexPath(row: self.channelMessages.array!.count - 1, section: 0)], with: .automatic)
-        SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id)
-        let indexPath = IndexPath(item: self.channelMessages.array!.count - 1, section: 0)
-        self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        let uuId = UUID().uuidString
+        prepareTableView(messageType: MessageType.text, uuID: uuId, text: text!)
+        SocketTaskManager.shared.sendChanMessage(message: text!, channelId: channelInfo!.channel!._id, uuid: uuId)
     }
     
     @objc func sendMessage() {

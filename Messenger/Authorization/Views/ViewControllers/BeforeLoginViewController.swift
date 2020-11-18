@@ -17,13 +17,6 @@ import DropDown
 
 class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
-        //        viewModel?.loginWithFacebook(accessToken: result?.token, completion: { (response, error) in
-        //            if error != nil {
-        //
-        //            } else {
-        //
-        //            }
-        //        })
         activityIndicator.startAnimating()
         var token = ""
         if AccessToken.current != nil {
@@ -140,7 +133,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         } else {
             checkPhone()
         }
-    } 
+    }
     
    
     //MARK: Lifecycle methods
@@ -273,7 +266,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     @IBAction func changeModeButtonAction(_ sender: UIButton) {
         isLoginWithEmail = !isLoginWithEmail
         if isLoginWithEmail {
-            sender.setTitle("use_phone_number_for_login".localized(), for: .normal)
+            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
+                                                            attributes: buttonAttributes)
+            sender.setAttributedTitle(attributeString, for: .normal)
             phonaView.isHidden = true
             numberTextField.text = ""
             borderView.backgroundColor = .lightGray
@@ -284,7 +279,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             phonaView.isHidden = false
             emaiCustomView.isHidden = true
             emptyField(customView: emaiCustomView)
-            sender.setTitle("use_email_for_login".localized(), for: .normal)
+            let attributeString = NSMutableAttributedString(string: "use_email_for_login".localized(),
+                                                            attributes: buttonAttributes)
+            sender.setAttributedTitle(attributeString, for: .normal)
             emailDescriptionLabel.text = "phone_number_will_be_used".localized()
             aboutPgLabel.text = "enter_your_phone_number".localized()
         }

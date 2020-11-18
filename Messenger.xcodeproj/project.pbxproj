@@ -1562,7 +1562,6 @@
 				CDB7D98D2511D73A00DBAD51 /* NotificationListViewController.swift in Sources */,
 				CD3F12F224BC55C200040D8E /* IceCandidate.swift in Sources */,
 				CD3F12D724BC290200040D8E /* CallManager.swift in Sources */,
-				D0F0AA86255960A9008AE75E /* ChannelMessagesViewController.swift in Sources */,
 				CD1FA0D3255D654C0023A5BC /* ChannelEndpoints.swift in Sources */,
 				CD39FD06248A7A0B004C083A /* CustomCell.swift in Sources */,
 				D0EDEFF12524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,

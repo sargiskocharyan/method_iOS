@@ -53,7 +53,7 @@ class MainTabBarController: UITabBarController {
         ((self.tabBar.items?[2].value(forKey: "view") as? UIView)?.subviews[0] as? UIImageView)?.contentMode = .scaleAspectFit
         self.navigationController?.isNavigationBarHidden = true
         self.saveContacts()
-        
+        AppDelegate.shared.notificationManager.delegate = self
         self.retrieveCoreDataObjects()
         verifyToken()
         getRequests()
@@ -62,13 +62,11 @@ class MainTabBarController: UITabBarController {
             print("home page connect")
         })
         callManager = AppDelegate.shared.callManager
-        AppDelegate.shared.notificationManager.delegate = self
         callsNC = viewControllers![0] as? UINavigationController
         callsVC = callsNC!.viewControllers[0] as? CallListViewController
         callsVC!.delegate = self
         self.signalClient = self.buildSignalingClient()
         self.signalClient?.delegate = self
-        
         Self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             if granted {
                 print("Yay!")
@@ -422,7 +420,7 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func onCallNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func onCallNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         let callNc = self.viewControllers![0] as! UINavigationController
         if callNc.viewControllers.count == 1 {
             if callHistory == nil {
@@ -444,7 +442,7 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func onChatNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func onChatNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         let recentNc = self.viewControllers![1] as! UINavigationController
         if callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id {
             if recentNc.viewControllers.count >= 2  {
@@ -479,16 +477,16 @@ class MainTabBarController: UITabBarController {
         }
     }
     
-    func onChannelNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func onChannelNC(_ callHistory: CallHistory?, _ message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         let channelNC = self.viewControllers![2] as! UINavigationController
         if channelNC.viewControllers.count >= 6 {
-            if let chatVC = channelNC.viewControllers[5] as? ChatViewController  {
+            if let chatVC = channelNC.viewControllers[5] as? ChatViewController {
                 chatVC.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
             }
         }
     }
     
-    func onProfileNC(_ message: Message, _ callHistory: CallHistory?, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func onProfileNC(_ message: Message, _ callHistory: CallHistory?, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         let profileNC = self.viewControllers![3] as! UINavigationController
         if profileNC.viewControllers.count < 4 {
             if (message.senderId != SharedConfigs.shared.signedUser?.id && callHistory == nil) || (callHistory != nil && callHistory?.caller != SharedConfigs.shared.signedUser?.id && callHistory?.status == CallStatus.missed.rawValue) {

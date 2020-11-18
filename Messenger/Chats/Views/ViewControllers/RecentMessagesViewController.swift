@@ -322,7 +322,7 @@ class RecentMessagesViewController: UIViewController {
         })
     }
     
-    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         var id = ""
         if message.senderId == SharedConfigs.shared.signedUser?.id {
             id = message.reciever ?? ""

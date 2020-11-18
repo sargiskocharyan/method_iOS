@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dynamic LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public enum ChannelApi {
     case createChannel(name: String, openMode: Bool)
@@ -29,6 +29,9 @@ public enum ChannelApi {
     case blockSubscribers(id: String, subscribers: [String])
     case deleteChannelMessageBySender(ids: [String])
     case editChannelMessageBySender(id: String, text: String)
+    case sendImageInChannel(tmpImage: UIImage?, channelId: String, text: String, boundary: String, tempUUID: String)
+    case sendVideoInChannel(videoData: Data, channelId: String, text: String, boundary: String, tempUUID: String)
+    case uploadChannelLogo(tmpImage: UIImage, channelId: String, boundary: String)
 }
 
 extension ChannelApi: EndPointType {
@@ -79,6 +82,12 @@ extension ChannelApi: EndPointType {
             return ChannelUrls.DeleteChannelMessageBySender
         case .editChannelMessageBySender(_,_):
             return ChannelUrls.EditChannelMessageBySender
+        case .sendImageInChannel(_, let channelId, _,_,_):
+            return "\(HomeUrls.SendImageInChannel)/\(channelId)/imageMessage"
+        case .sendVideoInChannel(_, let channelId, _,_,_):
+            return "\(HomeUrls.SendImageInChannel)/\(channelId)/videoMessage"
+        case .uploadChannelLogo(_, channelId: let channelId, _):
+            return "\(ChannelUrls.CreateChannel)/\(channelId)/avatar"
         }
     }
     
@@ -123,6 +132,12 @@ extension ChannelApi: EndPointType {
         case .deleteChannelMessageBySender(_):
             return .post
         case .editChannelMessageBySender(_,_):
+            return .post
+        case .sendImageInChannel(_,_,_,_,_):
+            return .post
+        case .sendVideoInChannel(_,_,_,_,_):
+            return .post
+        case .uploadChannelLogo(_,_,_):
             return .post
         }
     }
@@ -210,7 +225,18 @@ extension ChannelApi: EndPointType {
             let parameters:Parameters = ["messageId": id, "text": text]
             let headers:HTTPHeaders = endPointManager.createHeaders(token:  token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
-            
+        case .sendImageInChannel(tmpImage: let image, channelId: _, text: let text, boundary: let boundary, tempUUID: let tempUUID):
+            let parameters:Parameters = ["tempUUID": tempUUID, "text" : text, "image": image?.jpegData(compressionQuality: 1)]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .sendVideoInChannel(videoData: let videoData, channelId: _, text: let text, boundary: let boundary, tempUUID: let tempUUID):
+            let parameters:Parameters = ["tempUUID": tempUUID, "text" : text, "video": videoData]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .uploadChannelLogo(tmpImage: let image, channelId: _, boundary: let boundary):
+            let parameters:Parameters = [ "image": image.jpegData(compressionQuality: 1)]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     
