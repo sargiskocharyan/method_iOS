@@ -10,6 +10,7 @@ import UIKit
 
 class SentMediaMessageTableViewCell: UITableViewCell {
     
+    @IBOutlet weak var heghtConstraintOfSentImage: NSLayoutConstraint!
     @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var snedImageView: UIImageView!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
@@ -70,8 +71,8 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         imagView.translatesAutoresizingMaskIntoConstraints = false
         imagView.centerYAnchor.constraint(equalTo: snedImageView.centerYAnchor, constant: 0).isActive = true
         imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
-        imagView.heightAnchor.constraint(equalTo: snedImageView.heightAnchor, multiplier: 0.3).isActive = true
-        imagView.widthAnchor.constraint(equalTo: snedImageView.widthAnchor, multiplier: 0.3).isActive = true
+        imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     func configureSendVideoMessageTableViewCellInChannel(_ message: Message, _ channelInfo: ChannelInfo?, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
@@ -85,6 +86,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
                 DispatchQueue.main.async {
                     self.messageLabel.text = message.text
                     self.snedImageView.image = image
+                    
                 }
             }
         } else {

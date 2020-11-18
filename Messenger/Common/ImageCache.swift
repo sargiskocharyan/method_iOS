@@ -114,12 +114,12 @@ class ImageCache {
                             return
                         }
                         catch {
-                            completion(UIImage(named: "channelPlaceholder")!)
+                            completion(UIImage(named: "upload_image_icon")!)
                             return
                         }
                     } catch {
                         print(error.localizedDescription)
-                        completion(UIImage(named: "channelPlaceholder")!)
+                        completion(UIImage(named: "upload_image_icon")!)
                     }
                 }
             }

@@ -42,7 +42,7 @@ class ConfigureChannelMessagesViewController {
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
-                cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo)
+                cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: (vc.sendThumbnail ?? UIImage(named: "upload_image_icon"))!)
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
