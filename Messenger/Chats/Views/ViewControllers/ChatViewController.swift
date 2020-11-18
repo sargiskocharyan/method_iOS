@@ -120,60 +120,72 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         SocketTaskManager.shared.messageTyping(chatId: id!)
     }
     
-    func beforeSendRequest(messageType: String) -> String {
-        let text = inputTextField.text
+    func performTableView(messageType: MessageType, uuId: String, text: String) {
         viewConfigurator.removeSendImageView()
         viewConfigurator.removeLabel()
-        inputTextField.text = ""
-        let tempUUID = UUID().uuidString
-        self.allMessages?.array?.append(Message(call: nil, type: messageType, _id: tempUUID, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
+        self.allMessages?.array?.append(Message(call: nil, type: messageType.rawValue, _id: uuId, reciever: id, text: text, createdAt: nil, updatedAt: nil, owner: nil, senderId: SharedConfigs.shared.signedUser?.id, image: Image(imageName: nil, imageURL: nil), video: nil))
         self.tableView.insertRows(at: [IndexPath(row: allMessages!.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.allMessages?.array!.count)! - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        return tempUUID
+    }
+    
+    func sendImageInChat() {
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let image = sendImage
+        sendImage = nil
+        let uuId = UUID().uuidString
+        performTableView(messageType: MessageType.image, uuId: uuId, text: text!)
+        ChatNetworkManager().sendImageInChat(tmpImage: image, userId: self.id ?? "", text: text!, tempUUID: uuId, boundary: uuId) { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            }
+        }
+    }
+    
+    func sendVideoInChat() {
+        let sendAssetCopy = sendAsset
+        sendAsset = nil
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let uuId = UUID().uuidString
+        performTableView(messageType: MessageType.video, uuId: uuId, text: text!)
+        self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
+            if let url = url {
+                do {
+                    let data = try Data(contentsOf: url)
+                    ChatNetworkManager().sendVideoInChat(data: data, id: self.id!, text: text!, tempUUID: uuId, boundary: uuId) { error in
+                        if let error = error {
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "error".localized(), errorMessage: error.rawValue)
+                            }
+                        }
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    func sendTextInChat() {
+        let text = inputTextField.text
+        inputTextField.text = ""
+        let uuid = UUID().uuidString
+        performTableView(messageType: MessageType.text, uuId: uuid, text: text!)
+        SocketTaskManager.shared.send(message: text!, id: id!, uuid: uuid)
     }
     
     @objc func sendMessage() {
         if mode == .main {
             if sendImage != nil {
-                let text = inputTextField.text
-                let image = sendImage
-                sendImage = nil
-                let tempUUID = beforeSendRequest(messageType: "image")
-                let boundary = UUID().uuidString
-                HomeNetworkManager().sendImageInChat(tmpImage: image, userId: self.id ?? "", text: text!, tempUUID: tempUUID, boundary: boundary) { (error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                        }
-                    }
-                }
+                sendImageInChat()
             } else if sendAsset != nil {
-                let sendAssetCopy = sendAsset
-                sendAsset = nil
-                let text = inputTextField.text
-                let tempUUID = beforeSendRequest(messageType: "video")
-                self.viewModel?.encodeVideo(at: sendAssetCopy?.url.absoluteURL ?? URL(fileURLWithPath: "")) { (url, error) in
-                    if let url = url {
-                        do {
-                            let data = try Data(contentsOf: url)
-                            let boundary = UUID().uuidString
-                            HomeNetworkManager().sendVideoInChat(data: data, id: self.id!, text: text!, tempUUID: tempUUID, boundary: boundary) { error in
-                                if let error = error {
-                                    DispatchQueue.main.async {
-                                        self.showErrorAlert(title: "error".localized(), errorMessage: error.rawValue)
-                                    }
-                                }
-                            }
-                        } catch {
-                            print(error.localizedDescription)
-                        }
-                    }
-                }
+                sendVideoInChat()
             } else if inputTextField.text != "" {
-                let text = inputTextField.text
-                let uuid = beforeSendRequest(messageType: "text")
-                SocketTaskManager.shared.send(message: text!, id: id!, uuid: uuid)
+                sendTextInChat()
             }
         } else {
             mode = .main
@@ -196,7 +208,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         }
     }
     
-    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String) {
+    func getnewMessage(callHistory: CallHistory?, message: Message, _ name: String?, _ lastname: String?, _ username: String?, uuid: String?) {
         if (message.reciever == self.id || message.senderId == self.id) &&  message.senderId != message.reciever && self.id != SharedConfigs.shared.signedUser?.id {
             if message.senderId != SharedConfigs.shared.signedUser?.id {
                 self.allMessages?.array!.append(message)
@@ -215,9 +227,9 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                             self.allMessages!.array![i] = message
                         }
                     }
-                if message.type == "image" {
+                if message.type == MessageType.image.rawValue {
                     self.sendImageTmp = nil
-                } else if message.type == "video" {
+                } else if message.type == MessageType.video.rawValue {
                     self.sendThumbnail = nil
                 }
             }

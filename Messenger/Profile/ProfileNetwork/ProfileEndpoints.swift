@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dynamic LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public enum ProfileApi {
     case getUserContacts
@@ -28,6 +28,7 @@ public enum ProfileApi {
     case getRequests
     case getAdminMessage
     case getImage(avatar: String)
+    case uploadAvatar(tmpImage: UIImage, boundary: String)
 }
 
 extension ProfileApi: EndPointType {
@@ -76,6 +77,8 @@ extension ProfileApi: EndPointType {
             return HomeUrls.GetAdminMessage
         case .getImage(let avatar):
             return "\(HomeUrls.GetImage)/\(avatar)"
+        case .uploadAvatar(_,_):
+            return HomeUrls.UploadAvatar
         }
     }
     
@@ -119,6 +122,8 @@ extension ProfileApi: EndPointType {
             return .get
         case .getImage(_):
             return .get
+        case .uploadAvatar(_,_):
+            return .post
         }
     }
     
@@ -211,6 +216,10 @@ extension ProfileApi: EndPointType {
         case .getImage(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .uploadAvatar(tmpImage: let image, boundary: let boundary):
+            let parameters:Parameters = [ "image": image.jpegData(compressionQuality: 1)]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }
     

@@ -24,7 +24,6 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     @IBOutlet weak var genderView: CustomTextField!
     @IBOutlet weak var infoView: CustomTextField!
     @IBOutlet weak var deleteAccountButton: UIButton!
-    
     @IBOutlet weak var deactivateAccountButton: UIButton!
     
     //MARK: Properties

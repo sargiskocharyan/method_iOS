@@ -41,39 +41,6 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
         }
     }
     
-    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, String?)->()) {
-        let uuid = UUID().uuidString
-        router.uploadImageRequest(.uploadAvatar(tmpImage: tmpImage!, boundary: uuid), boundary: uuid) { (data, response, error) in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed, nil)
-                return }
-            if error != nil {
-                print(error!.rawValue)
-                completion(NetworkResponse.failed, nil)
-            } else {
-                guard let responseData = data else {
-                    completion(NetworkResponse.noData, nil)
-                    return
-                }
-                completion(nil, String(data: responseData, encoding: .utf8))
-                return
-            }
-        }
-    }
-    
-    func sendImageInChannel(tmpImage: UIImage?, channelId: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
-            router.uploadImageRequest(.sendImageInChannel(tmpImage: tmpImage, channelId: channelId, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
-                guard (response as? HTTPURLResponse) != nil else {
-                    completion(NetworkResponse.failed)
-                    return }
-                if error != nil {
-                    completion(NetworkResponse.failed)
-                } else {
-                    completion(nil)
-                }
-            }
-        }
-    
     func registerDevice(token: String, voipToken: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.registerDevice(token: token, voipToken: voipToken)) { data, response, error in
             if error != nil {
@@ -88,45 +55,6 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
                 case .failure( _):
                     completion(NetworkResponse.failed)
                 }
-            }
-        }
-    }
-    
-    func sendImageInChat(tmpImage: UIImage?, userId: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
-        router.uploadImageRequest(.sendImageInChat(tmpImage: tmpImage, userId: userId, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed)
-                return }
-            if error != nil {
-                completion(NetworkResponse.failed)
-            } else {
-                completion(nil)
-            }
-        }
-    }
-    
-    func sendVideoInChat(data: Data, id: String, text: String, tempUUID: String, boundary: String, completion: @escaping (NetworkResponse?)->()) {
-        router.uploadImageRequest(.sendVideoInChat(videoData: data, userId: id, text: text, boundary: boundary, tempUUID: tempUUID), boundary: boundary) { (data, response, error) in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed)
-                return }
-            if error != nil {
-                completion(NetworkResponse.failed)
-            } else {
-                completion(nil)
-            }
-        }
-    }
-    
-    func sendVideoInChannel(data: Data, channelId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
-        router.uploadImageRequest(.sendVideoInChannel(videoData: data, channelId: channelId, text: text, boundary: uuid, tempUUID: uuid), boundary: uuid) { (data, response, error) in
-            guard (response as? HTTPURLResponse) != nil else {
-                completion(NetworkResponse.failed)
-                return }
-            if error != nil {
-                completion(NetworkResponse.failed)
-            } else {
-                completion(nil)
             }
         }
     }
@@ -157,29 +85,6 @@ class HomeNetworkManager: NetworkManager, URLSessionDelegate, StreamDelegate {
                 return
             }
         }.resume()
-    }
-    
-    func uploadChannelImage(tmpImage: UIImage?, id: String, completion: @escaping (NetworkResponse?, String?)->()) {
-        if let tmpImage = tmpImage {
-            let uuid = UUID().uuidString
-            router.uploadImageRequest(.uploadChannelLogo(tmpImage: tmpImage, channelId: id, boundary: uuid), boundary: uuid) { (data, response, error) in
-                guard (response as? HTTPURLResponse) != nil else {
-                    completion(NetworkResponse.failed, nil)
-                    return }
-                if error != nil {
-                    print(error!.rawValue)
-                    completion(NetworkResponse.failed, nil)
-                } else {
-                    guard let responseData = data else {
-                        completion(NetworkResponse.noData, nil)
-                        return
-                    }
-                    completion(nil, String(data: responseData, encoding: .utf8))
-                    return
-                }
-            }
-        }
-        
     }
 }
 

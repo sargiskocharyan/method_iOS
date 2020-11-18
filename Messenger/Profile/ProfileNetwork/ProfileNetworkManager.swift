@@ -70,6 +70,26 @@ class ProfileNetworkManager: NetworkManager {
         }
     }
     
+    func uploadImage(tmpImage: UIImage?, completion: @escaping (NetworkResponse?, String?)->()) {
+        let uuid = UUID().uuidString
+        router.uploadImageRequest(.uploadAvatar(tmpImage: tmpImage!, boundary: uuid), boundary: uuid) { (data, response, error) in
+            guard (response as? HTTPURLResponse) != nil else {
+                completion(NetworkResponse.failed, nil)
+                return }
+            if error != nil {
+                print(error!.rawValue)
+                completion(NetworkResponse.failed, nil)
+            } else {
+                guard let responseData = data else {
+                    completion(NetworkResponse.noData, nil)
+                    return
+                }
+                completion(nil, String(data: responseData, encoding: .utf8))
+                return
+            }
+        }
+    }
+    
     func addContact(id: String, completion: @escaping (NetworkResponse?)->()) {
         router.request(.addContact(id: id)) { data, response, error in
             if error != nil {

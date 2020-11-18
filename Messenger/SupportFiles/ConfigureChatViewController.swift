@@ -144,21 +144,21 @@ class ConfigureChatViewController {
         if (vc.allMessages?.array![indexPath.row].senderId == SharedConfigs.shared.signedUser?.id) {
             size = CGSize(width: self.vc.view.frame.width * 0.6 - 100, height: 1500)
             let frame = NSString(string: vc.allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-            if vc.allMessages?.array![indexPath.row].type == "text" {
+            if vc.allMessages?.array![indexPath.row].type == MessageType.text.rawValue {
                 return frame.height + 52
-            }  else if vc.allMessages?.array![indexPath.row].type == "call" {
+            }  else if vc.allMessages?.array![indexPath.row].type == MessageType.call.rawValue {
                 return 80
-            } else if vc.allMessages?.array![indexPath.row].type == "image" || vc.allMessages?.array![indexPath.row].type == "video" {
+            } else if vc.allMessages?.array![indexPath.row].type == MessageType.image.rawValue || vc.allMessages?.array![indexPath.row].type == MessageType.video.rawValue {
                 return frame.height + 230
             }
         } else {
             size = CGSize(width: self.vc.view.frame.width * 0.6 - 100, height: 1500)
             let frame = NSString(string: vc.allMessages?.array![indexPath.row].text ?? "").boundingRect(with: size!, options: options, attributes: nil, context: nil)
-            if vc.allMessages?.array![indexPath.row].type == "text" {
+            if vc.allMessages?.array![indexPath.row].type == MessageType.text.rawValue {
                 return frame.height + 30
-            } else if vc.allMessages?.array![indexPath.row].type == "call" {
+            } else if vc.allMessages?.array![indexPath.row].type == MessageType.call.rawValue {
                 return 80
-            } else if vc.allMessages?.array![indexPath.row].type == "image" || vc.allMessages?.array![indexPath.row].type == "video" {
+            } else if vc.allMessages?.array![indexPath.row].type == MessageType.image.rawValue || vc.allMessages?.array![indexPath.row].type == MessageType.video.rawValue {
                 return frame.height + 230 //UITableView.automaticDimension
             }
         }
@@ -199,9 +199,9 @@ class ConfigureChatViewController {
         if gestureReconizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureReconizer.location(in: vc.tableView)
             if let indexPath = vc.tableView.indexPathForRow(at: touchPoint) {
-                if vc.allMessages!.array![indexPath.row].type == "text" {
+                if vc.allMessages!.array![indexPath.row].type == MessageType.text.rawValue {
                     self.tappedSendMessageCell(indexPath)
-                } else if vc.allMessages!.array![indexPath.row].type == "image" {
+                } else if vc.allMessages!.array![indexPath.row].type == MessageType.image.rawValue {
                     tappedSendImageMessageCell(indexPath)
                 } else {
                     tappedSendCallCell(indexPath)
@@ -211,15 +211,15 @@ class ConfigureChatViewController {
     }
     
     func configureSentMessageCell(message: Message, longTapGesture: UILongPressGestureRecognizer, tapOnImage: UITapGestureRecognizer, tapOnVideo: UITapGestureRecognizer, indexPath: IndexPath) -> UITableViewCell {
-        if message.type == "text" {
+        if message.type == MessageType.text.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: sendMessageCellIdentifier, for: indexPath) as! SentMessageTableViewCell
             cell.configureSendMessageTableViewCell(message: message, statuses: vc.allMessages!.statuses ?? [], longTapGesture)
             return cell
-        } else if message.type == "call" {
+        } else if message.type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SentCallTableViewCell
             cell.configureSendCallTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture)
             return cell
-        } else if message.type == "image" {
+        } else if message.type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
             cell.configureSendImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, tmpImage: vc.sendImageTmp)
             return cell
@@ -231,15 +231,15 @@ class ConfigureChatViewController {
     }
     
     func configureReceivedMessageCell(message: Message, longTapGesture: UILongPressGestureRecognizer, tapOnImage: UITapGestureRecognizer, tapOnVideo: UITapGestureRecognizer, indexPath: IndexPath) -> UITableViewCell {
-        if message.type == "text" {
+        if message.type == MessageType.text.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: self.receiveMessageCellIdentifier, for: indexPath) as! RecievedMessageTableViewCell
             cell.configureRecieveMessageTableViewCell(longTapGesture, vc.allMessages!.array![indexPath.row], image: self.vc.image!)
             return cell
-        }  else if vc.allMessages?.array![indexPath.row].type == "call" {
+        }  else if vc.allMessages?.array![indexPath.row].type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecievedCallTableViewCell
             cell.configureRecieveCallTableViewCell(vc.allMessages!.array![indexPath.row], image: self.vc.image!, longTapGesture)
             return cell
-        } else if vc.allMessages?.array![indexPath.row].type == "image" {
+        } else if vc.allMessages?.array![indexPath.row].type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
             cell.configureRecieveImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage)
             return cell

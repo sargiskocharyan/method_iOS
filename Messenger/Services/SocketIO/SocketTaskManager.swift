@@ -320,8 +320,8 @@ class SocketTaskManager {
         
     }
     
-    func sendChanMessage(message: String, channelId: String) {
-        socket!.emit("sendChnMessage", message, channelId)
+    func sendChanMessage(message: String, channelId: String, uuid: String) {
+        socket!.emit("sendChnMessage", message, channelId, uuid)
     }
     
     func send(message: String, id: String, uuid: String) {
@@ -356,10 +356,10 @@ class SocketTaskManager {
         }
     }
     
-    func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?, _ tempUUID: String) -> Void) {
+    func getChatMessage(completionHandler: @escaping (_ callHistory: CallHistory?, _ message: Message, _ senderName: String?, _ senderLastname: String?, _ senderUsername: String?, _ tempUUID: String?) -> Void) {
         socket!.on("message") { (dataArray, socketAck) -> Void in
             let data = dataArray[0] as! Dictionary<String, Any>
-            let tempUUID = data["tempUUID"] as! String
+            let tempUUID = data["tempUUID"] as? String
             let chatId = data["reciever"] as? String == SharedConfigs.shared.signedUser?.id ? data["senderId"] as? String :  data["reciever"] as? String
             if data["senderId"] as? String != SharedConfigs.shared.signedUser?.id {
                 self.messageReceived(chatId: chatId ?? "", messageId: data["_id"] as? String ?? "") {
