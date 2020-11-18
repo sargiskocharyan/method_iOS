@@ -241,7 +241,7 @@ class ConfigureChatViewController {
             return cell
         } else if vc.allMessages?.array![indexPath.row].type == "image" {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
-            cell.configureRecieveImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage)
+            cell.configureRecieveImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, image: self.vc.image!)
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell

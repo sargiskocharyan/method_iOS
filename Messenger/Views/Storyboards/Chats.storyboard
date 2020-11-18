@@ -12,7 +12,7 @@
         <!--Chat View Controller-->
         <scene sceneID="See-iS-aUw">
             <objects>
-                <viewController storyboardIdentifier="ChatViewController" automaticallyAdjustsScrollViewInsets="NO" id="BgS-L4-tyJ" customClass="ChatViewController" customModule="Messenger_copy" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatViewController" automaticallyAdjustsScrollViewInsets="NO" id="BgS-L4-tyJ" customClass="ChatViewController" customModule="method" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zf0-dn-jNL">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -20,15 +20,20 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="m2w-BA-qBj">
                                 <rect key="frame" x="0.0" y="44" width="414" height="763"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kDI-rG-wlQ">
+                                <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kDI-rG-wlQ" customClass="PaddingLabel" customModule="method" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="552" width="414" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <nil key="textColor"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" systemColor="opaqueSeparatorColor"/>
                                     <nil key="highlightedColor"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="paddingLeft">
+                                            <real key="value" value="25"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
                                 </label>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveMessageCell" rowHeight="54" id="ZXU-Ys-wV1" customClass="RecievedMessageTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveMessageCell" rowHeight="54" id="ZXU-Ys-wV1" customClass="RecievedMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZXU-Ys-wV1" id="SSv-z1-uzW">
@@ -42,7 +47,7 @@
                                                         <constraint firstAttribute="width" constant="30" id="oGv-Dg-bc1"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labelgfdgddgfdfdgfdfgdf" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YAf-TJ-1jx" customClass="UILabelPadding" customModule="Messenger_copy" customModuleProvider="target">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labelgfdgddgfdfdgfdfgdf" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YAf-TJ-1jx" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
                                                     <rect key="frame" x="95" y="10" width="174.5" height="44"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
@@ -77,14 +82,14 @@
                                             <outlet property="userImageView" destination="FvM-lC-mdx" id="X6q-lG-nwu"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendMessageCell" rowHeight="63" id="aS0-mg-h42" customClass="SentMessageTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendMessageCell" rowHeight="63" id="aS0-mg-h42" customClass="SentMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="82" width="414" height="63"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aS0-mg-h42" id="uDa-5F-SdW">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelkjkkkSoc" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bW-6Y-hXY" customClass="UILabelPadding" customModule="Messenger_copy" customModuleProvider="target">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LabelkjkkkSoc" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bW-6Y-hXY" customClass="UILabelPadding" customModule="method" customModuleProvider="target">
                                                     <rect key="frame" x="295.5" y="10" width="98.5" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
@@ -127,7 +132,7 @@
                                             <outlet property="readMessage" destination="qtB-km-wJC" id="JdQ-pd-3Ht"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendCallCell" rowHeight="89" id="52Z-Zf-ict" userLabel="sendCallCell" customClass="SentCallTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendCallCell" rowHeight="89" id="52Z-Zf-ict" userLabel="sendCallCell" customClass="SentCallTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="145" width="414" height="89"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="52Z-Zf-ict" id="d5m-ci-3Rv">
@@ -196,7 +201,7 @@
                                             <outlet property="ststusLabel" destination="JSK-iG-ykk" id="3eN-Q9-N2x"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveCallCell" rowHeight="85" id="jVV-UN-XnA" userLabel="receiveCallCell" customClass="RecievedCallTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveCallCell" rowHeight="85" id="jVV-UN-XnA" userLabel="receiveCallCell" customClass="RecievedCallTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="234" width="414" height="85"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jVV-UN-XnA" id="dlK-da-yrQ">
@@ -276,7 +281,7 @@
                                             <outlet property="userImageView" destination="B8b-qB-cMv" id="kLt-Mg-iHB"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendImageMessage" rowHeight="112" id="JzH-yy-qSS" customClass="SentMediaMessageTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendImageMessage" rowHeight="112" id="JzH-yy-qSS" customClass="SentMediaMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="319" width="414" height="112"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JzH-yy-qSS" id="RPT-iJ-2gL">
@@ -336,7 +341,7 @@
                                             <outlet property="viewUnderImage" destination="qtx-HZ-GTv" id="4qV-bJ-nO5"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveImageMessage" rowHeight="93" id="0zC-9E-grv" customClass="RecievedMediaMessageTableViewCell" customModule="Messenger_copy" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveImageMessage" rowHeight="93" id="0zC-9E-grv" customClass="RecievedMediaMessageTableViewCell" customModule="method" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="431" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0zC-9E-grv" id="cgE-L8-9LJ">
@@ -456,6 +461,9 @@
         <image name="arrow.up.right" catalog="system" width="128" height="111"/>
         <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="video.fill" catalog="system" width="128" height="82"/>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
