@@ -163,7 +163,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         self.messageLabel.text = message.text
     }
     
-    func configureRecieveImageMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnImage: UITapGestureRecognizer) {
+    func configureRecieveImageMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnImage: UITapGestureRecognizer, image: UIImage) {
         self.sendImageView.isUserInteractionEnabled = true
         self.sendImageView.addGestureRecognizer(tapOnImage)
         ImageCache.shared.getImage(url: message.image?.imageURL ?? "", id: message._id ?? "", isChannel: false) { (image) in
@@ -173,6 +173,8 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
                 self.sendImageView.image = image
             }
         }
+        nameLabel.text = ""
+        self.userImageView.image = image
     }
 }
 

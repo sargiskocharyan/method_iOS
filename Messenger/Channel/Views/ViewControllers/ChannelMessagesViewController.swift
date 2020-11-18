@@ -287,6 +287,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                             DispatchQueue.main.async {
                                 cell.messageLabel.text = self.inputTextField.text
                                 self.inputTextField.text = ""
+                                
                             }
                         }
                     })
@@ -302,10 +303,11 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 sendText()
             }
         }
+        self.viewConfigurator.removeView()
     }
     
     func showAlertBeforeDeleteMessage() {
-        self.showAlert(title: "attention".localized(), message: "are_you_sure_want_to_delete_selected_messages".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
+        self.showAlert(title: nil, message: "are_you_sure_want_to_delete_selected_messages".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             if self.arrayOfSelectedMesssgae.count == 0 {
                 self.deleteMessageButton.isEnabled = false
             } else {

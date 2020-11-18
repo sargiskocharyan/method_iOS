@@ -221,12 +221,14 @@ class ChannelListViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.activity.stopAnimating()
                         self.tableView.reloadData()
+                        self.refreshControl.endRefreshing()
                     }
                     completion()
                 } else {
                     DispatchQueue.main.async {
                         self.setView("no_channels".localized())
                         self.activity.stopAnimating()
+                        self.refreshControl.endRefreshing()
                     }
                 }
             }

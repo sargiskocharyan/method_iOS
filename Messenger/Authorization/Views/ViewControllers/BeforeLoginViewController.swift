@@ -159,6 +159,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         super.viewDidLoad()
         storyboardView.bringSubviewToFront(view)
         emaiCustomView.delagate = self
+        for constraint in logInWithFacebookButton.constraints where constraint.firstAttribute == .height {
+            constraint.constant = 35
+        }
         navigationController?.isNavigationBarHidden = true
         numberTextField.withDefaultPickerUI = true
         numberTextField.withPrefix = true
@@ -205,6 +208,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         }
         continueButton.layer.cornerRadius = 8
         logInWithFacebookButton.layer.cornerRadius = 8
+        
         logInWithFacebookButton.clipsToBounds = true
     }
     

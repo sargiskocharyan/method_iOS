@@ -338,7 +338,7 @@ class RecentMessagesViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.removeView()
                     let visibleViewController = self.navigationController?.visibleViewController
-                    if visibleViewController is ChatViewController {
+                    if visibleViewController is ChatViewController && message.reciever != SharedConfigs.shared.signedUser?.id {
                         let chatViewController = visibleViewController as! ChatViewController
                         chatViewController.getnewMessage(callHistory: callHistory, message: message, name, lastname, username, uuid: uuid)
                     }
