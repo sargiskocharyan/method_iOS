@@ -49,8 +49,6 @@ class NotificationManager {
                     }
                 }
             }
-        } else {
-            print("blblb")
         }
     }
     
