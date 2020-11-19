@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -120,22 +120,22 @@
                                             <outlet property="userImageView" destination="1Pc-OF-3c0" id="964-PU-hDn"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendImageMessage" rowHeight="112" id="Rv4-B4-4Kh" customClass="SentMediaMessageTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="93" width="414" height="112"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendImageMessage" rowHeight="153" id="Rv4-B4-4Kh" customClass="SentMediaMessageTableViewCell" customModule="method" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="93" width="414" height="153"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Rv4-B4-4Kh" id="shU-Jc-Dmr">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="112"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="153"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0N-so-L52">
-                                                    <rect key="frame" x="249" y="8" width="150" height="96"/>
+                                                    <rect key="frame" x="249" y="8" width="150" height="108"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6Ju-KX-xnj">
-                                                            <rect key="frame" x="8" y="5" width="134" height="63"/>
+                                                            <rect key="frame" x="8" y="5" width="134" height="93"/>
                                                             <color key="backgroundColor" red="0.49369448420000001" green="0.75258612629999999" blue="0.92300719019999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="sirun nkar" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CIj-aR-50s">
-                                                            <rect key="frame" x="10" y="72" width="130" height="18"/>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CIj-aR-50s">
+                                                            <rect key="frame" x="10" y="102" width="130" height="0.0"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -154,21 +154,33 @@
                                                     </constraints>
                                                 </view>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SMC-cf-phy">
-                                                    <rect key="frame" x="20" y="46" width="20" height="20"/>
+                                                    <rect key="frame" x="20" y="66.5" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="20" id="jpZ-fP-CNx"/>
                                                         <constraint firstAttribute="height" constant="20" id="quW-Z5-9NY"/>
                                                     </constraints>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fry-Sd-jPa">
+                                                    <rect key="frame" x="399" y="124" width="0.0" height="14"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="14" id="4I7-Vd-mfO"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                                    <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
+                                                <constraint firstItem="Fry-Sd-jPa" firstAttribute="trailing" secondItem="d0N-so-L52" secondAttribute="trailing" id="6JN-QQ-QVG"/>
+                                                <constraint firstAttribute="bottom" secondItem="Fry-Sd-jPa" secondAttribute="bottom" constant="15" id="8Yh-Rn-rYd"/>
+                                                <constraint firstItem="Fry-Sd-jPa" firstAttribute="top" secondItem="d0N-so-L52" secondAttribute="bottom" constant="8" id="PvJ-On-eFe"/>
                                                 <constraint firstItem="d0N-so-L52" firstAttribute="top" secondItem="shU-Jc-Dmr" secondAttribute="top" constant="8" id="SCb-EP-f5W"/>
-                                                <constraint firstAttribute="bottom" secondItem="d0N-so-L52" secondAttribute="bottom" constant="8" id="Utg-uy-r9N"/>
                                                 <constraint firstAttribute="trailing" secondItem="d0N-so-L52" secondAttribute="trailing" constant="15" id="Zot-DW-IwJ"/>
                                                 <constraint firstItem="SMC-cf-phy" firstAttribute="leading" secondItem="shU-Jc-Dmr" secondAttribute="leading" constant="20" id="bkK-6b-aqB"/>
                                                 <constraint firstItem="SMC-cf-phy" firstAttribute="centerY" secondItem="shU-Jc-Dmr" secondAttribute="centerY" id="c4n-lG-k5a"/>
                                                 <constraint firstItem="d0N-so-L52" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="shU-Jc-Dmr" secondAttribute="leading" constant="40" id="k8l-aJ-ETJ"/>
+                                                <constraint firstItem="Fry-Sd-jPa" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="shU-Jc-Dmr" secondAttribute="leading" constant="20" id="y0l-hw-u8v"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -176,12 +188,13 @@
                                             <outlet property="imageWidthConstraint" destination="ilY-hQ-LkK" id="Pjr-wh-PEy"/>
                                             <outlet property="leadingConstraintOfChaeckImage" destination="bkK-6b-aqB" id="sEf-Lt-Tu6"/>
                                             <outlet property="messageLabel" destination="CIj-aR-50s" id="Ty7-Bc-Y3K"/>
+                                            <outlet property="readMessageLabel" destination="Fry-Sd-jPa" id="SWL-hS-cSg"/>
                                             <outlet property="snedImageView" destination="6Ju-KX-xnj" id="ng8-lS-bbO"/>
                                             <outlet property="viewUnderImage" destination="d0N-so-L52" id="v4V-0y-ImP"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="receiveImageMessage" rowHeight="93" id="eey-Ps-E6g" customClass="RecievedMediaMessageTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="205" width="414" height="93"/>
+                                        <rect key="frame" x="0.0" y="246" width="414" height="93"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eey-Ps-E6g" id="PQU-sg-0EO">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="93"/>
@@ -265,14 +278,14 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sendMessageCell" rowHeight="63" id="5F3-b2-167" customClass="SentMessageTableViewCell" customModule="method" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="298" width="414" height="63"/>
+                                        <rect key="frame" x="0.0" y="339" width="414" height="63"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5F3-b2-167" id="K7H-d2-FSR">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WKF-UR-aWR">
-                                                    <rect key="frame" x="365" y="36" width="29" height="14"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WKF-UR-aWR">
+                                                    <rect key="frame" x="369" y="36" width="25" height="14"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="14" id="dG7-wZ-MR8"/>
                                                     </constraints>

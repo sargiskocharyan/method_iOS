@@ -127,6 +127,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             viewConfigurator.setSendImageView(image: selectedImage)
             self.selectedImage = selectedImage
             self.sendImageTmp = selectedImage
+            dismiss(animated: true, completion: nil)
+            return
         }
         if let videoURL = info["UIImagePickerControllerReferenceURL"] as? NSURL {
             PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
@@ -147,10 +149,10 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                         print("*** Error: \(error.localizedDescription)")
                     }
                 }
-                
+                self.dismiss(animated: true, completion: nil)
             })
         }
-        dismiss(animated: true, completion: nil)
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -199,6 +201,16 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 for i in 0..<self.channelMessages.array!.count {
                     if self.channelMessages.array![i]._id == uuid {
                         self.channelMessages.array![i] = message
+                        if message.senderId == SharedConfigs.shared.signedUser?.id {
+                            let ind = IndexPath(row: channelMessages.array!.count - 1, section: 0)
+                            if message.type == "text" {
+                                let cell = tableView.cellForRow(at: ind) as? SentMessageTableViewCell
+                                cell?.readMessage.text = "sent".localized()
+                            } else if message.type == "image" || message.type == "video" {
+                                let cell = tableView.cellForRow(at: ind) as? SentMediaMessageTableViewCell
+                                cell?.readMessageLabel.text = "sent".localized()
+                            }
+                        }
                     }
                 }
                 if message.type == MessageType.image.rawValue {
@@ -215,9 +227,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        let ind = IndexPath(row: channelMessages.array!.count - 1, section: 0)
     }
-    
-    
     
     func sendImage() {
         let sendImageCopy = self.selectedImage

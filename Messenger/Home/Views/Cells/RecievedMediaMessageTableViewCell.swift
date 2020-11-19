@@ -104,7 +104,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
             }
         }
     }
- 
+
     
     func configureRecieveVideoMessageTableViewCellInChannel(_ channelInfo: ChannelInfo, _ tap: UILongPressGestureRecognizer, message: Message, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage) {
         self.sendImageView.isUserInteractionEnabled = true
