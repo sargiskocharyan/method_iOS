@@ -39,13 +39,11 @@ class ChannelListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
-        self.navigationItem.title = "channels".localized()
         getChannels{ }
         addResfreshControl()
         setActivity()
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "search".localized()
         navigationItem.searchController = searchController
         definesPresentationContext = true
         activity.startAnimating()
@@ -54,6 +52,8 @@ class ChannelListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationItem.title = "channels".localized()
+        searchController.searchBar.placeholder = "search".localized()
         if (tabBarController?.tabBar.isHidden)! {
             tabBarController?.tabBar.isHidden = false
         }

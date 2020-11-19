@@ -45,11 +45,11 @@ extension HomeApi: EndPointType {
         let token = user?.token
         switch self {
         case .getUserById(_):
-            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: token)
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .registerDevice(token: let token, voipToken: let voipToken):
             let parameters:Parameters = ["deviceUUID": UIDevice.current.identifierForVendor?.uuidString, "token": token, "voIPToken": voipToken, "platform": "ios"]
-            let headers:HTTPHeaders = endPointManager.createHeaders(token:  SharedConfigs.shared.signedUser?.token ?? "")
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: user?.token ?? "")
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

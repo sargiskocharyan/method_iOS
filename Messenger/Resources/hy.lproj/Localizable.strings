@@ -133,7 +133,7 @@
 "missed_calls"                                    = "Բաց թողնված զանգեր";
 "admin_messages"                                  = "Ադմինիստրատորի նամակներ";
 "join"                                            = "Միանալ";
-"channels"                                        = "Channels";
+"channels"                                        = "Ալիքներ";
 "description"                                     = "Նկարագրություն";
 "description_not_set"                             = "Նկարագիրը դրված չէ";
 "create_channel"                                  = "Ստեղծել ալիք";
@@ -173,3 +173,4 @@
 "use_phone_number_for_login"                      = "Մուտք գործելու համար օգտագործել հեռ.";
 "phone_number_will_be_used"                       = "Հեռախոսահամարը կօգտագործվի հաստատելու համար";
 "enter_your_phone_number"                         = "Մուտքագրեք ձեր հեռախոսահամարը";
+"privacy"                                         = "Գաղտնիություն";

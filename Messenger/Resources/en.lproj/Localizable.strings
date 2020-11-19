@@ -179,3 +179,4 @@
 "use_phone_number_for_login"                      = "Use phone number for login";
 "phone_number_will_be_used"                       = "Phone number will be used to confirm";
 "enter_your_phone_number"                         = "Enter your phone number";
+"privacy"                                         = "Privacy";

@@ -82,7 +82,6 @@ struct ChannelUrls {
 }
 
 struct AppLangKeys {
-     
      static let Rus = "ru"
      static let Eng = "en"
      static let Arm = "hy"
@@ -94,6 +93,7 @@ struct Keys {
     static let TOKEN_KEYCHAIN_ID_KEY = "token"
     static let APP_Language = "appLanguage"
     static let IS_REGISTERED = "isRegistered"
+    static let AUTH_VERIFICATION_ID = "authVerificationID"
 }
 
 enum MessageType: String {

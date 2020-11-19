@@ -140,13 +140,14 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         self.viewModel?.signInWithFirebase(code: CodeField.text!, completion: { (authResult, error) in
             if let error = error {
                 self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                self.activityIndicator.stopAnimating()
                 return
             }
             DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
                 self.viewModel?.loginWithPhoneNumber(number: self.phoneNumber!.replacingOccurrences(of: " ", with: ""), completion: { (response, error) in
                     if let error = error {
                         DispatchQueue.main.async {
+                            self.activityIndicator.stopAnimating()
                             self.showErrorAlert(title: "error", errorMessage: error.rawValue)
                         }
                     } else if let response = response {
@@ -161,8 +162,8 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         self.viewModel?.parseUserData(loginResponse, loginResponse?.token, completion: { (error) in
             if error != nil {
                 DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                     self.activityIndicator.stopAnimating()
+                    self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
             } else {
                 DispatchQueue.main.async {

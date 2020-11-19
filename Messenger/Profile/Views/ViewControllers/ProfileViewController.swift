@@ -79,13 +79,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         configureImageView()
         addGestures()
         defineSwithState()
-        localizeStrings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
-       
+        localizeStrings()
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
     }
@@ -392,7 +391,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Arm)
             }
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
-            self.viewDidLoad()
+            self.viewWillAppear(false)
             self.mainRouter?.callDetailViewController?.tableView?.reloadData()
         }
         dropDown.backgroundColor = UIColor(named: "dropDownColor")

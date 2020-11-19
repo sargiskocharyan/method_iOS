@@ -187,7 +187,7 @@ class SocketTaskManager {
     
     func callAccepted(id: String, isAccepted: Bool) {
         socket!.emit("callAccepted", id, isAccepted) {
-            print("callAccepted")
+            print("callAccepted", isAccepted)
         }
     }
     

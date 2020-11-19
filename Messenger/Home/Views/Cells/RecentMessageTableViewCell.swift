@@ -73,14 +73,14 @@ class RecentMessageTableViewCell: UITableViewCell {
         } else if chat.username != nil {
             nameLabel.text = chat.username
         } else {
-            nameLabel.text = "no username"
+            nameLabel.text = "no_username".localized()
         }
         if chat.message != nil {
             timeLabel.text = stringToDate(date: chat.message!.createdAt ?? "" )
         }
         
         if chat.id == chat.message?.senderId {
-            lastMessageLabel.text = chat.message?.text ?? "Call"
+            lastMessageLabel.text = chat.message?.text ?? "call".localized()
             if chat.unreadMessageExists {
                 lastMessageLabel.textColor = .black
                 let boldAttribute = [
@@ -93,10 +93,10 @@ class RecentMessageTableViewCell: UITableViewCell {
             let regularAttribute = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)
             ]
-            let regularText = NSAttributedString(string: (chat.message?.text) ?? "Call", attributes: regularAttribute)
+            let regularText = NSAttributedString(string: (chat.message?.text) ?? "call".localized(), attributes: regularAttribute)
             lastMessageLabel.attributedText = regularText
             lastMessageLabel.textColor = .darkGray
-            lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "Call")
+            lastMessageLabel.text = "you".localized() + (chat.message?.text ?? "call".localized())
         }
     }
     

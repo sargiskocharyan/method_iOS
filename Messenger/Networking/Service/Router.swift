@@ -58,7 +58,6 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
     
     fileprivate func configureFormDataBody(_ bodyParameters: Parameters?, _ boundary: String) -> Data {
         let body = NSMutableData()
-        print(bodyParameters)
         for parameter in bodyParameters! {
             if let stringValue = (parameter.value as? String) {
                 body.appendString("--\(boundary)\r\n")

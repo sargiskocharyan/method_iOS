@@ -143,9 +143,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         continueButton.setTitle("continue".localized(), for: .normal)
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         aboutPgLabel.text = "enter_your_email".localized()
-        let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
-                                                        attributes: buttonAttributes)
-        changeModeButton.setAttributedTitle(attributeString, for: .normal)
+        changeModeButton.setTitle("use_phone_number_for_login".localized(), for: .normal)
     }
     
     override func viewDidLoad() {
@@ -155,7 +153,6 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         navigationController?.isNavigationBarHidden = true
         numberTextField.withDefaultPickerUI = true
         numberTextField.withPrefix = true
-        numberTextField.defaultRegion = "AM"
         numberTextField.withFlag = true
         numberTextField.withExamplePlaceholder = true
         continueButton.isEnabled = false
@@ -262,9 +259,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     @IBAction func changeModeButtonAction(_ sender: UIButton) {
         isLoginWithEmail = !isLoginWithEmail
         if isLoginWithEmail {
-            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
-                                                            attributes: buttonAttributes)
-            sender.setAttributedTitle(attributeString, for: .normal)
+            sender.setTitle("use_phone_number_for_login".localized(), for: .normal)
             phonaView.isHidden = true
             numberTextField.text = ""
             borderView.backgroundColor = .lightGray
@@ -275,9 +270,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             phonaView.isHidden = false
             emaiCustomView.isHidden = true
             emptyField(customView: emaiCustomView)
-            let attributeString = NSMutableAttributedString(string: "use_email_for_login".localized(),
-                                                            attributes: buttonAttributes)
-            sender.setAttributedTitle(attributeString, for: .normal)
+            sender.setTitle("use_email_for_login".localized(), for: .normal)
             emailDescriptionLabel.text = "phone_number_will_be_used".localized()
             aboutPgLabel.text = "enter_your_phone_number".localized()
         }
@@ -297,26 +290,30 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     }
     
     func checkPhone() {
-        Auth.auth().languageCode = "hy" //222222
+        self.activityIndicator.startAnimating()
+        Auth.auth().languageCode = AppLangKeys.Arm //222222
         Auth.auth().settings?.isAppVerificationDisabledForTesting = false
         PhoneAuthProvider.provider().verifyPhoneNumber(numberTextField.text!, uiDelegate: nil) { (verificationID, error) in
             if let error = error {
+                self.activityIndicator.stopAnimating()
                 self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
                 return
             }
-            UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+            UserDefaults.standard.set(verificationID, forKey: Keys.AUTH_VERIFICATION_ID)
             let currentUser = Auth.auth().currentUser
             currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
               if let error = error {
                 DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
                     self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
                 }
-                return;
+                return
               }
             }
             self.viewModel?.emailChecking(email: self.numberTextField.text!, completion: { (responseObject, error) in
                 if let error = error {
                     DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
                         self.showErrorAlert(title: "error", errorMessage: error.rawValue)
                     }
                 } else if let response = responseObject {
@@ -334,6 +331,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         viewModel!.emailChecking(email: emaiCustomView.textField.text!) { (responseObject, error) in
             if (error != nil) {
                 DispatchQueue.main.async {
+                    self.enableContinueButton()
                     self.activityIndicator.stopAnimating()
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
                 }
@@ -341,6 +339,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                 DispatchQueue.main.async {
                     self.authRouter?.showConfirmCodeViewController(email: self.emaiCustomView.textField.text!, code: responseObject!.code, isExists: responseObject!.mailExist, phoneNumber: nil)
                     self.activityIndicator.stopAnimating()
+                    self.enableContinueButton()
                 }
             }
         }
