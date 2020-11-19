@@ -10,6 +10,8 @@ import UIKit
 
 class SentMediaMessageTableViewCell: UITableViewCell {
     
+    @IBOutlet weak var readMessageLabel: UILabel!
+//    @IBOutlet weak var heghtConstraintOfSentImage: NSLayoutConstraint!
     @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var snedImageView: UIImageView!
     @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
@@ -70,14 +72,19 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         imagView.translatesAutoresizingMaskIntoConstraints = false
         imagView.centerYAnchor.constraint(equalTo: snedImageView.centerYAnchor, constant: 0).isActive = true
         imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
-        imagView.heightAnchor.constraint(equalTo: snedImageView.heightAnchor, multiplier: 0.3).isActive = true
-        imagView.widthAnchor.constraint(equalTo: snedImageView.widthAnchor, multiplier: 0.3).isActive = true
+        imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     func configureSendVideoMessageTableViewCellInChannel(_ message: Message, _ channelInfo: ChannelInfo?, _ tap: UILongPressGestureRecognizer, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage?) {
         self.id = message._id
         self.snedImageView.isUserInteractionEnabled = true
         self.snedImageView.addGestureRecognizer(tapOnVideo)
+        if message.createdAt != nil {
+            self.readMessageLabel.text = "sent".localized()
+        } else {
+            self.readMessageLabel.text = "waiting".localized()
+        }
         self.addGestureRecognizer(tap)
         self.setStartVideoImage()
         if let videoUrl = message.video {
@@ -85,6 +92,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
                 DispatchQueue.main.async {
                     self.messageLabel.text = message.text
                     self.snedImageView.image = image
+                    
                 }
             }
         } else {
@@ -124,6 +132,11 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         self.snedImageView.isUserInteractionEnabled = true
         self.snedImageView.addGestureRecognizer(tapOnImage)
         self.addGestureRecognizer(tap)
+        if message.createdAt != nil {
+            self.readMessageLabel.text = "sent".localized()
+        } else {
+            self.readMessageLabel.text = "waiting".localized()
+        }
         if let imageUrl = message.image?.imageURL {
             ImageCache.shared.getImage(url: imageUrl, id: message._id ?? "", isChannel: false) { (image) in
                 DispatchQueue.main.async {

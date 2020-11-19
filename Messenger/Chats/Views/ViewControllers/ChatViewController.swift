@@ -220,7 +220,6 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
                     SocketTaskManager.shared.messageRead(chatId: id!, messageId: message._id!)
                 }
             } else {
-                print(uuid)
                     for i in 0..<allMessages!.array!.count {
                         if uuid == allMessages!.array![i]._id {
                             (self.tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SentMessageTableViewCell)?.readMessage.text = "sent"
