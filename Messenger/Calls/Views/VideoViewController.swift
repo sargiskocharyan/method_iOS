@@ -174,8 +174,8 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         callManager.removeAllCalls()
         self.view.viewWithTag(10)?.removeFromSuperview()
         self.view.viewWithTag(11)?.removeFromSuperview()
-        webRTCClient?.removeThracks()
         webRTCClient?.peerConnection?.close()
+        webRTCClient?.removeThracks()
         self.navigationController?.popViewController(animated: false)
     }
     

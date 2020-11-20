@@ -59,7 +59,11 @@ class SentMessageTableViewCell: UITableViewCell {
     
     func configureSendMessageTableViewCellInChannel(_ channelInfo: ChannelInfo?, _ message: Message, _ tap: UILongPressGestureRecognizer, isPreview: Bool?) {
         self.id = message._id
-        self.readMessage.isHidden = true
+        if message.owner != nil {
+            self.readMessage.text = "sent".localized()
+        } else {
+            self.readMessage.text = "waiting".localized()
+        }
         self.messageLabel.backgroundColor = UIColor(red: 126/255, green: 192/255, blue: 235/255, alpha: 1)
         self.messageLabel.text = message.text
         self.messageLabel.sizeToFit()

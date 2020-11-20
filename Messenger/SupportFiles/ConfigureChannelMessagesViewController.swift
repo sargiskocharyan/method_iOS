@@ -42,7 +42,7 @@ class ConfigureChannelMessagesViewController {
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
-                cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo)
+                cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: (vc.sendThumbnail ?? UIImage(named: "upload_image_icon"))!)
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
@@ -103,16 +103,6 @@ class ConfigureChannelMessagesViewController {
     }
     
     func setupInputComponents() {
-        vc.messageInputContainerView.addSubview(vc.inputTextField)
-        vc.messageInputContainerView.addSubview(vc.sendButton)
-        vc.messageInputContainerView.layer.borderWidth = 1
-        vc.messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
-        vc.sendButton.translatesAutoresizingMaskIntoConstraints = false
-        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -10).isActive = true
-        vc.sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        vc.sendButton.topAnchor.constraint(equalTo: vc.messageInputContainerView.topAnchor, constant: 10).isActive = true
-        vc.sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        vc.sendButton.isUserInteractionEnabled = true
         let uploadImageView = UIImageView()
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.image = UIImage(named: "upload_image_icon")
@@ -123,6 +113,16 @@ class ConfigureChannelMessagesViewController {
         uploadImageView.centerYAnchor.constraint(equalTo: vc.messageInputContainerView.centerYAnchor).isActive = true
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        vc.messageInputContainerView.addSubview(vc.inputTextField)
+        vc.messageInputContainerView.addSubview(vc.sendButton)
+        vc.messageInputContainerView.layer.borderWidth = 1
+        vc.messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
+        vc.sendButton.translatesAutoresizingMaskIntoConstraints = false
+        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -10).isActive = true
+        vc.sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        vc.sendButton.topAnchor.constraint(equalTo: vc.messageInputContainerView.topAnchor, constant: 10).isActive = true
+        vc.sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        vc.sendButton.isUserInteractionEnabled = true
         vc.inputTextField.translatesAutoresizingMaskIntoConstraints = false
         vc.inputTextField.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: -37).isActive = true
         vc.inputTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 5).isActive = true
@@ -260,7 +260,7 @@ class ConfigureChannelMessagesViewController {
         vc.deleteMessageButton.titleLabel?.font = UIFont.systemFont(ofSize: 20.0)
         vc.deleteMessageButton.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 250/255, alpha: 1)
         vc.deleteMessageButton.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0).isActive = true
-        vc.deleteMessageButton.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor, constant: 0).isActive = true
+        vc.deleteMessageButton.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: 0).isActive = true
         vc.deleteMessageButton.bottomAnchor.constraint(equalTo: vc.messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         vc.deleteMessageButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
         vc.deleteMessageButton.addTarget(self, action: #selector(deleteMessages), for: .touchUpInside)

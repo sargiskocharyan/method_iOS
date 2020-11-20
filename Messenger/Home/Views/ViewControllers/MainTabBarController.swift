@@ -677,10 +677,10 @@ extension MainTabBarController: WebRTCClientDelegate {
             videoVC?.webRTCClient = nil
             id = nil
             videoVC?.closeAll()
-            DispatchQueue.main.async {
-                self.callsVC?.view.viewWithTag(20)?.removeFromSuperview()
+//            DispatchQueue.main.async {
+                self.callsVC?.removeView()
                 self.startDate = nil
-            }
+//            }
         }
     }
 }

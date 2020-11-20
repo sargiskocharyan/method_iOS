@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -123,7 +123,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="yAr-ff-Mvo">
-                                                        <rect key="frame" x="118" y="120" width="180" height="50"/>
+                                                        <rect key="frame" x="85.5" y="120" width="245" height="50"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w9q-x8-cJU">
                                                                 <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -150,8 +150,22 @@
                                                                     <action selector="startVideoCall:" destination="lXp-yg-gEO" eventType="touchUpInside" id="5ll-K5-URQ"/>
                                                                 </connections>
                                                             </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="arV-I0-AOk">
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ca0-gc-YBz">
                                                                 <rect key="frame" x="130" y="0.0" width="50" height="50"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="50" id="V3e-7S-w0n"/>
+                                                                    <constraint firstAttribute="width" constant="50" id="dcG-AO-Pf6"/>
+                                                                </constraints>
+                                                                <color key="tintColor" red="0.49803921569999998" green="0.37254901959999998" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <state key="normal" image="phone.fill" catalog="system">
+                                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="22"/>
+                                                                </state>
+                                                                <connections>
+                                                                    <action selector="audioCallAction:" destination="lXp-yg-gEO" eventType="touchUpInside" id="NV6-nz-MyW"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="arV-I0-AOk">
+                                                                <rect key="frame" x="195" y="0.0" width="50" height="50"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="50" id="Mv5-bc-yQ9"/>
                                                                     <constraint firstAttribute="width" constant="50" id="q2f-df-0z8"/>
@@ -423,6 +437,7 @@
                     </view>
                     <connections>
                         <outlet property="addToContactButton" destination="arV-I0-AOk" id="iIk-Yv-B7F"/>
+                        <outlet property="audioCallButton" destination="Ca0-gc-YBz" id="Mn6-XG-GaG"/>
                         <outlet property="birthDateLabel" destination="tpA-S2-UyV" id="YfG-SI-ql7"/>
                         <outlet property="birthDateTextLabel" destination="I4P-LF-NDX" id="byH-CJ-ZSO"/>
                         <outlet property="confirmButton" destination="xMw-TK-lIN" id="l8W-C4-u4v"/>
@@ -1233,6 +1248,7 @@
         <image name="noPhoto" width="2200" height="2200"/>
         <image name="person.crop.circle.badge.xmark" width="128" height="128"/>
         <image name="phone" catalog="system" width="128" height="115"/>
+        <image name="phone.fill" catalog="system" width="128" height="114"/>
         <image name="video.fill" catalog="system" width="128" height="82"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

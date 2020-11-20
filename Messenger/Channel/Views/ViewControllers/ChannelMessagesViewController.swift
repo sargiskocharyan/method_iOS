@@ -127,6 +127,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
             viewConfigurator.setSendImageView(image: selectedImage)
             self.selectedImage = selectedImage
             self.sendImageTmp = selectedImage
+            dismiss(animated: true, completion: nil)
+            return
         }
         if let videoURL = info["UIImagePickerControllerReferenceURL"] as? NSURL {
             PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) -> Void in
@@ -147,10 +149,10 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                         print("*** Error: \(error.localizedDescription)")
                     }
                 }
-                
+                self.dismiss(animated: true, completion: nil)
             })
         }
-        dismiss(animated: true, completion: nil)
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -199,6 +201,16 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 for i in 0..<self.channelMessages.array!.count {
                     if self.channelMessages.array![i]._id == uuid {
                         self.channelMessages.array![i] = message
+                        if message.senderId == SharedConfigs.shared.signedUser?.id {
+                            let ind = IndexPath(row: channelMessages.array!.count - 1, section: 0)
+                            if message.type == "text" {
+                                let cell = tableView.cellForRow(at: ind) as? SentMessageTableViewCell
+                                cell?.readMessage.text = "sent".localized()
+                            } else if message.type == "image" || message.type == "video" {
+                                let cell = tableView.cellForRow(at: ind) as? SentMediaMessageTableViewCell
+                                cell?.readMessageLabel.text = "sent".localized()
+                            }
+                        }
                     }
                 }
                 if message.type == MessageType.image.rawValue {
@@ -216,8 +228,6 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
     }
-    
-    
     
     func sendImage() {
         let sendImageCopy = self.selectedImage
@@ -285,6 +295,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                             DispatchQueue.main.async {
                                 cell.messageLabel.text = self.inputTextField.text
                                 self.inputTextField.text = ""
+                                
                             }
                         }
                     })
@@ -300,10 +311,11 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
                 sendText()
             }
         }
+        self.viewConfigurator.removeView()
     }
     
     func showAlertBeforeDeleteMessage() {
-        self.showAlert(title: "attention".localized(), message: "are_you_sure_want_to_delete_selected_messages".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
+        self.showAlert(title: nil, message: "are_you_sure_want_to_delete_selected_messages".localized(), buttonTitle1: "delete".localized(), buttonTitle2: "cancel".localized(), buttonTitle3: nil, completion1: {
             if self.arrayOfSelectedMesssgae.count == 0 {
                 self.deleteMessageButton.isEnabled = false
             } else {

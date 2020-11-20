@@ -234,6 +234,12 @@ class CallListViewController: UIViewController, AVAudioPlayerDelegate {
         })
     }
     
+    func removeView() {
+        DispatchQueue.main.async {
+            self.view.viewWithTag(20)?.removeFromSuperview()
+        }
+    }
+    
     func groupCalls() {
         var callsArray = viewModel?.calls
         var dictionary: Dictionary<CallHistory, Int> = [:]
@@ -457,7 +463,6 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         count = tabbar!.contactsViewModel!.contacts.count
         otherContactsCount = tabbar!.contactsViewModel!.otherContacts.count
         let call = sortedDictionary[indexPath.row].0
