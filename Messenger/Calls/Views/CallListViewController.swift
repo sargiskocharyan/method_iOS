@@ -471,7 +471,7 @@ extension CallListViewController: UITableViewDelegate, UITableViewDataSource {
         activeCall?.isHandleCall = false
         let calleeId = call.caller == SharedConfigs.shared.signedUser?.id ? call.receiver : call.caller
         if onCall == false  {
-            self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text ?? "", mode: .videoCall)
+            self.delegate?.handleCallClick(id: (call.receiver == SharedConfigs.shared.signedUser?.id ? call.caller : call.receiver)!, name: (tableView.cellForRow(at: indexPath) as! CallTableViewCell).nameLabel.text?.components(separatedBy: " ").first ?? "", mode: .videoCall)
         } else if onCall && id != nil {
             if id == calleeId {
                 self.delegate?.handleClickOnSamePerson()
