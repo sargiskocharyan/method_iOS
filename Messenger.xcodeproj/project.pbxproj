@@ -1963,7 +1963,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
@@ -1977,6 +1977,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
 				PRODUCT_NAME = method;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1989,7 +1990,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
@@ -2003,6 +2004,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
 				PRODUCT_NAME = method;
 				SWIFT_VERSION = 5.0;
@@ -2027,6 +2029,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.dev;
 				PRODUCT_NAME = method_dev;
@@ -2053,6 +2056,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.dev;
 				PRODUCT_NAME = method_dev;
@@ -2074,6 +2078,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2095,6 +2100,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2116,6 +2122,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2137,6 +2144,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
