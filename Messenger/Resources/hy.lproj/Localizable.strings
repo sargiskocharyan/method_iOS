@@ -169,7 +169,7 @@
 "only_admin_can _post"                            = "Միայն ադմինիստրատորը կարող է հրապարակում կատարել";
 "all_members_can_post"                            = "Բոլոր անդամները կարող են հրապարակում կատարել";
 "are_you_sure_you_want_to_delete_channel"         = "Վստա՞հ եք, որ ցանկանում եք ջնջել ալիքը:";
-"use_phone_number_for_login"                      = "Օգտագործեք հեռ.համար";
-"use_email"                                       = "Օգտագործեք Էլ. Փոստ";
+"use_email_for_login"                             = "Օգտագործել էլ.փոստ";
+"use_phone_number_for_login"                      = "Օգտագործել հեռ.";
+"phone_number_will_be_used"                       = "Հեռախոսահամարը կօգտագործվի հաստատելու համար";
 "enter_your_phone_number"                         = "Մուտքագրեք ձեր հեռախոսահամարը";
-"phone_number_will_be_used"                       = "Հեռախոսահամարը կօգտագործվի հաստատման համար";

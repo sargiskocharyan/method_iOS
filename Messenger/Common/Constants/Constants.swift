@@ -95,3 +95,10 @@ struct Keys {
     static let APP_Language = "appLanguage"
     static let IS_REGISTERED = "isRegistered"
 }
+
+enum MessageType: String {
+    case video = "video"
+    case call = "call"
+    case text = "text"
+    case image = "image"
+}

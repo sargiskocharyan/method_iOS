@@ -47,14 +47,14 @@ class ChannelMessagesViewModel {
         }
     }
     
-    func sendVideoInChannel(data: Data, channelId: String, text: String, completion: @escaping (NetworkResponse?)->() ) {
-        ChannelNetworkManager().sendVideoInChannel(data: data, channelId: channelId, text: text) { (error) in
+    func sendVideoInChannel(data: Data, channelId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->() ) {
+        ChannelNetworkManager().sendVideoInChannel(data: data, channelId: channelId, text: text, uuid: uuid) { (error) in
             completion(error)
         }
     }
     
-    func sendImage(tmpImage: UIImage, channelId: String, text: String, completion: @escaping (NetworkResponse?)->()) {
-        ChannelNetworkManager().sendImage(tmpImage: tmpImage, channelId: channelId, text: text) { (error) in
+    func sendImage(tmpImage: UIImage, channelId: String, text: String, uuid: String, completion: @escaping (NetworkResponse?)->()) {
+        ChannelNetworkManager().sendImageInChannel(tmpImage: tmpImage, channelId: channelId, text: text, tempUUID: uuid, boundary: uuid) { (error) in
             completion(error)
         }
     }

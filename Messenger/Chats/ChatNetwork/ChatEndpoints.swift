@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dynamic LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public enum ChatApi {
     case getChats
@@ -14,6 +14,8 @@ public enum ChatApi {
     case editChatMessage(messageId: String, text: String)
     case deleteChatMessages(arrayMessageIds: [String])
     case onlineUsers(arrayOfId: [String])
+    case sendImageInChat(tmpImage: UIImage?, userId: String, text: String, boundary: String, tempUUID: String)
+    case sendVideoInChat(videoData: Data, userId: String, text: String, boundary: String, tempUUID: String)
 }
 
 extension ChatApi: EndPointType {
@@ -34,6 +36,10 @@ extension ChatApi: EndPointType {
             return HomeUrls.DeleteChatMessages
         case .onlineUsers(_):
             return HomeUrls.OnlineUsers
+        case .sendImageInChat(_, let userId, _,_,_):
+            return "\(HomeUrls.SendImageInChat)/\(userId)/imageMessage"
+        case .sendVideoInChat(_, let userId, _,_,_):
+            return "\(HomeUrls.SendImageInChat)/\(userId)/videoMessage"
         }
     }
     
@@ -48,6 +54,10 @@ extension ChatApi: EndPointType {
         case .deleteChatMessages(_):
             return .post
         case .onlineUsers(_):
+            return .post
+        case .sendImageInChat(_,_,_,_,_):
+            return .post
+        case .sendVideoInChat(_,_,_,_,_):
             return .post
         }
     }
@@ -78,6 +88,14 @@ extension ChatApi: EndPointType {
         case .onlineUsers(arrayOfId: let arrayOfId):
             let parameters:Parameters = ["usersArray": arrayOfId]
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .sendImageInChat(tmpImage: let image, userId: _, text: let text, boundary: let boundary, tempUUID: let tempUUID):
+            let parameters:Parameters = ["tempUUID": tempUUID, "text" : text, "image": image?.jpegData(compressionQuality: 1)]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
+        case .sendVideoInChat(videoData: let videoData, userId: _, text: let text, boundary: let boundary, tempUUID: let tempUUID):
+            let parameters:Parameters = ["tempUUID": tempUUID, "text" : text, "video": videoData]
+            let headers:HTTPHeaders = endPointManager.createUploadTaskHeaders(token: token, boundary: boundary)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         }
     }

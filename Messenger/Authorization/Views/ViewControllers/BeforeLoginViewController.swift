@@ -16,86 +16,6 @@ import PhoneNumberKit
 import DropDown
 
 class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
-    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
-        //        viewModel?.loginWithFacebook(accessToken: result?.token, completion: { (response, error) in
-        //            if error != nil {
-        //
-        //            } else {
-        //
-        //            }
-        //        })
-        activityIndicator.startAnimating()
-        var token = ""
-        if AccessToken.current != nil {
-            token = AccessToken.current!.tokenString
-        }
-        viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
-                    self.activityIndicator.stopAnimating()
-                }
-            } else if response != nil {
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                }
-                
-                let model = UserModel(name: response!.user.name, lastname: response!.user.lastname, username: response!.user.username, email: response!.user.email,  token: response!.token, id: response!.user.id, avatarURL: response!.user.avatarURL, phoneNumber: response!.user.phoneNumber, birthDate: response!.user.birthDate, tokenExpire: self.stringToDate(date: response!.tokenExpire), missedCallHistory: response!.user.missedCallHistory)
-                SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: true)
-                UserDataController().saveUserSensitiveData(token: response!.token)
-                UserDataController().populateUserProfile(model: model)
-                self.registerDevice { (error) in
-                    if error != nil {
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
-                            self.activityIndicator.stopAnimating()
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            MainRouter().assemblyModule()
-                            self.activityIndicator.stopAnimating()
-                        }
-                    }
-                }
-            }
-        })
-        // fetchUserInfo()
-    }
-    func stringToDate(date:String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let parsedDate = formatter.date(from: date)
-        return parsedDate
-    }
-    func registerDevice(completion: @escaping (NetworkResponse?)->()) {
-        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken ?? "", voipDeviceToken: SharedConfigs.shared.voIPToken ?? "") { (error) in
-            completion(error)
-        }
-    }
-    
-    func fetchUserInfo() -> Void {
-        if (AccessToken.current != nil) {
-            let graphRequest: GraphRequest = GraphRequest(graphPath: "/me", parameters:["fields": "id, first_name, last_name, name, email, picture"])
-            graphRequest.start(completionHandler: { (connection, result, error) in
-                
-                if(error != nil) { self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
-                  }
-                else
-                {
-                    self.dictionary = result as! [String : AnyObject]
-                    let name = self.dictionary["name"] as! String
-                    let token = AccessToken.current?.tokenString
-                    print("name is -\(name)")
-                    print("token is -\(token ?? "")")
-                }
-            })
-        }
-    }
-    
-    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
-        print("")
-    }
-    
     
     //MARK: @IBOutlets
     @IBOutlet weak var logInWithFacebookButton: FBLoginButton!
@@ -140,7 +60,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         } else {
             checkPhone()
         }
-    } 
+    }
     
    
     //MARK: Lifecycle methods
@@ -157,6 +77,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         super.viewDidLoad()
         storyboardView.bringSubviewToFront(view)
         emaiCustomView.delagate = self
+        for constraint in logInWithFacebookButton.constraints where constraint.firstAttribute == .height {
+            constraint.constant = 35
+        }
         navigationController?.isNavigationBarHidden = true
         numberTextField.withDefaultPickerUI = true
         numberTextField.withPrefix = true
@@ -180,17 +103,6 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         changeModeButton.setAttributedTitle(attributeString, for: .normal)
     }
     
-    func addImage(textField: UITextField, imageView: UIImageView) {
-        textField.addSubview(imageView)
-        imageView.image = UIImage(named: "more")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
-        imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.isUserInteractionEnabled = true
-    }
-    
     override func viewDidLayoutSubviews() {
         self.emaiCustomView.handleRotate()
         let minRect = CGRect(x: 0, y: 0, width: 0, height: 0)
@@ -203,6 +115,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             headerShapeView.frame = maxRect
             bottomView.frame = maxRectBottom
         }
+        logInWithFacebookButton.titleLabel?.font = UIFont.systemFont(ofSize: 19)
         continueButton.layer.cornerRadius = 8
         logInWithFacebookButton.layer.cornerRadius = 8
         logInWithFacebookButton.clipsToBounds = true
@@ -226,6 +139,89 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         topHeight =  view.frame.height * 0.3
         self.view.addSubview(headerShapeView)
     }
+    
+    func addImage(textField: UITextField, imageView: UIImageView) {
+        textField.addSubview(imageView)
+        imageView.image = UIImage(named: "more")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
+        imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        imageView.isUserInteractionEnabled = true
+    }
+    
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        activityIndicator.startAnimating()
+        var token = ""
+        if AccessToken.current != nil {
+            token = AccessToken.current!.tokenString
+        }
+        viewModel?.loginWithFacebook(accessToken: token, completion: { (response, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error", errorMessage: error!.rawValue)
+                    self.activityIndicator.stopAnimating()
+                }
+            } else if response != nil {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
+                let model = UserModel(name: response!.user.name, lastname: response!.user.lastname, username: response!.user.username, email: response!.user.email,  token: response!.token, id: response!.user.id, avatarURL: response!.user.avatarURL, phoneNumber: response!.user.phoneNumber, birthDate: response!.user.birthDate, tokenExpire: self.stringToDate(date: response!.tokenExpire), missedCallHistory: response!.user.missedCallHistory)
+                SharedConfigs.shared.setIfLoginFromFacebook(isFromFacebook: true)
+                UserDataController().saveUserSensitiveData(token: response!.token)
+                UserDataController().populateUserProfile(model: model)
+                self.registerDevice { (error) in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
+                            self.activityIndicator.stopAnimating()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            MainRouter().assemblyModule()
+                            self.activityIndicator.stopAnimating()
+                        }
+                    }
+                }
+            }
+        })
+    }
+    func stringToDate(date:String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let parsedDate = formatter.date(from: date)
+        return parsedDate
+    }
+    func registerDevice(completion: @escaping (NetworkResponse?)->()) {
+        RemoteNotificationManager.registerDeviceToken(pushDevicetoken: SharedConfigs.shared.deviceToken ?? "", voipDeviceToken: SharedConfigs.shared.voIPToken ?? "") { (error) in
+            completion(error)
+        }
+    }
+    
+    func fetchUserInfo() -> Void {
+        if (AccessToken.current != nil) {
+            let graphRequest: GraphRequest = GraphRequest(graphPath: "/me", parameters:["fields": "id, first_name, last_name, name, email, picture"])
+            graphRequest.start(completionHandler: { (connection, result, error) in
+                
+                if(error != nil) { self.showErrorAlert(title: "error".localized(), errorMessage: error!.localizedDescription)
+                  }
+                else
+                {
+                    self.dictionary = result as! [String : AnyObject]
+                    let name = self.dictionary["name"] as! String
+                    let token = AccessToken.current?.tokenString
+                    print("name is -\(name)")
+                    print("token is -\(token ?? "")")
+                }
+            })
+        }
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        print("")
+    }
+    
     
     func disableContinueButton() {
         continueButton.isEnabled = false
@@ -269,14 +265,16 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     @IBAction func changeModeButtonAction(_ sender: UIButton) {
         isLoginWithEmail = !isLoginWithEmail
         if isLoginWithEmail {
-            sender.setTitle("use_phone_number_for_login".localized(), for: .normal)
+            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
+                                                            attributes: buttonAttributes)
+            sender.setAttributedTitle(attributeString, for: .normal)
             phonaView.isHidden = true
             numberTextField.text = ""
             borderView.backgroundColor = .lightGray
             emaiCustomView.isHidden = false
             emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
             aboutPgLabel.text = "enter_your_email".localized()
-            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),attributes: buttonAttributes)
+//            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),attributes: buttonAttributes)
             changeModeButton.setAttributedTitle(attributeString, for: .normal)
         } else {
             let attributeString = NSMutableAttributedString(string: "use_email".localized(),attributes: buttonAttributes)
@@ -284,7 +282,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             phonaView.isHidden = false
             emaiCustomView.isHidden = true
             emptyField(customView: emaiCustomView)
-            sender.setTitle("use_email_for_login".localized(), for: .normal)
+            let attributeString1 = NSMutableAttributedString(string: "use_email_for_login".localized(),
+                                                            attributes: buttonAttributes)
+            sender.setAttributedTitle(attributeString1, for: .normal)
             emailDescriptionLabel.text = "phone_number_will_be_used".localized()
             aboutPgLabel.text = "enter_your_phone_number".localized()
         }

@@ -85,10 +85,10 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         sendImageView.addSubview(viewOnCell!)
         viewOnCell?.addSubview(imagView)
         imageView?.translatesAutoresizingMaskIntoConstraints = false
-        imagView.centerYAnchor.constraint(equalTo: sendImageView.centerYAnchor, constant: 0).isActive = true
-        imagView.centerXAnchor.constraint(equalTo: sendImageView.centerXAnchor, constant: 0).isActive = true
-        imagView.heightAnchor.constraint(equalTo: sendImageView.heightAnchor, multiplier: 0.3).isActive = true
-        imagView.widthAnchor.constraint(equalTo:  sendImageView.widthAnchor, multiplier: 0.3).isActive = true
+        imagView.centerYAnchor.constraint(equalTo: viewOnCell!.centerYAnchor, constant: 0).isActive = true
+        imagView.centerXAnchor.constraint(equalTo: viewOnCell!.centerXAnchor, constant: 0).isActive = true
+        imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     func configureRecieveVideoMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnVideo: UITapGestureRecognizer) {
@@ -104,16 +104,19 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
             }
         }
     }
+
     
-    func configureRecieveVideoMessageTableViewCellInChannel(_ channelInfo: ChannelInfo, _ tap: UILongPressGestureRecognizer, message: Message, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer) {
+    func configureRecieveVideoMessageTableViewCellInChannel(_ channelInfo: ChannelInfo, _ tap: UILongPressGestureRecognizer, message: Message, isPreview: Bool?, tapOnVideo: UITapGestureRecognizer, thumbnail: UIImage) {
         self.sendImageView.isUserInteractionEnabled = true
         self.sendImageView.addGestureRecognizer(tapOnVideo)
+        setStartVideoImage()
         for i in 0..<(channelInfo.channel?.subscribers?.count)! {
             if channelInfo.channel?.subscribers?[i].user == message.senderId {
                 self.nameLabel.text = channelInfo.channel?.subscribers?[i].name
                 ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image
+                        self.messageLabel.text = message.text
                     }
                 }
                 break
@@ -126,11 +129,17 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         } else {
             self.checkImage.isHidden = true
         }
-        ImageCache.shared.getThumbnail(videoUrl: message.video ?? "", messageId: message._id ?? "") { (image) in
-            DispatchQueue.main.async {
-                self.messageLabel.text = message.text
-                self.sendImageView.image = image
+        if let videoUrl = message.video {
+            ImageCache.shared.getThumbnail(videoUrl: videoUrl, messageId: message._id ?? "") { (image) in
+                DispatchQueue.main.async {
+                    self.messageLabel.text = message.text
+                    self.sendImageView.image = image
+                    
+                }
             }
+        } else {
+            self.messageLabel.text = message.text
+            self.sendImageView.image = thumbnail
         }
     }
     
@@ -163,7 +172,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         self.messageLabel.text = message.text
     }
     
-    func configureRecieveImageMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnImage: UITapGestureRecognizer) {
+    func configureRecieveImageMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnImage: UITapGestureRecognizer, image: UIImage) {
         self.sendImageView.isUserInteractionEnabled = true
         self.sendImageView.addGestureRecognizer(tapOnImage)
         ImageCache.shared.getImage(url: message.image?.imageURL ?? "", id: message._id ?? "", isChannel: false) { (image) in
@@ -173,6 +182,8 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
                 self.sendImageView.image = image
             }
         }
+        nameLabel.text = ""
+        self.userImageView.image = image
     }
 }
 
