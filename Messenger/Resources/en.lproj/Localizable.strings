@@ -175,3 +175,7 @@
 "only_admin_can_post"                             = "Only admin can post";
 "all_members_can_post"                            = "All members can post";
 "are_you_sure_you_want_to_delete_channel"         = "Are you sure want to delete channel?";
+"use_phone_number_for_login"                      = "Use phone number for login";
+"use_email"                                       = "Use email for login";
+"enter_your_phone_number"                         = "Enter your phone nnumber";
+"phone_number_will_be_used"                       = "Phone number will be used to confirm";

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -24,7 +24,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email will be used to confirm" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jKN-9l-I9Q">
-                                <rect key="frame" x="40" y="477" width="334" height="19.5"/>
+                                <rect key="frame" x="40" y="475" width="334" height="19.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -75,7 +75,7 @@
                                 <variation key="heightClass=regular-widthClass=compact" hidden="NO"/>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pgh-Hv-J1c">
-                                <rect key="frame" x="40" y="395.5" width="334" height="66.5"/>
+                                <rect key="frame" x="40" y="393.5" width="334" height="66.5"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cAt-BW-4Vu" customClass="PhoneNumberTextField" customModule="PhoneNumberKit">
                                         <rect key="frame" x="0.0" y="2" width="334" height="50"/>
@@ -102,14 +102,15 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XSO-bX-5AT">
-                                <rect key="frame" x="40" y="355.5" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="40" y="345.5" width="40" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="button"/>
                                 <connections>
                                     <action selector="changeModeButtonAction:" destination="SB7-lZ-Am6" eventType="touchUpInside" id="nWa-tn-fsx"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O8b-Qw-8k0" customClass="CustomTextField" customModule="method" customModuleProvider="target">
-                                <rect key="frame" x="40" y="395.5" width="334" height="66.5"/>
+                                <rect key="frame" x="40" y="393.5" width="334" height="66.5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="66.333333333333314" id="cqb-X8-1Q2"/>
                                 </constraints>
@@ -163,7 +164,7 @@
                             <constraint firstItem="ENg-t3-oNR" firstAttribute="top" secondItem="eQJ-vN-M76" secondAttribute="top" constant="-50" id="Evh-9L-An3">
                                 <variation key="heightClass=regular-widthClass=compact" constant="90"/>
                             </constraint>
-                            <constraint firstItem="XSO-bX-5AT" firstAttribute="top" secondItem="7Du-X6-Dgm" secondAttribute="bottom" constant="10" id="GBE-3f-kck"/>
+                            <constraint firstItem="XSO-bX-5AT" firstAttribute="top" secondItem="7Du-X6-Dgm" secondAttribute="bottom" id="GBE-3f-kck"/>
                             <constraint firstItem="Pgh-Hv-J1c" firstAttribute="leading" secondItem="O8b-Qw-8k0" secondAttribute="leading" id="GCV-ao-hy5"/>
                             <constraint firstItem="9kI-qx-ouS" firstAttribute="top" secondItem="Wsi-Pt-bLK" secondAttribute="top" id="Ibr-bs-v32"/>
                             <constraint firstItem="YaA-Xg-Bwh" firstAttribute="leading" secondItem="eQJ-vN-M76" secondAttribute="leading" constant="100" id="Ig0-rt-6QI">
@@ -191,7 +192,8 @@
                                 <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                             </constraint>
                             <constraint firstItem="7Du-X6-Dgm" firstAttribute="top" secondItem="ENg-t3-oNR" secondAttribute="bottom" constant="85" id="ocg-mK-aiF"/>
-                            <constraint firstItem="O8b-Qw-8k0" firstAttribute="top" secondItem="XSO-bX-5AT" secondAttribute="bottom" constant="10" id="pL2-9l-HQ8"/>
+                            <constraint firstItem="O8b-Qw-8k0" firstAttribute="top" secondItem="XSO-bX-5AT" secondAttribute="bottom" constant="20" id="pL2-9l-HQ8"/>
+                            <constraint firstItem="eQJ-vN-M76" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="XSO-bX-5AT" secondAttribute="trailing" constant="20" id="uv2-lb-vQu"/>
                             <constraint firstItem="Pgh-Hv-J1c" firstAttribute="bottom" secondItem="O8b-Qw-8k0" secondAttribute="bottom" id="vgc-ff-D8h"/>
                         </constraints>
                     </view>

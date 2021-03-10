@@ -45,7 +45,28 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        viewModel!.resendCode(email: email!) { (code, error) in
+        if phoneNumber != nil {
+            Auth.auth().languageCode = "hy" //222222
+            Auth.auth().settings?.isAppVerificationDisabledForTesting = false
+            PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber!, uiDelegate: nil) { (verificationID, error) in
+                if let error = error {
+                    self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                    return
+                }
+                UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+                let currentUser = Auth.auth().currentUser
+                currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
+                  if let error = error {
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "error", errorMessage: error.localizedDescription)
+                    }
+                    return;
+                  }
+                }
+            }
+        }
+        
+        viewModel!.resendCode(email: (email ?? phoneNumber)! ) { (code, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.showErrorAlert(title: "error_message".localized(), errorMessage: error!.rawValue)
