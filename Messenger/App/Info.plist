@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.Dynamic.Method</string>
+		<string>am.dynamic.method</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -52,7 +52,7 @@
 	<key>FacebookAppID</key>
 	<string>817567549060223</string>
 	<key>FacebookDisplayName</key>
-	<string>Method</string>
+	<string>method</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -89,11 +89,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Method would like to use your camera</string>
+	<string>method would like to use camera</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Method would like to use your microphone</string>
+	<string>method would like to use microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Method would like to access your photo library</string>
+	<string>method would like to use Photo library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

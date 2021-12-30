@@ -1965,7 +1965,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DD2D5654EACA17FFAB01A3F9 /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
@@ -1979,7 +1979,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = method;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1991,7 +1996,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8F174665F176A73D603C6D28 /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
@@ -2005,7 +2010,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = method;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2029,6 +2039,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method_dev;
@@ -2055,6 +2066,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method_dev;
@@ -2076,7 +2088,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.service";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2097,7 +2114,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.service";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2118,8 +2140,13 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.content";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2140,8 +2167,13 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.content";
+=======
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
+>>>>>>> efd0c3c9ebd76b46b8563deb0e2f2854635bd925
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

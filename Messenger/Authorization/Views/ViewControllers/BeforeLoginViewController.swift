@@ -78,9 +78,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         continueButton.setTitle("continue".localized(), for: .normal)
         emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
         aboutPgLabel.text = "enter_your_email".localized()
-        let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),
-                                                        attributes: buttonAttributes)
-        changeModeButton.setAttributedTitle(attributeString, for: .normal)
+        
     }
     
     override func viewDidLoad() {
@@ -109,6 +107,8 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         logInWithFacebookButton.delegate = self
         isLoginWithEmail = true
         numberTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),attributes: buttonAttributes)
+        changeModeButton.setAttributedTitle(attributeString, for: .normal)
     }
     
     override func viewDidLayoutSubviews() {
@@ -282,13 +282,17 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
             emaiCustomView.isHidden = false
             emailDescriptionLabel.text = "email_will_be_used_to_confirm".localized()
             aboutPgLabel.text = "enter_your_email".localized()
+//            let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),attributes: buttonAttributes)
+            changeModeButton.setAttributedTitle(attributeString, for: .normal)
         } else {
+            let attributeString = NSMutableAttributedString(string: "use_email".localized(),attributes: buttonAttributes)
+            changeModeButton.setAttributedTitle(attributeString, for: .normal)
             phonaView.isHidden = false
             emaiCustomView.isHidden = true
             emptyField(customView: emaiCustomView)
-            let attributeString = NSMutableAttributedString(string: "use_email_for_login".localized(),
+            let attributeString1 = NSMutableAttributedString(string: "use_email_for_login".localized(),
                                                             attributes: buttonAttributes)
-            sender.setAttributedTitle(attributeString, for: .normal)
+            sender.setAttributedTitle(attributeString1, for: .normal)
             emailDescriptionLabel.text = "phone_number_will_be_used".localized()
             aboutPgLabel.text = "enter_your_phone_number".localized()
         }
