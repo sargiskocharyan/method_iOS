@@ -28,7 +28,7 @@ class RecentMessagesViewModel {
             return
         }
         let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CallEntity")
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: CallModelConstants.callEntity)
         do {
             let callsFetched = try managedContext.fetch(fetchRequest)
             self.privateCalls = callsFetched
@@ -68,7 +68,7 @@ class RecentMessagesViewModel {
     func deleteAllRecords() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: CallModelConstants.callEntity)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
         do {
             try context.execute(deleteRequest)
@@ -85,7 +85,7 @@ class RecentMessagesViewModel {
     }
     
     func deleteItem(id: [String], completion: @escaping (NetworkResponse?)->()) {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: CallModelConstants.callEntity)
         fetchRequest.includesPropertyValues = false
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return
@@ -130,7 +130,7 @@ class RecentMessagesViewModel {
     func save(newCall: CallHistory, completion: @escaping ()->()) {
         let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "CallEntity", in: managedContext)!
+        let entity = NSEntityDescription.entity(forEntityName: CallModelConstants.callEntity, in: managedContext)!
         let call = NSManagedObject(entity: entity, insertInto: managedContext)
         call.setValue(newCall._id, forKeyPath: "id")
         call.setValue(newCall.type, forKeyPath: "type")

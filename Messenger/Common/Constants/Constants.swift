@@ -10,11 +10,11 @@ import Foundation
 
 struct Environment {
     #if DEVELOPMENT
-    static let baseURL = "https://messenger-dynamic.herokuapp.com" //"https://192.168.0.105:3000"
-    static let socketUrl = "wss://messenger-dynamic.herokuapp.com" //messenger-dynamic.herokuapp.com
+    static let baseURL = "http://192.168.0.113:3000"//"https://messenger-dynamic.herokuapp.com" //"https://localhost:3000"
+    static let socketUrl = "wss://192.168.0.113:3000"//"wss://messenger-dynamic.herokuapp.com"  //messenger-dynamic.herokuapp.com
     #else
-    static let baseURL = "https://messenger-dynamic.herokuapp.com" //"https://192.168.0.105:3000"
-    static let socketUrl = "wss://messenger-dynamic.herokuapp.com" //messenger-dynamic.herokuapp.com
+    static let baseURL = "http://192.168.0.113:3000"//"https://messenger-dynamic.herokuapp.com" //"https://192.168.0.105:3000"
+    static let socketUrl = "wss://192.168.0.113:3000"//"wss://messenger-dynamic.herokuapp.com" //messenger-dynamic.herokuapp.com
     #endif
 }
 
@@ -82,7 +82,6 @@ struct ChannelUrls {
 }
 
 struct AppLangKeys {
-     
      static let Rus = "ru"
      static let Eng = "en"
      static let Arm = "hy"
@@ -94,6 +93,7 @@ struct Keys {
     static let TOKEN_KEYCHAIN_ID_KEY = "token"
     static let APP_Language = "appLanguage"
     static let IS_REGISTERED = "isRegistered"
+    static let IS_LOGIN_FROM_FACEBOOK = "isLoginFromFacebook"
 }
 
 enum MessageType: String {
@@ -101,4 +101,24 @@ enum MessageType: String {
     case call = "call"
     case text = "text"
     case image = "image"
+}
+
+struct CallModelConstants {
+    static let contactsEntity = "ContactsEntity"
+    static let otherContactsEntity = "OtherContactEntity"
+    static let callEntity = "CallEntity"
+    static let contacts = "contacts"
+    static let otherContacts = "otherContacts"
+}
+
+enum AppMode: String {
+    case dark
+    case light
+}
+
+
+struct Languages {
+    static let english = "English"
+    static let russian = "Russian"
+    static let armenian = "Armenian"
 }

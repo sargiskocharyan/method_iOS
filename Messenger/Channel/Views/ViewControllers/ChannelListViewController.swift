@@ -173,7 +173,7 @@ class ChannelListViewController: UIViewController {
                 let noResultView = UIView(frame: self.view.frame)
                 self.tableView.addSubview(noResultView)
                 noResultView.tag = 26
-                noResultView.backgroundColor = UIColor(named: "imputColor")
+                noResultView.backgroundColor = UIColor.inputColor
                 let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: 50))
                 noResultView.addSubview(label)
                 label.translatesAutoresizingMaskIntoConstraints = false
@@ -215,7 +215,7 @@ class ChannelListViewController: UIViewController {
                 }
                 completion()
             } else if let channels = retrievedChannels {
-                if channels.count != 0 {
+                if !channels.isEmpty {
                     self.channels = channels
                     self.channelsInfo = channels
                     DispatchQueue.main.async {

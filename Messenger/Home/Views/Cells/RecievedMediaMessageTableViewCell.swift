@@ -10,14 +10,15 @@ import UIKit
 
 class RecievedMediaMessageTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var messageContentStackView: UIStackView!
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var viewUnderImage: UIView!
+//    @IBOutlet weak var viewUnderImage: UIView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var sendImageView: UIImageView!
-    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint!
+//    @IBOutlet weak var leadingConstraintOfImageView: NSLayoutConstraint!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var leadingConstraintOfCheckImage: NSLayoutConstraint!
-    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
+//    @IBOutlet weak var imageWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var checkImage: UIImageView!
     var viewOnCell: UIView?
     
@@ -26,11 +27,11 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         changeShapeOfImageView()
         sendImageView?.contentMode = .scaleAspectFill
         userImageView.image = UIImage(named: "noPhoto")
-        leadingConstraintOfCheckImage?.constant -= 15
-        leadingConstraintOfImageView?.constant -= 15
+        leadingConstraintOfCheckImage?.constant -= 30
+//        leadingConstraintOfImageView?.constant -= 15
         checkImage?.isHidden = true
-        viewUnderImage.clipsToBounds = true
-        viewUnderImage.layer.cornerRadius = 10
+        messageContentStackView.clipsToBounds = true
+        messageContentStackView.layer.cornerRadius = 10
         viewOnCell?.tag = 12
     }
     
@@ -51,24 +52,24 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
     
     func setCheckButton(isPreview: Bool) {
         if isPreview {
-            leadingConstraintOfCheckImage?.constant = -10
-            leadingConstraintOfImageView?.constant = -5
+//            leadingConstraintOfCheckImage?.constant = -10
+//            leadingConstraintOfImageView?.constant = -5
             checkImage?.isHidden = true
         } else if !isPreview {
-            leadingConstraintOfCheckImage?.constant = 10
-            leadingConstraintOfImageView?.constant = 15
+//            leadingConstraintOfCheckImage?.constant = 10
+//            leadingConstraintOfImageView?.constant = 15
             checkImage?.isHidden = false
         }
     }
     
     func editPage(isPreview: Bool?) {
         if isPreview == true {
-            leadingConstraintOfCheckImage?.constant -= 20
-            leadingConstraintOfImageView?.constant -= 20
+//            leadingConstraintOfCheckImage?.constant -= 20
+//            leadingConstraintOfImageView?.constant -= 20
             checkImage.isHidden = true
         } else if isPreview == false {
-            leadingConstraintOfCheckImage?.constant += 20
-            leadingConstraintOfImageView?.constant += 20
+//            leadingConstraintOfCheckImage?.constant += 20
+//            leadingConstraintOfImageView?.constant += 20
             checkImage.isHidden = false
         }
     }
@@ -84,11 +85,11 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         viewOnCell?.frame = sendImageView.frame
         sendImageView.addSubview(viewOnCell!)
         viewOnCell?.addSubview(imagView)
-        imageView?.translatesAutoresizingMaskIntoConstraints = false
-        imagView.centerYAnchor.constraint(equalTo: viewOnCell!.centerYAnchor, constant: 0).isActive = true
-        imagView.centerXAnchor.constraint(equalTo: viewOnCell!.centerXAnchor, constant: 0).isActive = true
-        imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+//        imageView?.translatesAutoresizingMaskIntoConstraints = false
+//        imagView.centerYAnchor.constraint(equalTo: viewOnCell!.centerYAnchor, constant: 0).isActive = true
+//        imagView.centerXAnchor.constraint(equalTo: viewOnCell!.centerXAnchor, constant: 0).isActive = true
+//        imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+//        imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     func configureRecieveVideoMessageTableViewCell(_ message: Message, _ tap: UILongPressGestureRecognizer, _ tapOnVideo: UITapGestureRecognizer) {

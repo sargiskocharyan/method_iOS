@@ -8,30 +8,37 @@
 
 import Foundation
 
-public class Contacts: NSObject, NSCoding {
-    
-    public var contacts: [User] = []
-    
-    enum Key:String {
-        case contacts = "contacts"
-    }
-    
-    init(contacts: [User]) {
-        self.contacts = contacts
-    }
-    
-    public func encode(with aCoder: NSCoder) {
-        aCoder.encode(contacts, forKey: Key.contacts.rawValue)
-    }
-    
-    public required convenience init?(coder aDecoder: NSCoder) {
-        let mContacts = aDecoder.decodeObject(forKey: Key.contacts.rawValue) as! [User]
-        
-        self.init(contacts: mContacts)
-    }
-}
+//public class Contacts:  NSObject, NSSecureCoding {
+////    override public static var supportsSecureCoding = true
+//    public static var supportsSecureCoding: Bool { get
+//        { return true }
+//    }
+//    public var contacts: [User] = []
+//    
+//    enum Key:String {
+//        case contacts = "contacts"
+//    }
+//    
+//    init(contacts: [User]) {
+//        self.contacts = contacts
+//    }
+//    
+//    public func encode(with aCoder: NSCoder) {
+//        aCoder.encode(contacts, forKey: Key.contacts.rawValue)
+//    }
+//    
+//    public required convenience init?(coder aDecoder: NSCoder) {
+//        let mContacts = aDecoder.decodeObject(forKey: Key.contacts.rawValue) as! [User]
+//        
+//        self.init(contacts: mContacts)
+//    }
+//}
 
-public class User: NSObject,  Codable, NSCoding {
+public class User: NSObject, Codable, NSSecureCoding {
+    public static var supportsSecureCoding: Bool { get
+        { return true }
+    }
+    
     public var name: String?
     public var lastname: String?
     public var _id: String?

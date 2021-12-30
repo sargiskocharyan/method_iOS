@@ -7,10 +7,7 @@ target 'Messenger' do
   
   # Pods for Messenger
         pod 'DropDown'
-        pod 'Firebase/Analytics'
         pod 'GoogleWebRTC'
-	pod 'Firebase/Crashlytics'
- 	pod 'Firebase/Auth'
  	pod 'PhoneNumberKit', '~> 3.3'
 end
 

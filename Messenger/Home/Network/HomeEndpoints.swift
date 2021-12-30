@@ -42,7 +42,7 @@ extension HomeApi: EndPointType {
     var task: HTTPTask {
         let user = SharedConfigs.shared.signedUser
         let endPointManager = EndPointManager()
-        let token = user?.token
+        let _ = user?.token
         switch self {
         case .getUserById(_):
             let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token ?? "")

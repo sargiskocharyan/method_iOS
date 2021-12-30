@@ -22,7 +22,7 @@ class CustomAlertViewController: UIViewController {
         super.viewDidLoad()
         titleLabel.text = adminMessage?.title
         bodyLabel.text = adminMessage?.body
-        gifImageView.image = UIImage(named: "English")
+        gifImageView.image = UIImage(named: Languages.english)
        
     }
 

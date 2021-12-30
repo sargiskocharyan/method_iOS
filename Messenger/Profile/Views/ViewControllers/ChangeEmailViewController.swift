@@ -13,7 +13,7 @@ enum ChangingSubject: String {
     case email
 }
 
-protocol ChangeEmailViewControllerDelegate: class {
+protocol ChangeEmailViewControllerDelegate: AnyObject {
     func setEmail(email: String)
     func setPhone(phone: String)
 }

@@ -211,7 +211,7 @@ class AdminInfoViewController: UIViewController, UIImagePickerControllerDelegate
         closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
-        imageView.backgroundColor = UIColor(named: "imputColor")
+        imageView.backgroundColor = UIColor.inputColor
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
         deleteImageButton.translatesAutoresizingMaskIntoConstraints = false

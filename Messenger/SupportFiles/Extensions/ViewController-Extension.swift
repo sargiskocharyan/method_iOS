@@ -18,7 +18,6 @@ enum AppStoryboard: String {
     case channel = "Channel"
 }
 
-
 extension UIViewController {
     
     func showErrorAlert(title: String, errorMessage: String) {

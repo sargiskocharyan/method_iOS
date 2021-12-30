@@ -25,28 +25,34 @@ class ConfigureChannelMessagesViewController {
             if vc.channelMessages.array![indexPath.row].type == MessageType.image.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 cell.configureSendImageMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview, channelInfo: vc.channelInfo, tapOnImage: tapOnImage, tmpImage: vc.sendImageTmp)
+                cell.selectionStyle = .none
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue  {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 cell.configureSendVideoMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, tap, isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: vc.sendThumbnail)
+                cell.selectionStyle = .none
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SentMessageTableViewCell
                 cell.configureSendMessageTableViewCellInChannel(vc.channelInfo, vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview)
+                cell.selectionStyle = .none
                 return cell
             }
         } else {
             if vc.channelMessages.array![indexPath.row].type == MessageType.image.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 cell.configureRecieveImageMessageTableViewCellInChannel(vc.channelInfo, isPreview: vc.isPreview, message: vc.channelMessages.array![indexPath.row], tapOnImage: tapOnImage)
+                cell.selectionStyle = .none
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: (vc.sendThumbnail ?? UIImage(named: "upload_image_icon"))!)
+                cell.selectionStyle = .none
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
                 cell.configureRecieveMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, vc.isPreview)
+                cell.selectionStyle = .none
                 return cell
             }
         }
@@ -56,21 +62,34 @@ class ConfigureChannelMessagesViewController {
         if gestureReconizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureReconizer.location(in: vc.tableView)
             if let indexPath = vc.tableView.indexPathForRow(at: touchPoint) {
-                let cell = vc.tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
-                self.vc.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "edit".localized(), buttonTitle3: "cancel".localized()) {
-                    self.vc.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
-                        if error != nil {
-                            DispatchQueue.main.async {
-                                self.vc.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
-                            }
-                        }
-                    })
-                } completion2: {
-                    self.vc.mode = .edit
-                    self.vc.sendButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
-                    self.vc.indexPath = indexPath
-                    self.vc.inputTextField.text = cell?.messageLabel.text
-                } completion3: {}
+//                let cell = vc.tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
+//                cell?.select()
+//                vc.arrayOfSelectedMesssgae.append(vc.channelMessages.array![indexPath.row]._id!)
+
+                
+                if SharedConfigs.shared.signedUser?.id == vc.channelMessages.array?[indexPath.row].senderId {
+                    vc.deleteMessagesButton.isHidden = false
+                    vc.editButton.isHidden = false
+                    vc.tableView.allowsMultipleSelection = true
+                    vc.tableView?.selectRow(at: indexPath, animated: true, scrollPosition:.none)
+                    vc.tableView?.delegate?.tableView?(vc.tableView!, didSelectRowAt: indexPath)
+                }
+//                self.vc.showAlert(title: nil, message: nil, buttonTitle1: "delete".localized(), buttonTitle2: "edit".localized(), buttonTitle3: "cancel".localized()) {
+//                    self.vc.viewModel?.deleteChannelMessageBySender(ids: [cell?.id ?? ""], completion: { (error) in
+//                        if error != nil {
+//                            DispatchQueue.main.async {
+//                                self.vc.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+//                            }
+//                        }
+//                    })
+//                } completion2: {
+//                    self.vc.mode = .edit
+//                    self.vc.sendButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+//                    self.vc.indexPath = indexPath
+//                    self.vc.inputTextField.text = cell?.messageLabel.text
+//                } completion3: {
+//                    cell?.deselect()
+//                }
             }
         }
     }
@@ -109,7 +128,7 @@ class ConfigureChannelMessagesViewController {
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
         uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: vc, action: #selector(vc.handleUploadTap1)))
         vc.messageInputContainerView.addSubview(uploadImageView)
-        uploadImageView.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor).isActive = true
+        uploadImageView.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor, constant: 10).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: vc.messageInputContainerView.centerYAnchor).isActive = true
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
@@ -118,14 +137,14 @@ class ConfigureChannelMessagesViewController {
         vc.messageInputContainerView.layer.borderWidth = 1
         vc.messageInputContainerView.layer.borderColor = UIColor(white: 0.5, alpha: 0.5).cgColor
         vc.sendButton.translatesAutoresizingMaskIntoConstraints = false
-        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -10).isActive = true
+        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -20).isActive = true
         vc.sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         vc.sendButton.topAnchor.constraint(equalTo: vc.messageInputContainerView.topAnchor, constant: 10).isActive = true
         vc.sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         vc.sendButton.isUserInteractionEnabled = true
         vc.inputTextField.translatesAutoresizingMaskIntoConstraints = false
         vc.inputTextField.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: -37).isActive = true
-        vc.inputTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 5).isActive = true
+        vc.inputTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 15).isActive = true
         vc.inputTextField.bottomAnchor.constraint(equalTo: vc.messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         vc.inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         vc.inputTextField.isUserInteractionEnabled = true
@@ -215,13 +234,13 @@ class ConfigureChannelMessagesViewController {
     func addConstraints() {
         vc.view.addSubview(vc.messageInputContainerView)
         vc.messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
-        vc.bottomConstraint = vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0)
+        vc.bottomConstraint = vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -(UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0))
         vc.bottomConstraint?.isActive = true
         vc.messageInputContainerView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 1).isActive = true
         vc.messageInputContainerView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: -1).isActive = true
         vc.messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         vc.messageInputContainerView.isUserInteractionEnabled = true
-        vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
+//        vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
         vc.tableViewBottomConstraint.constant = 48
         vc.sendButton.addTarget(vc, action: #selector(vc.sendMessage), for: .touchUpInside)
     }
@@ -272,7 +291,7 @@ class ConfigureChannelMessagesViewController {
                 let noResultView = UIView(frame: self.vc.view.frame)
                 self.vc.tableView.addSubview(noResultView)
                 noResultView.tag = 26
-                noResultView.backgroundColor = UIColor(named: "imputColor")
+                noResultView.backgroundColor = UIColor.inputColor
                 let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.vc.view.frame.width * 0.8, height: 50))
                 noResultView.addSubview(label)
                 label.translatesAutoresizingMaskIntoConstraints = false

@@ -100,12 +100,12 @@ class ConfigureChatViewController {
         vc.messageInputContainerView.addSubview(vc.sendButton)
         vc.inputTextField.translatesAutoresizingMaskIntoConstraints = false
         vc.inputTextField.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: -32).isActive = true
-        vc.inputTextField.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor, constant: 44).isActive = true
+        vc.inputTextField.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor, constant: 54).isActive = true
         vc.inputTextField.bottomAnchor.constraint(equalTo: vc.messageInputContainerView.bottomAnchor, constant: 0).isActive = true
         vc.inputTextField.heightAnchor.constraint(equalToConstant: 48).isActive = true
         vc.inputTextField.isUserInteractionEnabled = true
         vc.sendButton.translatesAutoresizingMaskIntoConstraints = false
-        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -10).isActive = true
+        vc.sendButton.rightAnchor.constraint(equalTo: vc.messageInputContainerView.rightAnchor, constant: -20).isActive = true
         vc.sendButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         vc.sendButton.topAnchor.constraint(equalTo: vc.messageInputContainerView.topAnchor, constant: 10).isActive = true
         vc.sendButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
@@ -115,7 +115,7 @@ class ConfigureChatViewController {
         uploadImageView.image = UIImage(named: "upload_image_icon")
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
         vc.messageInputContainerView.addSubview(uploadImageView)
-        uploadImageView.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor).isActive = true
+        uploadImageView.leftAnchor.constraint(equalTo: vc.messageInputContainerView.leftAnchor, constant: 10).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: vc.messageInputContainerView.centerYAnchor).isActive = true
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 42).isActive = true
@@ -199,13 +199,23 @@ class ConfigureChatViewController {
         if gestureReconizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureReconizer.location(in: vc.tableView)
             if let indexPath = vc.tableView.indexPathForRow(at: touchPoint) {
-                if vc.allMessages!.array![indexPath.row].type == MessageType.text.rawValue {
-                    self.tappedSendMessageCell(indexPath)
-                } else if vc.allMessages!.array![indexPath.row].type == MessageType.image.rawValue {
-                    tappedSendImageMessageCell(indexPath)
-                } else {
-                    tappedSendCallCell(indexPath)
+//                let cell = vc.tableView.cellForRow(at: indexPath) as? SentMessageTableViewCell
+
+                vc.tableView.allowsMultipleSelection = true
+                vc.tableView?.selectRow(at: indexPath, animated: true, scrollPosition:.none)
+                vc.tableView?.delegate?.tableView?(vc.tableView!, didSelectRowAt: indexPath)
+                if let infoButton = vc.infoButton, let editMessageButton = vc.editMessageButton, let deleteMessagesButton = vc.deleteMessagesButton, SharedConfigs.shared.signedUser?.id == vc.allMessages?.array?[indexPath.row].senderId {
+                    vc.navigationItem.rightBarButtonItems = [infoButton, editMessageButton, deleteMessagesButton]
+                    
                 }
+//                if vc.allMessages!.array![indexPath.row].type == MessageType.text.rawValue {
+//                    self.tappedSendMessageCell(indexPath)
+//                } else if vc.allMessages!.array![indexPath.row].type == MessageType.image.rawValue {
+//                    tappedSendImageMessageCell(indexPath)
+//                } else {
+//                    tappedSendCallCell(indexPath)
+//                }
+                
             }
         }
     }
@@ -214,18 +224,22 @@ class ConfigureChatViewController {
         if message.type == MessageType.text.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: sendMessageCellIdentifier, for: indexPath) as! SentMessageTableViewCell
             cell.configureSendMessageTableViewCell(message: message, statuses: vc.allMessages!.statuses ?? [], longTapGesture)
+            cell.selectionStyle = .none
             return cell
         } else if message.type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SentCallTableViewCell
             cell.configureSendCallTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture)
+            cell.selectionStyle = .none
             return cell
         } else if message.type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
             cell.configureSendImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, tmpImage: vc.sendImageTmp)
+            cell.selectionStyle = .none
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
             cell.configureSendVideoMessageTableViewCell(message, longTapGesture, tapOnVideo, thumbnail: vc.sendThumbnail)
+            cell.selectionStyle = .none
             return cell
         }
     }
@@ -234,18 +248,22 @@ class ConfigureChatViewController {
         if message.type == MessageType.text.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: self.receiveMessageCellIdentifier, for: indexPath) as! RecievedMessageTableViewCell
             cell.configureRecieveMessageTableViewCell(longTapGesture, vc.allMessages!.array![indexPath.row], image: self.vc.image!)
+            cell.selectionStyle = .none
             return cell
         }  else if vc.allMessages?.array![indexPath.row].type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecievedCallTableViewCell
             cell.configureRecieveCallTableViewCell(vc.allMessages!.array![indexPath.row], image: self.vc.image!, longTapGesture)
+            cell.selectionStyle = .none
             return cell
         } else if vc.allMessages?.array![indexPath.row].type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
             cell.configureRecieveImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, image: self.vc.image!)
+            cell.selectionStyle = .none
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
             cell.configureRecieveVideoMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnVideo)
+            cell.selectionStyle = .none
             return cell
         }
     }
@@ -283,7 +301,7 @@ class ConfigureChatViewController {
     }
     
     func configureTableView(indexPath: IndexPath) -> UITableViewCell {
-        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap1(gestureReconizer:)))
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap1))
         let tapOnImage = CustomTapGesture(target: self, action: #selector(handleTapOnImage), indexPath: indexPath)
         let tapOnVideo = CustomTapGesture(target: self, action: #selector(handleTapOnVideo), indexPath: indexPath)
         if vc.allMessages?.array?[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
@@ -348,13 +366,12 @@ class ConfigureChatViewController {
     func addConstraints() {
         vc.view.addSubview(vc.messageInputContainerView)
         vc.messageInputContainerView.translatesAutoresizingMaskIntoConstraints = false
-        vc.bottomConstraint = vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0)
+        vc.bottomConstraint = vc.messageInputContainerView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -(UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0))
         vc.bottomConstraint?.isActive = true
         vc.messageInputContainerView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0).isActive = true
         vc.messageInputContainerView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: 0).isActive = true
         vc.messageInputContainerView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         vc.messageInputContainerView.isUserInteractionEnabled = true
-        vc.messageInputContainerView.bottomAnchor.constraint(equalTo: self.vc.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         vc.sendButton.addTarget(vc, action: #selector(vc.sendMessage), for: .touchUpInside)
     }
     

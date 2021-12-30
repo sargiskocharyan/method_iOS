@@ -276,7 +276,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         let label = UILabel()
         label.tag = 6
         label.text = callText
-        label.textColor = UIColor(named: "color")
+        label.textColor = UIColor.color
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.heightAnchor.constraint(equalToConstant: 100).isActive = true

@@ -22,6 +22,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     
     //MARK: Properties
     var viewModel: ChatMessagesViewModel?
+    var arrayOfSelectedMesssgae: [String] = []
     var id: String?
     var allMessages: Messages?
     var bottomConstraint: NSLayoutConstraint?
@@ -41,7 +42,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     var viewConfigurator: ConfigureChatViewController!
     let messageInputContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "imputColor")
+        view.backgroundColor = UIColor.inputColor
         return view
     }()
     let inputTextField: UITextField = {
@@ -54,6 +55,10 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         button.setImage(UIImage(named: "send"), for: .normal)
         return button
     }()
+    var deleteMessagesButton: UIBarButtonItem?
+    var editMessageButton: UIBarButtonItem?
+    var infoButton: UIBarButtonItem?
+
     var timer: Timer?
     var check = false
     var newArray: [Message]?
@@ -79,12 +84,11 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         viewConfigurator.setObservers()
         inputTextField.placeholder = "enter_message".localized()
         sendButton.setTitle("send".localized(), for: .normal)
-        self.navigationItem.rightBarButtonItem = .init(UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction)))
         viewConfigurator.setTitle()
         viewConfigurator.getImage()
         viewonCell.tag = 12
         activity.tag = 5
-        tableView.estimatedRowHeight = 100
+//        tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
         if (SocketTaskManager.shared.socket?.handlers.count)! < 13 {
             self.handleReadMessage()
@@ -92,7 +96,14 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
             self.handleReceiveMessage()
         }
         inputTextField.addTarget(self, action: #selector(inputTextFieldDidCghe), for: .editingChanged)
+        infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .done, target: self, action: #selector(infoButtonAction))
+        editMessageButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(editMessage))
+        deleteMessagesButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(deleteMessages))
+        
+        navigationItem.rightBarButtonItems = [infoButton!]
     }
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -108,11 +119,37 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
     }
     
     //MARK: Helper methods
+    @objc func deleteMessages() {
+        viewModel?.deleteChatMessages(arrayMessageIds: arrayOfSelectedMesssgae, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            }
+        })
+        cancel()
+    }
+
+    @objc func editMessage() {
+        let indexPath = tableView.indexPathForSelectedRow
+        let cell = tableView.cellForRow(at: indexPath ?? IndexPath()) as? SentMessageTableViewCell
+        mode = .edit
+        self.indexPath = indexPath
+        inputTextField.text = cell?.messageLabel.text
+        cancel()
+    }
+    
     @objc func infoButtonAction() {
         if !fromContactProfile! {
             mainRouter?.showContactProfileViewControllerFromChat(id: id!, fromChat: true)
         } else {
             self.navigationController?.popViewController(animated: false)
+        }
+    }
+    
+    func cancel() {
+        if infoButton != nil {
+            navigationItem.rightBarButtonItems = [infoButton!]
         }
     }
     
@@ -420,7 +457,7 @@ class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UI
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
+            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : -(UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0)
             tableViewBottomConstraint.constant = isKeyboardShowing ? -keyboardFrame!.height - 55 : -55
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
@@ -564,6 +601,37 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return viewConfigurator.heightForRowAt(indexPath: indexPath)
+    }
+    
+    //MARK: WillDeselectRowAt indexPath
+    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? { 
+        if allMessages?.array?[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
+                return  id != allMessages?.array![indexPath.row]._id
+            })
+            if arrayOfSelectedMesssgae.isEmpty {
+                navigationItem.rightBarButtonItems = [infoButton!]
+                tableView.allowsMultipleSelection = false
+            } else if arrayOfSelectedMesssgae.count == 1, infoButton != nil, editMessageButton != nil {
+                navigationItem.rightBarButtonItems = [infoButton!, editMessageButton!, deleteMessagesButton!]
+            }
+            (tableView.cellForRow(at: indexPath) as? CellProtocol)?.deselect()
+        }
+        return indexPath
+    }
+//
+//    //MARK: DidSelectRowAt indexPath
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if allMessages?.array?[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            if let message = allMessages?.array?[indexPath.row]._id {
+                arrayOfSelectedMesssgae.append(message)
+            }
+            if arrayOfSelectedMesssgae.count != 1, infoButton != nil, deleteMessagesButton != nil {
+                navigationItem.rightBarButtonItems = [infoButton!, deleteMessagesButton!]
+            }
+            (tableView.cellForRow(at: indexPath) as? CellProtocol)?.select()
+            
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

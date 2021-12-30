@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ContactRequestTableViewCellDelegate: class {
+protocol ContactRequestTableViewCellDelegate: AnyObject {
     func requestRemoved(number: Int)
     func showAlert(error: NetworkResponse)
 }

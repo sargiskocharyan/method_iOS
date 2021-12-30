@@ -15,6 +15,14 @@ import Firebase
 import PhoneNumberKit
 import DropDown
 
+extension PhoneNumberTextField {
+    var defaultRegion: String {
+        get {
+            return "AM"
+        }
+    }
+}
+
 class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     
     //MARK: @IBOutlets
@@ -85,7 +93,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         navigationController?.isNavigationBarHidden = true
         numberTextField.withDefaultPickerUI = true
         numberTextField.withPrefix = true
-        numberTextField.defaultRegion = "AM"
+//        numberTextField.defaultRegion = "AM"
         numberTextField.withFlag = true
         numberTextField.withExamplePlaceholder = true
         continueButton.isEnabled = false

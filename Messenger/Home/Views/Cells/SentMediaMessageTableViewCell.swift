@@ -71,7 +71,7 @@ class SentMediaMessageTableViewCell: UITableViewCell {
         viewOnCell?.addSubview(imagView)
         imagView.translatesAutoresizingMaskIntoConstraints = false
         imagView.centerYAnchor.constraint(equalTo: snedImageView.centerYAnchor, constant: 0).isActive = true
-        imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
+//        imagView.centerXAnchor.constraint(equalTo: snedImageView.centerXAnchor, constant: 0).isActive = true
         imagView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         imagView.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }

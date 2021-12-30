@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol CustomTextFieldDelegate: class {
+protocol CustomTextFieldDelegate: AnyObject {
     func texfFieldDidChange(placeholder: String)
 }
 
@@ -43,6 +43,7 @@ class CustomTextField: UIView {
         self.addConstraint(NSLayoutConstraint(item: border, attribute: .top, relatedBy: .equal, toItem: textField, attribute: .bottom, multiplier: 1, constant: -7))
         DispatchQueue.main.async {
             self.configureViews()
+            self.textField.autocapitalizationType = .none
             self.textField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
         }
     }

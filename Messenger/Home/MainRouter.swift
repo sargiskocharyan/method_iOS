@@ -171,18 +171,18 @@ class MainRouter {
         profileViewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func showContactProfileViewControllerFromContacts(id: String, contact: User, onContactPage: Bool) {
-           let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .profile)
-           vc.delegate = contactsViewController
+    func showContactProfileViewControllerFromContacts(contact: User, onContactPage: Bool) {
+        let vc = ContactProfileViewController.instantiate(fromAppStoryboard: .profile)
+        vc.delegate = contactsViewController
         vc.mainRouter = contactsViewController?.mainRouter
         vc.viewModel = mainTabBarController?.contactsViewModel
-           vc.id = id
-           vc.contact = contact
-           vc.onContactPage = onContactPage
-           vc.fromChat = false
-           self.contactProfileViewController = vc
-           contactsViewController?.navigationController?.pushViewController(vc, animated: true)
-       }
+        vc.id = contact._id
+        vc.contact = contact
+        vc.onContactPage = onContactPage
+        vc.fromChat = false
+        self.contactProfileViewController = vc
+        contactsViewController?.navigationController?.pushViewController(vc, animated: true)
+    }
     
     func showChatViewControllerFromContacts(name: String?, username: String?, avatarURL: String?, id: String) {
         let vc = ChatViewController.instantiate(fromAppStoryboard: .chats)

@@ -27,7 +27,7 @@ struct Config {
     static let `default` = Config(signalingServerUrl: defaultSignalingServerUrl, webRTCIceServers: defaultIceServers)
 }
 
-protocol CallListViewDelegate: class  {
+protocol CallListViewDelegate: AnyObject  {
     func handleCallClick(id: String, name: String, mode: VideoVCMode)
     func handleClickOnSamePerson()
 }

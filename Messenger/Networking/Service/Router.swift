@@ -9,7 +9,7 @@ import UIKit
 
 typealias NetworkRouterCompletion = (_ data: Data?,_ response: URLResponse?,_ error: NetworkResponse?)->()
 
-protocol NetworkRouter: class {
+protocol NetworkRouter: AnyObject {
     associatedtype EndPoint: EndPointType
     func request(_ route: EndPoint, completion: @escaping NetworkRouterCompletion)
     func cancel()
@@ -58,7 +58,7 @@ class Router<EndPoint: EndPointType>: NetworkRouter {
     
     fileprivate func configureFormDataBody(_ bodyParameters: Parameters?, _ boundary: String) -> Data {
         let body = NSMutableData()
-        print(bodyParameters)
+//        print(bodyParameters)
         for parameter in bodyParameters! {
             if let stringValue = (parameter.value as? String) {
                 body.appendString("--\(boundary)\r\n")

@@ -17,7 +17,6 @@ class ProfileNetworkManager: NetworkManager {
         router.request(.getUserContacts) { data, response, error in
             if error != nil {
                 print(error!.rawValue)
-                
                 completion(nil, error)
             }
             if let response = response as? HTTPURLResponse {

@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 class HomePageViewModel {
     func verifyToken(token: String, completion: @escaping (VerifyTokenResponse?, NetworkResponse?)->()) {
@@ -43,13 +44,12 @@ class HomePageViewModel {
     func saveContacts(contacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
         let appDelegate = AppDelegate.shared
         let managedContext = appDelegate.persistentContainer.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "ContactsEntity", in: managedContext)!
+        let entity = NSEntityDescription.entity(forEntityName: CallModelConstants.contactsEntity, in: managedContext)!
         let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
-        let mContacts = Contacts(contacts: contacts)
-        cmsg.setValue(mContacts, forKeyPath: "contacts")
+        cmsg.setValue(contacts, forKeyPath: CallModelConstants.contacts)
         do {
             try managedContext.save()
-            completion(mContacts.contacts, nil)
+            completion(contacts, nil)
             
         } catch let error as NSError {
             completion(nil, NetworkResponse.noData)
@@ -60,13 +60,12 @@ class HomePageViewModel {
     func saveOtherContacts(otherContacts: [User], completion: @escaping ([User]?, NetworkResponse?)->()) {
            let appDelegate = AppDelegate.shared
            let managedContext = appDelegate.persistentContainer.viewContext
-           let entity = NSEntityDescription.entity(forEntityName: "OtherContactEntity", in: managedContext)!
+        let entity = NSEntityDescription.entity(forEntityName: CallModelConstants.otherContactsEntity, in: managedContext)!
            let cmsg = NSManagedObject(entity: entity, insertInto: managedContext)
-           let mOtherContacts = Contacts(contacts: otherContacts)
-           cmsg.setValue(mOtherContacts, forKeyPath: "otherContacts")
+        cmsg.setValue(otherContacts, forKeyPath: CallModelConstants.otherContacts)
            do {
                try managedContext.save()
-               completion(mOtherContacts.contacts, nil)               
+               completion(otherContacts, nil)               
            } catch let error as NSError {
                completion(nil, NetworkResponse.noData)
                print("Could not save. \(error), \(error.userInfo)")

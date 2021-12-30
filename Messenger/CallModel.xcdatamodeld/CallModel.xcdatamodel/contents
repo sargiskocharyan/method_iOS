@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="20E241" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CallEntity" representedClassName="CallEntity" syncable="YES" codeGenerationType="class">
         <attribute name="callEndTime" optional="YES" attributeType="String"/>
         <attribute name="caller" optional="YES" attributeType="String"/>
@@ -7,20 +7,20 @@
         <attribute name="callSuggestTime" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="participants" optional="YES" attributeType="Transformable" valueTransformerName="NSKeyedUnarchiveFromDataTransformerName" customClassName="Participants"/>
+        <attribute name="participants" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="Participants"/>
         <attribute name="receiver" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ContactsEntity" representedClassName="ContactsEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="contacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
+        <attribute name="contacts" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="[User]"/>
     </entity>
     <entity name="OtherContactEntity" representedClassName="OtherContactEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="otherContacts" optional="YES" attributeType="Transformable" customClassName="Contacts"/>
+        <attribute name="otherContacts" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="[User]"/>
     </entity>
     <elements>
-        <element name="CallEntity" positionX="-63" positionY="-18" width="128" height="193"/>
-        <element name="ContactsEntity" positionX="-63" positionY="45" width="128" height="58"/>
-        <element name="OtherContactEntity" positionX="-63" positionY="18" width="128" height="58"/>
+        <element name="CallEntity" positionX="-63" positionY="-18" width="128" height="179"/>
+        <element name="ContactsEntity" positionX="-63" positionY="45" width="128" height="44"/>
+        <element name="OtherContactEntity" positionX="-63" positionY="18" width="128" height="44"/>
     </elements>
 </model>

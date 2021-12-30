@@ -24,6 +24,8 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var deleteMessagesButton: UIButton!
+    @IBOutlet weak var editButton: UIButton!
     //MARK: Properties
     var mainRouter: MainRouter?
     var viewModel: ChannelMessagesViewModel?
@@ -40,12 +42,12 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     let viewonCell = UIView()
     let deleteMessageButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(named: "imputColor")
+        button.backgroundColor = UIColor.inputColor
         return button
     }()
     let messageInputContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "imputColor")
+        view.backgroundColor = UIColor.inputColor
         return view
     }()
     let inputTextField: UITextField = {
@@ -76,13 +78,17 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         selectedImage = nil
         setObservers()
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 30
+//        tableView.estimatedRowHeight = 30
         isPreview = true
         check = true
         viewConfigurator.setLineOnHeaderView()
         headerView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
-        tableView.allowsMultipleSelection = false
+        tableView.allowsSelection = false
+//        tableView.allowsMultipleSelection = false
         viewonCell.tag = 12
+        
+        deleteMessagesButton.isHidden = true
+        editButton.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -90,14 +96,44 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = true
         nameOfChannelButton.setTitle(channelInfo?.channel?.name, for: .normal)
-        tableView.allowsMultipleSelection = false
+
         inputTextField.placeholder = "enter_message".localized()
-        self.tableView.allowsSelection = false
         checkChannelRole()
         setInputMessage()
     }
-    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
     //MARK: Helper methods
+    
+    @IBAction func deleteMessages(_ sender: Any) {
+        viewModel?.deleteChannelMessageBySender(ids: arrayOfSelectedMesssgae, completion: { (error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "error".localized(), errorMessage: error!.rawValue)
+                }
+            }
+        })
+        cancel()
+    }
+    
+    @IBAction func editMessage(_ sender: Any) {
+        mode = .edit
+//        sendButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+        let indexPath = tableView.indexPathForSelectedRow
+        self.indexPath = indexPath
+        let cell = tableView.cellForRow(at: indexPath ?? IndexPath()) as? SentMessageTableViewCell
+        inputTextField.text = cell?.messageLabel.text
+        let _ = tableView.delegate?.tableView?(tableView!, willDeselectRowAt: indexPath ?? IndexPath())
+        cancel()
+    }
+    
+    func cancel() {
+        deleteMessagesButton.isHidden = true
+        editButton.isHidden = true
+        arrayOfSelectedMesssgae = []
+    }
+    
     @objc func handleUploadTap1() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.allowsEditing = true
@@ -227,7 +263,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         self.tableView.insertRows(at: [IndexPath(row: channelMessages.array!.count - 1, section: 0)], with: .automatic)
         let indexPath = IndexPath(item: (self.channelMessages.array!.count) - 1, section: 0)
         self.tableView?.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        let ind = IndexPath(row: channelMessages.array!.count - 1, section: 0)
+        let _ = IndexPath(row: channelMessages.array!.count - 1, section: 0)
     }
     
     func sendImage() {
@@ -365,7 +401,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : 0
+            bottomConstraint?.constant = isKeyboardShowing ? -keyboardFrame!.height  : -(UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0)
             tableViewBottomConstraint.constant = isKeyboardShowing ? keyboardFrame!.height + 48 : 48
             UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
@@ -552,23 +588,39 @@ extension ChannelMessagesViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     //MARK: HeightForRowAt indexPath
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return viewConfigurator.heightForRowAt(indexPath: indexPath)
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return viewConfigurator.heightForRowAt(indexPath: indexPath)
+//    }
     
     //MARK: WillDeselectRowAt indexPath
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
-        arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
-            return  id != channelMessages.array![indexPath.row]._id
-        })
-        (tableView.cellForRow(at: indexPath) as? CellProtocol)?.deselect()
+        if channelMessages.array?[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            arrayOfSelectedMesssgae = arrayOfSelectedMesssgae.filter({ (id) -> Bool in
+                return  id != channelMessages.array![indexPath.row]._id
+            })
+            if arrayOfSelectedMesssgae.isEmpty {
+                deleteMessagesButton.isHidden = true
+                editButton.isHidden = true
+                tableView.allowsMultipleSelection = false
+            } else if arrayOfSelectedMesssgae.count == 1 {
+                editButton.isHidden = false
+            }
+            (tableView.cellForRow(at: indexPath) as? CellProtocol)?.deselect()
+        }
         return indexPath
     }
-    
-    //MARK: DidSelectRowAt indexPath
+//
+//    //MARK: DidSelectRowAt indexPath
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        arrayOfSelectedMesssgae.append(channelMessages.array![indexPath.row]._id!)
-        (tableView.cellForRow(at: indexPath) as? CellProtocol)?.select()
+        if channelMessages.array?[indexPath.row].senderId == SharedConfigs.shared.signedUser?.id {
+            if let message = channelMessages.array?[indexPath.row]._id {
+                arrayOfSelectedMesssgae.append(message)
+            }
+            if arrayOfSelectedMesssgae.count != 1 {
+                editButton.isHidden = true
+            }
+            (tableView.cellForRow(at: indexPath) as? CellProtocol)?.select()
+        }
     }
     
     //MARK: CellForRowAt indexPath

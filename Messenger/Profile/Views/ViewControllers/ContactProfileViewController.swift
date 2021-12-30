@@ -8,12 +8,12 @@
 
 import UIKit
 
-protocol ContactProfileDelegate: class {
+protocol ContactProfileDelegate: AnyObject {
     func addNewContact(contact: User)
     func removeContact()
 }
 
-protocol ContactProfileViewControllerDelegate: class {
+protocol ContactProfileViewControllerDelegate: AnyObject {
     func handleVideoCallClick()
 }
 
@@ -90,7 +90,7 @@ class ContactProfileViewController: UIViewController {
         }
         confirmButton.setTitle("confirm".localized(), for: .normal)
         rejectButton.setTitle("reject".localized(), for: .normal)
-        if contact != nil {
+          if contact != nil {
             configureView()
         }
         addLabels()
@@ -364,21 +364,21 @@ class ContactProfileViewController: UIViewController {
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = contact?.name
-            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.textColor = UIColor.color
         }
         if contact?.lastname == nil {
             lastnameLabel.text = "not_defined".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = contact?.lastname
-            lastnameLabel.textColor = UIColor(named: "color")
+            lastnameLabel.textColor = UIColor.color
         }
         if contact?.email == nil {
             emailLabel.text = "not_defined".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = contact?.email
-            emailLabel.textColor = UIColor(named: "color")
+            emailLabel.textColor = UIColor.color
         }
         
         if contact?.phoneNumber == nil {
@@ -386,7 +386,7 @@ class ContactProfileViewController: UIViewController {
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = contact?.phoneNumber
-            phoneLabel.textColor = UIColor(named: "color")
+            phoneLabel.textColor = UIColor.color
         }
         
         if contact?.birthday == nil {
@@ -394,7 +394,7 @@ class ContactProfileViewController: UIViewController {
             birthDateLabel.textColor = .lightGray
         } else {
             birthDateLabel.text = stringToDate(date: contact?.birthday) 
-            birthDateLabel.textColor = UIColor(named: "color")
+            birthDateLabel.textColor = UIColor.color
         }
         
         if contact?.gender == nil {
@@ -402,7 +402,7 @@ class ContactProfileViewController: UIViewController {
             genderLabel.textColor = .lightGray
         } else {
             genderLabel.text = contact?.gender?.lowercased().localized()
-            genderLabel.textColor = UIColor(named: "color")
+            genderLabel.textColor = UIColor.color
         }
         
         if contact?.username == nil {
@@ -410,14 +410,14 @@ class ContactProfileViewController: UIViewController {
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = contact?.username
-            usernameLabel.textColor = UIColor(named: "color")
+            usernameLabel.textColor = UIColor.color
         }
         if contact?.info == nil {
             infoLabel.text = "info_not_set".localized()
             infoLabel.textColor = .lightGray
         } else {
             infoLabel.text = contact?.info
-            infoLabel.textColor = UIColor(named: "color")
+            infoLabel.textColor = UIColor.color
         }
         
         if contact?.avatarURL != nil {

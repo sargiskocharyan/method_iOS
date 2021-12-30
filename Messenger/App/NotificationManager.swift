@@ -9,7 +9,7 @@
 import UIKit
 import PushKit
 
-protocol NotificationManagerDelegate: class {
+protocol NotificationManagerDelegate: AnyObject {
     func startCall(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
 

@@ -15,6 +15,10 @@ class ContactTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
     
+    static var reuseIdentifier: String {
+        return String(describing: self)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
@@ -26,7 +30,7 @@ class ContactTableViewCell: UITableViewCell {
     
     func changeShapeOfImageView() {
         contactImageView.clipsToBounds = true
-        contactImageView.layer.cornerRadius = 25
+        contactImageView.layer.cornerRadius = ContactTableViewCellConstants.imageCornerRadiue
     }
     
     func configure(contact: User) {
@@ -37,16 +41,16 @@ class ContactTableViewCell: UITableViewCell {
             }
         }
         if contact.name != nil && contact.lastname != nil {
-            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.textColor = UIColor.color
             nameLabel.text = contact.name
-            lastnameLabel.textColor = UIColor(named: "color")
+            lastnameLabel.textColor = UIColor.color
             lastnameLabel.text = contact.lastname
         } else if contact.name != nil && contact.lastname == nil {
-            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.textColor = UIColor.color
             nameLabel.text = contact.name
             lastnameLabel.text = ""
         } else if contact.lastname != nil && contact.name == nil {
-            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.textColor = UIColor.color
             nameLabel.text = contact.lastname
         } else {
             nameLabel.text = ""
@@ -54,9 +58,13 @@ class ContactTableViewCell: UITableViewCell {
         }
         if contact.username != nil {
             usernameLabel.text = contact.username
-            usernameLabel.textColor = UIColor(named: "color")
+            usernameLabel.textColor = UIColor.color
         } else {
             usernameLabel.text = "Method's user"
         }
     }
+}
+
+struct ContactTableViewCellConstants {
+    static let imageCornerRadiue: CGFloat = 25
 }

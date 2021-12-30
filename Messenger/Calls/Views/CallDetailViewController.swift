@@ -66,7 +66,7 @@ class CallDetailViewController: UIViewController {
         tableView.tableFooterView = UIView()
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = false
-        aboutCallView.backgroundColor = UIColor(named: "imputColor")
+        aboutCallView.backgroundColor = UIColor.inputColor
         setLabels()
     }
     

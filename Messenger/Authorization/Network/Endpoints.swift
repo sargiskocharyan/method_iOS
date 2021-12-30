@@ -109,7 +109,7 @@ extension AuthApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .checkUsername(username: let username):
             let parameters:Parameters = ["username": username]
-            let headers:HTTPHeaders = endPointManager.createHeaders(token: nil)
+            let headers:HTTPHeaders = endPointManager.createHeaders(token: SharedConfigs.shared.signedUser?.token)
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .loginWithFacebook(accessToken: let accessToken):
             let parameters:Parameters = ["accessToken": accessToken]

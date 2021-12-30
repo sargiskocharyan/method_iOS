@@ -12,7 +12,7 @@ struct Payload: Encodable {
     let type = "offer"
     let sdp: String
 }
-protocol SignalClientDelegate: class {
+protocol SignalClientDelegate: AnyObject {
     func signalClientDidConnect(_ signalClient: SignalingClient)
     func signalClientDidDisconnect(_ signalClient: SignalingClient)
     func signalClient(_ signalClient: SignalingClient, didReceiveRemoteSdp sdp: RTCSessionDescription)

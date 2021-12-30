@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-protocol CallTableViewDelegate: class {
+protocol CallTableViewDelegate: AnyObject {
     func callSelected(id: String, duration: String, callStartTime: Date?, callStatus: String, type: String,  name: String, avatarURL: String, isReceiverWe: Bool)
 }
 

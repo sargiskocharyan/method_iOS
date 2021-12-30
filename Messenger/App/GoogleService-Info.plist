@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>963219707627-sbh0fcbeac4qima77m74bdf30695ehfd.apps.googleusercontent.com</string>
+	<string>72671170747-uglf4p43go29orio1ls8j68npn3tp3fg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.963219707627-sbh0fcbeac4qima77m74bdf30695ehfd</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>963219707627-ti7q2fvii97mrmpbeirre3buomuk1le4.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.72671170747-uglf4p43go29orio1ls8j68npn3tp3fg</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCC0wF096t502iA9z4a5i9SYrimJSljQt0</string>
+	<string>AIzaSyBeYr_Wa4dL0VOFNSHohrlAGZx67TxbAgw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>963219707627</string>
+	<string>72671170747</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>am.dynamic.method</string>
+	<string>am.dynamic.method-messenger</string>
 	<key>PROJECT_ID</key>
-	<string>dynamic-messenger-4a076</string>
+	<string>method-messenger</string>
 	<key>STORAGE_BUCKET</key>
-	<string>dynamic-messenger-4a076.appspot.com</string>
+	<string>method-messenger.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:963219707627:ios:9acb24406bc342f0bdd0ae</string>
-	<key>DATABASE_URL</key>
-	<string>https://dynamic-messenger-4a076.firebaseio.com</string>
+	<string>1:72671170747:ios:cc2ab667a4b34507d1199e</string>
 </dict>
 </plist>

@@ -7,8 +7,9 @@
 //
 
 import UIKit
-import DropDown
 import Firebase
+import FirebaseAuth
+import DropDown
 import CallKit
 import CoreData
 import UserNotifications
@@ -16,7 +17,7 @@ import PushKit
 import UIKit
 import FBSDKCoreKit
 
-protocol AppDelegateProtocol : class {
+protocol AppDelegateProtocol : AnyObject {
     func startCallD(id: String, roomName: String, name: String, type: String, completionHandler: @escaping () -> ())
 }
 
@@ -55,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: callModel)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error {
+            if let error = error as NSError? {
                 fatalError("Unresolved error, \((error as NSError).userInfo)")
             }
         })
@@ -74,6 +75,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func getNotificationBody(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
         notificationManager.sendMessageReceived(launchOptions)
     }
+    
+//
+//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//      let firebaseAuth = Auth.auth()
+//      firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
+//
+//    }
+//
+//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//      let firebaseAuth = Auth.auth()
+//      if (firebaseAuth.canHandleNotification(userInfo)){
+//          print(userInfo)
+//          return
+//      }
+//    }
+//    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//        FirebaseApp.configure()
+//        return true
+//
+//    }
     
     func application( _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool { ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation] )
     }
@@ -94,7 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         UIApplication.shared.endBackgroundTask(task)
         task = .invalid
     }
-    
+
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
@@ -107,11 +128,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
         return false
     }
     
-   
-    
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let firebaseAuth = Auth.auth()
-        firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.unknown)
+        firebaseAuth.setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
         notificationManager.registerDeviceToken(deviceToken)
     }
     
@@ -157,11 +176,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
               restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return true
     }
-    
-  
-    
-    
-    
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userinfo = response.notification.request.content.userInfo
         let request = userinfo["request"] as? NSDictionary

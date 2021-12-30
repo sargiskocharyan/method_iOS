@@ -13,11 +13,11 @@ import CoreData
 import FBSDKLoginKit
 
 
-protocol ProfileViewControllerDelegate: class {
+protocol ProfileViewControllerDelegate: AnyObject {
     func changeLanguage(key: String)
 }
 
-protocol ProfileViewDelegate: class {
+protocol ProfileViewDelegate: AnyObject {
     func changeMode()
 }
 
@@ -59,7 +59,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     var viewModel: ProfileViewModel?
     let center = UNUserNotificationCenter.current()
     var imagePicker = UIImagePickerController()
-    static let nameOfDropdownCell = "CustomCell"
     weak var delegate: ProfileViewControllerDelegate?
     var mainRouter: MainRouter?
     weak var profileDelegate: ProfileViewDelegate?
@@ -68,24 +67,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
-        setFlagImage()
-        setBorder(view: contactView)
-        setBorder(view: languageView)
-        setBorder(view: darkModeView)
-        setBorder(view: logoutView)
-        setBorder(view: notificationView)
-        checkVersion()
-        setImage()
-        configureImageView()
+        setupUI()
         addGestures()
-        defineSwithState()
-        localizeStrings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkInformation()
-       
+
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
     }
@@ -97,6 +86,20 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func changePhoneAction(_ sender: Any) {
         mainRouter?.showChangeEmailViewController(changingSubject: .phone)
+    }
+    
+    func setupUI() {
+        setFlagImage()
+        setBorder(view: contactView)
+        setBorder(view: languageView)
+        setBorder(view: darkModeView)
+        setBorder(view: logoutView)
+        setBorder(view: notificationView)
+        checkVersion()
+        setImage()
+        configureImageView()
+        defineSwithState()
+        localizeStrings()
     }
     
     func setImage() {
@@ -123,7 +126,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func defineSwithState() {
-        if SharedConfigs.shared.mode == "dark" {
+        if SharedConfigs.shared.mode == AppMode.dark.rawValue {
             switchMode.isOn = true
         } else {
             switchMode.isOn = false
@@ -132,11 +135,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setFlagImage() {
         if SharedConfigs.shared.appLang == AppLangKeys.Eng {
-            flagImageView.image = UIImage(named: "English")
+            flagImageView.image = UIImage(named: Languages.english)
         } else if SharedConfigs.shared.appLang == AppLangKeys.Rus {
-            flagImageView.image = UIImage(named: "Russian")
+            flagImageView.image = UIImage(named: Languages.russian)
         } else if SharedConfigs.shared.appLang == AppLangKeys.Arm {
-            flagImageView.image = UIImage(named: "Armenian")
+            flagImageView.image = UIImage(named: Languages.armenian)
         }
     }
     
@@ -150,26 +153,26 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             UIApplication.shared.windows.forEach { window in
                 window.overrideUserInterfaceStyle = .dark
             }
-            SharedConfigs.shared.setMode(selectedMode: "dark")
+            SharedConfigs.shared.setMode(selectedMode: AppMode.dark.rawValue)
         } else {
             UIApplication.shared.windows.forEach { window in
                 window.overrideUserInterfaceStyle = .light
             }
-            SharedConfigs.shared.setMode(selectedMode: "light")
+            SharedConfigs.shared.setMode(selectedMode: AppMode.light.rawValue)
         }
         self.viewDidLoad()
     }
     
      func addCameraView(_ cameraView: UIView) {
         cameraView.translatesAutoresizingMaskIntoConstraints = false
-        cameraView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
-        cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 0).isActive = true
-        cameraView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 0).isActive = true
-        cameraView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        cameraView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        cameraView.backgroundColor = UIColor.camerViewColor
+        cameraView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: .zero).isActive = true
+        cameraView.rightAnchor.constraint(equalTo: userImageView.rightAnchor, constant: .zero).isActive = true
+        cameraView.heightAnchor.constraint(equalToConstant: ProfileViewConstants.cameraViewConstant).isActive = true
+        cameraView.widthAnchor.constraint(equalToConstant: ProfileViewConstants.cameraViewConstant).isActive = true
         cameraView.isUserInteractionEnabled = true
         cameraView.contentMode = . scaleAspectFill
-        cameraView.layer.cornerRadius = 15
+        cameraView.layer.cornerRadius = ProfileViewConstants.cameraViewCornerRadius
         cameraView.clipsToBounds = true
     }
     
@@ -182,16 +185,16 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         cameraImageView.image = UIImage(named: "camera")
         cameraView.addSubview(cameraImageView)
         cameraImageView.translatesAutoresizingMaskIntoConstraints = false
-        cameraImageView.backgroundColor = UIColor(red: 128/255, green: 94/255, blue: 251/255, alpha: 1)
-        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: -5).isActive = true
-        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: -5).isActive = true
-        cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: 5).isActive = true
-        cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: 5).isActive = true
+        cameraImageView.backgroundColor = UIColor.camerViewColor
+        cameraImageView.bottomAnchor.constraint(equalTo: cameraView.bottomAnchor, constant: -ProfileViewConstants.cameraImageViewConstant).isActive = true
+        cameraImageView.rightAnchor.constraint(equalTo: cameraView.rightAnchor, constant: -ProfileViewConstants.cameraImageViewConstant).isActive = true
+        cameraImageView.topAnchor.constraint(equalTo: cameraView.topAnchor, constant: ProfileViewConstants.cameraImageViewConstant).isActive = true
+        cameraImageView.leftAnchor.constraint(equalTo: cameraView.leftAnchor, constant: ProfileViewConstants.cameraImageViewConstant).isActive = true
         cameraImageView.isUserInteractionEnabled = true
         let tapCamera = UITapGestureRecognizer(target: self, action: #selector(self.handleCameraTap(_:)))
         cameraImageView.addGestureRecognizer(tapCamera)
         userImageView.contentMode = . scaleAspectFill
-        userImageView.layer.cornerRadius = 50
+        userImageView.layer.cornerRadius = ProfileViewConstants.cameraImageViewConrnerRadius
         userImageView.clipsToBounds = true
     }
     
@@ -210,7 +213,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func tapOnNotification(_ sender: UITapGestureRecognizer? = nil) {
-        if SharedConfigs.shared.getNumberOfNotifications() > 0 {
+        if SharedConfigs.shared.getNumberOfNotifications() > .zero {
             mainRouter?.showNotificationListViewController()
         }
     }
@@ -239,14 +242,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }, completion3: nil)
     }
     
-     func addCloseButton(_ imageView: UIImageView) {
+    func addCloseButton(_ imageView: UIImageView) {
         let closeButton = UIButton()
         imageView.addSubview(closeButton)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 20).isActive = true
-        closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: -10).isActive = true
-        closeButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        closeButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        closeButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: ProfileViewConstants.closeButtonTop).isActive = true
+        closeButton.rightAnchor.constraint(equalTo: imageView.rightAnchor, constant: ProfileViewConstants.closeButtonRight).isActive = true
+        closeButton.heightAnchor.constraint(equalToConstant: ProfileViewConstants.closeButtonSize).isActive = true
+        closeButton.widthAnchor.constraint(equalToConstant: ProfileViewConstants.closeButtonSize).isActive = true
         closeButton.isUserInteractionEnabled = true
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
         closeButton.addTarget(self, action: #selector(dismissFullscreenImage), for: .touchUpInside)
@@ -256,10 +259,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let deleteImageButton = UIButton()
         imageView.addSubview(deleteImageButton)
         deleteImageButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -40).isActive = true
+        deleteImageButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: ProfileViewConstants.deleteImageButtonBottom).isActive = true
         deleteImageButton.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
-        deleteImageButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        deleteImageButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        deleteImageButton.heightAnchor.constraint(equalToConstant: ProfileViewConstants.deleteImageButtonSize).isActive = true
+        deleteImageButton.widthAnchor.constraint(equalToConstant: ProfileViewConstants.deleteImageButtonSize).isActive = true
         deleteImageButton.isUserInteractionEnabled = true
         deleteImageButton.setImage(UIImage(named: "trash"), for: .normal)
         deleteImageButton.addTarget(self, action: #selector(deleteAvatar), for: .touchUpInside)
@@ -271,17 +274,17 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         let imageView = UIImageView(image: userImageView.image)
         addCloseButton(imageView)
-        imageView.backgroundColor = UIColor(named: "imputColor")
+        imageView.backgroundColor = UIColor.inputColor
         addDeleteMessageButton(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
-        imageView.tag = 3
+        imageView.tag = ProfileViewConstants.imageViewTag
         self.view.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        imageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: .zero).isActive = true
+        imageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: .zero).isActive = true
+        imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: .zero).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: .zero).isActive = true
         imageView.isUserInteractionEnabled = true
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
@@ -309,7 +312,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @objc func dismissFullscreenImage() {
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
-        view.viewWithTag(3)?.removeFromSuperview()
+        view.viewWithTag(ProfileViewConstants.imageViewTag)?.removeFromSuperview()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -344,7 +347,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-        if UserDefaults.standard.object(forKey: "isLoginFromFacebook") as? Bool == false {
+        if UserDefaults.standard.object(forKey: Keys.IS_LOGIN_FROM_FACEBOOK) as? Bool == false {
             viewModel!.logout(deviceUUID: UIDevice.current.identifierForVendor!.uuidString) { (error) in
                 UserDefaults.standard.set(false, forKey: Keys.IS_REGISTERED)
                 DispatchQueue.main.async {
@@ -369,8 +372,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setBorder(view: UIView) {
         view.layer.masksToBounds = true
-        view.layer.borderWidth = 1
-        let color = UIColor.lightGray.withAlphaComponent(0.5)
+        view.layer.borderWidth = ProfileViewConstants.borderWidth
+        let color = UIColor.lightGray.withAlphaComponent(UIColor.colorAlpha)
         view.layer.borderColor = color.cgColor
     }
     
@@ -378,25 +381,25 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         dropDown.anchorView = languageView 
         dropDown.direction = .any
         dropDown.width = languageView.frame.width
-        dropDown.dataSource = ["English", "Russian", "Armenian"]
-        dropDown.bottomOffset = CGPoint(x: 0, y:(dropDown.anchorView?.plainView.bounds.height)!)
+        dropDown.dataSource = [Languages.english, Languages.russian, Languages.armenian]
+        dropDown.bottomOffset = CGPoint(x: .zero, y:(dropDown.anchorView?.plainView.bounds.height)!)
         dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            if item == "Russian" {
-                self.flagImageView.image = UIImage(named: "Russian")
+            if item == Languages.russian {
+                self.flagImageView.image = UIImage(named: Languages.russian)
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Rus)
-            } else if item == "English" {
-                self.flagImageView.image = UIImage(named: "English")
+            } else if item == Languages.english {
+                self.flagImageView.image = UIImage(named: Languages.english)
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Eng)
-            } else if item == "Armenian" {
-                self.flagImageView.image = UIImage(named: "Armenian")
+            } else if item == Languages.armenian {
+                self.flagImageView.image = UIImage(named: Languages.armenian)
                 SharedConfigs.shared.setAppLang(lang: AppLangKeys.Arm)
             }
             self.delegate?.changeLanguage(key: AppLangKeys.Arm)
             self.viewDidLoad()
             self.mainRouter?.callDetailViewController?.tableView?.reloadData()
         }
-        dropDown.backgroundColor = UIColor(named: "dropDownColor")
-        dropDown.cellNib = UINib(nibName: Self.nameOfDropdownCell, bundle: nil)
+        dropDown.backgroundColor = UIColor.dropDownColor
+        dropDown.cellNib = UINib(nibName: ProfileViewConstants.nameOfDropdownCell, bundle: nil)
         dropDown.customCellConfiguration = { (index: Index, item: String, cell: DropDownCell) -> Void in
             guard let cell = cell as? CustomCell else { return }
             cell.countryImageView.image = UIImage(named: "\(item)")
@@ -407,7 +410,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func deleteAllRecords() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "CallEntity")
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: CallModelConstants.callEntity)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
         do {
             try context.execute(deleteRequest)
@@ -432,45 +435,45 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             nameLabel.textColor = .lightGray
         } else {
             nameLabel.text = user?.name
-            nameLabel.textColor = UIColor(named: "color")
+            nameLabel.textColor = UIColor.color
         }
         if user?.lastname == nil {
             lastnameLabel.text = "not_defined".localized()
             lastnameLabel.textColor = .lightGray
         } else {
             lastnameLabel.text = user?.lastname
-            lastnameLabel.textColor = UIColor(named: "color")
+            lastnameLabel.textColor = UIColor.color
         }
         if user?.email == nil {
             emailLabel.text = "not_defined".localized()
             emailLabel.textColor = .lightGray
         } else {
             emailLabel.text = user?.email
-            emailLabel.textColor = UIColor(named: "color")
+            emailLabel.textColor = UIColor.color
         }
         if user?.phoneNumber == nil {
             phoneLabel.text = "not_defined".localized()
             phoneLabel.textColor = .lightGray
         } else {
             phoneLabel.text = user?.phoneNumber
-            phoneLabel.textColor = UIColor(named: "color")
+            phoneLabel.textColor = UIColor.color
         }
         if user?.username == nil {
             usernameLabel.text = "not_defined".localized()
             usernameLabel.textColor = .lightGray
         } else {
             usernameLabel.text = user?.username
-            usernameLabel.textColor = UIColor(named: "color")
+            usernameLabel.textColor = UIColor.color
         }
     }
     
     private func checkVersion() {
         if #available(iOS 13.0, *) {
-            logOutDarkModeVerticalConstraint.priority = UILayoutPriority(rawValue: 990)
-            logOutLanguageVerticalConstraint.priority = UILayoutPriority(rawValue: 900)
+            logOutDarkModeVerticalConstraint.priority = UILayoutPriority(rawValue: ProfileViewConstants.higiPriority)
+            logOutLanguageVerticalConstraint.priority = UILayoutPriority(rawValue: ProfileViewConstants.lowPriority)
         } else {
-            logOutDarkModeVerticalConstraint.priority = UILayoutPriority(rawValue: 900)
-            logOutLanguageVerticalConstraint.priority = UILayoutPriority(rawValue: 990)
+            logOutDarkModeVerticalConstraint.priority = UILayoutPriority(rawValue: ProfileViewConstants.lowPriority)
+            logOutLanguageVerticalConstraint.priority = UILayoutPriority(rawValue: ProfileViewConstants.higiPriority)
             darkModeView.isHidden = true
         }
     }    
@@ -494,6 +497,24 @@ extension ProfileViewController: ChangeEmailViewControllerDelegate {
     
     func setPhone(phone: String) {
         phoneLabel.text = phone
-        phoneLabel.textColor = UIColor(named: "color")
+        phoneLabel.textColor = UIColor.color
     }
+}
+
+
+struct ProfileViewConstants {
+    static let cameraViewConstant: CGFloat = 30
+    static let cameraViewCornerRadius: CGFloat = 15
+    static let cameraImageViewConstant: CGFloat = 5
+    static let cameraImageViewConrnerRadius: CGFloat = 50
+    static let closeButtonTop: CGFloat = 20
+    static let closeButtonRight: CGFloat = -10
+    static let closeButtonSize: CGFloat = 25
+    static let deleteImageButtonBottom: CGFloat = -40
+    static let deleteImageButtonSize: CGFloat = 30
+    static let imageViewTag = 3
+    static let borderWidth: CGFloat = 1
+    static let higiPriority: Float = 990
+    static let lowPriority: Float = 900
+    static let nameOfDropdownCell = "CustomCell"
 }

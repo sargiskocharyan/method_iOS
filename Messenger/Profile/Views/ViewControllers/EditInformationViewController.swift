@@ -144,7 +144,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkGender(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.gender?.lowercased() != genderView.textField.text?.lowercased() {
-            if genderView.textField.text == "" {
+            if genderView.textField.text?.isEmpty == true {
                 gender = nil
                 return nil
             } else {
@@ -157,30 +157,30 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     func setTopLabels() {
-        if nameView.textField.text != "" {
+        if nameView.textField.text?.isEmpty == false {
             nameView.topLabel.text = "name".localized()
         }
-        if lastnameView.textField.text != "" {
+        if lastnameView.textField.text?.isEmpty == false {
             lastnameView.topLabel.text = "lastname".localized()
         }
-        if usernameView.textField.text != "" {
+        if usernameView.textField.text?.isEmpty == false {
             usernameView.topLabel.text = "username".localized()
         }
-        if birdthdateView.textField.text != "" {
+        if birdthdateView.textField.text?.isEmpty == false {
             birdthdateView.topLabel.text = "birth_date".localized()
         }
-        if genderView.textField.text != "" {
+        if genderView.textField.text?.isEmpty == false {
             genderView.topLabel.text = "gender".localized()
         }
-        if infoView.textField.text != "" {
+        if infoView.textField.text?.isEmpty == false {
             infoView.topLabel.text = "info".localized()
         }
     }
     
     func checkInfo(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.info != infoView.textField.text {
-            if (infoView.textField.text == "") {
-                if (signedUser?.info == nil && infoView.textField.text == "") {
+            if (infoView.textField.text?.isEmpty == true) {
+                if (signedUser?.info == nil && infoView.textField.text?.isEmpty == true) {
                     info = nil
                     return nil
                 } else {
@@ -198,7 +198,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkBirthdate(_ signedUser: UserModel?) -> Bool? {
         if  stringToDate(date: SharedConfigs.shared.signedUser?.birthDate) != birdthdateView.textField.text {
-            if signedUser?.birthDate == nil && birdthdateView.textField.text == "" {
+            if signedUser?.birthDate == nil && birdthdateView.textField.text?.isEmpty == true {
                 birthDate = nil
                 return nil
             } else {
@@ -212,8 +212,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkName(_ signedUser: UserModel?) -> Bool? {
         if signedUser?.name != nameView.textField.text {
-            if (nameView.textField.text?.isValidNameOrLastname())! || nameView.textField.text == "" {
-                if (signedUser?.name == nil && nameView.textField.text == "") {
+            if (nameView.textField.text?.isValidNameOrLastname())! || nameView.textField.text?.isEmpty == true {
+                if (signedUser?.name == nil && nameView.textField.text?.isEmpty == true) {
                     name = nil
                     return nil
                 } else {
@@ -232,7 +232,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     func checkUsername(_ signedUser: UserModel?, completion: @escaping (Bool?)->()) {
         if signedUser?.username?.lowercased() != usernameView.textField.text?.lowercased() {
             if (usernameView.textField.text?.isValidUsername())! {
-                if (usernameView.textField.text == "") {
+                if (usernameView.textField.text?.isEmpty == true) {
                     self.usernameView.errorLabel.text = "the_username_must_contain_at_least_4_letters".localized()
                     self.usernameView.errorLabel.textColor = .red
                     username = nil
@@ -283,8 +283,8 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     func checkLastname(_ signedUser: UserModel?) -> Bool? {
         if  signedUser?.lastname != lastnameView.textField.text {
-            if (lastnameView.textField.text?.isValidNameOrLastname())! || lastnameView.textField.text == "" {
-                if (signedUser?.lastname == nil && lastnameView.textField.text == "") {
+            if (lastnameView.textField.text?.isValidNameOrLastname())! || lastnameView.textField.text?.isEmpty == true {
+                if (signedUser?.lastname == nil && lastnameView.textField.text?.isEmpty == true) {
                     lastname = nil
                     return nil
                 } else {
@@ -321,7 +321,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func nameTextFieldAction() {
-        nameView.errorLabel.isHidden = (nameView.textField.text == "")
+        nameView.errorLabel.isHidden = (nameView.textField.text?.isEmpty == true)
         isChangingUsername = false
         checkFields()
     }
@@ -332,7 +332,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     @objc func lastnameTextFieldAction() {
-        lastnameView.errorLabel.isHidden = (lastnameView.textField.text == "")
+        lastnameView.errorLabel.isHidden = (lastnameView.textField.text?.isEmpty == true)
         isChangingUsername = false
         checkFields()
     }
@@ -373,7 +373,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
                 raiseStackView(keyboardFrame, isKeyboardShowing, nameView)
             }
             
-            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+            UIView.animate(withDuration: .zero, delay: .zero, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
@@ -436,18 +436,21 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     
     @objc func handleBirthDateViewTap(_ sender: UITapGestureRecognizer? = nil) {
         view.endEditing(true)
-        datePicker.backgroundColor = .white
+        datePicker.backgroundColor = .white.withAlphaComponent(UIColor.colorAlpha)
         datePicker.datePickerMode = .date
+        if #available(iOS 13.4, *) {
+            datePicker.preferredDatePickerStyle = .wheels
+        }
         let viewUnderDatePicker = UIView()
         viewUnderDatePicker.tag = 30
-        viewUnderDatePicker.backgroundColor = .white
+        viewUnderDatePicker.backgroundColor = .white.withAlphaComponent(0.9)
         viewUnderDatePicker.isUserInteractionEnabled = true
         let tapViewUnderDatePicker = UITapGestureRecognizer(target: self, action: #selector(self.handleTapViewUnderDatePicker(_:)))
         let okLabel = UILabel()
         okLabel.text = "ok".localized()
         viewUnderDatePicker.addSubview(okLabel)
         okLabel.translatesAutoresizingMaskIntoConstraints = false
-        okLabel.bottomAnchor.constraint(equalTo: viewUnderDatePicker.bottomAnchor, constant: -75).isActive = true
+        okLabel.bottomAnchor.constraint(equalTo: viewUnderDatePicker.bottomAnchor, constant: ( -(UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0)) - 85).isActive = true
         okLabel.centerXAnchor.constraint(equalTo: viewUnderDatePicker.centerXAnchor).isActive = true
         okLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         okLabel.widthAnchor.constraint(equalToConstant: 30).isActive = true
@@ -462,11 +465,15 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         viewUnderDatePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
         viewUnderDatePicker.isUserInteractionEnabled = true
         datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         datePicker.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).isActive = true
-        datePicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        datePicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        datePicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: .zero).isActive = true
         datePicker.heightAnchor.constraint(equalToConstant: 250).isActive = true
         datePicker.isUserInteractionEnabled = true
+    }
+    
+    func createDataPicker() {
+        
     }
     
     func addImage(textField: UITextField, imageView: UIImageView) {
@@ -474,7 +481,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         imageView.image = UIImage(named: "more")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 5).isActive = true
-        imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
+        imageView.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: .zero).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
         imageView.isUserInteractionEnabled = true
@@ -505,10 +512,10 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
     func addConstraintsOnButton(button: UIButton, textField: UITextField) {
         textField.addSubview(button)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0).isActive = true
-        button.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 0).isActive = true
-        button.leftAnchor.constraint(equalTo: textField.leftAnchor, constant: 0).isActive = true
-        button.bottomAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0).isActive = true
+        button.topAnchor.constraint(equalTo: textField.topAnchor, constant: .zero).isActive = true
+        button.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: .zero).isActive = true
+        button.leftAnchor.constraint(equalTo: textField.leftAnchor, constant: .zero).isActive = true
+        button.bottomAnchor.constraint(equalTo: textField.bottomAnchor, constant: .zero).isActive = true
     }
     
     @IBAction func hidePersonalData(_ sender: UISwitch) {
@@ -629,4 +636,9 @@ extension EditInformationViewController: CustomTextFieldDelegate {
             }
         }
     }
+}
+
+
+struct EditInformationViewConstraints {
+    
 }

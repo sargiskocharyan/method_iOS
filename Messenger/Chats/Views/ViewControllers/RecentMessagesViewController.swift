@@ -165,7 +165,7 @@ class RecentMessagesViewController: UIViewController {
             self.removeView()
             let noResultView = UIView(frame: self.view.frame)
             noResultView.tag = 26
-            noResultView.backgroundColor = UIColor(named: "imputColor")
+            noResultView.backgroundColor = UIColor.inputColor
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.8, height: self.view.frame.height))
             label.center = noResultView.center
             label.text = str

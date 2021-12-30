@@ -51,7 +51,7 @@ extension ProviderDelegate: CXProviderDelegate {
     }
     
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
-        print("")
+        
     }
     
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
@@ -63,7 +63,7 @@ extension ProviderDelegate: CXProviderDelegate {
         call.answer()
         
         action.fulfill()
-            SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
+        SocketTaskManager.shared.callAccepted(id: call.id, isAccepted: true)
     }
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {

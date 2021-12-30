@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
+		548BC63863C69225F85635D2 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9BC4AFD74E49DA4C1CF3060 /* Pods_Messenger.framework */; };
 		CD09EC412549369400907003 /* SentMediaMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD09EC402549369400907003 /* SentMediaMessageTableViewCell.swift */; };
 		CD1FA0B7255D59300023A5BC /* ChannelNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1FA0B6255D59300023A5BC /* ChannelNetworkManager.swift */; };
 		CD1FA0D3255D654C0023A5BC /* ChannelEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1FA0D2255D654C0023A5BC /* ChannelEndpoints.swift */; };
@@ -137,8 +137,6 @@
 		D0065B75251CCB0700EE880A /* Calls.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0065B73251CCB0700EE880A /* Calls.storyboard */; };
 		D0099627252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
 		D0099628252B4EC0001476B6 /* UpdateChannelInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0099626252B4EC0001476B6 /* UpdateChannelInfoViewController.swift */; };
-		D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = D016E646254AE42F0067DEE8 /* FacebookCore */; };
-		D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D016E648254AE42F0067DEE8 /* FacebookLogin */; };
 		D01A89E92522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EA2522FEA000ACE2D8 /* ChannelListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89E82522FEA000ACE2D8 /* ChannelListTableViewCell.swift */; };
 		D01A89EC2522FF9200ACE2D8 /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A89EB2522FF9200ACE2D8 /* ChannelListViewController.swift */; };
@@ -151,7 +149,6 @@
 		D04605B2255D02B90016255A /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04605B1255D02B90016255A /* Chats.storyboard */; };
 		D04605B3255D02B90016255A /* Chats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04605B1255D02B90016255A /* Chats.storyboard */; };
 		D048C0532555306D006B36FC /* VideoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D048C0522555306D006B36FC /* VideoCache.swift */; };
-		D048C07B2555818A006B36FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D048C0792555818A006B36FC /* AppDelegate.swift */; };
 		D0607CE2255E4FB6008EB9DE /* CellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */; };
 		D0607CE3255E4FB6008EB9DE /* CellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */; };
 		D077FA64255D58600060CA8B /* ChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */; };
@@ -162,7 +159,6 @@
 		D077FA73255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */; };
 		D077FA79255D80BB0060CA8B /* CustomTapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */; };
 		D077FA7A255D80BB0060CA8B /* CustomTapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */; };
-		D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */; };
 		D0B01C6A2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B01C6B2547F911004A6A6F /* ChannelUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */; };
 		D0B68D31252C3EDD0019818D /* UpdateChannelInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */; };
@@ -284,12 +280,15 @@
 		D0F66526251B177D0018D9B7 /* karch.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CDA1A047250B72FE0067B245 /* karch.mp3 */; };
 		D0F66529251B177D0018D9B7 /* methodNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA85024E48A5900EE8578 /* methodNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D0F6652A251B177D0018D9B7 /* methodNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */; };
+		D6502932275F8FB200ECE761 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6502931275F8FB200ECE761 /* CryptoSwift */; };
+		D6502936275F91A000ECE761 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D6502935275F91A000ECE761 /* Lottie */; };
+		D65A0920277B4FB80080AD7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D65A091F277B4FB80080AD7B /* GoogleService-Info.plist */; };
+		D65A0922277B50480080AD7B /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65A0921277B50480080AD7B /* UIColor.swift */; };
+		D6FC93A227607D040003923B /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = D6FC93A127607D040003923B /* FacebookCore */; };
+		D6FC93A427607D040003923B /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D6FC93A327607D040003923B /* FacebookLogin */; };
+		D6FC93AD27607F2E0003923B /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = D6FC93AC27607F2E0003923B /* SocketIO */; };
 		F16CBAD7249A0A4900BCE77C /* UserDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD6249A0A4900BCE77C /* UserDataController.swift */; };
 		F16CBADA249A0A8200BCE77C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16CBAD9249A0A8200BCE77C /* UserModel.swift */; };
-		F1764361249CD60800492327 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = F1764360249CD60800492327 /* SocketIO */; };
-		F1764364249CD61F00492327 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1764363249CD61F00492327 /* Lottie */; };
-		F1764367249CD68B00492327 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1764366249CD68B00492327 /* CryptoSwift */; };
 		F1ACA84324E42C1E00EE8578 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACA84224E42C1E00EE8578 /* NotificationService.swift */; };
 		F1ACA84724E42C1E00EE8578 /* methodNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1ACA84024E42C1E00EE8578 /* methodNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1ACA85224E48A5900EE8578 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ACA85124E48A5900EE8578 /* UserNotifications.framework */; };
@@ -357,9 +356,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
-		8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
-		B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F174665F176A73D603C6D28 /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		CD09EC402549369400907003 /* SentMediaMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentMediaMessageTableViewCell.swift; sourceTree = "<group>"; };
 		CD1FA0B6255D59300023A5BC /* ChannelNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNetworkManager.swift; sourceTree = "<group>"; };
 		CD1FA0D2255D654C0023A5BC /* ChannelEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints.swift; sourceTree = "<group>"; };
@@ -493,13 +490,11 @@
 		D04605A6255D027E0016255A /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D04605B1255D02B90016255A /* Chats.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Chats.storyboard; sourceTree = "<group>"; };
 		D048C0522555306D006B36FC /* VideoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCache.swift; sourceTree = "<group>"; };
-		D048C0792555818A006B36FC /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0607CE1255E4FB6008EB9DE /* CellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellProtocol.swift; sourceTree = "<group>"; };
 		D077FA63255D58600060CA8B /* ChannelMessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessagesViewController.swift; sourceTree = "<group>"; };
 		D077FA6A255D5D470060CA8B /* ConfigureChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureChatViewController.swift; sourceTree = "<group>"; };
 		D077FA71255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureChannelMessagesViewController.swift; sourceTree = "<group>"; };
 		D077FA78255D80BB0060CA8B /* CustomTapGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTapGesture.swift; sourceTree = "<group>"; };
-		D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0B01C692547F911004A6A6F /* ChannelUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUserTableViewCell.swift; sourceTree = "<group>"; };
 		D0B68D30252C3EDD0019818D /* UpdateChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChannelInfoViewModel.swift; sourceTree = "<group>"; };
 		D0B806832526F938004E4DF0 /* AdminInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminInfoViewController.swift; sourceTree = "<group>"; };
@@ -509,6 +504,10 @@
 		D0EDEFF62524AE7200016AF7 /* ChannelInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelInfoViewModel.swift; sourceTree = "<group>"; };
 		D0F6652E251B177D0018D9B7 /* method_dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = method_dev.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F6652F251B177D0018D9B7 /* Messenger_dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Messenger_dev-Info.plist"; path = "/Users/employee3/Desktop/method_iOS/Messenger_dev-Info.plist"; sourceTree = "<absolute>"; };
+		D65A091F277B4FB80080AD7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D65A0921277B50480080AD7B /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		D6E5696A2761D853006ED74C /* DropDown.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropDown.framework; path = "../../Library/Developer/Xcode/DerivedData/Messenger-dtmonulicjxleibvytcepuidxgma/Build/Products/Debug-iphoneos/DropDown.framework"; sourceTree = "<group>"; };
+		DD2D5654EACA17FFAB01A3F9 /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		F118AD2924DDA92C00832864 /* methodRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodRelease.entitlements; sourceTree = "<group>"; };
 		F16CBAD6249A0A4900BCE77C /* UserDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataController.swift; sourceTree = "<group>"; };
 		F16CBAD9249A0A8200BCE77C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -516,8 +515,7 @@
 		F1874D5D24F7975D00AE8FE3 /* GoogleDataTransportCCTSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = GoogleDataTransportCCTSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1874D5E24F7975D00AE8FE3 /* GoogleUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = GoogleUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1874D5F24F7975D00AE8FE3 /* nanopb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = nanopb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1874D6B24F797B600AE8FE3 /* DropDown.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DropDown.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1874D6C24F797B600AE8FE3 /* FBLPromises.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FBLPromises.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1874D6C24F797B600AE8FE3 /* FBLPromises.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = FBLPromises.framework; path = "../../Library/Developer/Xcode/DerivedData/Messenger-dtmonulicjxleibvytcepuidxgma/Build/Products/Debug-iphoneos/FBLPromises.framework"; sourceTree = "<group>"; };
 		F1874D6D24F797B600AE8FE3 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1874D6E24F797B600AE8FE3 /* FirebaseCoreDiagnostics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCoreDiagnostics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1874D6F24F797B600AE8FE3 /* FirebaseInstallations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseInstallations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -532,6 +530,7 @@
 		F1ACA85B24E48A5900EE8578 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1ACA86224E48BCB00EE8578 /* methodNotificationContentRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationContentRelease.entitlements; sourceTree = "<group>"; };
 		F1ACA86424E522C300EE8578 /* methodNotificationContentDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = methodNotificationContentDebug.entitlements; sourceTree = "<group>"; };
+		F9BC4AFD74E49DA4C1CF3060 /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -539,13 +538,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D85DDB196407E3CF62F5F764 /* Pods_Messenger.framework in Frameworks */,
-				D016E647254AE42F0067DEE8 /* FacebookCore in Frameworks */,
-				F1764367249CD68B00492327 /* CryptoSwift in Frameworks */,
-				F1764361249CD60800492327 /* SocketIO in Frameworks */,
-				F1764364249CD61F00492327 /* Lottie in Frameworks */,
-				D016E649254AE42F0067DEE8 /* FacebookLogin in Frameworks */,
-				AA404F168334413509C3DD0E /* Pods_Messenger.framework in Frameworks */,
+				D6502936275F91A000ECE761 /* Lottie in Frameworks */,
+				D6FC93A227607D040003923B /* FacebookCore in Frameworks */,
+				D6FC93A427607D040003923B /* FacebookLogin in Frameworks */,
+				D6502932275F8FB200ECE761 /* CryptoSwift in Frameworks */,
+				D6FC93AD27607F2E0003923B /* SocketIO in Frameworks */,
+				548BC63863C69225F85635D2 /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,8 +579,8 @@
 		5750680802076C9E6BEC6CFD /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */,
-				8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */,
+				DD2D5654EACA17FFAB01A3F9 /* Pods-Messenger.debug.xcconfig */,
+				8F174665F176A73D603C6D28 /* Pods-Messenger.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -590,7 +588,7 @@
 		973962255568CF3D54CC56AE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F1874D6B24F797B600AE8FE3 /* DropDown.framework */,
+				D6E5696A2761D853006ED74C /* DropDown.framework */,
 				F1874D6C24F797B600AE8FE3 /* FBLPromises.framework */,
 				F1874D6D24F797B600AE8FE3 /* FirebaseCore.framework */,
 				F1874D6E24F797B600AE8FE3 /* FirebaseCoreDiagnostics.framework */,
@@ -599,9 +597,9 @@
 				F1874D5D24F7975D00AE8FE3 /* GoogleDataTransportCCTSupport.framework */,
 				F1874D5E24F7975D00AE8FE3 /* GoogleUtilities.framework */,
 				F1874D5F24F7975D00AE8FE3 /* nanopb.framework */,
-				B2DBC058E4F497EFFF9CB2B9 /* Pods_Messenger.framework */,
 				F1ACA85124E48A5900EE8578 /* UserNotifications.framework */,
 				F1ACA85324E48A5900EE8578 /* UserNotificationsUI.framework */,
+				F9BC4AFD74E49DA4C1CF3060 /* Pods_Messenger.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -802,6 +800,7 @@
 				CDCF7F8224A1DD7D00C97EAC /* View-Extension.swift */,
 				CDBF72F224E125F700D7A727 /* Date-Extension.swift */,
 				CDBF72F424E1263B00D7A727 /* Int-Extension.swift */,
+				D65A0921277B50480080AD7B /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -943,7 +942,7 @@
 				CDBE8DFE2476744D0049F971 /* Info.plist */,
 				D04605A6255D027E0016255A /* AppDelegate.swift */,
 				D046059F255D02770016255A /* NotificationManager.swift */,
-				D07A3AD225512DE8005D9FEE /* GoogleService-Info.plist */,
+				D65A091F277B4FB80080AD7B /* GoogleService-Info.plist */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -1207,7 +1206,6 @@
 		D041FBD9255D13EC00BAC343 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				D048C0792555818A006B36FC /* AppDelegate.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1250,13 +1248,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CDBE8E012476744D0049F971 /* Build configuration list for PBXNativeTarget "Messenger" */;
 			buildPhases = (
-				9FD1B31FF6A606AC9B078A15 /* [CP] Check Pods Manifest.lock */,
+				E2D596619F31E74BCED773CF /* [CP] Check Pods Manifest.lock */,
 				CDBE8DE92476744C0049F971 /* Sources */,
 				CDBE8DEA2476744C0049F971 /* Frameworks */,
 				CDBE8DEB2476744C0049F971 /* Resources */,
-				3D71DC436929572CB0C311FE /* [CP] Embed Pods Frameworks */,
 				F1ACA84824E42C1F00EE8578 /* Embed App Extensions */,
 				D0ADD9C42562466A007062FC /* ShellScript */,
+				D88D2EEC0F5C9DC08E77D3B0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1266,11 +1264,11 @@
 			);
 			name = Messenger;
 			packageProductDependencies = (
-				F1764360249CD60800492327 /* SocketIO */,
-				F1764363249CD61F00492327 /* Lottie */,
-				F1764366249CD68B00492327 /* CryptoSwift */,
-				D016E646254AE42F0067DEE8 /* FacebookCore */,
-				D016E648254AE42F0067DEE8 /* FacebookLogin */,
+				D6502931275F8FB200ECE761 /* CryptoSwift */,
+				D6502935275F91A000ECE761 /* Lottie */,
+				D6FC93A127607D040003923B /* FacebookCore */,
+				D6FC93A327607D040003923B /* FacebookLogin */,
+				D6FC93AC27607F2E0003923B /* SocketIO */,
 			);
 			productName = Messenger;
 			productReference = CDBE8DED2476744C0049F971 /* method.app */;
@@ -1342,7 +1340,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1160;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Dynamic LLC";
 				TargetAttributes = {
 					CDBE8DEC2476744C0049F971 = {
@@ -1372,10 +1370,10 @@
 			);
 			mainGroup = CDBE8DE42476744C0049F971;
 			packageReferences = (
-				F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */,
-				F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
-				D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				D6502930275F8FB200ECE761 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				D6502934275F91A000ECE761 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				D6FC93A027607D040003923B /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				D6FC93AB27607F2E0003923B /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 			);
 			productRefGroup = CDBE8DEE2476744C0049F971 /* Products */;
 			projectDirPath = "";
@@ -1396,6 +1394,7 @@
 			files = (
 				CD39FD07248A7A0B004C083A /* CustomCell.xib in Resources */,
 				CDCA9A1A252F32320040253A /* Channel.storyboard in Resources */,
+				D65A0920277B4FB80080AD7B /* GoogleService-Info.plist in Resources */,
 				CDA1A046250B6EFD0067B245 /* ringback.mp3 in Resources */,
 				CD35E26C2497A6E2003C53AB /* congr.json in Resources */,
 				CD361E1D248B8DFA00BCF154 /* Localizable.strings in Resources */,
@@ -1407,7 +1406,6 @@
 				D0065B74251CCB0700EE880A /* Calls.storyboard in Resources */,
 				CDB9214525528AB000E65FAC /* Auth.storyboard in Resources */,
 				D04605B2255D02B90016255A /* Chats.storyboard in Resources */,
-				D07A3AD325512DE8005D9FEE /* GoogleService-Info.plist in Resources */,
 				CDA1A048250B72FE0067B245 /* karch.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1448,7 +1446,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3D71DC436929572CB0C311FE /* [CP] Embed Pods Frameworks */ = {
+		D0ADD9C42562466A007062FC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+		};
+		D88D2EEC0F5C9DC08E77D3B0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1465,7 +1481,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9FD1B31FF6A606AC9B078A15 /* [CP] Check Pods Manifest.lock */ = {
+		E2D596619F31E74BCED773CF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1486,24 +1502,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		D0ADD9C42562466A007062FC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1539,6 +1537,7 @@
 				CD9D5E1124D94600007818E9 /* AuthRouter.swift in Sources */,
 				CD1FA134255D7D470023A5BC /* CallNetworkManager.swift in Sources */,
 				CDD9C66D247BC4AE0048A9A1 /* EndPointOptions.swift in Sources */,
+				D65A0922277B50480080AD7B /* UIColor.swift in Sources */,
 				CDD1756024851E2A001E804B /* HomePageViewModel.swift in Sources */,
 				CD3FEE52249CF387008CF774 /* EditInformationViewController.swift in Sources */,
 				CD36536824C05C4800432264 /* CallModel.xcdatamodeld in Sources */,
@@ -1697,7 +1696,6 @@
 				D0EDEFF22524642F00016AF7 /* ChannelInfoViewController.swift in Sources */,
 				D0F664DF251B177D0018D9B7 /* NetworkLogger.swift in Sources */,
 				D077FA73255D7BB70060CA8B /* ConfigureChannelMessagesViewController.swift in Sources */,
-				D048C07B2555818A006B36FC /* AppDelegate.swift in Sources */,
 				CD1FA12E255D7D2D0023A5BC /* CallEndpoints.swift in Sources */,
 				D0F664E0251B177D0018D9B7 /* HomeResponseModels.swift in Sources */,
 				D0F664E1251B177D0018D9B7 /* RemoteNotificationManager.swift in Sources */,
@@ -1875,7 +1873,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4CYXB39KG3;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1899,6 +1898,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1939,6 +1939,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4CYXB39KG3;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1955,20 +1956,21 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		CDBE8E022476744D0049F971 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 547B14C3511C87CF535E690D /* Pods-Messenger.debug.xcconfig */;
+			baseConfigurationReference = DD2D5654EACA17FFAB01A3F9 /* Pods-Messenger.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
@@ -1977,7 +1979,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1987,14 +1989,14 @@
 		};
 		CDBE8E032476744D0049F971 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8245C429AFC498C4C745507E /* Pods-Messenger.release.xcconfig */;
+			baseConfigurationReference = 8F174665F176A73D603C6D28 /* Pods-Messenger.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = Messenger/App/Info.plist;
@@ -2003,7 +2005,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2018,7 +2020,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = "Messenger_dev-Info.plist";
@@ -2028,7 +2030,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method_dev;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -2044,7 +2046,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Messenger/methodRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Messenger-Prefix.pch";
 				INFOPLIST_FILE = "Messenger_dev-Info.plist";
@@ -2054,7 +2056,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger";
 				PRODUCT_NAME = method_dev;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2066,7 +2068,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = methodNotificationService/methodNotificationService.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				INFOPLIST_FILE = methodNotificationService/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2074,7 +2076,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.service";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2087,7 +2089,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = methodNotificationService/methodNotificationService.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				INFOPLIST_FILE = methodNotificationService/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2095,7 +2097,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.aa;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.service";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2108,7 +2110,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = methodNotificationContent/methodNotificationContentDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				INFOPLIST_FILE = methodNotificationContent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2116,7 +2118,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.content";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2129,7 +2132,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = methodNotificationContent/methodNotificationContentRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7T5ESUR6XP;
+				DEVELOPMENT_TEAM = 92UM2XU45D;
 				INFOPLIST_FILE = methodNotificationContent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2137,7 +2140,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = am.dynamic.method.bb;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "am.dynamic.method-messenger.content";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2196,14 +2200,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.0;
-			};
-		};
 		D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
@@ -2228,43 +2224,41 @@
 				minimumVersion = 1.3.1;
 			};
 		};
-		F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */ = {
+		D6502930275F8FB200ECE761 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		D6502934275F91A000ECE761 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.1;
+			};
+		};
+		D6FC93A027607D040003923B /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		D6FC93AB27607F2E0003923B /* XCRemoteSwiftPackageReference "socket.io-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 15.2.0;
 			};
 		};
-		F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.8;
-			};
-		};
-		F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D016E646254AE42F0067DEE8 /* FacebookCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookCore;
-		};
-		D016E648254AE42F0067DEE8 /* FacebookLogin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D016E645254AE42F0067DEE8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookLogin;
-		};
 		D0F664AD251B177D0018D9B7 /* SocketIO */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D0F664AE251B177D0018D9B7 /* XCRemoteSwiftPackageReference "socket" */;
@@ -2280,20 +2274,30 @@
 			package = D0F664B2251B177D0018D9B7 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
 		};
-		F1764360249CD60800492327 /* SocketIO */ = {
+		D6502931275F8FB200ECE761 /* CryptoSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F176435F249CD60800492327 /* XCRemoteSwiftPackageReference "socket" */;
-			productName = SocketIO;
+			package = D6502930275F8FB200ECE761 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
 		};
-		F1764363249CD61F00492327 /* Lottie */ = {
+		D6502935275F91A000ECE761 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764362249CD61F00492327 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = D6502934275F91A000ECE761 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		F1764366249CD68B00492327 /* CryptoSwift */ = {
+		D6FC93A127607D040003923B /* FacebookCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1764365249CD68B00492327 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
-			productName = CryptoSwift;
+			package = D6FC93A027607D040003923B /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		D6FC93A327607D040003923B /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6FC93A027607D040003923B /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
+		D6FC93AC27607F2E0003923B /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6FC93AB27607F2E0003923B /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
+			productName = SocketIO;
 		};
 /* End XCSwiftPackageProductDependency section */
 

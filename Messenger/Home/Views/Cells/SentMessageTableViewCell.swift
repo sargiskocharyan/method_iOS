@@ -19,7 +19,7 @@ class SentMessageTableViewCell: UITableViewCell {
         super.awakeFromNib()
         changeShapeOfImageView()
         isSelected = false
-        leadingConstraintOfChaeckImage?.constant = -10
+//        leadingConstraintOfChaeckImage?.constant = -10
         checkImageView?.isHidden = true
     }
     
@@ -68,7 +68,6 @@ class SentMessageTableViewCell: UITableViewCell {
         self.messageLabel.text = message.text
         self.messageLabel.sizeToFit()
         self.contentView.addGestureRecognizer(tap)
-        self.checkImageView?.image = UIImage.init(systemName: "circle")
         if  (channelInfo?.role == 0 || channelInfo?.role == 1) {
             self.setCheckImage()
             self.setCheckButton(isPreview: isPreview!)
@@ -88,15 +87,16 @@ class SentMessageTableViewCell: UITableViewCell {
         }
     }
     
-    func configureSendMessageTableViewCell(message: Message, statuses: [MessageStatus], _ tap: UILongPressGestureRecognizer) {
+    func configureSendMessageTableViewCell(message: Message, statuses: [MessageStatus], _ tap: UILongPressGestureRecognizer) { 
         self.messageLabel.text = message.text
         self.messageLabel.backgroundColor =  UIColor(red: 135/255, green: 192/255, blue: 237/255, alpha: 1)
         self.id = message._id
         self.messageLabel.textColor = .black
         self.messageLabel.sizeToFit()
-        DispatchQueue.main.async {
-            self.addGestureRecognizer(tap)
-        }
+        self.addGestureRecognizer(tap)
+//        DispatchQueue.main.async {
+//            self.addGestureRecognizer(tap)
+//        }
         if message.createdAt != nil {
             let date = stringToDateD(date: message.createdAt!)
             let status = statuses[0].userId == SharedConfigs.shared.signedUser?.id ? statuses[1] : statuses[0]
@@ -123,12 +123,16 @@ class SentMessageTableViewCell: UITableViewCell {
 
 extension SentMessageTableViewCell: CellProtocol {
     func select() {
-        let image = UIImage.init(systemName: "checkmark.circle.fill")
-        self.checkImageView?.image = image
+//        let image = UIImage.init(systemName: "checkmark.circle.fill")
+//        self.checkImageView?.image = image
+        self.checkImageView?.isHidden = false
+//        leadingConstraintOfChaeckImage?.constant += 10
+        
     }
     
     func deselect() {
-        let image = UIImage.init(systemName: "circle")
-        self.checkImageView?.image = image
+//        let image = UIImage.init(systemName: "circle")
+//        leadingConstraintOfChaeckImage?.constant -= 10
+        self.checkImageView?.isHidden = true
     }
 }

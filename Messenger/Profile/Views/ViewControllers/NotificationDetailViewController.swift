@@ -77,12 +77,12 @@ class NotificationDetailViewController: UIViewController {
         mainRouter?.callListViewController?.viewModel!.getuserById(id: id) { (user, error) in
             DispatchQueue.main.async {
                 if error == nil && user != nil {
+                    cell.configure(user: user!, request: request, number: row)
                     var newArray = self.mainRouter?.mainTabBarController?.contactsViewModel?.otherContacts
                     newArray?.append(user!)
-                    self.mainRouter?.mainTabBarController?.viewModel!.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
-                        self.mainRouter?.mainTabBarController?.contactsViewModel!.otherContacts = users!
+                    self.mainRouter?.mainTabBarController?.viewModel?.saveOtherContacts(otherContacts: newArray!, completion: { (users, error) in
+                        self.mainRouter?.mainTabBarController?.contactsViewModel?.otherContacts = users ?? []
                     })
-                    cell.configure(user: user!, request: request, number: row)
                 }
             }
         }
@@ -174,7 +174,7 @@ extension NotificationDetailViewController: UITableViewDelegate, UITableViewData
             for i in 0..<otherContactsCount {
                 if mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i]._id == ourContactRequests[indexPath.row].sender {
                     existsInContactList = true
-                    cell.configure(user: mainRouter!.mainTabBarController!.contactsViewModel!.otherContacts[i], request: ourContactRequests[indexPath.row], number: indexPath.row)
+                    cell.configure(user: mainRouter?.mainTabBarController?.contactsViewModel?.otherContacts[i] ?? User(), request: ourContactRequests[indexPath.row], number: indexPath.row)
                     break
                 }
             }

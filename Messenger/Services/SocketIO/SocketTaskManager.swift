@@ -10,7 +10,7 @@ import Foundation
 import SocketIO 
 import WebRTC
 
-protocol SocketIODelegate: class {
+protocol SocketIODelegate: AnyObject {
     func receiveData(sdp: String)
     func receiveCandidate(remoteCandidate: RTCIceCandidate)
 }

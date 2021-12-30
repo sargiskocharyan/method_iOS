@@ -106,7 +106,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         let attributeString = NSMutableAttributedString(string: "resend_code".localized(),
                                                         attributes: buttonAttributes)
         resendCodeButton.setAttributedTitle(attributeString, for: .normal)
-        continueButton.isEnabled = true
+//        continueButton.isEnabled = true
         self.CodeField.addTarget(self, action: #selector(self.textFieldDidChange(textField:)), for: .editingChanged)
         self.hideKeyboardWhenTappedAround()
         constant = registerOrLogintTopConstraint.constant

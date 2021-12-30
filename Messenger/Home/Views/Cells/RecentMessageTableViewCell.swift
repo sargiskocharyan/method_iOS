@@ -46,7 +46,7 @@ class RecentMessageTableViewCell: UITableViewCell {
         onlineView.contentMode = . scaleAspectFill
         onlineView.layer.masksToBounds = true
         onlineView.layer.borderWidth = 2
-        onlineView.layer.borderColor = UIColor(named: "imputColor")?.cgColor
+        onlineView.layer.borderColor = UIColor.inputColor?.cgColor
         onlineView.layer.cornerRadius = 9
         onlineView.clipsToBounds = true
         onlineView.tag = 50
