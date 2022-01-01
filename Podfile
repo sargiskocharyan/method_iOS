@@ -6,9 +6,9 @@ target 'Messenger' do
   use_frameworks!
   
   # Pods for Messenger
-        pod 'DropDown'
-        pod 'GoogleWebRTC'
- 	pod 'PhoneNumberKit', '~> 3.3'
+  pod 'DropDown'
+  pod 'GoogleWebRTC'
+  pod 'PhoneNumberKit', '~> 3.3'
 end
 
 #target 'methodNotificationService' do
