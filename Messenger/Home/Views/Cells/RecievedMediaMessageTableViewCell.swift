@@ -30,8 +30,8 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         leadingConstraintOfCheckImage?.constant -= 30
 //        leadingConstraintOfImageView?.constant -= 15
         checkImage?.isHidden = true
-        messageContentStackView.clipsToBounds = true
-        messageContentStackView.layer.cornerRadius = 10
+//        messageContentStackView.clipsToBounds = true
+//        messageContentStackView.layer.cornerRadius = 10
         viewOnCell?.tag = 12
     }
     
@@ -113,7 +113,7 @@ class RecievedMediaMessageTableViewCell: UITableViewCell {
         setStartVideoImage()
         for i in 0..<(channelInfo.channel?.subscribers?.count)! {
             if channelInfo.channel?.subscribers?[i].user == message.senderId {
-                self.nameLabel.text = channelInfo.channel?.subscribers?[i].name
+                self.nameLabel.text = channelInfo.channel?.subscribers?[i].name 
                 ImageCache.shared.getImage(url: channelInfo.channel?.subscribers?[i].avatarURL ?? "", id: channelInfo.channel?.subscribers?[i].user ?? "", isChannel: false) { (image) in
                     DispatchQueue.main.async {
                         self.userImageView.image = image

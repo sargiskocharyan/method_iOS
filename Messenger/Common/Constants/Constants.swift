@@ -10,11 +10,11 @@ import Foundation
 
 struct Environment {
     #if DEVELOPMENT
-    static let baseURL = "http://192.168.0.113:3000"//"https://messenger-dynamic.herokuapp.com" //"https://localhost:3000"
-    static let socketUrl = "wss://192.168.0.113:3000"//"wss://messenger-dynamic.herokuapp.com"  //messenger-dynamic.herokuapp.com
+    static let baseURL = "https://method.dynamic.am"
+    static let socketUrl = "wss://method.dynamic.am"
     #else
-    static let baseURL = "http://192.168.0.113:3000"//"https://messenger-dynamic.herokuapp.com" //"https://192.168.0.105:3000"
-    static let socketUrl = "wss://192.168.0.113:3000"//"wss://messenger-dynamic.herokuapp.com" //messenger-dynamic.herokuapp.com
+    static let baseURL = "https://method.dynamic.am"
+    static let socketUrl = "wss://method.dynamic.am"
     #endif
 }
 

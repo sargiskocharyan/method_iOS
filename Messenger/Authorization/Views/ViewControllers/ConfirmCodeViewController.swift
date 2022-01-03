@@ -113,7 +113,6 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        CodeField.text = code
         CodeField.placeholder = "enter_code".localized()
         CodeField.underlined()
         continueButton.setTitle("continue".localized(), for: .normal)

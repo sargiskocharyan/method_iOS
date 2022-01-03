@@ -92,6 +92,7 @@ class ChannelListViewController: UIViewController {
                     if channels[i].channel?.subscribers?[j].user == user {
                         channels[i].channel?.subscribers?[j].name = name
                         channels[i].channel?.subscribers?[j].avatarURL = avatarUrl
+//                        channels[i].channel?.subscribers?[j].
                         break
                     }
                 }

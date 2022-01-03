@@ -578,7 +578,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
         genderDropDown.anchorView = genderButton
         genderDropDown.direction = .any
         genderDropDown.dataSource = ["male".localized(), "female".localized()]
-        genderDropDown.bottomOffset = CGPoint(x: 0, y:((genderDropDown.anchorView?.plainView.bounds.height)! + genderView.textField.frame.height + 30))
+        genderDropDown.bottomOffset = CGPoint(x: .zero, y:((genderDropDown.anchorView?.plainView.bounds.height)! + genderView.textField.frame.height + 30))
         genderDropDown.selectionAction = { [unowned self] (index: Int, item: String) in
             self.genderView.textField.text = item
             self.genderMoreOrLessImageView.image = UIImage(named: "more")
@@ -587,7 +587,7 @@ class EditInformationViewController: UIViewController, UITextFieldDelegate, UITe
             self.checkFields()
         }
         genderDropDown.width = genderView.textField.bounds.width
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: self.genderView.textField.frame.height))
+        let paddingView = UIView(frame: CGRect(x: .zero, y: .zero, width: EditInformationViewConstraints.width, height: self.genderView.textField.frame.height))
         genderView.textField.rightView = paddingView
         genderView.textField.rightViewMode = UITextField.ViewMode.always
         genderDropDown.cancelAction = { [unowned self] in
@@ -640,5 +640,6 @@ extension EditInformationViewController: CustomTextFieldDelegate {
 
 
 struct EditInformationViewConstraints {
-    
+    static let width: CGFloat = 30
+    static let height: CGFloat = 30
 }
