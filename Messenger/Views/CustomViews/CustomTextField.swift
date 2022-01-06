@@ -8,8 +8,9 @@
 
 import UIKit
 
-protocol CustomTextFieldDelegate: AnyObject {
+@objc protocol CustomTextFieldDelegate: AnyObject, UITextFieldDelegate {
     func texfFieldDidChange(placeholder: String)
+    @objc optional func textFieldShouldReturn(_ textField: UITextField) -> Bool
 }
 
 class CustomTextField: UIView {

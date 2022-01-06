@@ -136,7 +136,7 @@ class ChannelMessagesViewController: UIViewController, UIImagePickerControllerDe
     
     @objc func handleUploadTap1() {
         let imagePickerController = UIImagePickerController()
-        imagePickerController.allowsEditing = true
+        imagePickerController.allowsEditing = false
         imagePickerController.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)

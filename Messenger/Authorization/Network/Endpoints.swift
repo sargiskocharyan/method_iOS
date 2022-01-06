@@ -19,6 +19,7 @@ public enum AuthApi {
     case checkUsername(username: String)
     case loginWithFacebook(accessToken: String)
     case loginWithPhoneNumber(number: String, accessToken: String)
+    case loginWithApple(userId: String, email: String, accessToken: String)
 }
 
 extension AuthApi: EndPointType {
@@ -48,6 +49,8 @@ extension AuthApi: EndPointType {
             return AUTHUrls.LoginWithFacebook
         case .loginWithPhoneNumber(_,_):
             return AUTHUrls.LoginWithPhoneNumber
+        case .loginWithApple(_, _, _):
+            return AUTHUrls.LoginWithApple
         }
     }
     
@@ -71,6 +74,8 @@ extension AuthApi: EndPointType {
         case .loginWithFacebook(_):
             return .post
         case .loginWithPhoneNumber(_,_):
+            return .post
+        case .loginWithApple(_, _, _):
             return .post
         }
     }
@@ -117,6 +122,9 @@ extension AuthApi: EndPointType {
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: headers)
         case .loginWithPhoneNumber(number: let number, accessToken: let accessToken):
             let parameters:Parameters = ["phoneNumber": number, "accessToken": accessToken]
+            return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: nil)
+        case .loginWithApple(userId: let userId, email: let email, accessToken: let accessToken):
+            let parameters:Parameters = ["userId": userId, "email": email,"accessToken": accessToken]
             return .requestParametersAndHeaders(bodyParameters: parameters, bodyEncoding: .jsonEncoding, urlParameters: nil, additionHeaders: nil)
         }
     }

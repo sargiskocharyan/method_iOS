@@ -16,10 +16,11 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var enterCodeLabel: UILabel!
     @IBOutlet weak var CodeField: UITextField!
     @IBOutlet weak var resendCodeButton: UIButton!
-    @IBOutlet weak var continueButton: UIButton!
+//    @IBOutlet weak var continueButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var registerOrLogintTopConstraint: NSLayoutConstraint!
     
+//    @IBOutlet weak var continueButtonBottomConstraint: NSLayoutConstraint!
     //MARK: properties
     var constant: CGFloat = 0
     var email: String?
@@ -46,7 +47,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             self.activityIndicator.startAnimating()
         }
         if phoneNumber != nil {
-            Auth.auth().languageCode = "hy" //222222
+            Auth.auth().languageCode = "en" //222222
             Auth.auth().settings?.isAppVerificationDisabledForTesting = false
             PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber!, uiDelegate: nil) { (verificationID, error) in
                 if let error = error {
@@ -74,7 +75,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
                 }
             } else if code != nil {
                 DispatchQueue.main.async {
-                    self.CodeField.text = code
+//                    self.CodeField.text = code
                     self.activityIndicator.stopAnimating()
                 }
             }
@@ -115,7 +116,7 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         CodeField.placeholder = "enter_code".localized()
         CodeField.underlined()
-        continueButton.setTitle("continue".localized(), for: .normal)
+//        continueButton.setTitle("continue".localized(), for: .normal)
         enterCodeLabel.text = "code".localized()
         CodeField.delegate = self
         if isExists! {
@@ -131,6 +132,8 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         self.hideKeyboardWhenTappedAround()
         constant = registerOrLogintTopConstraint.constant
         setObservers()
+        CodeField.textContentType = .oneTimeCode
+        CodeField.becomeFirstResponder()
     }
     
     override func viewDidLayoutSubviews() {
@@ -145,8 +148,8 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
             bottomView.frame = maxRectBottom
         }
         self.gradientColor.removeFromSuperlayer()
-        continueButton.setGradientBackground(view: self.view, gradientColor)
-        continueButton.layer.cornerRadius = 8
+//        continueButton.setGradientBackground(view: self.view, gradientColor)
+//        continueButton.layer.cornerRadius = 8
         setImage()
     }
     
@@ -264,10 +267,15 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func textFieldDidChange(textField: UITextField){
-        if textField.text != "" {
-            continueButton.isEnabled = true
+        if textField.text?.isEmpty == false {
+//            continueButton.isEnabled = true
+            if email != nil && textField.text?.count == 4 {
+                confirmEmailCode()
+            } else if textField.text?.count == 6 {
+                confirmPhoneCode()
+            }
         } else {
-            continueButton.isEnabled = false
+//            continueButton.isEnabled = false
         }
     }
     
@@ -275,14 +283,19 @@ class ConfirmCodeViewController: UIViewController, UITextFieldDelegate {
         if let userInfo = notification.userInfo {
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-            if self.view.frame.height - resendCodeButton.frame.maxY < keyboardFrame!.height {
-                registerOrLogintTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - resendCodeButton.frame.maxY)) : constant
-            } else {
-                registerOrLogintTopConstraint.constant = constant
-            }
-            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                self.view.layoutIfNeeded()
-            }, completion: nil)
+//            if isKeyboardShowing {
+//                continueButtonBottomConstraint.constant = (keyboardFrame?.height ?? 0) + 10
+//            } else {
+//                continueButtonBottomConstraint.constant = 50
+//            }
+//            if self.view.frame.height - resendCodeButton.frame.maxY < keyboardFrame!.height {
+//                registerOrLogintTopConstraint.constant = isKeyboardShowing ? constant - (keyboardFrame!.height - (self.view.frame.height - resendCodeButton.frame.maxY)) : constant
+//            } else {
+//                registerOrLogintTopConstraint.constant = constant
+//            }
+//            UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+//                self.view.layoutIfNeeded()
+//            }, completion: nil)
         }
     }
     

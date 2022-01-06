@@ -14,6 +14,7 @@ import FBSDKCoreKit_Basics
 import Firebase
 import PhoneNumberKit
 import DropDown
+import AuthenticationServices
 
 extension PhoneNumberTextField {
     var defaultRegion: String {
@@ -27,6 +28,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     
     //MARK: @IBOutlets
     @IBOutlet weak var logInWithFacebookButton: FBLoginButton!
+    @IBOutlet weak var logInWithAppleButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var emailDescriptionLabel: UILabel!
     @IBOutlet weak var aboutPgLabel: UILabel!
@@ -70,7 +72,15 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         }
     }
     
-   
+    @IBAction func loginWithApple(_ sender: Any) {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.performRequests()
+    }
+    
     //MARK: Lifecycle methods
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -109,6 +119,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         numberTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         let attributeString = NSMutableAttributedString(string: "use_phone_number_for_login".localized(),attributes: buttonAttributes)
         changeModeButton.setAttributedTitle(attributeString, for: .normal)
+        emaiCustomView.textField.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -127,6 +138,8 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
         continueButton.layer.cornerRadius = 8
         logInWithFacebookButton.layer.cornerRadius = 8
         logInWithFacebookButton.clipsToBounds = true
+        logInWithAppleButton.layer.cornerRadius = 8
+        logInWithAppleButton.clipsToBounds = true
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -312,7 +325,7 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
     }
     
     func checkPhone() {
-        Auth.auth().languageCode = "hy" //222222
+        Auth.auth().languageCode = "en" //222222
         Auth.auth().settings?.isAppVerificationDisabledForTesting = false
         PhoneAuthProvider.provider().verifyPhoneNumber(numberTextField.text!, uiDelegate: nil) { (verificationID, error) in
             if let error = error {
@@ -342,6 +355,9 @@ class BeforeLoginViewController: UIViewController, LoginButtonDelegate {
                 }
             })
         }
+        
+//        self.authRouter?.showConfirmCodeViewController(email: nil, code: nil, isExists: true,  phoneNumber: self.numberTextField.text)
+//        self.activityIndicator.stopAnimating()
     }
     
     func checkEmail() {
@@ -389,5 +405,37 @@ extension BeforeLoginViewController: CustomTextFieldDelegate {
             }
         }
     }
+
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            checkEmail()
+            return true
+        }
 }
 
+extension BeforeLoginViewController: ASAuthorizationControllerDelegate {
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            let userIdentifier = appleIDCredential.user
+            let fullName = appleIDCredential.fullName
+            let email = appleIDCredential.email
+            viewModel?.loginWithApple(userId: userIdentifier, email: email ?? "", accessToken: String(data: appleIDCredential.identityToken!, encoding: .utf8) ?? "", completion: {
+                (responseObject, error) in
+                    if let error = error {
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "error", errorMessage: error.rawValue)
+                        }
+                    }
+//                else if let response = responseObject {
+//                        DispatchQueue.main.async {
+//                            self.authRouter?.showConfirmCodeViewController(email: nil, code: nil, isExists: response.mailExist, phoneNumber: self.numberTextField.text)
+//                            self.activityIndicator.stopAnimating()
+//                        }
+                })
+            print("User id is\(userIdentifier) \n Full name is \(String(describing: fullName)) \n Email is \(String(describing: email))")
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print(error.localizedDescription)
+    }
+}

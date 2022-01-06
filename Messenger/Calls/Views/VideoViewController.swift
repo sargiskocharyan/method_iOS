@@ -54,7 +54,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
         navigationController?.navigationBar.isHidden = true
         if videoVCMode == .videoCall {
             DispatchQueue.main.async {
-                self.cameraOffButton.setImage(UIImage(named: "cameraOff"), for: .normal)
+                self.cameraOffButton.setImage(UIImage(named: "cameraOn"), for: .normal)
             }
             isSpeakerOn = true
             speakerOnOffButton.setImage(UIImage(named: "speakerOn"), for: .normal)
@@ -114,7 +114,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
                         self.ourView.backgroundColor = .clear
                     }
                     DispatchQueue.main.async {
-                        sender.setImage(UIImage(named: "cameraOn"), for: .normal)
+                        sender.setImage(UIImage(named: "cameraOff"), for: .normal)
                         self.cameraSwitchButton.isEnabled = false
                     }
                     self.webRTCClient?.sendData("turn camera off".data(using: .utf8)!)
@@ -126,7 +126,7 @@ class VideoViewController: UIViewController, AVAudioPlayerDelegate {
                 webRTCClient?.startCaptureLocalVideo(renderer: localRenderer! as! RTCVideoRenderer, cameraPosition: cameraPosition, completion: {})
                 isCameraOff = true
                 DispatchQueue.main.async {
-                    sender.setImage(UIImage(named: "cameraOff"), for: .normal)
+                    sender.setImage(UIImage(named: "cameraOn"), for: .normal)
                     self.cameraSwitchButton.isEnabled = true
                 }
                 self.webRTCClient?.sendData("turn camera on".data(using: .utf8)!)

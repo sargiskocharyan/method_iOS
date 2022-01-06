@@ -23,4 +23,10 @@ class BeforeLoginViewModel {
             completion(response, error)
         }
     }
+    
+    func loginWithApple(userId: String, email: String, accessToken: String, completion: @escaping (LoginResponse?, NetworkResponse?)->()) {
+        networkManager.loginWithApple(userId: userId, email: email, accessToken: accessToken) { (response, error) in
+            completion(response, error)
+        }
+    }
 }

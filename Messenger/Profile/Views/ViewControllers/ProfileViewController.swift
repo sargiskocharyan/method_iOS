@@ -128,6 +128,9 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func defineSwithState() {
         if SharedConfigs.shared.mode == AppMode.dark.rawValue {
             switchMode.isOn = true
+            UIApplication.shared.windows.forEach { window in
+                window.overrideUserInterfaceStyle = .dark
+            }
         } else {
             switchMode.isOn = false
         }

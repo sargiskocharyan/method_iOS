@@ -26,16 +26,19 @@ class ConfigureChannelMessagesViewController {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 cell.configureSendImageMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview, channelInfo: vc.channelInfo, tapOnImage: tapOnImage, tmpImage: vc.sendImageTmp)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue  {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
                 cell.configureSendVideoMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, tap, isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: vc.sendThumbnail)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendMessageCell", for: indexPath) as! SentMessageTableViewCell
                 cell.configureSendMessageTableViewCellInChannel(vc.channelInfo, vc.channelMessages.array![indexPath.row], tap, isPreview: vc.isPreview)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             }
         } else {
@@ -43,16 +46,19 @@ class ConfigureChannelMessagesViewController {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 cell.configureRecieveImageMessageTableViewCellInChannel(vc.channelInfo, isPreview: vc.isPreview, message: vc.channelMessages.array![indexPath.row], tapOnImage: tapOnImage)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             } else if vc.channelMessages.array![indexPath.row].type == MessageType.video.rawValue {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
                 cell.configureRecieveVideoMessageTableViewCellInChannel(vc.channelInfo, tap, message: vc.channelMessages.array![indexPath.row], isPreview: vc.isPreview, tapOnVideo: tapOnVideo, thumbnail: (vc.sendThumbnail ?? UIImage(named: "upload_image_icon"))!)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             } else {
                 let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveMessageCell", for: indexPath) as! RecievedMessageTableViewCell
                 cell.configureRecieveMessageTableViewCellInChannel(vc.channelMessages.array![indexPath.row], vc.channelInfo, vc.isPreview)
                 cell.selectionStyle = .none
+                cell.contentView.backgroundColor = UIColor.inputColor
                 return cell
             }
         }
@@ -125,6 +131,7 @@ class ConfigureChannelMessagesViewController {
         let uploadImageView = UIImageView()
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.image = UIImage(named: "upload_image_icon")
+        uploadImageView.image?.withTintColor(.blue)
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
         uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: vc, action: #selector(vc.handleUploadTap1)))
         vc.messageInputContainerView.addSubview(uploadImageView)
@@ -178,6 +185,7 @@ class ConfigureChannelMessagesViewController {
         self.vc.view.addSubview(viewUnderImageView)
         viewUnderImageView.translatesAutoresizingMaskIntoConstraints = false
         viewUnderImageView.leadingAnchor.constraint(equalTo: self.vc.view.leadingAnchor, constant: 0).isActive = true
+//        viewUnderImageView.leadingAnchor.constraint(equalTo: self.vc.view.leadingAnchor, constant: 0).isActive = true
         viewUnderImageView.trailingAnchor.constraint(equalToSystemSpacingAfter: self.vc.view.trailingAnchor, multiplier: 1).isActive = true
         viewUnderImageView.bottomAnchor.constraint(equalTo: self.vc.view.bottomAnchor, constant: 0).isActive = true
         viewUnderImageView.topAnchor.constraint(equalTo: self.vc.view.topAnchor, constant: 0).isActive = true
@@ -188,8 +196,11 @@ class ConfigureChannelMessagesViewController {
         imageView.trailingAnchor.constraint(equalToSystemSpacingAfter: self.vc.view.trailingAnchor, multiplier: 1).isActive = true
         imageView.centerYAnchor.constraint(equalTo: self.vc.view.centerYAnchor).isActive = true
         imageView.topAnchor.constraint(equalTo: self.vc.view.topAnchor, constant: 80).isActive = true
+        imageView.contentMode = .scaleAspectFit
         ImageCache.shared.getImage(url: vc.channelMessages.array?[gestureReconizer.indexPath.row].image?.imageURL ?? "", id: vc.channelMessages.array?[gestureReconizer.indexPath.row]._id ?? "", isChannel: true) { (image) in
-            imageView.image = image
+            DispatchQueue.main.async {
+                imageView.image = image
+            }
         }
         let closeButton = UIButton()
         closeButton.setImage(UIImage(named: "closeColor"), for: .normal)
@@ -197,7 +208,7 @@ class ConfigureChannelMessagesViewController {
         viewUnderImageView.addSubview(closeButton)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.trailingAnchor.constraint(equalTo: self.vc.view.trailingAnchor, constant: -10).isActive = true
-        closeButton.topAnchor.constraint(equalTo: self.vc.view.topAnchor, constant: 30).isActive = true
+        closeButton.topAnchor.constraint(equalTo: self.vc.view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
     }
     
     @objc func handleCloseAction() {

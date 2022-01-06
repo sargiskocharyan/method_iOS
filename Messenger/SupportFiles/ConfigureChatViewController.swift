@@ -56,6 +56,7 @@ class ConfigureChatViewController {
     @objc func handleCloseAction(view: UIView, vc: ChatViewController) {
         view.viewWithTag(23)?.removeFromSuperview()
         self.vc.navigationController?.navigationBar.isHidden = false
+        
     }
     
     func setLabel(text: String, view: UIView, superView: UIView) {
@@ -225,21 +226,25 @@ class ConfigureChatViewController {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: sendMessageCellIdentifier, for: indexPath) as! SentMessageTableViewCell
             cell.configureSendMessageTableViewCell(message: message, statuses: vc.allMessages!.statuses ?? [], longTapGesture)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         } else if message.type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendCallCell", for: indexPath) as! SentCallTableViewCell
             cell.configureSendCallTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         } else if message.type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
             cell.configureSendImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, tmpImage: vc.sendImageTmp)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "sendImageMessage", for: indexPath) as! SentMediaMessageTableViewCell
             cell.configureSendVideoMessageTableViewCell(message, longTapGesture, tapOnVideo, thumbnail: vc.sendThumbnail)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         }
     }
@@ -249,21 +254,25 @@ class ConfigureChatViewController {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: self.receiveMessageCellIdentifier, for: indexPath) as! RecievedMessageTableViewCell
             cell.configureRecieveMessageTableViewCell(longTapGesture, vc.allMessages!.array![indexPath.row], image: self.vc.image!)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         }  else if vc.allMessages?.array![indexPath.row].type == MessageType.call.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveCallCell", for: indexPath) as! RecievedCallTableViewCell
             cell.configureRecieveCallTableViewCell(vc.allMessages!.array![indexPath.row], image: self.vc.image!, longTapGesture)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         } else if vc.allMessages?.array![indexPath.row].type == MessageType.image.rawValue {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
             cell.configureRecieveImageMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnImage, image: self.vc.image!)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         } else {
             let cell = vc.tableView.dequeueReusableCell(withIdentifier: "receiveImageMessage", for: indexPath) as! RecievedMediaMessageTableViewCell
             cell.configureRecieveVideoMessageTableViewCell(vc.allMessages!.array![indexPath.row], longTapGesture, tapOnVideo)
             cell.selectionStyle = .none
+            cell.contentView.backgroundColor = UIColor.inputColor
             return cell
         }
     }

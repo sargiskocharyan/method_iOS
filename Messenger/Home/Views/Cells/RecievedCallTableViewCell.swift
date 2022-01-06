@@ -20,6 +20,7 @@ class RecievedCallTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         changeShapeOfImageView()
+        cellMessageView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
     }
 
     func changeShapeOfImageView() {
